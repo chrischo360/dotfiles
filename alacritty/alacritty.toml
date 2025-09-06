@@ -1,0 +1,125 @@
+[window]
+
+padding.x = 10
+padding.y = 10
+
+opacity = 0.80
+decorations = "transparent"
+
+startup_mode = "Maximized"
+
+[font]
+
+normal = { family = "JetBrainsMono Nerd Font", style = "Medium" }
+bold = { family = "JetBrainsMono Nerd Font", style = "Bold" }
+italic = { family = "JetBrainsMono Nerd Font", style = "Italic" }
+size=15
+
+# Catppuccin Mocha colors (matching your Neovim theme)
+[colors.primary]
+background = '#1e1e2e'
+foreground = '#cdd6f4'
+
+[colors.cursor]
+text = '#1e1e2e'
+cursor = '#f5e0dc'
+
+# Normal colors
+[colors.normal]
+black   = '#45475a'
+red     = '#f38ba8'
+green   = '#a6e3a1'
+yellow  = '#f9e2af'
+blue    = '#89b4fa'
+magenta = '#f5c2e7'
+cyan    = '#94e2d5'
+white   = '#bac2de'
+
+# Bright colors
+[colors.bright]
+black   = '#585b70'
+red     = '#f38ba8'
+green   = '#a6e3a1'
+yellow  = '#f9e2af'
+blue    = '#89b4fa'
+magenta = '#f5c2e7'
+cyan    = '#94e2d5'
+white   = '#a6adc8'
+
+# Selection colors
+[colors.selection]
+text = '#1e1e2e'
+background = '#f5e0dc'
+
+# Search colors
+[colors.search.matches]
+foreground = '#1e1e2e'
+background = '#a6adc8'
+
+[colors.search.focused_match]
+foreground = '#1e1e2e'
+background = '#a6e3a1'
+
+# Footer bar colors
+[colors.footer_bar]
+foreground = '#1e1e2e'
+background = '#a6adc8'
+
+# Hints
+[colors.hints.start]
+foreground = '#1e1e2e'
+background = '#f9e2af'
+
+[colors.hints.end]
+foreground = '#1e1e2e'
+background = '#a6adc8'
+
+# Line indicator
+[colors.line_indicator]
+foreground = 'None'
+background = 'None'
+
+# VI mode
+[colors.vi_mode_cursor]
+text = '#1e1e2e'
+cursor = '#b4befe'
+
+[env]
+TERM = "xterm-256color"
+
+[terminal.shell]
+program = "/bin/zsh"
+args = ["-l", "-c", "tmux attach || tmux"]
+
+# Additional enhancements for better transparency experience
+[cursor]
+style = { shape = "Block", blinking = "On" }
+blink_interval = 500
+
+[scrolling]
+history = 10000
+multiplier = 3
+
+[mouse]
+hide_when_typing = true
+
+# Key bindings for better UX
+[[keyboard.bindings]]
+key = "N"
+mods = "Command"
+action = "SpawnNewInstance"
+
+[[keyboard.bindings]]
+key = "Plus"
+mods = "Command"
+action = "IncreaseFontSize"
+
+[[keyboard.bindings]]
+key = "Minus"
+mods = "Command"
+action = "DecreaseFontSize"
+
+[[keyboard.bindings]]
+key = "Key0"
+mods = "Command"
+action = "ResetFontSize"
