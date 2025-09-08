@@ -3,7 +3,7 @@
 padding.x = 10
 padding.y = 10
 
-opacity = 0.80
+opacity = 0.85
 decorations = "transparent"
 
 startup_mode = "Maximized"

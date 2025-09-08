@@ -1,0 +1,95 @@
+# Oh My Zsh Configuration
+export ZSH="$HOME/.oh-my-zsh"
+
+# Theme - using robbyrussell (default) which shows git branch info
+ZSH_THEME="robbyrussell"
+
+# Essential plugins for autocomplete and syntax highlighting
+plugins=(
+  git                    # Git aliases and completions
+  zsh-autosuggestions   # Fish-like autosuggestions
+  zsh-syntax-highlighting # Syntax highlighting
+  docker                # Docker completions
+  kubectl               # Kubernetes completions
+  npm                   # NPM completions
+  node                  # Node.js completions
+  pip                   # Python pip completions
+  pyenv                 # Pyenv completions
+  yarn                  # Yarn completions
+  gcloud                # Google Cloud completions
+)
+
+# Source Oh My Zsh
+source $ZSH/oh-my-zsh.sh
+
+# ================================
+# Your Custom Configuration Below
+# ================================
+
+# --- Google Cloud SDK ---
+# The next line updates PATH for the Google Cloud SDK.
+if [ -f '/Users/cc446g/google-cloud-sdk/path.zsh.inc' ]; then
+  . '/Users/cc446g/google-cloud-sdk/path.zsh.inc'
+fi
+# The next line enables shell command completion for gcloud.
+if [ -f '/Users/cc446g/google-cloud-sdk/completion.zsh.inc' ]; then
+  . '/Users/cc446g/google-cloud-sdk/completion.zsh.inc'
+fi
+
+# --- NVM (Node Version Manager) ---
+export NVM_DIR="$HOME/.nvm"
+# Try loading NVM from common locations
+if [ -s "$NVM_DIR/nvm.sh" ]; then
+  . "$NVM_DIR/nvm.sh" # Loads nvm
+elif [ -s "/usr/local/opt/nvm/nvm.sh" ]; then
+  . "/usr/local/opt/nvm/nvm.sh"
+fi
+
+# Load nvm bash_completion if available
+if [ -s "$NVM_DIR/bash_completion" ]; then
+  . "$NVM_DIR/bash_completion"
+elif [ -s "/usr/local/opt/nvm/etc/bash_completion" ]; then
+  . "/usr/local/opt/nvm/etc/bash_completion"
+fi
+
+# --- NODE_EXTRA_CA_CERTS ---
+export NODE_EXTRA_CA_CERTS=/Users/cc446g/codebase/wayfair-certs.pem
+
+# --- Pyenv (Homebrew installation) ---
+export PYENV_ROOT="$HOME/.pyenv"
+export PATH="$PYENV_ROOT/shims:$PATH"
+eval "$(pyenv init -)"
+
+# --- Yarn ---
+export PATH="$HOME/.yarn/bin:$HOME/.config/yarn/global/node_modules/.bin:/Users/cc446g/.local/bin:$PATH"
+
+# --- Zoxide ---
+eval "$(zoxide init zsh --cmd cd)"
+
+# --- Automatic nvm version switching ---
+autoload -U add-zsh-hook
+load-nvmrc() {
+  local node_version="$(nvm version)"
+  local nvmrc_path="$(nvm_find_nvmrc)"
+  if [ -n "$nvmrc_path" ]; then
+    local nvmrc_node_version=$(nvm version "$(cat "${nvmrc_path}")")
+    if [ "$nvmrc_node_version" = "N/A" ]; then
+      nvm install
+    elif [ "$nvmrc_node_version" != "$node_version" ]; then
+      nvm use
+    fi
+  elif [ "$node_version" != "$(nvm version default)" ]; then
+    echo "Reverting to nvm default version"
+    nvm use default
+  fi
+}
+add-zsh-hook chpwd load-nvmrc
+load-nvmrc
+
+# --- RNDR_VM --- 
+# export RNDR_VM="ccho_gcp_wayfair_com@webphp-php8ccho-dsm1.us-central1-c.c.wf-gcp-us-sds-prod.internal"
+# export RNDR_VM="ccho_gcp_wayfair_com@webphp-cho-dsm1.c.wf-gcp-us-sds-prod.internal"
+export RNDR_VM="ext_ccho_wayfair_com@webphp-php8ccho-dsm1.us-central1-c.c.wf-gcp-us-sds-prod.internal"
+
+# --- Windsurf ---
+export PATH="/Users/cc446g/.codeium/windsurf/bin:$PATH"

@@ -20,10 +20,45 @@ vim.opt.rtp:prepend(lazypath)
 -- This is also a good place to setup other settings (vim.opt)
 vim.g.mapleader = " "
 vim.g.maplocalleader = "\\"
--- Enable line numbers
-vim.wo.number = true
--- Enable relative line numbers (hybrid mode)
-vim.wo.relativenumber = true
+-- Line numbers configuration
+vim.opt.number = true           -- Show absolute line numbers
+vim.opt.relativenumber = true   -- Show relative line numbers
+vim.opt.numberwidth = 4         -- Set the width of number column
+vim.opt.signcolumn = "yes"      -- Always show sign column to prevent text shifting
+
+-- Force line numbers to stay visible
+vim.api.nvim_create_autocmd({"BufEnter", "WinEnter", "ColorScheme"}, {
+  pattern = "*",
+  callback = function()
+    vim.wo.number = true
+    vim.wo.relativenumber = true
+  end,
+})
+
+-- Line number color overrides for transparency
+vim.api.nvim_create_autocmd("ColorScheme", {
+  pattern = "*",
+  callback = function()
+    -- Set visible line number colors that work with transparent backgrounds
+    vim.api.nvim_set_hl(0, "LineNr", { 
+      fg = "#6C7086",           -- Muted gray for relative line numbers
+      bg = "NONE"               -- Transparent background
+    })
+    vim.api.nvim_set_hl(0, "CursorLineNr", { 
+      fg = "#F38BA8",           -- Pink/red for current line number
+      bg = "NONE",              -- Transparent background
+      bold = true               -- Make current line bold
+    })
+    vim.api.nvim_set_hl(0, "SignColumn", {
+      bg = "NONE"               -- Keep sign column transparent too
+    })
+  end,
+})
+
+-- Also set initial colors before any colorscheme loads
+vim.api.nvim_set_hl(0, "LineNr", { fg = "#6C7086", bg = "NONE" })
+vim.api.nvim_set_hl(0, "CursorLineNr", { fg = "#F38BA8", bg = "NONE", bold = true })
+vim.api.nvim_set_hl(0, "SignColumn", { bg = "NONE" })
 -- Light mode
 vim.o.background = "light"
 -- Enable clipboard integration
@@ -41,3 +76,6 @@ require("lazy").setup({
   -- automatically check for plugin updates
   checker = { enabled = false },
 })
+
+-- Setup local plugins after lazy.nvim
+require("config.local-plugins")

@@ -39,7 +39,7 @@ return {
 				},
 			})
 			require("mason-lspconfig").setup({
-				ensure_installed = { "pyright", "lua_ls", "ts_ls", "jdtls", "intelephense" },
+				ensure_installed = { "pyright", "lua_ls", "ts_ls", "jdtls", "intelephense", "rust_analyzer" },
 				automatic_installation = true,
 			})
 
@@ -179,6 +179,34 @@ return {
 						},
 						format = {
 							enable = true,
+						},
+					},
+				},
+			})
+
+			-- Rust
+			lspconfig.rust_analyzer.setup({
+				capabilities = capabilities,
+				settings = {
+					["rust-analyzer"] = {
+						cargo = {
+							allFeatures = true,
+							loadOutDirsFromCheck = true,
+							runBuildScripts = true,
+						},
+						-- Add clippy lints for Rust.
+						checkOnSave = {
+							allFeatures = true,
+							command = "clippy",
+							extraArgs = { "--no-deps" },
+						},
+						procMacro = {
+							enable = true,
+							ignored = {
+								["async-trait"] = { "async_trait" },
+								["napi-derive"] = { "napi" },
+								["async-recursion"] = { "async_recursion" },
+							},
 						},
 					},
 				},
