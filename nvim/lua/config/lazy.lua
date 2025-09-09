@@ -64,6 +64,17 @@ vim.o.background = "light"
 -- Enable clipboard integration
 vim.opt.clipboard = "unnamedplus"
 
+-- Search and navigation settings
+vim.opt.scrolloff = 8           -- Keep 8 lines visible above/below cursor
+vim.opt.hlsearch = true         -- Highlight all search matches
+vim.opt.incsearch = true        -- Show matches as you type
+vim.opt.ignorecase = true       -- Case insensitive search by default
+vim.opt.smartcase = true        -- Case sensitive if uppercase letters used
+
+-- Center screen on search navigation
+vim.keymap.set('n', 'n', 'nzz', { desc = 'Next search result (centered)' })
+vim.keymap.set('n', 'N', 'Nzz', { desc = 'Previous search result (centered)' })
+
 -- Setup lazy.nvim
 require("lazy").setup({
   spec = {

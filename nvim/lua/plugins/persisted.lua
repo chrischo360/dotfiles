@@ -21,7 +21,14 @@ return {
 				for _, buf in ipairs(bufs) do
 					if vim.api.nvim_buf_is_loaded(buf) and vim.api.nvim_buf_get_option(buf, "buflisted") then
 						local buftype = vim.api.nvim_buf_get_option(buf, "buftype")
-						if buftype == "" then -- Normal file buffer
+						local bufname = vim.api.nvim_buf_get_name(buf)
+						local filetype = vim.api.nvim_buf_get_option(buf, "filetype")
+						
+						-- Skip Neo-tree and other special buffers
+						if bufname:match("neo%-tree") or bufname:match("Neo%-tree") or 
+						   filetype == "neo-tree" or buftype ~= "" then
+							-- Skip this buffer
+						elseif buftype == "" then -- Normal file buffer
 							return true
 						end
 					end
@@ -30,7 +37,7 @@ return {
 			end,
 
 			save_dir = vim.fn.expand(vim.fn.stdpath("data") .. "/sessions/"), -- Directory where session files are saved
-			use_git_branch = true,                       -- Don't include git branch in session file name
+			use_git_branch = false,                      -- Don't include git branch in session file name
 
 			-- Function to run when `autoload = true` but there is no session to load
 			on_autoload_no_session = function()
@@ -54,8 +61,25 @@ return {
 				vim.notify("Session saved!", vim.log.levels.INFO)
 			end,
 
-			-- Post-load notification
+			-- Post-load notification and cleanup
 			post_load = function()
+				-- Clean up any duplicate or problematic buffers after session load
+				vim.defer_fn(function()
+					-- Close any Neo-tree buffers that might have been restored improperly
+					for _, buf in ipairs(vim.api.nvim_list_bufs()) do
+						if vim.api.nvim_buf_is_valid(buf) then
+							local buf_name = vim.api.nvim_buf_get_name(buf)
+							local buf_filetype = vim.api.nvim_buf_get_option(buf, "filetype")
+							-- Check for various Neo-tree buffer patterns
+							if buf_name:match("neo%-tree") or buf_name:match("Neo%-tree") or 
+							   buf_name:match("filesystem") or buf_filetype == "neo-tree" then
+								pcall(vim.api.nvim_buf_delete, buf, { force = true })
+							end
+						end
+					end
+					-- Force refresh of any open Neo-tree windows after cleanup
+					pcall(vim.cmd, "Neotree refresh")
+				end, 200)
 				vim.notify("Session loaded!", vim.log.levels.INFO)
 			end,
 

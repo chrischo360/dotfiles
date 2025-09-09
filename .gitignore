@@ -1,0 +1,6 @@
+
+# AI Configuration
+ai-config/backups/
+ai-config/.env
+ai-config/memory/local/
+*.log

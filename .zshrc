@@ -114,3 +114,4 @@ export PATH="/Users/cc446g/.codeium/windsurf/bin:$PATH"
 # --- Performance: Reduce history file operations ---
 HISTSIZE=1000
 SAVEHIST=1000
+export PATH="$HOME/.composer/vendor/bin:$PATH"
