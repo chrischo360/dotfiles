@@ -92,12 +92,12 @@ return {
 						-- Prioritize the comprehensive fix.php script
 						local fix_script = vim.fn.findfile("vendor-bin/cs/fix.php", ".;")
 						if fix_script ~= "" then
-							return "php"
+							return "/opt/homebrew/opt/php@8.1/bin/php"
 						end
 						-- Fallback to project phpcbf
 						local project_phpcbf = vim.fn.findfile("includes/sdk/composer-packages/bin/phpcbf", ".;")
 						if project_phpcbf ~= "" then
-							return "php"
+							return "/opt/homebrew/opt/php@8.1/bin/php"
 						end
 						-- Global fallback
 						return "phpcbf"
@@ -129,12 +129,12 @@ return {
 					-- Try to find the company's comprehensive fix.php script first
 					local fix_script = vim.fn.findfile("vendor-bin/cs/fix.php", ".;")
 					if fix_script ~= "" then
-						return "php"
+						return "/opt/homebrew/opt/php@8.1/bin/php"
 					end
 					-- Try to find the project-specific phpcbf second
 					local project_phpcbf = vim.fn.findfile("includes/sdk/composer-packages/bin/phpcbf", ".;")
 					if project_phpcbf ~= "" then
-						return "php"
+						return "/opt/homebrew/opt/php@8.1/bin/php"
 					end
 					-- Fall back to global phpcbf
 					return "phpcbf"
@@ -168,15 +168,16 @@ return {
 			
 			print("=== PHP Formatter Detection ===")
 			print("Working directory: " .. vim.fn.getcwd())
+			print("PHP Version: 8.1 (/opt/homebrew/opt/php@8.1/bin/php)")
 			print("fix.php found: " .. (fix_script ~= "" and fix_script or "NOT FOUND"))
 			print("phpcbf found: " .. (project_phpcbf ~= "" and project_phpcbf or "NOT FOUND"))
 			print("")
 			
 			if fix_script ~= "" then
-				print("✅ WILL USE: php " .. fix_script .. " filename.php")
+				print("✅ WILL USE: /opt/homebrew/opt/php@8.1/bin/php " .. fix_script .. " filename.php")
 				print("🚀 COMPREHENSIVE FORMATTING (PHP-CS-Fixer + PHPCBF + Rector)")
 			elseif project_phpcbf ~= "" then
-				print("✅ WILL USE: php " .. project_phpcbf .. " --standard=CSNStores filename.php")
+				print("✅ WILL USE: /opt/homebrew/opt/php@8.1/bin/php " .. project_phpcbf .. " --standard=CSNStores filename.php")
 				print("🔧 BASIC PHPCBF with CSNStores")
 			else
 				print("✅ WILL USE: phpcbf --standard=PSR12 filename.php")

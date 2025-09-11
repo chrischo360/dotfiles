@@ -157,7 +157,7 @@ return {
 							maxSize = 1000000,
 						},
 						environment = {
-							phpVersion = "8.2", -- Set your PHP version
+							phpVersion = "8.1", -- Updated to PHP 8.1
 						},
 						stubs = {
 							"apache", "bcmath", "bz2", "calendar", "com_dotnet", "Core",
