@@ -42,18 +42,21 @@ return {
 				}
 			},
 
-			-- Improved event handlers to avoid conflicts with session restoration
+			-- Enhanced event handlers to avoid conflicts with session restoration
 			event_handlers = {
 				{
 					event = "neo_tree_buffer_enter",
 					handler = function()
 						-- Only auto-reveal if not during session restoration
-						-- Add a small delay to avoid conflicts with session loading
-						vim.defer_fn(function()
-							if vim.bo.filetype ~= "" and vim.fn.expand("%") ~= "" then
-								pcall(vim.cmd, "Neotree reveal")
-							end
-						end, 100)
+						-- Check if we're in the middle of session loading
+						local session_loading = vim.g.persisted_loading_session
+						if not session_loading then
+							vim.defer_fn(function()
+								if vim.bo.filetype ~= "" and vim.fn.expand("%") ~= "" then
+									pcall(vim.cmd, "Neotree reveal")
+								end
+							end, 100)
+						end
 					end
 				},
 				{
@@ -65,6 +68,23 @@ return {
 							-- Force refresh to avoid stale buffer issues
 							pcall(vim.cmd, "Neotree refresh")
 						end, 50)
+					end
+				},
+				{
+					-- Prevent buffer conflicts during session loading
+					event = "neo_tree_before_render",
+					handler = function()
+						-- Clear any orphaned buffers that might conflict
+						local current_buf = vim.api.nvim_get_current_buf()
+						local buf_name = vim.api.nvim_buf_get_name(current_buf)
+						
+						-- If this is a conflicting buffer, try to resolve it
+						if buf_name:match("neo%-tree") and not buf_name:match("neo%-tree filesystem") then
+							pcall(function()
+								-- Create a new proper buffer if needed
+								vim.api.nvim_buf_set_name(current_buf, "neo-tree filesystem [" .. current_buf .. "]")
+							end)
+						end
 					end
 				}
 			}

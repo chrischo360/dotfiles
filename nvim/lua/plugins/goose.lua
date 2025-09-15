@@ -21,7 +21,7 @@ return {
 		-- Session management
 		{ "<leader>gs",  "<cmd>GooseSelectSession<cr>",                        desc = "Select Goose Session" },
 		{ "<leader>gt",  "<cmd>GooseToggleFocus<cr>",                          desc = "Toggle Goose Focus" },
-		{ "<leader>gf",  "<cmd>GooseToggleFullscreen<cr>",                     desc = "Toggle Goose Fullscreen" },
+		-- { "<leader>gf",  "<cmd>GooseToggleFullscreen<cr>",                     desc = "Toggle Goose Fullscreen" },
 
 		-- Mode switching
 		{ "<leader>gmc", "<cmd>lua require('goose.api').set_mode('chat')<cr>", desc = "Set Chat Mode" },

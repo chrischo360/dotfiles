@@ -93,9 +93,10 @@ return {
 				},
 			})
 
-			-- TypeScript
+			-- TypeScript (using Node v22.18.0 wrapper to fix compatibility)
 			lspconfig.ts_ls.setup({
 				capabilities = capabilities,
+				cmd = { "/Users/cc446g/.local/bin/typescript-language-server-wrapper", "--stdio" },
 			})
 
 			-- Java
@@ -189,27 +190,22 @@ return {
 				capabilities = capabilities,
 				settings = {
 					["rust-analyzer"] = {
+						checkOnSave = true, -- FIXED: boolean instead of map
 						cargo = {
 							allFeatures = true,
 							loadOutDirsFromCheck = true,
-							runBuildScripts = true,
-						},
-						-- Add clippy lints for Rust.
-						checkOnSave = {
-							allFeatures = true,
-							command = "clippy",
-							extraArgs = { "--no-deps" },
+							runBuildScripts = true
 						},
 						procMacro = {
 							enable = true,
 							ignored = {
-								["async-trait"] = { "async_trait" },
-								["napi-derive"] = { "napi" },
 								["async-recursion"] = { "async_recursion" },
-							},
-						},
-					},
-				},
+								["async-trait"] = { "async_trait" },
+								["napi-derive"] = { "napi" }
+							}
+						}
+					}
+				}
 			})
 			-- Completion Setup
 			local cmp = require("cmp")

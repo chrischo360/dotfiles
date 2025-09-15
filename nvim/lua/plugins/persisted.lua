@@ -24,12 +24,23 @@ return {
 						local bufname = vim.api.nvim_buf_get_name(buf)
 						local filetype = vim.api.nvim_buf_get_option(buf, "filetype")
 						
-						-- Skip Neo-tree and other special buffers
-						if bufname:match("neo%-tree") or bufname:match("Neo%-tree") or 
-						   filetype == "neo-tree" or buftype ~= "" then
-							-- Skip this buffer
-						elseif buftype == "" then -- Normal file buffer
-							return true
+						-- Enhanced filtering for Neo-tree and special buffers
+						local is_special_buffer = 
+							bufname:match("neo%-tree") or 
+							bufname:match("Neo%-tree") or 
+							bufname:match("filesystem") or
+							bufname:match("git_status") or
+							bufname:match("buffers") or
+							bufname:match("document_symbols") or
+							filetype == "neo-tree" or 
+							filetype == "neo-tree-popup" or
+							buftype ~= "" or
+							bufname == "" or
+							bufname:match("^term://") or
+							bufname:match("^oil://")
+						
+						if not is_special_buffer and buftype == "" then
+							return true -- Found a real file buffer
 						end
 					end
 				end
@@ -46,6 +57,9 @@ return {
 
 			-- Pre-save hook to clean up before saving
 			pre_save = function()
+				-- Set flag to indicate we're saving a session
+				vim.g.persisted_saving_session = true
+				
 				-- Close NeoTree if it's open
 				pcall(vim.cmd, "Neotree close")
 				-- Close any floating windows
@@ -54,15 +68,24 @@ return {
 						pcall(vim.api.nvim_win_close, win, false)
 					end
 				end
+				
+				-- Small delay to ensure everything is closed
+				vim.defer_fn(function()
+					vim.g.persisted_saving_session = false
+				end, 100)
 			end,
 
 			-- Post-save notification
 			post_save = function()
+				vim.g.persisted_saving_session = false
 				vim.notify("Session saved!", vim.log.levels.INFO)
 			end,
 
 			-- Post-load notification and cleanup
 			post_load = function()
+				-- Set flag to indicate we're loading a session
+				vim.g.persisted_loading_session = true
+				
 				-- Clean up any duplicate or problematic buffers after session load
 				vim.defer_fn(function()
 					-- Close any Neo-tree buffers that might have been restored improperly
@@ -70,16 +93,30 @@ return {
 						if vim.api.nvim_buf_is_valid(buf) then
 							local buf_name = vim.api.nvim_buf_get_name(buf)
 							local buf_filetype = vim.api.nvim_buf_get_option(buf, "filetype")
-							-- Check for various Neo-tree buffer patterns
-							if buf_name:match("neo%-tree") or buf_name:match("Neo%-tree") or 
-							   buf_name:match("filesystem") or buf_filetype == "neo-tree" then
+							-- Enhanced pattern matching for Neo-tree buffers
+							local is_neotree_buffer = 
+								buf_name:match("neo%-tree") or 
+								buf_name:match("Neo%-tree") or 
+								buf_name:match("filesystem") or 
+								buf_name:match("git_status") or
+								buf_name:match("buffers") or
+								buf_name:match("document_symbols") or
+								buf_filetype == "neo-tree" or
+								buf_filetype == "neo-tree-popup"
+								
+							if is_neotree_buffer then
 								pcall(vim.api.nvim_buf_delete, buf, { force = true })
 							end
 						end
 					end
+					
+					-- Clear the loading flag after cleanup
+					vim.g.persisted_loading_session = false
+					
 					-- Force refresh of any open Neo-tree windows after cleanup
 					pcall(vim.cmd, "Neotree refresh")
-				end, 200)
+				end, 300) -- Increased delay for better stability
+				
 				vim.notify("Session loaded!", vim.log.levels.INFO)
 			end,
 
@@ -133,8 +170,39 @@ return {
 				print("Session started:", persisted.session_started)
 				print("Current session:", persisted.current_session or "None")
 				print("Save dir:", vim.fn.stdpath("data") .. "/sessions/")
+				print("Loading flag:", vim.g.persisted_loading_session or "false")
+				print("Saving flag:", vim.g.persisted_saving_session or "false")
 			end,
 			desc = "Session info"
+		},
+		{
+			"<leader>qb",
+			function()
+				print("=== Current Buffer Analysis ===")
+				local bufs = vim.api.nvim_list_bufs()
+				for _, buf in ipairs(bufs) do
+					if vim.api.nvim_buf_is_loaded(buf) then
+						local bufname = vim.api.nvim_buf_get_name(buf)
+						local buftype = vim.api.nvim_buf_get_option(buf, "buftype")
+						local filetype = vim.api.nvim_buf_get_option(buf, "filetype")
+						local listed = vim.api.nvim_buf_get_option(buf, "buflisted")
+						
+						-- Check if this would be filtered
+						local is_special = 
+							bufname:match("neo%-tree") or 
+							bufname:match("Neo%-tree") or 
+							bufname:match("filesystem") or
+							filetype == "neo-tree" or 
+							buftype ~= ""
+						
+						local status = is_special and "🚫 FILTERED" or "✅ INCLUDED"
+						print(string.format("Buffer %d: %s [%s] (%s/%s) %s", 
+							buf, bufname == "" and "<unnamed>" or bufname, 
+							filetype, buftype, listed and "listed" or "unlisted", status))
+					end
+				end
+			end,
+			desc = "Debug buffer state"
 		},
 	},
 }
