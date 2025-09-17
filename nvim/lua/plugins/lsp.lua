@@ -93,10 +93,9 @@ return {
 				},
 			})
 
-			-- TypeScript (using Node v22.18.0 wrapper to fix compatibility)
+			-- TypeScript
 			lspconfig.ts_ls.setup({
 				capabilities = capabilities,
-				cmd = { "/Users/cc446g/.local/bin/typescript-language-server-wrapper", "--stdio" },
 			})
 
 			-- Java
