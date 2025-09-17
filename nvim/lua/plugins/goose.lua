@@ -37,6 +37,7 @@ return {
 		{ "<leader>gc",  "<cmd>GooseDiffClose<cr>",                            desc = "Close Diff" },
 		{ "<leader>gra", "<cmd>GooseRevertAll<cr>",                            desc = "Revert All Changes" },
 		{ "<leader>grt", "<cmd>GooseRevertThis<cr>",                           desc = "Revert This File" },
+
 	},
 	config = function()
 		require("goose").setup({
@@ -59,6 +60,12 @@ return {
 
 			-- Provider configuration - customize based on your needs
 			providers = {
+				gcp_vertex_ai = {
+					"gemini-2.5-flash",
+					"gemini-2.5-pro",
+					"claude-sonnet-4@20250514",
+					"claude-opus-4-1@20250805",
+				},
 				-- Example providers - uncomment and modify as needed
 				-- anthropic = {
 				--   "claude-3-5-sonnet-20241022",
