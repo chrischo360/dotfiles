@@ -15,18 +15,18 @@ bold = { family = "JetBrainsMono Nerd Font", style = "Bold" }
 italic = { family = "JetBrainsMono Nerd Font", style = "Italic" }
 size=15
 
-# Modus Vivendi colors (replacing Catppuccin)
+# Modus Vivendi Tinted colors (softer than default)
 [colors.primary]
-background = '#000000'
+background = '#0d0e1c'
 foreground = '#ffffff'
 
 [colors.cursor]
-text = '#000000'
+text = '#0d0e1c'
 cursor = '#ffffff'
 
 # Normal colors
 [colors.normal]
-black   = '#000000'
+black   = '#0d0e1c'
 red     = '#ff5f59'
 green   = '#44bc44'
 yellow  = '#d0bc00'
@@ -37,7 +37,7 @@ white   = '#ffffff'
 
 # Bright colors
 [colors.bright]
-black   = '#1e1e1e'
+black   = '#1d2235'
 red     = '#ff5f5f'
 green   = '#44df44'
 yellow  = '#efef00'
@@ -48,30 +48,30 @@ white   = '#989898'
 
 # Selection colors
 [colors.selection]
-text = '#000000'
+text = '#0d0e1c'
 background = '#ffffff'
 
 # Search colors
 [colors.search.matches]
-foreground = '#000000'
+foreground = '#0d0e1c'
 background = '#989898'
 
 [colors.search.focused_match]
-foreground = '#000000'
+foreground = '#0d0e1c'
 background = '#44df44'
 
 # Footer bar colors
 [colors.footer_bar]
-foreground = '#000000'
+foreground = '#0d0e1c'
 background = '#989898'
 
 # Hints
 [colors.hints.start]
-foreground = '#000000'
+foreground = '#0d0e1c'
 background = '#efef00'
 
 [colors.hints.end]
-foreground = '#000000'
+foreground = '#0d0e1c'
 background = '#989898'
 
 # Line indicator
@@ -81,7 +81,7 @@ background = 'None'
 
 # VI mode
 [colors.vi_mode_cursor]
-text = '#000000'
+text = '#0d0e1c'
 cursor = '#2fafff'
 
 [env]
