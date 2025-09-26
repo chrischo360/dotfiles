@@ -19,6 +19,7 @@ return {
         "json",
         "markdown",
         "markdown_inline",
+        "swift",
       },
     })
   end,

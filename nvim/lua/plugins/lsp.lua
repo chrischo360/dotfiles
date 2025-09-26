@@ -206,6 +206,16 @@ return {
 					}
 				}
 			})
+
+			-- Swift
+			lspconfig.sourcekit.setup({
+				capabilities = capabilities,
+				cmd = { "sourcekit-lsp" },
+				filetypes = { "swift", "objective-c", "objective-cpp" },
+				root_dir = function(fname)
+					return require("lspconfig.util").root_pattern("Package.swift", ".git")(fname)
+				end
+			})
 			-- Completion Setup
 			local cmp = require("cmp")
 			local luasnip = require("luasnip")

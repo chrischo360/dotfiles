@@ -19,7 +19,7 @@ vim.opt.rtp:prepend(lazypath)
 -- loading lazy.nvim so that mappings are correct.
 -- This is also a good place to setup other settings (vim.opt)
 vim.g.mapleader = " "
-vim.g.maplocalleader = "\\"
+vim.g.maplocalleader = "\\\\"
 -- Line numbers configuration
 vim.opt.number = true         -- Show absolute line numbers
 vim.opt.relativenumber = true -- Show relative line numbers
@@ -65,11 +65,17 @@ vim.o.background = "light"
 vim.opt.clipboard = "unnamedplus"
 
 -- Search and navigation settings
-vim.opt.scrolloff = 8     -- Keep 8 lines visible above/below cursor
-vim.opt.hlsearch = true   -- Highlight all search matches
-vim.opt.incsearch = true  -- Show matches as you type
+vim.opt.scrolloff = 8   -- Keep 8 lines visible above/below cursor
+vim.opt.hlsearch = true -- Highlight all search matches
+
+-- Wrap and indentation settings
+vim.opt.wrap = true -- Enable line wrapping
+vim.opt.breakindent = true -- Indent wrapped lines
+vim.opt.showbreak = '↪ ' -- Show a symbol on wrapped lines
+
+vim.opt.incsearch = true -- Show matches as you type
 vim.opt.ignorecase = true -- Case insensitive search by default
-vim.opt.smartcase = true  -- Case sensitive if uppercase letters used
+vim.opt.smartcase = true -- Case sensitive if uppercase letters used
 
 -- Center screen on search navigation
 vim.keymap.set('n', 'n', 'nzz', { desc = 'Next search result (centered)' })

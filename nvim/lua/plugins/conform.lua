@@ -40,6 +40,7 @@ return {
 			rust = { "rustfmt" },
 			cpp = { "clang-format" },
 			c = { "clang-format" },
+			swift = { "swift_format" },
 			-- php = { "company_php_fixer" }, -- DISABLED
 		},
 		-- Set default options
@@ -85,6 +86,11 @@ return {
 			},
 			shfmt = {
 				prepend_args = { "-i", "2" },
+			},
+			swift_format = {
+				command = "swift-format",
+				args = { "$FILENAME" },
+				stdin = false,
 			},
 			company_php_fixer = {
 				command = function()
