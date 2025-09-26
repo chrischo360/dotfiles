@@ -15,64 +15,64 @@ bold = { family = "JetBrainsMono Nerd Font", style = "Bold" }
 italic = { family = "JetBrainsMono Nerd Font", style = "Italic" }
 size=15
 
-# Catppuccin Mocha colors (matching your Neovim theme)
+# Modus Vivendi colors (replacing Catppuccin)
 [colors.primary]
-background = '#1e1e2e'
-foreground = '#cdd6f4'
+background = '#000000'
+foreground = '#ffffff'
 
 [colors.cursor]
-text = '#1e1e2e'
-cursor = '#f5e0dc'
+text = '#000000'
+cursor = '#ffffff'
 
 # Normal colors
 [colors.normal]
-black   = '#45475a'
-red     = '#f38ba8'
-green   = '#a6e3a1'
-yellow  = '#f9e2af'
-blue    = '#89b4fa'
-magenta = '#f5c2e7'
-cyan    = '#94e2d5'
-white   = '#bac2de'
+black   = '#000000'
+red     = '#ff5f59'
+green   = '#44bc44'
+yellow  = '#d0bc00'
+blue    = '#2fafff'
+magenta = '#feacd0'
+cyan    = '#00d3d0'
+white   = '#ffffff'
 
 # Bright colors
 [colors.bright]
-black   = '#585b70'
-red     = '#f38ba8'
-green   = '#a6e3a1'
-yellow  = '#f9e2af'
-blue    = '#89b4fa'
-magenta = '#f5c2e7'
-cyan    = '#94e2d5'
-white   = '#a6adc8'
+black   = '#1e1e1e'
+red     = '#ff5f5f'
+green   = '#44df44'
+yellow  = '#efef00'
+blue    = '#338fff'
+magenta = '#ff66ff'
+cyan    = '#00eff0'
+white   = '#989898'
 
 # Selection colors
 [colors.selection]
-text = '#1e1e2e'
-background = '#f5e0dc'
+text = '#000000'
+background = '#ffffff'
 
 # Search colors
 [colors.search.matches]
-foreground = '#1e1e2e'
-background = '#a6adc8'
+foreground = '#000000'
+background = '#989898'
 
 [colors.search.focused_match]
-foreground = '#1e1e2e'
-background = '#a6e3a1'
+foreground = '#000000'
+background = '#44df44'
 
 # Footer bar colors
 [colors.footer_bar]
-foreground = '#1e1e2e'
-background = '#a6adc8'
+foreground = '#000000'
+background = '#989898'
 
 # Hints
 [colors.hints.start]
-foreground = '#1e1e2e'
-background = '#f9e2af'
+foreground = '#000000'
+background = '#efef00'
 
 [colors.hints.end]
-foreground = '#1e1e2e'
-background = '#a6adc8'
+foreground = '#000000'
+background = '#989898'
 
 # Line indicator
 [colors.line_indicator]
@@ -81,8 +81,8 @@ background = 'None'
 
 # VI mode
 [colors.vi_mode_cursor]
-text = '#1e1e2e'
-cursor = '#b4befe'
+text = '#000000'
+cursor = '#2fafff'
 
 [env]
 TERM = "xterm-256color"

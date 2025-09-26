@@ -35,32 +35,33 @@ vim.api.nvim_create_autocmd({ "BufEnter", "WinEnter", "ColorScheme" }, {
 	end,
 })
 
+-- COMMENTED OUT: Using Modus Vivendi theme defaults for line numbers
 -- Line number color overrides for transparency
-vim.api.nvim_create_autocmd("ColorScheme", {
-	pattern = "*",
-	callback = function()
-		-- Set visible line number colors that work with transparent backgrounds
-		vim.api.nvim_set_hl(0, "LineNr", {
-			fg = "#6C7086", -- Muted gray for relative line numbers
-			bg = "NONE" -- Transparent background
-		})
-		vim.api.nvim_set_hl(0, "CursorLineNr", {
-			fg = "#F38BA8", -- Pink/red for current line number
-			bg = "NONE", -- Transparent background
-			bold = true -- Make current line bold
-		})
-		vim.api.nvim_set_hl(0, "SignColumn", {
-			bg = "NONE" -- Keep sign column transparent too
-		})
-	end,
-})
+-- vim.api.nvim_create_autocmd("ColorScheme", {
+-- 	pattern = "*",
+-- 	callback = function()
+-- 		-- Set visible line number colors that work with transparent backgrounds
+-- 		vim.api.nvim_set_hl(0, "LineNr", {
+-- 			fg = "#6C7086", -- Muted gray for relative line numbers
+-- 			bg = "NONE" -- Transparent background
+-- 		})
+-- 		vim.api.nvim_set_hl(0, "CursorLineNr", {
+-- 			fg = "#F38BA8", -- Pink/red for current line number
+-- 			bg = "NONE", -- Transparent background
+-- 			bold = true -- Make current line bold
+-- 		})
+-- 		vim.api.nvim_set_hl(0, "SignColumn", {
+-- 			bg = "NONE" -- Keep sign column transparent too
+-- 		})
+-- 	end,
+-- })
 
 -- Also set initial colors before any colorscheme loads
-vim.api.nvim_set_hl(0, "LineNr", { fg = "#6C7086", bg = "NONE" })
-vim.api.nvim_set_hl(0, "CursorLineNr", { fg = "#F38BA8", bg = "NONE", bold = true })
-vim.api.nvim_set_hl(0, "SignColumn", { bg = "NONE" })
--- Light mode
-vim.o.background = "light"
+-- vim.api.nvim_set_hl(0, "LineNr", { fg = "#6C7086", bg = "NONE" })
+-- vim.api.nvim_set_hl(0, "CursorLineNr", { fg = "#F38BA8", bg = "NONE", bold = true })
+-- vim.api.nvim_set_hl(0, "SignColumn", { bg = "NONE" })
+-- Dark mode (for Modus Vivendi theme)
+vim.o.background = "dark"
 -- Enable clipboard integration
 vim.opt.clipboard = "unnamedplus"
 
