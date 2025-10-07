@@ -59,6 +59,11 @@ return {
 				return false -- Skip PHP formatting
 			end
 			
+			-- DISABLE Swift formatting entirely
+			if vim.bo[bufnr].filetype == "swift" then
+				return false -- Skip Swift formatting
+			end
+			
 			-- Standard timeout for other languages
 			return { timeout_ms = 2000 }
 		end,

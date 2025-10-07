@@ -15,6 +15,9 @@ return {
       { "<leader>g", group = "🪿 Goose AI" },
       { "<leader>gm", group = "Mode" },
       { "<leader>gr", group = "Revert" },
+      { "<leader>gn", group = "Notifications" },
+      { "<leader>gnt", "<cmd>GooseToggleNotifications<cr>", desc = "Toggle Notifications" },
+      { "<leader>gnc", "<cmd>GooseConfigureNotifications<cr>", desc = "Configure Notifications" },
     })
   end,
   keys = {
