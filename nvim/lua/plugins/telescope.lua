@@ -17,6 +17,12 @@ return {
 		{ "<leader>fF", "<cmd>Telescope frecency workspace=CWD<cr>", desc = "Find Files (Smart)" },
 		{ "<leader>fh", "<cmd>Telescope help_tags<cr>",              desc = "Help Tags" },
 		{ "<leader>fr", "<cmd>Telescope oldfiles<cr>",               desc = "Recent Files" },
+		-- Git telescopes
+		{ "<leader>gc", "<cmd>Telescope git_commits<cr>",            desc = "Git Commits" },
+		{ "<leader>gC", "<cmd>Telescope git_bcommits<cr>",           desc = "Git Buffer Commits" },
+		{ "<leader>gB", "<cmd>Telescope git_branches<cr>",           desc = "Git Branches" },
+		{ "<leader>gS", "<cmd>Telescope git_status<cr>",             desc = "Git Status" },
+		{ "<leader>gf", "<cmd>Telescope git_files<cr>",              desc = "Git Files" },
 	},
 	config = function()
 		local telescope = require("telescope")

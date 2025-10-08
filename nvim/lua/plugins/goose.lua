@@ -82,7 +82,9 @@ return {
 		-- Chat completion notification system
 		local notification_config = {
 			enabled = true,
-			sound = true, -- macOS system sound
+			sound = true, -- System sound
+			sound_type = "glass", -- glass, blow, bottle, frog, funk, hero, morse, ping, pop, purr, sosumi, submarine, tink
+			desktop_notification = true, -- System desktop notification
 			show_time = true, -- Show completion time
 			show_session = true, -- Show session name in notification
 			-- Notification styles: "default", "success", "info", "warn", "error"
@@ -92,39 +94,127 @@ return {
 		-- Track chat start times for duration calculation
 		local chat_sessions = {}
 
-		-- Enhanced notification function
+		-- Simple and reliable notification function
 		local function notify_chat_completion(session_name, duration)
 			if not notification_config.enabled then return end
 
-			local message = "🎉 Goose chat completed"
+			local title = "🪿 Goose AI"
+			local message = "Chat completed"
 			
+			-- Get current directory/repository info
+			local cwd = vim.fn.getcwd()
+			local repo_name = vim.fn.fnamemodify(cwd, ":t") -- Get directory name
+			local git_branch = vim.fn.system("git branch --show-current 2>/dev/null"):gsub("\n", "")
+			if git_branch == "" then git_branch = nil end
+			
+			-- Get current file info if in a file
+			local current_file = vim.fn.expand("%:t")
+			if current_file == "" then current_file = nil end
+			
+			-- Build detailed message with context
+			local details = {}
+			
+			-- Repository/directory context
+			if git_branch then
+				table.insert(details, "📂 " .. repo_name .. " (" .. git_branch .. ")")
+			else
+				table.insert(details, "📂 " .. repo_name)
+			end
+			
+			-- Session context
 			if notification_config.show_session and session_name then
-				message = message .. " (" .. session_name .. ")"
+				table.insert(details, "💬 " .. session_name)
 			end
 			
+			-- Current file context
+			if current_file then
+				table.insert(details, "📄 " .. current_file)
+			end
+			
+			-- Time context
 			if notification_config.show_time and duration then
-				message = message .. " • " .. string.format("%.1fs", duration)
+				table.insert(details, "⏱️ " .. string.format("%.1fs", duration))
+			end
+			
+			-- Create different message formats for different uses
+			local short_message = message
+			if notification_config.show_session and session_name then
+				short_message = short_message .. " (" .. session_name .. ")"
+			end
+			if notification_config.show_time and duration then
+				short_message = short_message .. " • " .. string.format("%.1fs", duration)
+			end
+			
+			local detailed_message = message .. "\n" .. table.concat(details, "\n")
+			local terminal_message = message .. " - " .. table.concat(details, " | ")
+
+			-- Always play sound first (most reliable)
+			if notification_config.sound then
+				local sound_file = "/System/Library/Sounds/" .. 
+					string.upper(notification_config.sound_type:sub(1,1)) .. 
+					notification_config.sound_type:sub(2) .. ".aiff"
+				-- Play sound multiple times for louder notification
+				for i = 1, 3 do
+					vim.fn.system("afplay '" .. sound_file .. "' &")
+					if i < 3 then
+						vim.defer_fn(function() end, 200) -- Small delay between sounds
+					end
+				end
 			end
 
-			-- Show Neovim notification
-			local level = vim.log.levels.INFO
-			if notification_config.style == "success" then
-				level = vim.log.levels.INFO
-			elseif notification_config.style == "warn" then
-				level = vim.log.levels.WARN
-			elseif notification_config.style == "error" then
-				level = vim.log.levels.ERROR
+			-- Desktop notification using terminal-notifier
+			if notification_config.desktop_notification then
+				if vim.fn.executable('terminal-notifier') == 1 then
+					local sound_name = notification_config.sound and 
+						string.upper(notification_config.sound_type:sub(1,1)) .. notification_config.sound_type:sub(2) or "Glass"
+					
+					-- Use subtitle for repository info and message for details
+					local tn_cmd = string.format(
+						'terminal-notifier -title "%s" -subtitle "%s" -message "%s" -sound "%s"',
+						title, 
+						git_branch and (repo_name .. " (" .. git_branch .. ")") or repo_name,
+						table.concat(details, " • "),
+						sound_name
+					)
+					print("Sending notification: " .. tn_cmd)
+					vim.fn.system(tn_cmd .. " &")
+				else
+					-- Fallback to simple osascript
+					local cmd = string.format(
+						'osascript -e "display notification \\"%s\\" with title \\"%s\\""',
+						terminal_message, title
+					)
+					print("Fallback notification: " .. cmd)
+					vim.fn.system(cmd .. " &")
+				end
 			end
 
-			vim.notify(message, level, {
-				title = "Goose",
-				timeout = 3000,
+			-- Enhanced Neovim notification with more context
+			local neovim_title = "Goose Chat Complete!"
+			if git_branch then
+				neovim_title = neovim_title .. " (" .. repo_name .. "/" .. git_branch .. ")"
+			else
+				neovim_title = neovim_title .. " (" .. repo_name .. ")"
+			end
+			
+			vim.notify("🎉 " .. short_message, vim.log.levels.INFO, {
+				title = neovim_title,
+				timeout = 10000, -- Longer timeout for more info
 			})
 
-			-- Play system sound on macOS
-			if notification_config.sound then
-				vim.fn.system("afplay /System/Library/Sounds/Glass.aiff &")
+			-- Print detailed colored notification to terminal
+			local colored_header = string.format('\027[1;32m🎉 %s\027[0m', title)
+			local colored_details = {}
+			for _, detail in ipairs(details) do
+				table.insert(colored_details, '\027[36m' .. detail .. '\027[0m')
 			end
+			
+			local full_terminal_message = colored_header .. '\n' .. 
+				table.concat(colored_details, '\n') .. '\n' ..
+				'\027[90m' .. cwd .. '\027[0m\n'
+			
+			io.write(full_terminal_message)
+			io.flush()
 		end
 
 		-- Wrap the original goose job execution to add notifications
@@ -194,7 +284,9 @@ return {
 		vim.api.nvim_create_user_command('GooseConfigureNotifications', function()
 			local options = {
 				"Toggle notifications: " .. (notification_config.enabled and "ON" or "OFF"),
+				"Toggle desktop notification: " .. (notification_config.desktop_notification and "ON" or "OFF"),
 				"Toggle sound: " .. (notification_config.sound and "ON" or "OFF"),
+				"Sound type: " .. notification_config.sound_type,
 				"Toggle time display: " .. (notification_config.show_time and "ON" or "OFF"),
 				"Toggle session display: " .. (notification_config.show_session and "ON" or "OFF"),
 				"Style: " .. notification_config.style,
@@ -205,29 +297,94 @@ return {
 			}, function(choice)
 				if not choice then return end
 				
-				if choice:match("Toggle notifications") then
+				if choice:match("Toggle notifications:") then
 					notification_config.enabled = not notification_config.enabled
-				elseif choice:match("Toggle sound") then
+					vim.notify("Notifications " .. (notification_config.enabled and "enabled" or "disabled"))
+				elseif choice:match("Toggle desktop notification:") then
+					notification_config.desktop_notification = not notification_config.desktop_notification
+					vim.notify("Desktop notifications " .. (notification_config.desktop_notification and "enabled" or "disabled"))
+				elseif choice:match("Toggle sound:") then
 					notification_config.sound = not notification_config.sound
-				elseif choice:match("Toggle time display") then
+					vim.notify("Sound " .. (notification_config.sound and "enabled" or "disabled"))
+				elseif choice:match("Sound type:") then
+					local sounds = {"glass", "blow", "bottle", "frog", "funk", "hero", "morse", "ping", "pop", "purr", "sosumi", "submarine", "tink"}
+					vim.ui.select(sounds, {
+						prompt = "Select sound type (louder sounds: hero, funk, sosumi):",
+					}, function(sound)
+						if sound then
+							notification_config.sound_type = sound
+							vim.notify("Sound changed to: " .. sound)
+							-- Test the sound
+							if notification_config.sound then
+								if notification_config.desktop_notification then
+									vim.fn.system(string.format('osascript -e \'display notification "Test sound" with title "Goose" sound name "%s"\' &', sound))
+								else
+									local sound_file = "/System/Library/Sounds/" .. 
+										string.upper(sound:sub(1,1)) .. sound:sub(2) .. ".aiff"
+									vim.fn.system("afplay '" .. sound_file .. "' &")
+								end
+							end
+						end
+					end)
+				elseif choice:match("Toggle time display:") then
 					notification_config.show_time = not notification_config.show_time
-				elseif choice:match("Toggle session display") then
+					vim.notify("Time display " .. (notification_config.show_time and "enabled" or "disabled"))
+				elseif choice:match("Toggle session display:") then
 					notification_config.show_session = not notification_config.show_session
-				elseif choice:match("Style") then
+					vim.notify("Session display " .. (notification_config.show_session and "enabled" or "disabled"))
+				elseif choice:match("Style:") then
 					local styles = {"default", "success", "info", "warn", "error"}
 					vim.ui.select(styles, {
 						prompt = "Select notification style:",
 					}, function(style)
 						if style then
 							notification_config.style = style
+							vim.notify("Notification style changed to: " .. style)
 						end
 					end)
 				end
-				
-				vim.notify("Notification settings updated!")
 			end)
 		end, {
 			desc = 'Configure Goose notification settings'
+		})
+
+		-- Command to test notifications
+		vim.api.nvim_create_user_command('GooseTestNotification', function()
+			notify_chat_completion("test-session", 5.2)
+		end, {
+			desc = 'Test Goose notification with sample data'
+		})
+
+		-- Command to debug notification issues
+		vim.api.nvim_create_user_command('GooseDebugNotifications', function()
+			print("=== Goose Notification Debug ===")
+			print("notification_config.enabled: " .. tostring(notification_config.enabled))
+			print("notification_config.desktop_notification: " .. tostring(notification_config.desktop_notification))
+			print("notification_config.sound: " .. tostring(notification_config.sound))
+			print("notification_config.sound_type: " .. notification_config.sound_type)
+			
+			-- Test osascript directly
+			print("\n--- Testing osascript ---")
+			local cmd = 'osascript -e "display notification \\"Direct osascript test\\" with title \\"Debug Test\\""'
+			print("Command: " .. cmd)
+			local result = vim.fn.system(cmd)
+			print("Result: " .. (result or "nil"))
+			
+			-- Test terminal-notifier if available
+			if vim.fn.executable('terminal-notifier') == 1 then
+				print("\n--- Testing terminal-notifier ---")
+				local tn_cmd = 'terminal-notifier -title "Debug Test" -message "Terminal notifier test"'
+				print("Command: " .. tn_cmd)
+				vim.fn.system(tn_cmd .. " &")
+			else
+				print("\n--- terminal-notifier not available ---")
+			end
+			
+			-- Test the actual notification function
+			print("\n--- Testing notification function ---")
+			notify_chat_completion("debug-session", 1.5)
+		end, {
+			desc = 'Debug Goose notification issues'
 		})
 	end
 }

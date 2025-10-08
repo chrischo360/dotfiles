@@ -121,3 +121,5 @@ export PATH="/Users/cc446g/.codeium/windsurf/bin:$PATH"
 HISTSIZE=1000
 SAVEHIST=1000
 export PATH="$HOME/.composer/vendor/bin:$PATH"
+export PATH="$HOME/.local/bin:$PATH"
+export NODE_EXTRA_CA_CERTS=~/certificates/wayfair-certs.pem

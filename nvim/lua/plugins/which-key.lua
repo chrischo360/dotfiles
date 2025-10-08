@@ -18,6 +18,8 @@ return {
       { "<leader>gn", group = "Notifications" },
       { "<leader>gnt", "<cmd>GooseToggleNotifications<cr>", desc = "Toggle Notifications" },
       { "<leader>gnc", "<cmd>GooseConfigureNotifications<cr>", desc = "Configure Notifications" },
+      { "<leader>gns", "<cmd>GooseTestNotification<cr>", desc = "Test Notification" },
+      { "<leader>gnd", "<cmd>GooseDebugNotifications<cr>", desc = "Debug Notifications" },
     })
   end,
   keys = {
