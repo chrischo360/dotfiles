@@ -3,13 +3,13 @@ return {
   event = "VeryLazy",
   config = function()
     local wk = require("which-key")
-    
+
     -- Setup which-key
     wk.setup({
       -- your configuration comes here
       -- or leave it empty to use the default settings
     })
-    
+
     -- Register Goose keybindings with organized groups
     wk.add({
       { "<leader>g", group = "🪿 Goose AI" },
@@ -25,6 +25,8 @@ return {
     -- Register Claude keybindings with organized groups
     wk.add({
       { "<leader>c", group = "🤖 Claude AI" },
+      -- The new keymap for claude-code.nvim
+      { "<leader>cc", "<cmd>ClaudeCode<CR>", desc = "Toggle Claude Code" },
       { "<leader>cr", group = "Refactor" },
       { "<leader>cm", group = "Model" },
     })
