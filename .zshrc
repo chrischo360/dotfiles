@@ -123,3 +123,24 @@ SAVEHIST=1000
 export PATH="$HOME/.composer/vendor/bin:$PATH"
 export PATH="$HOME/.local/bin:$PATH"
 export NODE_EXTRA_CA_CERTS=~/certificates/wayfair-certs.pem
+
+# --- Claude Code on Vertex AI Configuration ---
+
+# Enable Vertex AI integration for Claude Code
+export CLAUDE_CODE_USE_VERTEX=1
+
+# Set your Google Cloud Project ID for Vertex AI
+# IMPORTANT: Replace YOUR-PROJECT-ID with your actual GCP project ID.
+export ANTHROPIC_VERTEX_PROJECT_ID=wf-gcp-us-sf-genai-pilot-sbx
+
+# Use the global endpoint for Vertex AI.
+# Note: Some models may require a specific regional endpoint.
+export CLOUD_ML_REGION=us-east5
+
+# Optional: Disable prompt caching
+export DISABLE_PROMPT_CACHING=
+export ANTHROPIC_MODEL='claude-sonnet-4-5@20250929'
+# export ANTHROPIC_MODEL='claude-opus-4-1@20250805' # Opus
+export ANTHROPIC_SMALL_FAST_MODEL='claude-3-5-haiku@20241022'
+
+# --- End Claude Code Configuration ---
