@@ -21,6 +21,13 @@ return {
       { "<leader>gns", "<cmd>GooseTestNotification<cr>", desc = "Test Notification" },
       { "<leader>gnd", "<cmd>GooseDebugNotifications<cr>", desc = "Debug Notifications" },
     })
+
+    -- Register Claude keybindings with organized groups
+    wk.add({
+      { "<leader>c", group = "🤖 Claude AI" },
+      { "<leader>cr", group = "Refactor" },
+      { "<leader>cm", group = "Model" },
+    })
   end,
   keys = {
     {
