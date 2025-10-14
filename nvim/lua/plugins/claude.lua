@@ -10,7 +10,7 @@ return {
   keys = {
     -- Core functionality
     { "<leader>cc", "<cmd>ClaudeChat<cr>", desc = "Claude Chat" },
-    { "<leader>cI", "<cmd>ClaudeChat<cr>", desc = "Claude New Chat" }, -- Simplified: opens the chat view
+    { "<leader>cI", "<cmd>ClaudeChat<cr>", desc = "Claude New Chat" },
 
     -- Code actions
     { "<leader>cg", "<cmd>ClaudeGenerate<cr>", desc = "Generate Code", mode = { "n", "v" } },
@@ -34,17 +34,18 @@ return {
     -- Telescope integration
     { "<leader>ca", "<cmd>Telescope claude_code actions<cr>", desc = "All Actions (Telescope)" },
   },
-  config = function()
-    -- Define the models you want to use with friendly names
+  
+  -- lazy.nvim will automatically call setup(opts) with this table
+  opts = function()
     local models = {
       opus = "claude-opus-4-1@20250805",
       sonnet = "claude-sonnet-4-5@20250929",
       haiku = "claude-3-5-haiku@20241022",
     }
-
-    require("claude_code").setup({
-      model = models.opus, -- Default to Opus
-      replace_strategy = "visual", -- Show response in a floating window
+    
+    return {
+      model = models.opus,
+      replace_strategy = "visual",
       http_options = {
         vertex_project = "wf-gcp-us-sf-genai-pilot-sbx",
         vertex_region = "us-east5",
@@ -53,14 +54,22 @@ return {
           Sonnet = models.sonnet,
           Haiku = models.haiku,
         },
-        temperature = 0.2, -- Optimized for accurate code generation
+        temperature = 0.2,
       },
-    })
+      _models = models, -- Pass models to the config function
+    }
+  end,
+
+  -- This function runs AFTER the plugin is loaded and configured with `opts`
+  config = function(_, opts)
+    -- The setup is now IMPLICITLY handled by lazy.nvim. We DO NOT call it here.
 
     -- Load the Telescope extension
     pcall(require("telescope").load_extension, "claude_code")
 
     -- === Custom Commands for Model Switching ===
+    local models = opts._models
+
     vim.api.nvim_create_user_command("ClaudeUseOpus", function()
       require("claude_code").set_model(models.opus)
       vim.notify("🤖 Claude: Using Opus (Most Powerful)", vim.log.levels.INFO)
