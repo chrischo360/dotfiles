@@ -86,6 +86,25 @@ return {
 							end)
 						end
 					end
+				},
+				{
+					-- Additional safety: clean up any duplicate neo-tree buffers
+					event = "neo_tree_window_before_open",
+					handler = function()
+						-- Clean up any existing neo-tree buffers that might cause conflicts
+						for _, buf in ipairs(vim.api.nvim_list_bufs()) do
+							if vim.api.nvim_buf_is_valid(buf) then
+								local buf_name = vim.api.nvim_buf_get_name(buf)
+								local buf_filetype = vim.api.nvim_buf_get_option(buf, "filetype")
+								
+								-- Delete any existing neo-tree buffers before creating new ones
+								if (buf_name:match("neo%-tree") or buf_filetype == "neo-tree") and
+								   buf ~= vim.api.nvim_get_current_buf() then
+									pcall(vim.api.nvim_buf_delete, buf, { force = true })
+								end
+							end
+						end
+					end
 				}
 			}
 		})

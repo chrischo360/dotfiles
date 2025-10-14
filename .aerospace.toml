@@ -118,8 +118,8 @@ automatically-unhide-macos-hidden-apps = false
 
     # See: https://nikitabobko.github.io/AeroSpace/commands#workspace
 
-    cmd-1 = 'workspace 1' # Editor + Terminal
-    cmd-2 = 'workspace 2' # Browser
+    cmd-1 = 'workspace 1' # Browser
+    cmd-2 = 'workspace 2' # Editor + Terminal
     cmd-3 = 'workspace 3' # Everything Else
     cmd-4 = 'workspace 4' # 
     cmd-5 = 'workspace 5' # 
@@ -174,16 +174,17 @@ automatically-unhide-macos-hidden-apps = false
 
 # Cursor TODO: Find better way for this
 [[on-window-detected]]
-if.app-id = 'com.todesktop.230313mzl4w4u92'
+if.app-id = 'com.google.Chrome'
 run = ['move-node-to-workspace 1']
+
+[[on-window-detected]]
+if.app-id = 'com.todesktop.230313mzl4w4u92'
+run = ['move-node-to-workspace 2']
 
 [[on-window-detected]]
 if.app-id = 'org.alacritty'
-run = ['move-node-to-workspace 1']
-
-[[on-window-detected]]
-if.app-id = 'com.google.Chrome'
 run = ['move-node-to-workspace 2']
+
 
 [[on-window-detected]]
 if.app-id = 'notion.id'

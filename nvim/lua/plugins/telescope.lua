@@ -22,7 +22,7 @@ return {
 		{ "<leader>gC", "<cmd>Telescope git_bcommits<cr>",           desc = "Git Buffer Commits" },
 		{ "<leader>gB", "<cmd>Telescope git_branches<cr>",           desc = "Git Branches" },
 		{ "<leader>gS", "<cmd>Telescope git_status<cr>",             desc = "Git Status" },
-		{ "<leader>gf", "<cmd>Telescope git_files<cr>",              desc = "Git Files" },
+		-- { "<leader>gf", "<cmd>Telescope git_files<cr>",              desc = "Git Files" },
 	},
 	config = function()
 		local telescope = require("telescope")
@@ -32,22 +32,22 @@ return {
 			defaults = {
 				path_display = { "smart" },
 				dynamic_preview_title = true,
-				
+
 				-- Performance optimizations
 				cache_picker = {
-					num_pickers = 5,  -- Cache recent pickers
+					num_pickers = 5, -- Cache recent pickers
 				},
-				
+
 				-- Faster file operations
 				file_sorter = require("telescope.sorters").get_fuzzy_file,
 				generic_sorter = require("telescope.sorters").get_generic_fuzzy_sorter,
-				
+
 				-- Better preview handling
 				preview = {
 					filesize_limit = 0.1, -- 100KB limit for preview
-					timeout = 250,         -- Faster preview timeout
+					timeout = 250, -- Faster preview timeout
 				},
-				
+
 				file_ignore_patterns = {
 					"node_modules",
 					".git/",
@@ -102,7 +102,7 @@ return {
 				live_grep = {
 					-- Optimize live grep
 					additional_args = function()
-						return {"--hidden", "--smart-case"}
+						return { "--hidden", "--smart-case" }
 					end
 				},
 				buffers = {

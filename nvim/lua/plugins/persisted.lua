@@ -62,6 +62,18 @@ return {
 				
 				-- Close NeoTree if it's open
 				pcall(vim.cmd, "Neotree close")
+				
+				-- Force delete any neo-tree buffers before saving
+				for _, buf in ipairs(vim.api.nvim_list_bufs()) do
+					if vim.api.nvim_buf_is_valid(buf) then
+						local buf_name = vim.api.nvim_buf_get_name(buf)
+						local buf_filetype = vim.api.nvim_buf_get_option(buf, "filetype")
+						if buf_name:match("neo%-tree") or buf_filetype == "neo-tree" then
+							pcall(vim.api.nvim_buf_delete, buf, { force = true })
+						end
+					end
+				end
+				
 				-- Close any floating windows
 				for _, win in ipairs(vim.api.nvim_list_wins()) do
 					if vim.api.nvim_win_get_config(win).relative ~= "" then
@@ -75,10 +87,40 @@ return {
 				end, 100)
 			end,
 
-			-- Post-save notification
+			-- Post-save hook with session file cleanup
 			post_save = function()
 				vim.g.persisted_saving_session = false
-				vim.notify("Session saved!", vim.log.levels.INFO)
+				
+				-- Clean the session file after it's saved to remove any neo-tree references
+				local persisted = require("persisted")
+				local session_file = persisted.current_session
+				
+				if session_file and vim.fn.filereadable(session_file) == 1 then
+					vim.defer_fn(function()
+						local lines = vim.fn.readfile(session_file)
+						local cleaned_lines = {}
+						local removed_count = 0
+						
+						for _, line in ipairs(lines) do
+							-- Skip lines that reference neo-tree (comprehensive patterns)
+							if not (line:match("neo%-tree") or line:match("Neo%-tree") or 
+								   line:match("filesystem %[%d+%]") or line:match("neo%-tree\\")) then
+								table.insert(cleaned_lines, line)
+							else
+								removed_count = removed_count + 1
+							end
+						end
+						
+						if removed_count > 0 then
+							vim.fn.writefile(cleaned_lines, session_file)
+							vim.notify("Session saved and cleaned! Removed " .. removed_count .. " neo-tree references.", vim.log.levels.INFO)
+						else
+							vim.notify("Session saved!", vim.log.levels.INFO)
+						end
+					end, 50) -- Small delay to ensure session file is fully written
+				else
+					vim.notify("Session saved!", vim.log.levels.INFO)
+				end
 			end,
 
 			-- Post-load notification and cleanup
