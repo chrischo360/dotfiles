@@ -1,0 +1,68 @@
+{
+  "alwaysThinkingEnabled": false,
+  "hooks": {
+    "Stop": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "printf '\\a'"
+          }
+        ]
+      }
+    ],
+    "SessionEnd": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "printf '\\a'"
+          }
+        ]
+      }
+    ]
+  },
+  "allowedTools": [
+    {
+      "tool": "Read",
+      "pathPattern": "**"
+    },
+    {
+      "tool": "Write",
+      "pathPattern": "**"
+    },
+    {
+      "tool": "Edit",
+      "pathPattern": "**"
+    },
+    {
+      "tool": "Bash",
+      "commandPattern": "*"
+    },
+    {
+      "tool": "Glob",
+      "pathPattern": "**"
+    },
+    {
+      "tool": "Grep",
+      "pathPattern": "**"
+    }
+  ],
+  "allowedDirectories": [
+    "~/dotfiles",
+    "~/codebase/block-builder-api",
+    "~/codebase/block-builder-app",
+    "~/codebase/CF-Cypress",
+    "~/codebase/experience-decision-engine",
+    "~/codebase/homebase",
+    "~/codebase/homebase-design-tokens",
+    "~/codebase/homebase-docs",
+    "~/codebase/php",
+    "~/codebase/sf-js-libraries",
+    "~/codebase/sf-ui-cart-and-checkout",
+    "~/codebase/sf-ui-checkout",
+    "~/codebase/sf-ui-web",
+    "~/codebase/terraform"
+  ],
+  "defaultMode": "plan"
+}

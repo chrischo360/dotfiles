@@ -123,3 +123,9 @@ action = "DecreaseFontSize"
 key = "Key0"
 mods = "Command"
 action = "ResetFontSize"
+
+# Bell configuration for notifications
+[bell]
+animation = "EaseOutExpo"
+duration = 300
+color = "#44df44"  # Green flash for visual notification
