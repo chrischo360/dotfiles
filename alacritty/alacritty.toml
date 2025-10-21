@@ -15,64 +15,64 @@ bold = { family = "JetBrainsMono Nerd Font", style = "Bold" }
 italic = { family = "JetBrainsMono Nerd Font", style = "Italic" }
 size=13
 
-# Modus Vivendi Tinted colors (softer than default)
+# Kanagawa Wave colors
 [colors.primary]
-background = '#0d0e1c'
-foreground = '#ffffff'
+background = '#1f1f28'
+foreground = '#dcd7ba'
 
 [colors.cursor]
-text = '#0d0e1c'
-cursor = '#ffffff'
+text = '#1f1f28'
+cursor = '#c8c093'
 
 # Normal colors
 [colors.normal]
-black   = '#0d0e1c'
-red     = '#ff5f59'
-green   = '#44bc44'
-yellow  = '#d0bc00'
-blue    = '#2fafff'
-magenta = '#feacd0'
-cyan    = '#00d3d0'
-white   = '#ffffff'
+black   = '#090618'
+red     = '#c34043'
+green   = '#76946a'
+yellow  = '#c0a36e'
+blue    = '#7e9cd8'
+magenta = '#957fb8'
+cyan    = '#6a9589'
+white   = '#c8c093'
 
 # Bright colors
 [colors.bright]
-black   = '#1d2235'
-red     = '#ff5f5f'
-green   = '#44df44'
-yellow  = '#efef00'
-blue    = '#338fff'
-magenta = '#ff66ff'
-cyan    = '#00eff0'
-white   = '#989898'
+black   = '#727169'
+red     = '#e82424'
+green   = '#98bb6c'
+yellow  = '#e6c384'
+blue    = '#7fb4ca'
+magenta = '#938aa9'
+cyan    = '#7aa89f'
+white   = '#dcd7ba'
 
 # Selection colors
 [colors.selection]
-text = '#0d0e1c'
-background = '#ffffff'
+text = '#c8c093'
+background = '#2d4f67'
 
 # Search colors
 [colors.search.matches]
-foreground = '#0d0e1c'
-background = '#989898'
+foreground = '#1f1f28'
+background = '#c0a36e'
 
 [colors.search.focused_match]
-foreground = '#0d0e1c'
-background = '#44df44'
+foreground = '#1f1f28'
+background = '#e6c384'
 
 # Footer bar colors
 [colors.footer_bar]
-foreground = '#0d0e1c'
-background = '#989898'
+foreground = '#1f1f28'
+background = '#727169'
 
 # Hints
 [colors.hints.start]
-foreground = '#0d0e1c'
-background = '#efef00'
+foreground = '#1f1f28'
+background = '#e6c384'
 
 [colors.hints.end]
-foreground = '#0d0e1c'
-background = '#989898'
+foreground = '#1f1f28'
+background = '#727169'
 
 # Line indicator
 [colors.line_indicator]
@@ -81,8 +81,8 @@ background = 'None'
 
 # VI mode
 [colors.vi_mode_cursor]
-text = '#0d0e1c'
-cursor = '#2fafff'
+text = '#1f1f28'
+cursor = '#7e9cd8'
 
 [env]
 TERM = "xterm-256color"
