@@ -5,7 +5,7 @@ return {
 		"nvim-lua/plenary.nvim",
 		"nvim-tree/nvim-web-devicons", -- not strictly required, but recommended
 		"MunifTanjim/nui.nvim",
-		-- "3rd/image.nvim", -- Optional image support in preview window: See `# Preview Mode` for more information
+		"3rd/image.nvim", -- Optional image support in preview window: See `# Preview Mode` for more information
 	},
 	keys = {
 		{
@@ -41,72 +41,6 @@ return {
 					["<C-l>"] = function() vim.cmd("wincmd l") end,
 				}
 			},
-
-			-- Enhanced event handlers to avoid conflicts with session restoration
-			event_handlers = {
-				{
-					event = "neo_tree_buffer_enter",
-					handler = function()
-						-- Only auto-reveal if not during session restoration
-						-- Check if we're in the middle of session loading
-						local session_loading = vim.g.persisted_loading_session
-						if not session_loading then
-							vim.defer_fn(function()
-								if vim.bo.filetype ~= "" and vim.fn.expand("%") ~= "" then
-									pcall(vim.cmd, "Neotree reveal")
-								end
-							end, 100)
-						end
-					end
-				},
-				{
-					-- Handle session restoration better
-					event = "neo_tree_window_after_open",
-					handler = function()
-						-- Ensure proper buffer handling after window opens
-						vim.defer_fn(function()
-							-- Force refresh to avoid stale buffer issues
-							pcall(vim.cmd, "Neotree refresh")
-						end, 50)
-					end
-				},
-				{
-					-- Prevent buffer conflicts during session loading
-					event = "neo_tree_before_render",
-					handler = function()
-						-- Clear any orphaned buffers that might conflict
-						local current_buf = vim.api.nvim_get_current_buf()
-						local buf_name = vim.api.nvim_buf_get_name(current_buf)
-						
-						-- If this is a conflicting buffer, try to resolve it
-						if buf_name:match("neo%-tree") and not buf_name:match("neo%-tree filesystem") then
-							pcall(function()
-								-- Create a new proper buffer if needed
-								vim.api.nvim_buf_set_name(current_buf, "neo-tree filesystem [" .. current_buf .. "]")
-							end)
-						end
-					end
-				},
-				{
-					-- Additional safety: clean up any duplicate neo-tree buffers
-					event = "neo_tree_window_before_open",
-					handler = function()
-						-- Clean up any existing neo-tree buffers that might cause conflicts
-						for _, buf in ipairs(vim.api.nvim_list_bufs()) do
-							if vim.api.nvim_buf_is_valid(buf) then
-								local buf_name = vim.api.nvim_buf_get_name(buf)
-								local buf_filetype = vim.api.nvim_buf_get_option(buf, "filetype")
-								
-								-- Delete any existing neo-tree buffers before creating new ones
-								if (buf_name:match("neo%-tree") or buf_filetype == "neo-tree") and
-								   buf ~= vim.api.nvim_get_current_buf() then
-									pcall(vim.api.nvim_buf_delete, buf, { force = true })
-								end
-							end
-						end
-					end
-				}
-			}
 		})
 
 		-- Keep these window movement keymaps

@@ -138,9 +138,10 @@ export ANTHROPIC_VERTEX_PROJECT_ID=wf-gcp-us-sf-genai-pilot-sbx
 export CLOUD_ML_REGION=us-east5
 
 # Optional: Disable prompt caching
-export DISABLE_PROMPT_CACHING=
+# export DISABLE_PROMPT_CACHING=1
+# export ANTHROPIC_MODEL='claude-opus-4@20250514'
 export ANTHROPIC_MODEL='claude-sonnet-4-5@20250929'
-# export ANTHROPIC_MODEL='claude-opus-4-1@20250805' # Opus
-export ANTHROPIC_SMALL_FAST_MODEL='claude-3-5-haiku@20241022'
+export ANTHROPIC_SMALL_FAST_MODEL='claude-haiku-4-5@20251001'
+export ANTHROPIC_DEFAULT_OPUS_MODEL='claude-opus-4@20250514'
 
 # --- End Claude Code Configuration ---

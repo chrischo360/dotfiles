@@ -10,6 +10,5 @@ return {
 	dependencies = {
 		'nvim-tree/nvim-web-devicons', -- For file icons
 		'willothy/nvim-cokeline', -- For buffer line integration
-		'akinsho/bufferline.nvim', -- Alternative buffer line
 	}
 }

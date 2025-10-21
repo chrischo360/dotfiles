@@ -1,5 +1,4 @@
 {
-  "alwaysThinkingEnabled": false,
   "hooks": {
     "Stop": [
       {
@@ -22,6 +21,7 @@
       }
     ]
   },
+  "alwaysThinkingEnabled": false,
   "allowedTools": [
     {
       "tool": "Read",
@@ -50,6 +50,8 @@
   ],
   "allowedDirectories": [
     "~/dotfiles",
+    "~/codebase",
+    "~/codebase/basket-service",
     "~/codebase/block-builder-api",
     "~/codebase/block-builder-app",
     "~/codebase/CF-Cypress",
@@ -64,5 +66,6 @@
     "~/codebase/sf-ui-web",
     "~/codebase/terraform"
   ],
-  "defaultMode": "plan"
+  "defaultMode": "plan",
+  "model": "opus"
 }

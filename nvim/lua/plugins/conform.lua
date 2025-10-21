@@ -33,7 +33,8 @@ return {
 			json = { "prettier" },
 			yaml = { "prettier" },
 			markdown = { "prettier" },
-			graphql = { "prettier" },
+			-- graphql = { "prettier" },
+			graphqls = { "prettier" },
 			sh = { "shfmt" },
 			bash = { "shfmt" },
 			go = { "gofmt" },
@@ -53,17 +54,17 @@ return {
 			if vim.bo[bufnr].filetype == "" then
 				return false
 			end
-			
+
 			-- DISABLE PHP formatting entirely
 			if vim.bo[bufnr].filetype == "php" then
 				return false -- Skip PHP formatting
 			end
-			
+
 			-- DISABLE Swift formatting entirely
 			if vim.bo[bufnr].filetype == "swift" then
 				return false -- Skip Swift formatting
 			end
-			
+
 			-- Standard timeout for other languages
 			return { timeout_ms = 2000 }
 		end,
@@ -106,7 +107,8 @@ return {
 							return "/opt/homebrew/opt/php@8.1/bin/php"
 						end
 						-- Fallback to project phpcbf
-						local project_phpcbf = vim.fn.findfile("includes/sdk/composer-packages/bin/phpcbf", ".;")
+						local project_phpcbf = vim.fn.findfile(
+							"includes/sdk/composer-packages/bin/phpcbf", ".;")
 						if project_phpcbf ~= "" then
 							return "/opt/homebrew/opt/php@8.1/bin/php"
 						end
@@ -123,7 +125,8 @@ return {
 							return { fix_script, "$FILENAME" }
 						end
 						-- Fallback to project phpcbf
-						local project_phpcbf = vim.fn.findfile("includes/sdk/composer-packages/bin/phpcbf", ".;")
+						local project_phpcbf = vim.fn.findfile(
+							"includes/sdk/composer-packages/bin/phpcbf", ".;")
 						if project_phpcbf ~= "" then
 							return { project_phpcbf, "--standard=CSNStores", "$FILENAME" }
 						end
@@ -143,7 +146,8 @@ return {
 						return "/opt/homebrew/opt/php@8.1/bin/php"
 					end
 					-- Try to find the project-specific phpcbf second
-					local project_phpcbf = vim.fn.findfile("includes/sdk/composer-packages/bin/phpcbf", ".;")
+					local project_phpcbf = vim.fn.findfile(
+						"includes/sdk/composer-packages/bin/phpcbf", ".;")
 					if project_phpcbf ~= "" then
 						return "/opt/homebrew/opt/php@8.1/bin/php"
 					end
@@ -157,7 +161,8 @@ return {
 						return { fix_script, "$FILENAME" }
 					end
 					-- Try to find the project-specific phpcbf second
-					local project_phpcbf = vim.fn.findfile("includes/sdk/composer-packages/bin/phpcbf", ".;")
+					local project_phpcbf = vim.fn.findfile(
+						"includes/sdk/composer-packages/bin/phpcbf", ".;")
 					if project_phpcbf ~= "" then
 						return { project_phpcbf, "--standard=CSNStores", "$FILENAME" }
 					end
@@ -171,50 +176,51 @@ return {
 	init = function()
 		-- If you want the formatexpr, here is the place to set it
 		vim.o.formatexpr = "v:lua.require'conform'.formatexpr()"
-		
+
 		-- Debug function to check which PHP formatter will be used
 		vim.api.nvim_create_user_command("DebugPHPFormatter", function()
 			local fix_script = vim.fn.findfile("vendor-bin/cs/fix.php", ".;")
 			local project_phpcbf = vim.fn.findfile("includes/sdk/composer-packages/bin/phpcbf", ".;")
-			
+
 			print("=== PHP Formatter Detection ===")
 			print("Working directory: " .. vim.fn.getcwd())
 			print("PHP Version: 8.1 (/opt/homebrew/opt/php@8.1/bin/php)")
 			print("fix.php found: " .. (fix_script ~= "" and fix_script or "NOT FOUND"))
 			print("phpcbf found: " .. (project_phpcbf ~= "" and project_phpcbf or "NOT FOUND"))
 			print("")
-			
+
 			if fix_script ~= "" then
 				print("✅ WILL USE: /opt/homebrew/opt/php@8.1/bin/php " .. fix_script .. " filename.php")
 				print("🚀 COMPREHENSIVE FORMATTING (PHP-CS-Fixer + PHPCBF + Rector)")
 			elseif project_phpcbf ~= "" then
-				print("✅ WILL USE: /opt/homebrew/opt/php@8.1/bin/php " .. project_phpcbf .. " --standard=CSNStores filename.php")
+				print("✅ WILL USE: /opt/homebrew/opt/php@8.1/bin/php " ..
+					project_phpcbf .. " --standard=CSNStores filename.php")
 				print("🔧 BASIC PHPCBF with CSNStores")
 			else
 				print("✅ WILL USE: phpcbf --standard=PSR12 filename.php")
 				print("📋 GLOBAL PHPCBF with PSR12")
 			end
 		end, {})
-		
+
 		-- Test PHP formatter manually (doesn't require saving)
 		vim.api.nvim_create_user_command("TestPHPFormatter", function()
 			local bufnr = vim.api.nvim_get_current_buf()
 			print("Testing PHP formatter on current buffer...")
-			require("conform").format({ 
-				bufnr = bufnr, 
+			require("conform").format({
+				bufnr = bufnr,
 				timeout_ms = 20000,
-				quiet = false 
+				quiet = false
 			})
 		end, {})
-		
+
 		-- Company-specific PHP commands for manual checking and fixing:
-		-- 
+		--
 		-- COMPREHENSIVE FORMATTER (PHP-CS-Fixer + PHPCBF + Rector):
 		-- :!php vendor-bin/cs/fix.php %
-		-- 
+		--
 		-- To check for sniff issues (PHPCS):
 		-- :!php includes/sdk/composer-packages/bin/phpcs -p --colors --report=full --standard=CSNStores --warning-severity=0 %
-		-- 
+		--
 		-- To fix issues with PHPCBF only:
 		-- :!php includes/sdk/composer-packages/bin/phpcbf --standard=CSNStores %
 		--
