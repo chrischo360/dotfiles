@@ -169,6 +169,33 @@ function M.file_history_advanced()
 	end)
 end
 
+-- Quick compare with main/master branch
+function M.compare_with_main()
+	-- Try main first, then master
+	local handle = io.popen('git rev-parse --verify main 2>/dev/null')
+	if handle then
+		local result = handle:read("*a")
+		handle:close()
+		if result and result ~= '' then
+			vim.cmd('DiffviewOpen main')
+			return
+		end
+	end
+
+	-- Fallback to master
+	handle = io.popen('git rev-parse --verify master 2>/dev/null')
+	if handle then
+		local result = handle:read("*a")
+		handle:close()
+		if result and result ~= '' then
+			vim.cmd('DiffviewOpen master')
+			return
+		end
+	end
+
+	vim.notify("Neither 'main' nor 'master' branch found", vim.log.levels.WARN)
+end
+
 -- Quick diff commands
 function M.quick_diff_menu()
 	local options = {
@@ -223,23 +250,20 @@ end
 -- Setup keymaps for these utilities
 function M.setup_keymaps()
 	local opts = { noremap = true, silent = true }
-	
-	-- Main quick diff menu
-	vim.keymap.set('n', '<leader>dq', M.quick_diff_menu, 
+
+	-- Quick shortcuts
+	vim.keymap.set('n', '<leader>dm', M.compare_with_main,
+		vim.tbl_extend('force', opts, { desc = 'Compare with main/master' }))
+
+	vim.keymap.set('n', '<leader>dq', M.quick_diff_menu,
 		vim.tbl_extend('force', opts, { desc = 'Quick Diff Menu' }))
-	
-	-- Individual functions
-	vim.keymap.set('n', '<leader>dbi', M.compare_branches_interactive, 
-		vim.tbl_extend('force', opts, { desc = 'Compare Branches Interactive' }))
-		
-	vim.keymap.set('n', '<leader>dci', M.compare_with_commit_interactive, 
-		vim.tbl_extend('force', opts, { desc = 'Compare with Commit Interactive' }))
-		
-	vim.keymap.set('n', '<leader>dbf', M.compare_file_between_branches, 
-		vim.tbl_extend('force', opts, { desc = 'Compare File Between Branches' }))
-		
-	vim.keymap.set('n', '<leader>dfh', M.file_history_advanced, 
-		vim.tbl_extend('force', opts, { desc = 'File History Advanced' }))
+
+	-- Interactive selectors
+	vim.keymap.set('n', '<leader>db', M.compare_with_branch_interactive,
+		vim.tbl_extend('force', opts, { desc = 'Compare current with branch' }))
+
+	vim.keymap.set('n', '<leader>d2', M.compare_branches_interactive,
+		vim.tbl_extend('force', opts, { desc = 'Compare two branches' }))
 end
 
 return M
