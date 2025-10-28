@@ -1,28 +1,48 @@
 {
   "model": "opus",
   "hooks": {
-    "Stop": [
-      {
-        "hooks": [
-          {
-            "type": "command",
-            "command": "printf '\\a'"
-          }
-        ]
-      }
-    ],
     "SessionEnd": [
       {
         "hooks": [
           {
             "type": "command",
-            "command": "printf '\\a'"
+            "command": "~/dotfiles/claude/notify.sh SessionEnd"
+          }
+        ]
+      }
+    ],
+    "Notification": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "~/dotfiles/claude/notify.sh"
+          }
+        ]
+      }
+    ],
+    "Stop": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "~/dotfiles/claude/notify.sh"
+          }
+        ]
+      }
+    ],
+    "SubagentStop": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "~/dotfiles/claude/notify.sh"
           }
         ]
       }
     ]
   },
-  "alwaysThinkingEnabled": true,
+  "alwaysThinkingEnabled": false,
   "allowedTools": [
     {
       "tool": "Read",

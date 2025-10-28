@@ -1,10 +1,11 @@
 [window]
 
-padding.x = 10
-padding.y = 10
+padding.x = 0
+padding.y = 0
 
-opacity = 0.85
-decorations = "transparent"
+# opacity = 0.85
+# decorations = "buttonless"
+decorations = "none"
 
 startup_mode = "Maximized"
 
@@ -13,7 +14,7 @@ startup_mode = "Maximized"
 normal = { family = "JetBrainsMono Nerd Font", style = "Medium" }
 bold = { family = "JetBrainsMono Nerd Font", style = "Bold" }
 italic = { family = "JetBrainsMono Nerd Font", style = "Italic" }
-size=13
+size=14
 
 # Kanagawa Wave colors
 [colors.primary]
