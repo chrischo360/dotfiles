@@ -145,3 +145,7 @@ export ANTHROPIC_SMALL_FAST_MODEL='claude-haiku-4-5@20251001'
 export ANTHROPIC_DEFAULT_OPUS_MODEL='claude-opus-4@20250514'
 
 # --- End Claude Code Configuration ---
+
+#THIS MUST BE AT THE END OF THE FILE FOR SDKMAN TO WORK!!!
+export SDKMAN_DIR="$HOME/.sdkman"
+[[ -s "$HOME/.sdkman/bin/sdkman-init.sh" ]] && source "$HOME/.sdkman/bin/sdkman-init.sh"

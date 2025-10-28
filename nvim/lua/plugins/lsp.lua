@@ -17,7 +17,7 @@ return {
 			local capabilities = require("cmp_nvim_lsp").default_capabilities()
 			-- Diagnostic configuration for performance
 			vim.diagnostic.config({
-				virtual_text = false, -- Disable inline diagnostics
+				virtual_text = true, -- Disable inline diagnostics
 				update_in_insert = false,
 				severity_sort = true,
 				float = {
@@ -57,6 +57,13 @@ return {
 					vim.keymap.set("n", "<leader>rn", vim.lsp.buf.rename, opts)
 					vim.keymap.set("n", "<leader>ca", vim.lsp.buf.code_action, opts)
 					vim.keymap.set("n", "<leader>f", vim.lsp.buf.format, opts)
+
+					-- Diagnostic keymaps
+					vim.keymap.set("n", "[d", vim.diagnostic.goto_prev, opts)
+					vim.keymap.set("n", "]d", vim.diagnostic.goto_next, opts)
+					vim.keymap.set("n", "gl", vim.diagnostic.open_float, opts)
+					vim.keymap.set("n", "<leader>xl", vim.diagnostic.setloclist, opts)
+					vim.keymap.set("n", "<leader>xq", vim.diagnostic.setqflist, opts)
 				end,
 			})
 

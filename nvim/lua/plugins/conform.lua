@@ -23,17 +23,18 @@ return {
 		formatters_by_ft = {
 			lua = { "stylua" },
 			python = { "isort", "black" },
-			javascript = { "prettier" },
-			typescript = { "prettier" },
-			javascriptreact = { "prettier" },
-			typescriptreact = { "prettier" },
-			css = { "prettier" },
+			javascript = { "biome" },
+			typescript = { "biome" },
+			javascriptreact = { "biome" },
+			typescriptreact = { "biome" },
+			json = { "biome" },
+			jsonc = { "biome" },
+			css = { "biome" },
+			-- Fallback to prettier for formats biome doesn't support yet
 			scss = { "prettier" },
 			html = { "prettier" },
-			json = { "prettier" },
 			yaml = { "prettier" },
 			markdown = { "prettier" },
-			-- graphql = { "prettier" },
 			graphqls = { "prettier" },
 			sh = { "shfmt" },
 			bash = { "shfmt" },
@@ -70,6 +71,11 @@ return {
 		end,
 		-- Customize formatters
 		formatters = {
+			biome = {
+				-- Biome uses biome.json for configuration, but you can pass args here
+				-- By default it will look for biome.json in your project root
+				prepend_args = {},
+			},
 			prettier = {
 				prepend_args = {
 					"--tab-width",

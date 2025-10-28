@@ -4,13 +4,11 @@ return {
 		'tpope/vim-fugitive',
 		cmd = { 'Git', 'Gstatus', 'Gblame', 'Gpush', 'Gpull', 'Gdiff' },
 		keys = {
-			{ '<leader>gs', '<cmd>Git<cr>', desc = 'Git Status' },
-			{ '<leader>gp', '<cmd>Git push<cr>', desc = 'Git Push' },
-			{ '<leader>gl', '<cmd>Git pull<cr>', desc = 'Git Pull' },
+			{ '<leader>gs', '<cmd>Git<cr>',       desc = 'Git Status' },
 			{ '<leader>gb', '<cmd>Git blame<cr>', desc = 'Git Blame' },
 		},
 	},
-	
+
 	-- Git signs for buffer
 	{
 		'lewis6991/gitsigns.nvim',
@@ -72,31 +70,36 @@ return {
 					if vim.wo.diff then return ']c' end
 					vim.schedule(function() gs.next_hunk() end)
 					return '<Ignore>'
-				end, {expr=true, desc = 'Next Git Hunk'})
+				end, { expr = true, desc = 'Next Git Hunk' })
 
 				map('n', '[c', function()
 					if vim.wo.diff then return '[c' end
 					vim.schedule(function() gs.prev_hunk() end)
 					return '<Ignore>'
-				end, {expr=true, desc = 'Previous Git Hunk'})
+				end, { expr = true, desc = 'Previous Git Hunk' })
 
 				-- Actions
 				map('n', '<leader>hs', gs.stage_hunk, { desc = 'Stage Hunk' })
 				map('n', '<leader>hr', gs.reset_hunk, { desc = 'Reset Hunk' })
-				map('v', '<leader>hs', function() gs.stage_hunk {vim.fn.line('.'), vim.fn.line('v')} end, { desc = 'Stage Hunk' })
-				map('v', '<leader>hr', function() gs.reset_hunk {vim.fn.line('.'), vim.fn.line('v')} end, { desc = 'Reset Hunk' })
+				map('v', '<leader>hs',
+					function() gs.stage_hunk { vim.fn.line('.'), vim.fn.line('v') } end,
+					{ desc = 'Stage Hunk' })
+				map('v', '<leader>hr',
+					function() gs.reset_hunk { vim.fn.line('.'), vim.fn.line('v') } end,
+					{ desc = 'Reset Hunk' })
 				map('n', '<leader>hS', gs.stage_buffer, { desc = 'Stage Buffer' })
 				map('n', '<leader>hu', gs.undo_stage_hunk, { desc = 'Undo Stage Hunk' })
 				map('n', '<leader>hR', gs.reset_buffer, { desc = 'Reset Buffer' })
 				map('n', '<leader>hp', gs.preview_hunk, { desc = 'Preview Hunk' })
-				map('n', '<leader>hb', function() gs.blame_line{full=true} end, { desc = 'Blame Line' })
+				map('n', '<leader>hb', function() gs.blame_line { full = true } end,
+					{ desc = 'Blame Line' })
 				map('n', '<leader>tb', gs.toggle_current_line_blame, { desc = 'Toggle Line Blame' })
 				map('n', '<leader>hd', gs.diffthis, { desc = 'Diff This' })
 				map('n', '<leader>hD', function() gs.diffthis('~') end, { desc = 'Diff This ~' })
 				map('n', '<leader>td', gs.toggle_deleted, { desc = 'Toggle Deleted' })
 
 				-- Text object
-				map({'o', 'x'}, 'ih', ':<C-U>Gitsigns select_hunk<CR>', { desc = 'Select Git Hunk' })
+				map({ 'o', 'x' }, 'ih', ':<C-U>Gitsigns select_hunk<CR>', { desc = 'Select Git Hunk' })
 			end
 		},
 	},
@@ -107,7 +110,7 @@ return {
 		dependencies = { 'tpope/vim-fugitive' },
 		cmd = { 'GV' },
 		keys = {
-			{ '<leader>gv', '<cmd>GV<cr>', desc = 'Git Log' },
+			{ '<leader>gv', '<cmd>GV<cr>',  desc = 'Git Log' },
 			{ '<leader>gV', '<cmd>GV!<cr>', desc = 'Git Log (current file)' },
 		},
 	},

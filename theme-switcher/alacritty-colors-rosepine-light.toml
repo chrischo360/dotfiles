@@ -1,0 +1,68 @@
+# Rose Pine Dawn colors (Light theme)
+[colors.primary]
+background = '#faf4ed'
+foreground = '#575279'
+
+[colors.cursor]
+text = '#faf4ed'
+cursor = '#cecacd'
+
+# Normal colors
+[colors.normal]
+black   = '#f2e9e1'
+red     = '#b4637a'
+green   = '#286983'
+yellow  = '#ea9d34'
+blue    = '#56949f'
+magenta = '#907aa9'
+cyan    = '#d7827e'
+white   = '#575279'
+
+# Bright colors
+[colors.bright]
+black   = '#9893a5'
+red     = '#b4637a'
+green   = '#286983'
+yellow  = '#ea9d34'
+blue    = '#56949f'
+magenta = '#907aa9'
+cyan    = '#d7827e'
+white   = '#575279'
+
+# Selection colors
+[colors.selection]
+text = '#575279'
+background = '#dfdad9'
+
+# Search colors
+[colors.search.matches]
+foreground = '#faf4ed'
+background = '#ea9d34'
+
+[colors.search.focused_match]
+foreground = '#faf4ed'
+background = '#d7827e'
+
+# Footer bar colors
+[colors.footer_bar]
+foreground = '#faf4ed'
+background = '#9893a5'
+
+# Hints
+[colors.hints.start]
+foreground = '#faf4ed'
+background = '#ea9d34'
+
+[colors.hints.end]
+foreground = '#faf4ed'
+background = '#9893a5'
+
+# Line indicator
+[colors.line_indicator]
+foreground = 'None'
+background = 'None'
+
+# VI mode
+[colors.vi_mode_cursor]
+text = '#faf4ed'
+cursor = '#56949f'
