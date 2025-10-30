@@ -26,8 +26,9 @@ if [ -n "$TMUX" ]; then
     TMUX_WINDOW=$(tmux display-message -p '#I')
     TMUX_PANE=$(tmux display-message -p '#P')
 
-    # Build execute command to activate Alacritty and switch to this pane
-    EXECUTE_CMD="osascript -e 'tell application \"Alacritty\" to activate' && tmux switch-client -t ${TMUX_SESSION}:${TMUX_WINDOW} && tmux select-pane -t .${TMUX_PANE}"
+    # Build execute command to call our click handler script
+    SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+    EXECUTE_CMD="${SCRIPT_DIR}/notify-click-handler.sh ${TMUX_SESSION}:${TMUX_WINDOW}.${TMUX_PANE}"
 fi
 
 # Get location (git repo name or directory name)
@@ -51,7 +52,7 @@ case "$EVENT_TYPE" in
         MESSAGE="Repository: $LOCATION"
         ;;
     *)
-        TITLE="🤖 Claude Code $EVENT_TYPE"
+        TITLE="🤖 $EVENT_TYPE"
         MESSAGE="Repository: $LOCATION"
         ;;
 esac

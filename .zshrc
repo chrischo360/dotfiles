@@ -139,10 +139,16 @@ export CLOUD_ML_REGION=us-east5
 
 # Optional: Disable prompt caching
 # export DISABLE_PROMPT_CACHING=1
-# export ANTHROPIC_MODEL='claude-opus-4@20250514'
-export ANTHROPIC_MODEL='claude-sonnet-4-5@20250929'
-export ANTHROPIC_SMALL_FAST_MODEL='claude-haiku-4-5@20251001'
+
+# Model configuration for Vertex AI
 export ANTHROPIC_DEFAULT_OPUS_MODEL='claude-opus-4@20250514'
+export ANTHROPIC_DEFAULT_SONNET_MODEL='claude-sonnet-4-5@20250929'
+# Haiku not available in this project - use Sonnet for fast operations
+export ANTHROPIC_DEFAULT_HAIKU_MODEL='claude-sonnet-4-5@20250929'
+
+# Primary and small/fast models (both use Sonnet since Haiku unavailable)
+export ANTHROPIC_MODEL='claude-sonnet-4-5@20250929'
+export ANTHROPIC_SMALL_FAST_MODEL='claude-sonnet-4-5@20250929'
 
 # --- End Claude Code Configuration ---
 

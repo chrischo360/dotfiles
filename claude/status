@@ -1,0 +1,38 @@
+#!/bin/bash
+
+# Quick status display for Claude Code
+# Usage:
+#   status              - Show current session status (if env vars are set)
+#   status 25000        - Show status with custom token count
+#   status 25000 opus   - Show status with custom token count and model
+
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+
+# Parse arguments
+CUSTOM_TOKENS=${1:-}
+CUSTOM_MODEL=${2:-${CLAUDE_MODEL:-opus}}
+
+# If custom tokens provided, set them
+if [ -n "$CUSTOM_TOKENS" ]; then
+    export CLAUDE_TOKENS_USED=$CUSTOM_TOKENS
+    export CLAUDE_TOKENS_TOTAL=${CLAUDE_TOKENS_TOTAL:-200000}
+fi
+
+# If we still don't have tokens, try to read from the most recent Claude Code session
+if [ -z "$CLAUDE_TOKENS_USED" ]; then
+    echo "ℹ️  No active Claude Code session detected."
+    echo "💡 Usage: status [tokens_used] [model]"
+    echo ""
+    echo "Examples:"
+    echo "  status 30000         - Show status for 30k tokens (opus model)"
+    echo "  status 30000 sonnet  - Show status for 30k tokens (sonnet model)"
+    echo "  status 30000 haiku   - Show status for 30k tokens (haiku model)"
+    echo ""
+    echo "Available models: opus, sonnet, haiku"
+    exit 0
+fi
+
+export CLAUDE_MODEL=$CUSTOM_MODEL
+
+# Display the status
+"${SCRIPT_DIR}/display-status.sh"

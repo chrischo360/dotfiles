@@ -1,5 +1,4 @@
 {
-  "model": "opus",
   "hooks": {
     "SessionEnd": [
       {
@@ -42,7 +41,13 @@
       }
     ]
   },
-  "alwaysThinkingEnabled": false,
+  "statusLine": {
+    "type": "command",
+    "command": "~/.claude/statusline.sh",
+    "padding": 0
+  },
+  "alwaysThinkingEnabled": true,
+  "defaultMode": "plan",
   "allowedTools": [
     {
       "tool": "Read",
@@ -67,6 +72,25 @@
     {
       "tool": "Grep",
       "pathPattern": "**"
+    },
+    {
+      "tool": "BashOutput",
+      "commandPattern": "*"
+    },
+    {
+      "tool": "KillShell",
+      "commandPattern": "*"
+    },
+    {
+      "tool": "Task",
+      "pathPattern": "*"
+    },
+    {
+      "tool": "TodoWrite"
+    },
+    {
+      "tool": "WebFetch",
+      "urlPattern": "https://github.com/**"
     }
   ],
   "allowedDirectories": [
@@ -86,6 +110,5 @@
     "~/codebase/sf-ui-checkout",
     "~/codebase/sf-ui-web",
     "~/codebase/terraform"
-  ],
-  "defaultMode": "plan"
+  ]
 }
