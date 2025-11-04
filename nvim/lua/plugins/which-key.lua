@@ -14,10 +14,42 @@ return {
       -- or leave it empty to use the default settings
     })
 
-    -- Register Claude keybindings with organized groups
+    -- Register LSP keybindings with organized groups
     wk.add({
-      { "<leader>c", group = "🤖 Claude AI" },
-      -- The new keymap for claude-code.nvim
+      -- LSP Navigation (g-prefix)
+      { "gd", desc = "LSP: Go to definition" },
+      { "gD", desc = "LSP: Go to declaration" },
+      { "gi", desc = "LSP: Go to implementation" },
+      { "go", desc = "LSP: Go to type definition" },
+      { "gr", desc = "LSP: Go to references" },
+      { "gl", desc = "LSP: Open diagnostic float" },
+      { "K", desc = "LSP: Hover documentation" },
+
+      -- LSP Actions (leader-prefix)
+      { "<leader>rn", desc = "LSP: Rename symbol" },
+      { "<leader>ca", desc = "LSP: Code action" },
+      { "<leader>f", desc = "LSP: Format buffer" },
+
+      -- Diagnostic Navigation
+      { "[d", desc = "Previous diagnostic" },
+      { "]d", desc = "Next diagnostic" },
+
+      -- Diagnostic Lists (x-prefix group)
+      { "<leader>x", group = "🔧 Diagnostics" },
+      { "<leader>xl", desc = "Set location list" },
+      { "<leader>xq", desc = "Set quickfix list" },
+    })
+
+    -- Register DiffView keybindings with organized groups
+    wk.add({
+      { "<leader>d", group = "📊 DiffView" },
+      { "<leader>dv", desc = "Toggle Diffview (uncommitted changes)" },
+      { "<leader>dfh", desc = "File History (current file)" },
+      { "<leader>dfa", desc = "File History (all files)" },
+      { "<leader>dm", desc = "Compare with main/master" },
+      { "<leader>db", desc = "Compare current with branch" },
+      { "<leader>d2", desc = "Compare two branches" },
+      { "<leader>dq", desc = "Quick Diff Menu" },
     })
 
     -- Register Harpoon keybindings with organized groups

@@ -1,7 +1,3 @@
--- Plugin: Lualine
--- Description: Status bar at the bottom showing mode, git branch, file info, LSP servers, diagnostics, and location.
---              Adapts colors to match your current colorscheme.
-
 return {
   "nvim-lualine/lualine.nvim",
   dependencies = { "nvim-tree/nvim-web-devicons" },
