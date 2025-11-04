@@ -10,18 +10,6 @@ return {
 			-- or leave it empty to use the default settings
 		})
 
-		-- Register Goose keybindings with organized groups
-		wk.add({
-			{ "<leader>g", group = "🪿 Goose AI" },
-			{ "<leader>gm", group = "Mode" },
-			{ "<leader>gr", group = "Revert" },
-			{ "<leader>gn", group = "Notifications" },
-			{ "<leader>gnt", "<cmd>GooseToggleNotifications<cr>", desc = "Toggle Notifications" },
-			{ "<leader>gnc", "<cmd>GooseConfigureNotifications<cr>", desc = "Configure Notifications" },
-			{ "<leader>gns", "<cmd>GooseTestNotification<cr>", desc = "Test Notification" },
-			{ "<leader>gnd", "<cmd>GooseDebugNotifications<cr>", desc = "Debug Notifications" },
-		})
-
 		-- Register Claude keybindings with organized groups
 		wk.add({
 			{ "<leader>c", group = "🤖 Claude AI" },
