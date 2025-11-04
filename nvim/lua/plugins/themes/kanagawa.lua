@@ -19,7 +19,7 @@ return {
     theme = "wave", -- wave (default), dragon (darker), lotus (light)
     background = {
       dark = "wave",
-      light = "lotus"
+      light = "lotus",
     },
   },
   config = function(_, opts)

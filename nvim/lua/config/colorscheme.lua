@@ -20,22 +20,22 @@ local default_colorscheme = "dracula-soft"
 
 -- Function to safely set colorscheme
 local function set_colorscheme(name)
-	local status_ok, _ = pcall(vim.cmd.colorscheme, name)
-	if not status_ok then
-		vim.notify("Colorscheme '" .. name .. "' not found!", vim.log.levels.WARN)
-		return false
-	end
-	return true
+  local status_ok, _ = pcall(vim.cmd.colorscheme, name)
+  if not status_ok then
+    vim.notify("Colorscheme '" .. name .. "' not found!", vim.log.levels.WARN)
+    return false
+  end
+  return true
 end
 
 -- Set the default colorscheme on startup
 set_colorscheme(default_colorscheme)
 
 -- Keybinding for theme picker (using Telescope)
-vim.keymap.set('n', '<leader>th', '<cmd>Telescope colorscheme<cr>', {
-	desc = 'Theme picker',
-	noremap = true,
-	silent = true
+vim.keymap.set("n", "<leader>th", "<cmd>Telescope colorscheme<cr>", {
+  desc = "Theme picker",
+  noremap = true,
+  silent = true,
 })
 
 -- Optional: Quick theme switching keybindings

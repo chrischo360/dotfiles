@@ -1,17 +1,17 @@
 -- Bootstrap lazy.nvim
 local lazypath = vim.fn.stdpath("data") .. "/lazy/lazy.nvim"
 if not (vim.uv or vim.loop).fs_stat(lazypath) then
-	local lazyrepo = "https://github.com/folke/lazy.nvim.git"
-	local out = vim.fn.system({ "git", "clone", "--filter=blob:none", "--branch=stable", lazyrepo, lazypath })
-	if vim.v.shell_error ~= 0 then
-		vim.api.nvim_echo({
-			{ "Failed to clone lazy.nvim:\n", "ErrorMsg" },
-			{ out,                            "WarningMsg" },
-			{ "\nPress any key to exit..." },
-		}, true, {})
-		vim.fn.getchar()
-		os.exit(1)
-	end
+  local lazyrepo = "https://github.com/folke/lazy.nvim.git"
+  local out = vim.fn.system({ "git", "clone", "--filter=blob:none", "--branch=stable", lazyrepo, lazypath })
+  if vim.v.shell_error ~= 0 then
+    vim.api.nvim_echo({
+      { "Failed to clone lazy.nvim:\n", "ErrorMsg" },
+      { out, "WarningMsg" },
+      { "\nPress any key to exit..." },
+    }, true, {})
+    vim.fn.getchar()
+    os.exit(1)
+  end
 end
 vim.opt.rtp:prepend(lazypath)
 
@@ -21,18 +21,18 @@ vim.opt.rtp:prepend(lazypath)
 vim.g.mapleader = " "
 vim.g.maplocalleader = "\\\\"
 -- Line numbers configuration
-vim.opt.number = true         -- Show absolute line numbers
+vim.opt.number = true -- Show absolute line numbers
 vim.opt.relativenumber = true -- Show relative line numbers
-vim.opt.numberwidth = 4       -- Set the width of number column
-vim.opt.signcolumn = "yes"    -- Always show sign column to prevent text shifting
+vim.opt.numberwidth = 4 -- Set the width of number column
+vim.opt.signcolumn = "yes" -- Always show sign column to prevent text shifting
 
 -- Force line numbers to stay visible
 vim.api.nvim_create_autocmd({ "BufEnter", "WinEnter", "ColorScheme" }, {
-	pattern = "*",
-	callback = function()
-		vim.wo.number = true
-		vim.wo.relativenumber = true
-	end,
+  pattern = "*",
+  callback = function()
+    vim.wo.number = true
+    vim.wo.relativenumber = true
+  end,
 })
 
 -- COMMENTED OUT: Using Modus Vivendi theme defaults for line numbers
@@ -66,35 +66,35 @@ vim.o.background = "dark"
 vim.opt.clipboard = "unnamedplus"
 
 -- Search and navigation settings
-vim.opt.scrolloff = 8   -- Keep 8 lines visible above/below cursor
+vim.opt.scrolloff = 8 -- Keep 8 lines visible above/below cursor
 vim.opt.hlsearch = true -- Highlight all search matches
 
 -- Wrap and indentation settings
 vim.opt.wrap = true -- Enable line wrapping
 vim.opt.breakindent = true -- Indent wrapped lines
-vim.opt.showbreak = '↪ ' -- Show a symbol on wrapped lines
+vim.opt.showbreak = "↪ " -- Show a symbol on wrapped lines
 
 vim.opt.incsearch = true -- Show matches as you type
 vim.opt.ignorecase = true -- Case insensitive search by default
 vim.opt.smartcase = true -- Case sensitive if uppercase letters used
 
 -- Center screen on search navigation
-vim.keymap.set('n', 'n', 'nzz', { desc = 'Next search result (centered)' })
-vim.keymap.set('n', 'N', 'Nzz', { desc = 'Previous search result (centered)' })
+vim.keymap.set("n", "n", "nzz", { desc = "Next search result (centered)" })
+vim.keymap.set("n", "N", "Nzz", { desc = "Previous search result (centered)" })
 
 -- Setup lazy.nvim
 require("lazy").setup({
-	spec = {
-		-- import your plugins
-		{ import = "plugins" },
-		-- import theme plugins from subfolder
-		{ import = "plugins.themes" },
-	},
-	-- Configure any other settings here. See the documentation for more details.
-	-- colorscheme that will be used when installing plugins.
-	-- install = { colorscheme = { "habamax" } },
-	-- automatically check for plugin updates
-	checker = { enabled = false },
+  spec = {
+    -- import your plugins
+    { import = "plugins" },
+    -- import theme plugins from subfolder
+    { import = "plugins.themes" },
+  },
+  -- Configure any other settings here. See the documentation for more details.
+  -- colorscheme that will be used when installing plugins.
+  -- install = { colorscheme = { "habamax" } },
+  -- automatically check for plugin updates
+  checker = { enabled = false },
 })
 
 -- Setup local plugins after lazy.nvim
