@@ -1,0 +1,17 @@
+# StyLua Configuration
+# Docs: https://github.com/JohnnyMorganz/StyLua
+
+# Indentation
+indent_type = "Spaces"
+indent_width = 2
+
+# Line width and endings
+column_width = 120
+line_endings = "Unix"
+
+# Code style
+quote_style = "AutoPreferDouble"
+call_parentheses = "Always"
+
+# Collapse simple statements
+collapse_simple_statement = "Never"
