@@ -18,6 +18,7 @@ return {
         "vim",
         "javascript",
         "typescript",
+        "tsx",
         "html",
         "css",
         "json",

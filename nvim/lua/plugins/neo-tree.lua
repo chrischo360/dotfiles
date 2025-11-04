@@ -50,6 +50,12 @@ return {
           ["<C-h>"] = function()
             vim.cmd("wincmd h")
           end,
+          ["<C-j>"] = function()
+            vim.cmd("wincmd j")
+          end,
+          ["<C-k>"] = function()
+            vim.cmd("wincmd k")
+          end,
           ["<C-l>"] = function()
             vim.cmd("wincmd l")
           end,
@@ -59,6 +65,8 @@ return {
 
     -- Keep these window movement keymaps
     vim.keymap.set("n", "<C-h>", "<C-w>h", { noremap = true, silent = true })
+    vim.keymap.set("n", "<C-j>", "<C-w>j", { noremap = true, silent = true })
+    vim.keymap.set("n", "<C-k>", "<C-w>k", { noremap = true, silent = true })
     vim.keymap.set("n", "<C-l>", "<C-w>l", { noremap = true, silent = true })
   end,
 }
