@@ -1,3 +1,7 @@
+-- Plugin: Harpoon
+-- Description: Quick navigation between frequently used files (like browser tabs). Mark files and jump between them instantly.
+-- Keybindings: <leader>ha (add file), <leader>hh (menu), <M-h/j/k/l> (jump to files 1-4)
+
 return {
   "ThePrimeagen/harpoon",
   branch = "harpoon2",

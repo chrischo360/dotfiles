@@ -1,3 +1,7 @@
+-- Plugin: Telescope.nvim
+-- Description: Fuzzy finder for files, text, buffers, git files, and more. Your primary navigation and search tool.
+-- Keybindings: <leader>ff (find files), <leader>fg (grep text), <leader>fb (buffers), <leader>fh (help)
+
 return {
   "nvim-telescope/telescope.nvim",
   tag = "0.1.8", -- Use the latest stable release

@@ -1,3 +1,7 @@
+-- Plugin: Neo-tree
+-- Description: File explorer sidebar with tree view. Shows hidden files by default and follows current file.
+-- Keybindings: <leader>e (toggle explorer), <leader>o (focus current file in tree)
+
 return {
   "nvim-neo-tree/neo-tree.nvim",
   branch = "v3.x",

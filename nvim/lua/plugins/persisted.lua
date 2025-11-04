@@ -1,4 +1,7 @@
--- Lua
+-- Plugin: Persisted.nvim
+-- Description: Automatic session management. Saves and restores your workspace (open files, window layout) when you quit and restart nvim.
+--              Sessions are saved per git branch/directory.
+
 return {
   "olimorris/persisted.nvim",
   lazy = false, -- Load immediately

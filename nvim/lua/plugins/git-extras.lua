@@ -1,3 +1,8 @@
+-- Plugin: Git Extras (vim-fugitive + gitsigns)
+-- Description: Git integration showing line changes in gutter, git blame, and hunk navigation.
+--              Fugitive provides :Git commands, gitsigns shows inline changes.
+-- Keybindings: ]c (next hunk), [c (prev hunk), <leader>hb (blame line)
+
 return {
   -- Enhanced git integration
   {

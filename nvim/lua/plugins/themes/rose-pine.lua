@@ -1,3 +1,7 @@
+-- Theme: Rose Pine
+-- Description: Low-contrast theme with main (dark), moon (dark, higher contrast), and dawn (light) variants.
+-- Variants: rose-pine, rose-pine-main, rose-pine-moon, rose-pine-dawn
+
 return {
   "rose-pine/neovim",
   name = "rose-pine",

@@ -1,3 +1,7 @@
+-- Plugin: Diffview
+-- Description: Side-by-side git diff viewer. Compare changes, view file history, and manage git operations visually.
+-- Commands: :DiffviewOpen, :DiffviewFileHistory
+
 return {
   "sindrets/diffview.nvim",
   dependencies = { "nvim-lua/plenary.nvim" },

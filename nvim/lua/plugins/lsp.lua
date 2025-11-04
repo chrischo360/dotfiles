@@ -1,3 +1,8 @@
+-- Plugin: LSP Configuration (nvim-lspconfig + Mason)
+-- Description: Language Server Protocol integration with auto-completion, diagnostics, and code navigation.
+--              Includes Mason for managing LSP servers (Lua, Python, TypeScript, Java, PHP, Rust, Swift).
+-- Keybindings: gd (definition), gr (references), K (hover), <leader>rn (rename), <leader>ca (code action)
+
 return {
   {
     "neovim/nvim-lspconfig",

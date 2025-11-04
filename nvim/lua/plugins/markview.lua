@@ -1,3 +1,8 @@
+-- Plugin: Markview.nvim
+-- Description: Live markdown preview with icons for headings, formatted code blocks, and checkboxes.
+--              Uses theme-aware colors for consistent appearance.
+-- Keybindings: <leader>mp (toggle markdown preview)
+
 return {
   "OXY2DEV/markview.nvim",
   lazy = false, -- Don't lazy load (markview has internal lazy-loading)

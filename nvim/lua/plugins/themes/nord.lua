@@ -1,3 +1,7 @@
+-- Theme: Nord
+-- Description: Arctic, north-bluish color theme with subtle, cool tones.
+-- Variants: nord
+
 return {
   "shaunsingh/nord.nvim",
   priority = 1000,

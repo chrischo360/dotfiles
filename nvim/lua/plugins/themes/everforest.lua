@@ -1,3 +1,7 @@
+-- Theme: Everforest
+-- Description: Comfortable green forest theme inspired by gruvbox. Supports both dark and light modes.
+-- Variants: everforest (respects vim.o.background setting)
+
 return {
   "neanias/everforest-nvim",
   priority = 1000,

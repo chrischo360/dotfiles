@@ -1,3 +1,7 @@
+-- Theme: Dracula
+-- Description: Popular purple/pink dark theme with high contrast and vibrant colors.
+-- Variants: dracula, dracula-soft
+
 return {
   "Mofiqul/dracula.nvim",
   priority = 1000,

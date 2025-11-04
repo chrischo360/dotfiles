@@ -1,3 +1,7 @@
+-- Theme: Kanagawa
+-- Description: Japanese-inspired dark theme with wave (default dark), lotus (light), and dragon (darker) variants.
+-- Variants: kanagawa-wave, kanagawa-lotus, kanagawa-dragon
+
 return {
   "rebelot/kanagawa.nvim",
   priority = 1000,

@@ -1,3 +1,7 @@
+-- Plugin: Bufferin
+-- Description: Buffer management interface for viewing and switching between open files/buffers.
+-- Keybindings: <leader>b (toggle buffer list)
+
 return {
   "wasabeef/bufferin.nvim",
   keys = {

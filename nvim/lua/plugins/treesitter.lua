@@ -1,3 +1,7 @@
+-- Plugin: nvim-treesitter
+-- Description: Better syntax highlighting and code understanding using tree-sitter parsers.
+--              Makes code more readable with accurate, context-aware highlighting.
+
 return {
   "nvim-treesitter/nvim-treesitter",
   build = ":TSUpdate",

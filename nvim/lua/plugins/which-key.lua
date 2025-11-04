@@ -1,3 +1,7 @@
+-- Plugin: Which-key
+-- Description: Shows popup of available keybindings when you press <leader>. Helps you discover and remember shortcuts.
+-- Keybindings: <leader>? (show buffer-local keymaps)
+
 return {
   "folke/which-key.nvim",
   event = "VeryLazy",

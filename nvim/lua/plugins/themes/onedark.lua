@@ -1,3 +1,7 @@
+-- Theme: OneDark Pro
+-- Description: Atom's iconic One Dark theme with multiple variants (onedark, onedark_vivid, onedark_dark).
+-- Variants: onedark, onedark_vivid (more saturated), onedark_dark (deeper blacks)
+
 return {
   "olimorris/onedarkpro.nvim",
   priority = 1000,
