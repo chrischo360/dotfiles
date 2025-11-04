@@ -1,23 +1,18 @@
 {
+  "permissions": {
+    "allow": [
+      "Bash"
+    ]
+  },
   "hooks": {
     "SessionEnd": [
       {
-        "hooks": [
-          {
-            "type": "command",
-            "command": "~/dotfiles/claude/notify.sh SessionEnd"
-          }
-        ]
+        "hooks": []
       }
     ],
     "Notification": [
       {
-        "hooks": [
-          {
-            "type": "command",
-            "command": "~/dotfiles/claude/notify.sh"
-          }
-        ]
+        "hooks": []
       }
     ],
     "Stop": [
@@ -32,12 +27,7 @@
     ],
     "SubagentStop": [
       {
-        "hooks": [
-          {
-            "type": "command",
-            "command": "~/dotfiles/claude/notify.sh"
-          }
-        ]
+        "hooks": []
       }
     ]
   },
@@ -46,7 +36,7 @@
     "command": "~/.claude/statusline.sh",
     "padding": 0
   },
-  "alwaysThinkingEnabled": true,
+  "alwaysThinkingEnabled": false,
   "defaultMode": "plan",
   "allowedTools": [
     {
@@ -110,5 +100,26 @@
     "~/codebase/sf-ui-checkout",
     "~/codebase/sf-ui-web",
     "~/codebase/terraform"
-  ]
+  ],
+  "mcpServers": {
+    "MCP_DOCKER": {
+      "command": "docker",
+      "args": [
+        "mcp",
+        "gateway",
+        "run"
+      ]
+    },
+    "glean": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "@gleanwork/local-mcp-server"
+      ],
+      "env": {
+        "GLEAN_INSTANCE": "wayfair",
+        "GLEAN_API_TOKEN": "***REMOVED-SECRET***"
+      }
+    }
+  }
 }

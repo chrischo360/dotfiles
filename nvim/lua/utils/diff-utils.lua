@@ -5,7 +5,7 @@ local M = {}
 
 -- Get list of git branches
 local function get_git_branches()
-	local handle = io.popen('git branch -a --format="%(refname:short)"')
+	local handle = io.popen('git branch --format="%(refname:short)"')
 	if not handle then return {} end
 	
 	local branches = {}

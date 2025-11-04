@@ -111,7 +111,13 @@ add-zsh-hook chpwd load-nvmrc
 # Run once when shell starts (only if in a project directory)
 load-nvmrc
 
-# --- RNDR_VM --- 
+# --- Glean Enterprise Search ---
+# IMPORTANT: Replace these placeholder values with your actual Glean credentials
+export GLEAN_SUBDOMAIN="wayfair"  # e.g., "wayfair" if your Glean URL is wayfair.glean.com
+export GLEAN_API_TOKEN="***REMOVED-SECRET***"  # Get this from your Glean admin settings
+# export GLEAN_API_TOKEN="***REMOVED-SECRET***"
+
+# --- RNDR_VM ---
 export RNDR_VM="ext_ccho_wayfair_com@webphp-php8ccho-dsm1.us-central1-c.c.wf-gcp-us-sds-prod.internal"
 
 # --- Windsurf ---

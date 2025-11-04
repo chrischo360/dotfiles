@@ -7,6 +7,8 @@ return {
 			"MeanderingProgrammer/render-markdown.nvim",
 			opts = {
 				anti_conceal = { enabled = false },
+				-- Only render markdown in goose buffers to avoid conflict with markview
+				file_types = { "goose" },
 			},
 		}
 	},
