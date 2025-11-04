@@ -3,7 +3,7 @@ return {
   dependencies = "nvim-treesitter/nvim-treesitter",
   event = { "BufReadPre", "BufNewFile" },
   config = function()
-    require('nvim-ts-autotag').setup({
+    require("nvim-ts-autotag").setup({
       enable = true,
       filetypes = {
         "html",
@@ -18,8 +18,7 @@ return {
         "xml",
         "php",
         "markdown",
-      }
+      },
     })
   end,
 }
-

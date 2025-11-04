@@ -1,7 +1,8 @@
 return {
-  'echasnovski/mini.nvim', version = false, 
+  "echasnovski/mini.nvim",
+  version = false,
   config = function()
-    require('mini.comment').setup()
-    require('mini.pairs').setup()
-  end
+    require("mini.comment").setup()
+    require("mini.pairs").setup()
+  end,
 }
