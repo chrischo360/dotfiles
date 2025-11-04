@@ -28,6 +28,12 @@ return {
 		require("neo-tree").setup({
 			-- Auto-reveal configuration
 			filesystem = {
+				filtered_items = {
+					visible = true, -- Show hidden files by default
+					hide_dotfiles = false,
+					hide_gitignored = false,
+					hide_hidden = false, -- Windows hidden attribute
+				},
 				follow_current_file = {
 					enabled = true, -- This will find and focus the file in the tree
 					leave_dirs_open = true, -- Keep directories open when navigating

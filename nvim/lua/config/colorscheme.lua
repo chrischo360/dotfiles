@@ -16,7 +16,6 @@
 --   - everforest (dark/light based on background setting)
 --   - dracula
 --   - nord
-
 local default_colorscheme = "dracula-soft"
 
 -- Function to safely set colorscheme
