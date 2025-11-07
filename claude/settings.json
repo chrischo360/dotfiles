@@ -4,6 +4,7 @@
       "Bash"
     ]
   },
+  "model": "opus",
   "hooks": {
     "SessionEnd": [
       {
@@ -119,6 +120,18 @@
       "env": {
         "GLEAN_INSTANCE": "wayfair",
         "GLEAN_API_TOKEN": "***REMOVED-SECRET***"
+      }
+    },
+    "playwright-direct": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "@playwright/mcp-server"
+      ],
+      "env": {
+        "PLAYWRIGHT_BROWSER": "chromium",
+        "PLAYWRIGHT_HEADLESS": "false",
+        "PLAYWRIGHT_USER_DATA_DIR": "/Users/cc446g/.claude/browser-data"
       }
     }
   }

@@ -72,6 +72,11 @@ return {
       { "<M-k>", desc = "Harpoon: File 3" },
       { "<M-l>", desc = "Harpoon: File 4" },
     })
+
+    -- Register Oil.nvim keybindings
+    wk.add({
+      { "<leader>-", desc = "🗂️  Open Oil (file explorer)" },
+    })
   end,
   keys = {
     {

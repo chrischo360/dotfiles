@@ -35,7 +35,7 @@ return {
         filtered_items = {
           visible = true, -- Show hidden files by default
           hide_dotfiles = false,
-          hide_gitignored = false,
+          hide_gitignored = true,
           hide_hidden = false, -- Windows hidden attribute
         },
         follow_current_file = {
