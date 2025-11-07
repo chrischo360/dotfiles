@@ -1,138 +1,122 @@
 {
-  "permissions": {
-    "allow": [
-      "Bash"
-    ]
-  },
-  "model": "opus",
-  "hooks": {
-    "SessionEnd": [
-      {
-        "hooks": []
-      }
-    ],
-    "Notification": [
-      {
-        "hooks": []
-      }
-    ],
-    "Stop": [
-      {
-        "hooks": [
-          {
-            "type": "command",
-            "command": "~/dotfiles/claude/notify.sh"
-          }
-        ]
-      }
-    ],
-    "SubagentStop": [
-      {
-        "hooks": []
-      }
-    ]
-  },
-  "statusLine": {
-    "type": "command",
-    "command": "~/.claude/statusline.sh",
-    "padding": 0
-  },
-  "alwaysThinkingEnabled": false,
-  "defaultMode": "plan",
-  "allowedTools": [
-    {
-      "tool": "Read",
-      "pathPattern": "**"
-    },
-    {
-      "tool": "Write",
-      "pathPattern": "**"
-    },
-    {
-      "tool": "Edit",
-      "pathPattern": "**"
-    },
-    {
-      "tool": "Bash",
-      "commandPattern": "*"
-    },
-    {
-      "tool": "Glob",
-      "pathPattern": "**"
-    },
-    {
-      "tool": "Grep",
-      "pathPattern": "**"
-    },
-    {
-      "tool": "BashOutput",
-      "commandPattern": "*"
-    },
-    {
-      "tool": "KillShell",
-      "commandPattern": "*"
-    },
-    {
-      "tool": "Task",
-      "pathPattern": "*"
-    },
-    {
-      "tool": "TodoWrite"
-    },
-    {
-      "tool": "WebFetch",
-      "urlPattern": "https://github.com/**"
-    }
-  ],
-  "allowedDirectories": [
-    "~/dotfiles",
-    "~/codebase",
-    "~/codebase/basket-service",
-    "~/codebase/block-builder-api",
-    "~/codebase/block-builder-app",
-    "~/codebase/CF-Cypress",
-    "~/codebase/experience-decision-engine",
-    "~/codebase/homebase",
-    "~/codebase/homebase-design-tokens",
-    "~/codebase/homebase-docs",
-    "~/codebase/php",
-    "~/codebase/sf-js-libraries",
-    "~/codebase/sf-ui-cart-and-checkout",
-    "~/codebase/sf-ui-checkout",
-    "~/codebase/sf-ui-web",
-    "~/codebase/terraform"
-  ],
-  "mcpServers": {
-    "MCP_DOCKER": {
-      "command": "docker",
-      "args": [
-        "mcp",
-        "gateway",
-        "run"
-      ]
-    },
-    "glean": {
-      "command": "npx",
-      "args": [
-        "-y",
-        "@gleanwork/local-mcp-server"
-      ],
-      "env": {
-        "GLEAN_INSTANCE": "wayfair",
-        "GLEAN_API_TOKEN": "***REMOVED-SECRET***"
-      }
-    },
-    "playwright-direct": {
-      "command": "npx",
-      "args": [
-        "-y",
-        "@playwright/mcp-server"
-      ],
-      "env": {
-        "PLAYWRIGHT_BROWSER": "chromium",
-        "PLAYWRIGHT_HEADLESS": "false",
-        "PLAYWRIGHT_USER_DATA_DIR": "/Users/cc446g/.claude/browser-data"
-      }
-    }
-  }
+	"permissions": {
+		"allow": ["Bash"]
+	},
+	"hooks": {
+		"SessionEnd": [
+			{
+				"hooks": []
+			}
+		],
+		"Notification": [
+			{
+				"hooks": []
+			}
+		],
+		"Stop": [
+			{
+				"hooks": [
+					{
+						"type": "command",
+						"command": "~/dotfiles/claude/notify.sh"
+					}
+				]
+			}
+		],
+		"SubagentStop": [
+			{
+				"hooks": []
+			}
+		]
+	},
+	"statusLine": {
+		"type": "command",
+		"command": "~/.claude/statusline.sh",
+		"padding": 0
+	},
+	"alwaysThinkingEnabled": false,
+	"defaultMode": "plan",
+	"allowedTools": [
+		{
+			"tool": "Read",
+			"pathPattern": "**"
+		},
+		{
+			"tool": "Write",
+			"pathPattern": "**"
+		},
+		{
+			"tool": "Edit",
+			"pathPattern": "**"
+		},
+		{
+			"tool": "Bash",
+			"commandPattern": "*"
+		},
+		{
+			"tool": "Glob",
+			"pathPattern": "**"
+		},
+		{
+			"tool": "Grep",
+			"pathPattern": "**"
+		},
+		{
+			"tool": "BashOutput",
+			"commandPattern": "*"
+		},
+		{
+			"tool": "KillShell",
+			"commandPattern": "*"
+		},
+		{
+			"tool": "Task",
+			"pathPattern": "*"
+		},
+		{
+			"tool": "TodoWrite"
+		},
+		{
+			"tool": "WebFetch",
+			"urlPattern": "https://github.com/**"
+		}
+	],
+	"allowedDirectories": [
+		"~/dotfiles",
+		"~/codebase",
+		"~/codebase/basket-service",
+		"~/codebase/block-builder-api",
+		"~/codebase/block-builder-app",
+		"~/codebase/CF-Cypress",
+		"~/codebase/experience-decision-engine",
+		"~/codebase/homebase",
+		"~/codebase/homebase-design-tokens",
+		"~/codebase/homebase-docs",
+		"~/codebase/php",
+		"~/codebase/sf-js-libraries",
+		"~/codebase/sf-ui-cart-and-checkout",
+		"~/codebase/sf-ui-checkout",
+		"~/codebase/sf-ui-web",
+		"~/codebase/terraform"
+	],
+	"mcpServers": {
+		"MCP_DOCKER": {
+			"command": "docker",
+			"args": ["mcp", "gateway", "run"]
+		},
+		"glean": {
+			"command": "npx",
+			"args": ["-y", "@gleanwork/local-mcp-server"],
+			"env": {
+				"GLEAN_INSTANCE": "wayfair",
+				"GLEAN_API_TOKEN": "***REMOVED-SECRET***"
+			}
+		},
+		"playwright": {
+			"type": "stdio",
+			"command": "npx",
+			"args": ["@playwright/mcp@latest", "--extension"],
+			"env": {}
+		}
+	}
 }
