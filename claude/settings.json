@@ -10,7 +10,12 @@
 		],
 		"Notification": [
 			{
-				"hooks": []
+				"hooks": [
+					{
+						"type": "command",
+						"command": "~/dotfiles/claude/notify.sh"
+					}
+				]
 			}
 		],
 		"Stop": [
