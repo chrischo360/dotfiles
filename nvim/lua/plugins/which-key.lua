@@ -14,6 +14,23 @@ return {
       -- or leave it empty to use the default settings
     })
 
+    -- TEMPORARILY DISABLED FOR STEP-BY-STEP TESTING
+    --[[ Buffer importance keybindings - will add back in later steps
+    wk.add({
+      { "<leader>bi", group = "📊 Buffer Importance" },
+      { "<leader>bis", "<cmd>BufferStats<cr>", desc = "Current buffer stats" },
+      { "<leader>bit", "<cmd>BufferImportanceTop<cr>", desc = "Top important buffers" },
+      { "<leader>bir", "<cmd>BufferImportanceRelated<cr>", desc = "Related buffers" },
+      { "<leader>biR", "<cmd>BufferImportanceReset!<cr>", desc = "Reset all data" },
+    })
+
+    -- Add Telescope buffer importance command
+    wk.add({
+      { "<leader>f", group = "🔍 Find" },
+      { "<leader>fB", desc = "Buffers (Smart Sort)" },
+    })
+    --]]
+
     -- Register LSP keybindings with organized groups
     wk.add({
       -- LSP Navigation (g-prefix)

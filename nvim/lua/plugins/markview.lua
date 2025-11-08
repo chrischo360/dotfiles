@@ -2,6 +2,8 @@
 -- Description: Live markdown preview with icons for headings, formatted code blocks, and checkboxes.
 --              Uses theme-aware colors for consistent appearance.
 -- Keybindings: <leader>mp (toggle markdown preview)
+-- Test Test TEST TEST
+-- TEST TEST
 
 return {
   "OXY2DEV/markview.nvim",
@@ -13,7 +15,7 @@ return {
     require("markview").setup({
       preview = {
         modes = { "n", "no", "c" }, -- Preview in normal, operator-pending, command modes
-        hybrid_modes = { "i" }, -- Edit while previewing in insert mode
+        hybrid_modes = { "n", "i" }, -- Show raw markdown on cursor line in normal and insert modes
         filetypes = { "markdown", "md" },
       },
 

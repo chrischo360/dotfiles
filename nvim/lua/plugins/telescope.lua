@@ -18,6 +18,8 @@ return {
     { "<leader>ff", "<cmd>Telescope find_files<cr>", desc = "Find Files" },
     { "<leader>fg", "<cmd>Telescope live_grep<cr>", desc = "Live Grep" },
     { "<leader>fb", "<cmd>Telescope buffers<cr>", desc = "Buffers" },
+    -- TEMPORARILY DISABLED FOR STEP-BY-STEP TESTING
+    -- { "<leader>fB", function() require("config.telescope-importance").importance_buffers() end, desc = "Buffers (Smart)" },
     { "<leader>fF", "<cmd>Telescope frecency workspace=CWD<cr>", desc = "Find Files (Smart)" },
     { "<leader>fh", "<cmd>Telescope help_tags<cr>", desc = "Help Tags" },
     { "<leader>fr", "<cmd>Telescope oldfiles<cr>", desc = "Recent Files" },
@@ -115,6 +117,28 @@ return {
           mappings = {
             i = {
               ["<c-d>"] = actions.delete_buffer,
+              ["<c-i>"] = function(prompt_bufnr)
+                -- Show importance info for selected buffer
+                local selection = require("telescope.actions.state").get_selected_entry()
+                if selection then
+                  local importance = require("config.buffer-importance")
+                  local metrics = importance.get_sorted_buffers()
+
+                  for _, m in ipairs(metrics) do
+                    if m.filepath == selection.filename then
+                      vim.notify(string.format(
+                        "📊 Buffer: %s\nScore: %.2f | Edits: %d | Saves: %d | Time: %.1fh",
+                        vim.fn.fnamemodify(m.filepath, ":t"),
+                        m.score,
+                        m.edits,
+                        m.saves,
+                        m.time_hours
+                      ), vim.log.levels.INFO)
+                      break
+                    end
+                  end
+                end
+              end,
             },
           },
         },
