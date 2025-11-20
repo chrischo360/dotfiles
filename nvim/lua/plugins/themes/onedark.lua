@@ -4,6 +4,7 @@
 
 return {
   "olimorris/onedarkpro.nvim",
+  lazy = true, -- Only load when explicitly requested
   priority = 1000,
   opts = {
     options = {

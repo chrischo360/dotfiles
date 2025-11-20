@@ -4,6 +4,7 @@
 
 return {
   "rebelot/kanagawa.nvim",
+  lazy = true, -- Only load when explicitly requested
   priority = 1000,
   opts = {
     compile = false,

@@ -5,6 +5,7 @@
 return {
   "rose-pine/neovim",
   name = "rose-pine",
+  lazy = true, -- Only load when explicitly requested
   priority = 1000,
   opts = {
     variant = "auto", -- auto, main, moon, or dawn

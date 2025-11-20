@@ -41,30 +41,97 @@ gcloud() {
   gcloud "$@"        # Call the real gcloud
 }
 
-# --- NVM (Node Version Manager) - Direct Loading ---
+# --- NVM (Node Version Manager) - Smart Lazy Loading ---
 export NVM_DIR="$HOME/.nvm"
 
-# Load NVM immediately at startup
-if [ -s "$NVM_DIR/nvm.sh" ]; then
-  . "$NVM_DIR/nvm.sh"
-elif [ -s "/usr/local/opt/nvm/nvm.sh" ]; then
-  . "/usr/local/opt/nvm/nvm.sh"
-fi
+# Smart NVM initialization: load immediately if in Node project, otherwise lazy-load
+_nvm_loaded=0
 
-# Load nvm bash_completion if available
-if [ -s "$NVM_DIR/bash_completion" ]; then
-  . "$NVM_DIR/bash_completion"
-elif [ -s "/usr/local/opt/nvm/etc/bash_completion" ]; then
-  . "/usr/local/opt/nvm/etc/bash_completion"
+_load_nvm() {
+  if [ $_nvm_loaded -eq 1 ]; then
+    return
+  fi
+
+  # Load NVM
+  if [ -s "$NVM_DIR/nvm.sh" ]; then
+    . "$NVM_DIR/nvm.sh"
+  elif [ -s "/usr/local/opt/nvm/nvm.sh" ]; then
+    . "/usr/local/opt/nvm/nvm.sh"
+  fi
+
+  # Load nvm bash_completion if available
+  if [ -s "$NVM_DIR/bash_completion" ]; then
+    . "$NVM_DIR/bash_completion"
+  elif [ -s "/usr/local/opt/nvm/etc/bash_completion" ]; then
+    . "/usr/local/opt/nvm/etc/bash_completion"
+  fi
+
+  _nvm_loaded=1
+}
+
+# Check if we're in a Node project at startup
+if [[ -f "$(pwd)/.nvmrc" || -f "$(pwd)/package.json" ]]; then
+  _load_nvm
+else
+  # Lazy-load NVM via wrapper functions
+  nvm() {
+    _load_nvm
+    nvm "$@"
+  }
+
+  node() {
+    _load_nvm
+    unset -f node  # Remove wrapper
+    node "$@"
+  }
+
+  npm() {
+    _load_nvm
+    unset -f npm
+    npm "$@"
+  }
+
+  npx() {
+    _load_nvm
+    unset -f npx
+    npx "$@"
+  }
 fi
 
 # --- NODE_EXTRA_CA_CERTS ---
 export NODE_EXTRA_CA_CERTS=/Users/cc446g/codebase/wayfair-certs.pem
 
-# --- Pyenv (Homebrew installation) ---
+# --- Pyenv (Homebrew installation) - Lazy Loading ---
 export PYENV_ROOT="$HOME/.pyenv"
 export PATH="$PYENV_ROOT/shims:$PATH"
-eval "$(pyenv init -)"
+
+_pyenv_loaded=0
+
+_load_pyenv() {
+  if [ $_pyenv_loaded -eq 1 ]; then
+    return
+  fi
+  eval "$(pyenv init -)"
+  _pyenv_loaded=1
+}
+
+# Lazy-load pyenv
+pyenv() {
+  _load_pyenv
+  pyenv "$@"
+}
+
+python() {
+  _load_pyenv
+  unset -f python
+  python "$@"
+}
+
+pip() {
+  _load_pyenv
+  unset -f pip
+  pip "$@"
+}
 
 # --- Yarn ---
 export PATH="$HOME/.yarn/bin:$HOME/.config/yarn/global/node_modules/.bin:/Users/cc446g/.local/bin:$PATH"
@@ -85,13 +152,16 @@ load-nvmrc() {
   if [[ ! -f "$(pwd)/.nvmrc" && ! -f "$(pwd)/package.json" ]]; then
     return
   fi
-  
+
+  # Ensure NVM is loaded before trying to use it
+  _load_nvm
+
   local node_version="$(nvm version 2>/dev/null)"
   local nvmrc_path="$(nvm_find_nvmrc 2>/dev/null)"
-  
+
   if [ -n "$nvmrc_path" ]; then
     local nvmrc_node_version=$(nvm version "$(cat "${nvmrc_path}")" 2>/dev/null)
-    
+
     if [ "$nvmrc_node_version" = "N/A" ]; then
       echo "🔄 Installing Node version specified in .nvmrc..."
       nvm install
@@ -158,6 +228,39 @@ export ANTHROPIC_SMALL_FAST_MODEL='claude-sonnet-4-5@20250929'
 
 # --- End Claude Code Configuration ---
 
-#THIS MUST BE AT THE END OF THE FILE FOR SDKMAN TO WORK!!!
+# --- SDKMAN - Lazy Loading ---
 export SDKMAN_DIR="$HOME/.sdkman"
-[[ -s "$HOME/.sdkman/bin/sdkman-init.sh" ]] && source "$HOME/.sdkman/bin/sdkman-init.sh"
+
+_sdkman_loaded=0
+
+_load_sdkman() {
+  if [ $_sdkman_loaded -eq 1 ]; then
+    return
+  fi
+  [[ -s "$HOME/.sdkman/bin/sdkman-init.sh" ]] && source "$HOME/.sdkman/bin/sdkman-init.sh"
+  _sdkman_loaded=1
+}
+
+# Lazy-load SDKMAN for common Java tools
+sdk() {
+  _load_sdkman
+  sdk "$@"
+}
+
+java() {
+  _load_sdkman
+  unset -f java
+  java "$@"
+}
+
+mvn() {
+  _load_sdkman
+  unset -f mvn
+  mvn "$@"
+}
+
+gradle() {
+  _load_sdkman
+  unset -f gradle
+  gradle "$@"
+}

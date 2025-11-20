@@ -2,7 +2,7 @@
 -- Default theme and theme picker
 
 -- Set default colorscheme
--- Available themes:
+-- Available themes (other themes are lazy-loaded):
 --   - kanagawa-wave (dark)
 --   - kanagawa-lotus (light)
 --   - kanagawa-dragon (darker)
@@ -15,6 +15,7 @@
 --   - onedark_dark (dark, deeper blacks)
 --   - everforest (dark/light based on background setting)
 --   - dracula
+--   - dracula-soft (current default)
 --   - nord
 local default_colorscheme = "dracula-soft"
 
@@ -28,7 +29,8 @@ local function set_colorscheme(name)
   return true
 end
 
--- Set the default colorscheme on startup
+-- Set the default colorscheme on startup (only dracula loads immediately)
+-- Other themes are lazy-loaded when you switch to them
 set_colorscheme(default_colorscheme)
 
 -- Keybinding for theme picker (using Telescope)

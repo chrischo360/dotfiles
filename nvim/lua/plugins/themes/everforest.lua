@@ -4,6 +4,7 @@
 
 return {
   "neanias/everforest-nvim",
+  lazy = true, -- Only load when explicitly requested
   priority = 1000,
   opts = {
     background = "hard", -- hard, medium, soft
