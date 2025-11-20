@@ -4,6 +4,7 @@
       "Bash"
     ]
   },
+  "model": "opus",
   "hooks": {
     "SessionEnd": [
       {
