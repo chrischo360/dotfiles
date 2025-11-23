@@ -5,8 +5,8 @@ export PATH="/opt/homebrew/opt/php@8.1/sbin:$PATH"
 # Oh My Zsh Configuration - Optimized for Speed
 export ZSH="$HOME/.oh-my-zsh"
 
-# Fast theme - robbyrussell is one of the fastest
-ZSH_THEME="robbyrussell"
+# Disable Oh My Zsh theme (using Starship instead)
+ZSH_THEME=""
 
 # Minimal essential plugins only (removed heavy ones)
 plugins=(
@@ -20,6 +20,14 @@ DISABLE_AUTO_UPDATE="true"           # Skip auto-update checks
 DISABLE_UPDATE_PROMPT="true"         # Skip update prompts
 COMPLETION_WAITING_DOTS="false"      # Disable waiting dots
 DISABLE_UNTRACKED_FILES_DIRTY="true" # Speed up git status in large repos
+
+# Completion caching - only rebuild cache once per day
+autoload -Uz compinit
+if [[ -n ~/.zcompdump(#qNmh+24) ]]; then
+  compinit
+else
+  compinit -C  # Use cached version for faster startup
+fi
 
 # Source Oh My Zsh
 source $ZSH/oh-my-zsh.sh
@@ -264,3 +272,7 @@ gradle() {
   unset -f gradle
   gradle "$@"
 }
+
+# --- Starship Prompt ---
+# Initialize Starship (must be at the end of .zshrc)
+eval "$(starship init zsh)"
