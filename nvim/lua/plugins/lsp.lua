@@ -22,7 +22,11 @@ return {
       local capabilities = require("cmp_nvim_lsp").default_capabilities()
       -- Diagnostic configuration for performance
       vim.diagnostic.config({
-        virtual_text = true, -- Disable inline diagnostics
+        virtual_text = {
+          severity = { min = vim.diagnostic.severity.WARN }, -- Only warnings and errors
+          prefix = "●",
+          source = "if_many",
+        },
         update_in_insert = false,
         severity_sort = true,
         float = {
@@ -42,6 +46,17 @@ return {
         opts.max_height = opts.max_height or 20
         return orig_util_open_floating_preview(contents, syntax, opts, ...)
       end
+
+      -- Enable inlay hints for all LSP servers that support it
+      vim.api.nvim_create_autocmd("LspAttach", {
+        group = vim.api.nvim_create_augroup("LspInlayHints", { clear = true }),
+        callback = function(args)
+          local client = vim.lsp.get_client_by_id(args.data.client_id)
+          if client and client.server_capabilities.inlayHintProvider then
+            vim.lsp.inlay_hint.enable(true, { bufnr = args.buf })
+          end
+        end,
+      })
 
       -- Mason Setup
       require("mason").setup({
@@ -64,6 +79,7 @@ return {
         callback = function(event)
           local opts = { buffer = event.buf }
           vim.keymap.set("n", "K", vim.lsp.buf.hover, opts)
+          vim.keymap.set("i", "<C-k>", vim.lsp.buf.signature_help, opts)
           vim.keymap.set("n", "gd", vim.lsp.buf.definition, opts)
           vim.keymap.set("n", "gD", vim.lsp.buf.declaration, opts)
           vim.keymap.set("n", "gi", vim.lsp.buf.implementation, opts)
@@ -72,6 +88,12 @@ return {
           vim.keymap.set("n", "<leader>rn", vim.lsp.buf.rename, opts)
           vim.keymap.set("n", "<leader>ca", vim.lsp.buf.code_action, opts)
           vim.keymap.set("n", "<leader>f", vim.lsp.buf.format, opts)
+          vim.keymap.set("n", "<leader>ds", function()
+            require("telescope.builtin").lsp_document_symbols({
+              bufnr = event.buf,
+              default_text = "",
+            })
+          end, vim.tbl_extend("force", opts, { desc = "Document symbols" }))
 
           -- Diagnostic keymaps
           vim.keymap.set("n", "[d", vim.diagnostic.goto_prev, opts)

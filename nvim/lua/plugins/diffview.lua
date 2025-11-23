@@ -146,6 +146,9 @@ return {
           { "n", "g?", actions.help({ "view", "diff2" }), { desc = "Help" } },
         },
         diff3 = {
+          { "n", "1o", actions.diffget("ours"), { desc = "Obtain ours" } },
+          { "n", "2o", actions.diffget("theirs"), { desc = "Obtain theirs" } },
+          { "n", "3o", actions.diffget("base"), { desc = "Obtain base" } },
           { "n", "g?", actions.help({ "view", "diff3" }), { desc = "Help" } },
         },
         diff4 = {

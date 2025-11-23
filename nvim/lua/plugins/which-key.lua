@@ -67,6 +67,7 @@ return {
       { "<leader>db", desc = "Compare current with branch" },
       { "<leader>d2", desc = "Compare two branches" },
       { "<leader>dq", desc = "Quick Diff Menu" },
+      { "<leader>ds", desc = "Document symbols" },
     })
 
     -- Register Harpoon keybindings with organized groups

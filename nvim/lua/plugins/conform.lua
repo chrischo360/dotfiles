@@ -99,6 +99,9 @@ return {
       shfmt = {
         prepend_args = { "-i", "2" },
       },
+      rustfmt = {
+        prepend_args = { "--edition", "2024" },
+      },
       swift_format = {
         command = "swift-format",
         args = { "$FILENAME" },

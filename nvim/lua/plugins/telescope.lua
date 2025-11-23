@@ -15,8 +15,35 @@ return {
   },
   cmd = { "Telescope" },
   keys = {
-    { "<leader>ff", "<cmd>Telescope find_files<cr>", desc = "Find Files" },
-    { "<leader>fg", "<cmd>Telescope live_grep<cr>", desc = "Live Grep" },
+    -- Find Files
+    { "<leader>ff", "<cmd>Telescope find_files<cr>", desc = "Find Files", mode = { "n" } },
+    { "<leader>ff", function()
+      local saved_reg = vim.fn.getreg('"')
+      local saved_type = vim.fn.getregtype('"')
+      vim.cmd('noau normal! "vy"')
+      local text = vim.fn.getreg("v")
+      text = vim.fn.substitute(text, "\n", "", "g")
+      vim.fn.setreg('"', saved_reg, saved_type)
+      require("telescope.builtin").find_files({ default_text = text })
+    end, desc = "Find Files (selection)", mode = { "v" } },
+
+    -- Live Grep
+    { "<leader>fg", "<cmd>Telescope live_grep<cr>", desc = "Live Grep", mode = { "n" } },
+    { "<leader>fg", function()
+      local saved_reg = vim.fn.getreg('"')
+      local saved_type = vim.fn.getregtype('"')
+      vim.cmd('noau normal! "vy"')
+      local text = vim.fn.getreg("v")
+      text = vim.fn.substitute(text, "\n", "", "g")
+      vim.fn.setreg('"', saved_reg, saved_type)
+      require("telescope.builtin").live_grep({ default_text = text })
+    end, desc = "Live Grep (selection)", mode = { "v" } },
+    { "<leader>fw", function()
+      local text = vim.fn.expand("<cword>")
+      require("telescope.builtin").live_grep({
+        default_text = text
+      })
+    end, desc = "Find Word" },
     { "<leader>fb", "<cmd>Telescope buffers<cr>", desc = "Buffers" },
     -- TEMPORARILY DISABLED FOR STEP-BY-STEP TESTING
     -- { "<leader>fB", function() require("config.telescope-importance").importance_buffers() end, desc = "Buffers (Smart)" },
