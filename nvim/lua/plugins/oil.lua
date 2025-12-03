@@ -1,6 +1,6 @@
 -- Plugin: Oil.nvim
 -- Description: File explorer that lets you edit your filesystem like a normal Neovim buffer. Works alongside neo-tree for buffer-style file management.
--- Keybindings: <leader>- (open oil in current directory)
+-- Keybindings: <leader>- or <leader>E (open oil in current directory)
 
 return {
   "stevearc/oil.nvim",
@@ -8,6 +8,13 @@ return {
   keys = {
     {
       "<leader>-",
+      function()
+        require("oil").open()
+      end,
+      desc = "Open Oil (file explorer)",
+    },
+    {
+      "<leader>E",
       function()
         require("oil").open()
       end,

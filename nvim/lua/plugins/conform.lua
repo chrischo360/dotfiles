@@ -100,7 +100,8 @@ return {
         prepend_args = { "-i", "2" },
       },
       rustfmt = {
-        prepend_args = { "--edition", "2024" },
+        -- Let rustfmt infer edition from Cargo.toml or use default
+        prepend_args = {},
       },
       swift_format = {
         command = "swift-format",

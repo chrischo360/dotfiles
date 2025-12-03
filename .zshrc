@@ -276,3 +276,34 @@ gradle() {
 # --- Starship Prompt ---
 # Initialize Starship (must be at the end of .zshrc)
 eval "$(starship init zsh)"
+
+# Find Next Problem
+# alias cfnext='cargo run --bin next-unsolved'
+# alias cfnext='cargo run -p tools --bin next-unsolved'
+alias cfnext='(cd ~/codebase/codeforces && cargo run -p tools --bin next-unsolved)'
+alias cfnext800='cargo run --bin next-unsolved -- --level 800'
+alias cfnext1200='cargo run --bin next-unsolved -- --level 1200'
+
+# Progress Tracking (requires being in project root)
+alias cfadd='(cd ~/codebase/codeforces/training && cargo run -- add)'
+alias cfshow='(cd ~/codebase/codeforces/training && cargo run -- show)'
+
+# Navigation
+# alias cf="cd ~/codebase/codeforces"
+
+# Problem Solving (Fast!)
+# alias cfrun='cargo run -p solutions --bin'
+# alias cfbuild='cargo build -p solutions'
+# alias cfcheck='cargo check -p solutions'
+
+# alias cfnext-no-browser='cargo run --bin next-unsolved -- --no-browser'
+
+# alias cfmigrate='(cd ~/codebase/codeforces/training && cargo run -- migrate)'
+
+# Workspace Management
+# alias cfclean='cargo clean'
+# alias cfworkspace='cargo build --workspace'
+# alias cftest='cargo test --workspace'
+
+# Quick workflows
+# alias cfsolve='cfnext && cfrun'  # Find next problem and prepare to run

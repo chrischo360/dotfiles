@@ -58,6 +58,27 @@ return {
         end,
       })
 
+      -- Hide inlay hints on the current line and in insert/visual mode
+      -- local inlay_hint_group = vim.api.nvim_create_augroup("InlayHintsCursorLine", { clear = true })
+      --
+      -- local function update_inlay_hints()
+      --   local bufnr = vim.api.nvim_get_current_buf()
+      --   local mode = vim.api.nvim_get_mode().mode
+      --
+      --   -- Disable in insert or visual mode, or when on the current line
+      --   if mode == 'i' or mode == 'v' or mode == 'V' or mode == '\22' then -- \22 is visual block mode
+      --     vim.lsp.inlay_hint.enable(false, { bufnr = bufnr })
+      --   else
+      --     vim.lsp.inlay_hint.enable(true, { bufnr = bufnr })
+      --   end
+      -- end
+      --
+      -- -- Update on mode change
+      -- vim.api.nvim_create_autocmd({ "ModeChanged", "CursorMoved", "CursorMovedI" }, {
+      --   group = inlay_hint_group,
+      --   callback = update_inlay_hints,
+      -- })
+
       -- Mason Setup
       require("mason").setup({
         ui = {
@@ -87,7 +108,7 @@ return {
           vim.keymap.set("n", "gr", vim.lsp.buf.references, opts)
           vim.keymap.set("n", "<leader>rn", vim.lsp.buf.rename, opts)
           vim.keymap.set("n", "<leader>ca", vim.lsp.buf.code_action, opts)
-          vim.keymap.set("n", "<leader>f", vim.lsp.buf.format, opts)
+          -- vim.keymap.set("n", "<leader>f", vim.lsp.buf.format, opts) -- Disabled: conflicts with conform.nvim
           vim.keymap.set("n", "<leader>ds", function()
             require("telescope.builtin").lsp_document_symbols({
               bufnr = event.buf,
