@@ -3,3 +3,4 @@ ai-config/backups/
 ai-config/.env
 ai-config/memory/local/
 *.log
+.DS_Store

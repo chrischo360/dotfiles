@@ -279,7 +279,7 @@ eval "$(starship init zsh)"
 
 # --- Aliases ---
 # Alacritty theme picker
-alias at='~/dotfiles/scripts/alacritty-theme-picker.sh'
+alias at='~/dotfiles/alacritty/scripts/alacritty-theme-picker.sh'
 
 # Find Next Problem
 # alias cfnext='cargo run --bin next-unsolved'
