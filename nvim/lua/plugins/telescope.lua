@@ -144,28 +144,6 @@ return {
           mappings = {
             i = {
               ["<c-d>"] = actions.delete_buffer,
-              ["<c-i>"] = function(prompt_bufnr)
-                -- Show importance info for selected buffer
-                local selection = require("telescope.actions.state").get_selected_entry()
-                if selection then
-                  local importance = require("config.buffer-importance")
-                  local metrics = importance.get_sorted_buffers()
-
-                  for _, m in ipairs(metrics) do
-                    if m.filepath == selection.filename then
-                      vim.notify(string.format(
-                        "📊 Buffer: %s\nScore: %.2f | Edits: %d | Saves: %d | Time: %.1fh",
-                        vim.fn.fnamemodify(m.filepath, ":t"),
-                        m.score,
-                        m.edits,
-                        m.saves,
-                        m.time_hours
-                      ), vim.log.levels.INFO)
-                      break
-                    end
-                  end
-                end
-              end,
             },
           },
         },

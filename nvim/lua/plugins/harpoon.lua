@@ -163,7 +163,9 @@ return {
 
     -- Phase 3: UI Customization
     -- Better looking menu with borders
+    local harpoon_ui_group = vim.api.nvim_create_augroup("HarpoonUI", { clear = true })
     vim.api.nvim_create_autocmd("FileType", {
+      group = harpoon_ui_group,
       pattern = "harpoon",
       callback = function()
         vim.opt_local.cursorline = true

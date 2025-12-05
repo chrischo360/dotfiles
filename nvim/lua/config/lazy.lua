@@ -30,7 +30,9 @@ vim.opt.numberwidth = 4 -- Set the width of number column
 vim.opt.signcolumn = "yes" -- Always show sign column to prevent text shifting
 
 -- Force line numbers to stay visible
+local line_numbers_group = vim.api.nvim_create_augroup("ForceLineNumbers", { clear = true })
 vim.api.nvim_create_autocmd({ "BufEnter", "WinEnter", "ColorScheme" }, {
+  group = line_numbers_group,
   pattern = "*",
   callback = function()
     vim.wo.number = true

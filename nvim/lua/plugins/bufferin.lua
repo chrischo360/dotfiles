@@ -13,6 +13,11 @@ return {
     local buffer_mod = require("bufferin.buffer")
     local utils = require("bufferin.utils")
 
+    -- Initialize buffer importance tracking
+    if not importance.initialized then
+      importance.setup()
+    end
+
     -- Setup bufferin with default config
     bufferin.setup()
 

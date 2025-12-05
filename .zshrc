@@ -277,6 +277,10 @@ gradle() {
 # Initialize Starship (must be at the end of .zshrc)
 eval "$(starship init zsh)"
 
+# --- Aliases ---
+# Alacritty theme picker
+alias at='~/dotfiles/scripts/alacritty-theme-picker.sh'
+
 # Find Next Problem
 # alias cfnext='cargo run --bin next-unsolved'
 # alias cfnext='cargo run -p tools --bin next-unsolved'
