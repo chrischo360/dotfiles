@@ -1,6 +1,6 @@
 [general]
 import = [
-  "~/.config/alacritty/themes/themes/gruvbox_material_medium_dark.toml"
+  "~/.config/alacritty/themes/themes/dracula.toml"
 ]
 live_config_reload = true
 
@@ -21,75 +21,6 @@ normal = { family = "JetBrainsMono Nerd Font", style = "Medium" }
 bold = { family = "JetBrainsMono Nerd Font", style = "Bold" }
 italic = { family = "JetBrainsMono Nerd Font", style = "Italic" }
 size=13.25
-
-# Kanagawa Wave colors (commented out - using imported theme instead)
-# [colors.primary]
-# background = '#1f1f28'
-# foreground = '#dcd7ba'
-#
-# [colors.cursor]
-# text = '#1f1f28'
-# cursor = '#c8c093'
-#
-# # Normal colors
-# [colors.normal]
-# black   = '#090618'
-# red     = '#c34043'
-# green   = '#76946a'
-# yellow  = '#c0a36e'
-# blue    = '#7e9cd8'
-# magenta = '#957fb8'
-# cyan    = '#6a9589'
-# white   = '#c8c093'
-#
-# # Bright colors
-# [colors.bright]
-# black   = '#727169'
-# red     = '#e82424'
-# green   = '#98bb6c'
-# yellow  = '#e6c384'
-# blue    = '#7fb4ca'
-# magenta = '#938aa9'
-# cyan    = '#7aa89f'
-# white   = '#dcd7ba'
-#
-# # Selection colors
-# [colors.selection]
-# text = '#c8c093'
-# background = '#2d4f67'
-#
-# # Search colors
-# [colors.search.matches]
-# foreground = '#1f1f28'
-# background = '#c0a36e'
-#
-# [colors.search.focused_match]
-# foreground = '#1f1f28'
-# background = '#e6c384'
-#
-# # Footer bar colors
-# [colors.footer_bar]
-# foreground = '#1f1f28'
-# background = '#727169'
-#
-# # Hints
-# [colors.hints.start]
-# foreground = '#1f1f28'
-# background = '#e6c384'
-#
-# [colors.hints.end]
-# foreground = '#1f1f28'
-# background = '#727169'
-#
-# # Line indicator
-# [colors.line_indicator]
-# foreground = 'None'
-# background = 'None'
-#
-# # VI mode
-# [colors.vi_mode_cursor]
-# text = '#1f1f28'
-# cursor = '#7e9cd8'
 
 [env]
 TERM = "xterm-256color"
