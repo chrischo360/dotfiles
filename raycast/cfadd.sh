@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/zsh
 
 # Required parameters:
 # @raycast.schemaVersion 1
@@ -14,8 +14,5 @@
 # @raycast.description Add progress to CodeForces training tracker
 # @raycast.author cc446g
 
-# Source zshrc to get access to aliases and environment
-source ~/.zshrc
-
 # Run the command
-(cd ~/codebase/codeforces/training && cargo run -- add)
+cd ~/codebase/codeforces/training && cargo run -- add
