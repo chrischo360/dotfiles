@@ -107,7 +107,7 @@ else
 fi
 
 # --- NODE_EXTRA_CA_CERTS ---
-export NODE_EXTRA_CA_CERTS=/Users/cc446g/codebase/wayfair-certs.pem
+export NODE_EXTRA_CA_CERTS="$HOME/certificates/wayfair-certs.pem"
 
 # --- Pyenv (Homebrew installation) - Lazy Loading ---
 export PYENV_ROOT="$HOME/.pyenv"
@@ -190,23 +190,19 @@ add-zsh-hook chpwd load-nvmrc
 load-nvmrc
 
 # --- Glean Enterprise Search ---
-# IMPORTANT: Replace these placeholder values with your actual Glean credentials
-export GLEAN_SUBDOMAIN="wayfair"  # e.g., "wayfair" if your Glean URL is wayfair.glean.com
-export GLEAN_API_TOKEN="***REMOVED-SECRET***"  # Get this from your Glean admin settings
-# export GLEAN_API_TOKEN="***REMOVED-SECRET***"
+export GLEAN_SUBDOMAIN="wayfair"
+export GLEAN_API_TOKEN="***REMOVED-SECRET***"
 
 # --- RNDR_VM ---
 export RNDR_VM="ext_ccho_wayfair_com@webphp-php8ccho-dsm1.us-central1-c.c.wf-gcp-us-sds-prod.internal"
 
 # --- Windsurf ---
-export PATH="/Users/cc446g/.codeium/windsurf/bin:$PATH"
+export PATH="$HOME/.codeium/windsurf/bin:$PATH"
 
 # --- Performance: Reduce history file operations ---
 HISTSIZE=1000
 SAVEHIST=1000
 export PATH="$HOME/.composer/vendor/bin:$PATH"
-export PATH="$HOME/.local/bin:$PATH"
-export NODE_EXTRA_CA_CERTS=~/certificates/wayfair-certs.pem
 
 # --- Claude Code on Vertex AI Configuration ---
 
@@ -279,35 +275,13 @@ eval "$(starship init zsh)"
 
 # --- Aliases ---
 # Alacritty theme picker
-alias at='~/dotfiles/alacritty/scripts/alacritty-theme-picker.sh'
+alias at="$HOME/dotfiles/alacritty/scripts/alacritty-theme-picker.sh"
 
-# Find Next Problem
-# alias cfnext='cargo run --bin next-unsolved'
-# alias cfnext='cargo run -p tools --bin next-unsolved'
-alias cfnext='(cd ~/codebase/codeforces && cargo run -p tools --bin next-unsolved)'
-alias cfnext800='cargo run --bin next-unsolved -- --level 800'
-alias cfnext1200='cargo run --bin next-unsolved -- --level 1200'
+# CodeForces - Find Next Problem
+alias cfnext="(cd $HOME/codebase/codeforces && cargo run -p tools --bin next-unsolved)"
+alias cfnext800="cargo run --bin next-unsolved -- --level 800"
+alias cfnext1200="cargo run --bin next-unsolved -- --level 1200"
 
-# Progress Tracking (requires being in project root)
-alias cfadd='(cd ~/codebase/codeforces/training && cargo run -- add)'
-alias cfshow='(cd ~/codebase/codeforces/training && cargo run -- show)'
-
-# Navigation
-# alias cf="cd ~/codebase/codeforces"
-
-# Problem Solving (Fast!)
-# alias cfrun='cargo run -p solutions --bin'
-# alias cfbuild='cargo build -p solutions'
-# alias cfcheck='cargo check -p solutions'
-
-# alias cfnext-no-browser='cargo run --bin next-unsolved -- --no-browser'
-
-# alias cfmigrate='(cd ~/codebase/codeforces/training && cargo run -- migrate)'
-
-# Workspace Management
-# alias cfclean='cargo clean'
-# alias cfworkspace='cargo build --workspace'
-# alias cftest='cargo test --workspace'
-
-# Quick workflows
-# alias cfsolve='cfnext && cfrun'  # Find next problem and prepare to run
+# CodeForces - Progress Tracking
+alias cfadd="(cd $HOME/codebase/codeforces/training && cargo run -- add)"
+alias cfshow="(cd $HOME/codebase/codeforces/training && cargo run -- show)"
