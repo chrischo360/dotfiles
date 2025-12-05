@@ -34,4 +34,4 @@ echo "==================" >> /tmp/statusline-debug.log
 echo "" >> /tmp/statusline-debug.log
 
 # Now run the actual statusline script
-echo "$INPUT" | /Users/cc446g/dotfiles/claude/statusline.sh
+echo "$INPUT" | /Users/cc446g/dotfiles/claude/scripts/statusline.sh

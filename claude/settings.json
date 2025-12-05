@@ -1,6 +1,7 @@
 {
   "permissions": {
     "allow": [
+      "Bash",
       "Read",
       "Write",
       "Edit",
@@ -9,7 +10,6 @@
       "Task",
       "TodoWrite",
       "BashOutput",
-      "KillShell",
       "WebFetch"
     ]
   },
@@ -25,7 +25,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "~/dotfiles/claude/notify.sh"
+            "command": "~/dotfiles/claude/scripts/notify.sh"
           }
         ]
       }
@@ -35,7 +35,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "~/dotfiles/claude/notify.sh"
+            "command": "~/dotfiles/claude/scripts/notify.sh"
           }
         ]
       }
@@ -68,7 +68,43 @@
     },
     {
       "tool": "Bash",
-      "commandPattern": "*"
+      "commandPattern": "ls*"
+    },
+    {
+      "tool": "Bash",
+      "commandPattern": "cd*"
+    },
+    {
+      "tool": "Bash",
+      "commandPattern": "pwd*"
+    },
+    {
+      "tool": "Bash",
+      "commandPattern": "cat*"
+    },
+    {
+      "tool": "Bash",
+      "commandPattern": "grep*"
+    },
+    {
+      "tool": "Bash",
+      "commandPattern": "echo*"
+    },
+    {
+      "tool": "Bash",
+      "commandPattern": "mkdir*"
+    },
+    {
+      "tool": "Bash",
+      "commandPattern": "touch*"
+    },
+    {
+      "tool": "Bash",
+      "commandPattern": "which*"
+    },
+    {
+      "tool": "Bash",
+      "commandPattern": "ps*"
     },
     {
       "tool": "Glob",
@@ -83,10 +119,6 @@
       "commandPattern": "*"
     },
     {
-      "tool": "KillShell",
-      "commandPattern": "*"
-    },
-    {
       "tool": "Task",
       "pathPattern": "*"
     },
@@ -95,7 +127,7 @@
     },
     {
       "tool": "WebFetch",
-      "urlPattern": "https://github.com/**"
+      "urlPattern": "https://**"
     }
   ],
   "allowedDirectories": [
