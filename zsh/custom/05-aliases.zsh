@@ -3,14 +3,11 @@
 # Alacritty theme picker
 alias at="$HOME/dotfiles/alacritty/scripts/alacritty-theme-picker.sh"
 
-# CodeForces - Find Next Problem
-alias cfnext="(cd $HOME/codebase/codeforces && cargo run -p tools --bin next-unsolved)"
-alias cfnext800="cargo run --bin next-unsolved -- --level 800"
-alias cfnext1200="cargo run --bin next-unsolved -- --level 1200"
-
-# CodeForces - Progress Tracking
-alias cfadd="(cd $HOME/codebase/codeforces/training && cargo run -- add)"
-alias cfshow="(cd $HOME/codebase/codeforces/training && cargo run -- show)"
+# CodeForces - Unified CLI (Release Binary)
+alias cfnext='~/codebase/codeforces/target/release/cf next'
+alias cfshow='~/codebase/codeforces/target/release/cf show'
+alias cfadd='~/codebase/codeforces/target/release/cf add'
+alias cfbuild='cd ~/codebase/codeforces && cargo build --release --bin cf'
 
 # Modern CLI Tools (eza, bat, fd, delta)
 alias ls="eza --icons"

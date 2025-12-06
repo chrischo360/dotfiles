@@ -1,6 +1,6 @@
 [general]
 import = [
-  "~/.config/alacritty/themes/themes/dracula.toml"
+  "~/.config/alacritty/themes/themes/papercolor_light.toml"
 ]
 live_config_reload = true
 

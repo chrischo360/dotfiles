@@ -20,6 +20,7 @@ M.light_themes = {
   "onelight",
   "gruvbox",
   "dayfox",
+  "dawnfox",
   "kanagawa-lotus",
 }
 
@@ -51,9 +52,7 @@ M.dark_themes = {
   "carbonfox",
   "duskfox",
   "nordfox",
-  "dawnfox",
   "terafox",
-  "solarized",
   "oxocarbon",
   "nightfly",
   "palenight",
@@ -132,7 +131,7 @@ M.theme_map = {
   github_light_high_contrast = "github_light_high_contrast",
   solarized_light = "solarized",
   one_light = "onelight",
-  selenized_light = "solarized",  -- Close alternative
+  selenized_light = "solarized",
 
   -- Warm & Earthy
   gruvbox_light = "gruvbox",
@@ -277,6 +276,21 @@ function M.is_theme_for_appearance(theme_name, appearance)
     end
   end
   return false
+end
+
+-- Function to get theme type: "light", "dark", or "dual"
+function M.get_theme_type(theme_name)
+  local in_light = vim.tbl_contains(M.light_themes, theme_name)
+  local in_dark = vim.tbl_contains(M.dark_themes, theme_name)
+
+  if in_light and in_dark then
+    return "dual"
+  elseif in_light then
+    return "light"
+  elseif in_dark then
+    return "dark"
+  end
+  return "unknown"
 end
 
 return M

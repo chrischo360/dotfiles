@@ -7,7 +7,9 @@ return {
   lazy = true,
   priority = 1000,
   opts = {
-    transparent = false,
+    transparent = {
+      enabled = false,
+    },
     palette = 'solarized', -- solarized or selenized
     styles = {
       comments = { italic = true, bold = false },

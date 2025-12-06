@@ -11,7 +11,7 @@
 -- STARTUP NOTIFICATION
 -- ============================================================================
 -- Why: Confirms Hammerspoon loaded successfully after changes
-hs.notify.new({title="Hammerspoon", informativeText="Config loaded ✓"}):send()
+hs.notify.new({ title = "Hammerspoon", informativeText = "Config loaded ✓" }):send()
 
 -- ============================================================================
 -- CONFIG RELOAD HOTKEY
@@ -19,7 +19,7 @@ hs.notify.new({title="Hammerspoon", informativeText="Config loaded ✓"}):send()
 -- Why: Essential for rapid development - reload config without restarting app
 -- Hotkey: Ctrl+Alt+Cmd+R
 -- Reason for combo: Unlikely to conflict, uses all modifier keys for safety
-hs.hotkey.bind({"ctrl", "alt", "cmd"}, "R", function()
+hs.hotkey.bind({ "ctrl", "alt", "cmd" }, "R", function()
   hs.reload()
 end)
 
@@ -42,7 +42,8 @@ hs.alert.show("Config Reloaded")
 --   Shift+Cmd+Delete - Leave current channel
 -- ============================================================================
 
-require("slack")
+-- UNCOMMENT TO ENABLE SLACK OVERRIDES
+-- require("slack")
 
 -- ============================================================================
 -- FUTURE EXTENSIONS (commented out - uncomment to enable)

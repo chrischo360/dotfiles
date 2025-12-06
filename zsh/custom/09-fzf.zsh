@@ -1,11 +1,30 @@
-# FZF Configuration
+# FZF Configuration - Lazy Loading
 
-# Set up fzf key bindings and fuzzy completion
+# Lazy-load FZF - only initialize when first used
+_fzf_loaded=0
+
+_load_fzf() {
+  if [ $_fzf_loaded -eq 1 ]; then
+    return
+  fi
+
+  if [ -f ~/.fzf.zsh ]; then
+    source ~/.fzf.zsh
+  fi
+
+  _fzf_loaded=1
+}
+
+# Wrapper function - loads FZF on first use
 if [ -f ~/.fzf.zsh ]; then
-  source ~/.fzf.zsh
+  fzf() {
+    _load_fzf
+    unset -f fzf  # Remove wrapper, use real fzf
+    fzf "$@"
+  }
 fi
 
-# FZF options
+# FZF options (these don't require loading)
 export FZF_DEFAULT_OPTS="--height 40% --layout=reverse --border"
 
 # Use fd for FZF if available

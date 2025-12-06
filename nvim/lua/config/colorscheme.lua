@@ -64,9 +64,43 @@ local function set_colorscheme(name)
   return true
 end
 
+-- Save the selected colorscheme to persist across sessions
+local function save_colorscheme(name)
+  local file = io.open(vim.fn.stdpath('config') .. '/last-theme.txt', 'w')
+  if file then
+    -- Save both theme name and background setting
+    file:write(name .. '\n' .. vim.o.background)
+    file:close()
+  end
+end
+
+-- Load the last saved colorscheme
+local function load_saved_colorscheme()
+  local file = io.open(vim.fn.stdpath('config') .. '/last-theme.txt', 'r')
+  if file then
+    local theme = file:read('*l')  -- Read first line (theme name)
+    local bg = file:read('*l')     -- Read second line (background)
+    file:close()
+
+    -- Set background first if it was saved
+    if bg and (bg == 'light' or bg == 'dark') then
+      vim.o.background = bg
+    end
+
+    return theme
+  end
+  return nil
+end
+
 -- Set the default colorscheme on startup
--- Themes are lazy-loaded when you switch to them
-set_colorscheme(default_colorscheme)
+-- First try saved theme, then coordinated theme
+local saved_theme = load_saved_colorscheme()
+if saved_theme and saved_theme ~= "" then
+  set_colorscheme(saved_theme)
+else
+  -- Fallback to coordinated theme on first launch
+  set_colorscheme(get_coordinated_theme())
+end
 
 -- Keybinding for theme picker with live preview - ALL THEMES
 vim.keymap.set("n", "<leader>th", function()
@@ -89,6 +123,24 @@ vim.keymap.set("n", "<leader>th", function()
     prompt_title = header,
     finder = finders.new_table {
       results = all_themes,
+      entry_maker = function(entry)
+        local theme_type = theme_mapping.get_theme_type(entry)
+        local indicator = ""
+
+        if theme_type == "light" then
+          indicator = " (light)"
+        elseif theme_type == "dark" then
+          indicator = " (dark)"
+        elseif theme_type == "dual" then
+          indicator = " (dual)"
+        end
+
+        return {
+          value = entry,
+          display = entry .. indicator,
+          ordinal = entry .. indicator,
+        }
+      end
     },
     sorter = conf.generic_sorter({}),
     attach_mappings = function(prompt_bufnr, map)
@@ -137,7 +189,18 @@ vim.keymap.set("n", "<leader>th", function()
         local selection = action_state.get_selected_entry()
         actions.close(prompt_bufnr)
         if selection then
+          local theme_type = theme_mapping.get_theme_type(selection.value)
+
+          -- Set appropriate background before applying theme
+          if theme_type == "light" then
+            vim.o.background = "light"
+          elseif theme_type == "dark" then
+            vim.o.background = "dark"
+          end
+          -- For "dual" themes, keep current background
+
           vim.cmd.colorscheme(selection.value)
+          save_colorscheme(selection.value)  -- Save as default for future sessions
         end
       end)
 

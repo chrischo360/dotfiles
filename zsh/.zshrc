@@ -14,10 +14,10 @@ ZSH_THEME=""
 # Minimal essential plugins
 plugins=(
   git                    # Essential for git completions
-  npm                    # npm completions
+  # npm                  # DISABLED - slow completions, rarely needed
   command-not-found      # Suggests package to install
   zsh-autosuggestions   # Fish-like autosuggestions
-  zsh-syntax-highlighting # Syntax highlighting (load last)
+  fast-syntax-highlighting # Fast syntax highlighting (load last)
 )
 
 # Performance optimizations
@@ -25,6 +25,10 @@ DISABLE_AUTO_UPDATE="true"           # Skip auto-update checks
 DISABLE_UPDATE_PROMPT="true"         # Skip update prompts
 COMPLETION_WAITING_DOTS="false"      # Disable waiting dots
 DISABLE_UNTRACKED_FILES_DIRTY="true" # Speed up git status in large repos
+
+# History deduplication - speeds up autosuggestions
+setopt HIST_IGNORE_ALL_DUPS  # Remove older duplicate entries from history
+setopt HIST_FIND_NO_DUPS     # Don't show duplicates in search
 
 # Completion caching - only rebuild cache once per day
 autoload -Uz compinit
@@ -49,7 +53,8 @@ for config ($HOME/dotfiles/zsh/custom/*.zsh) source $config
 # ================================
 
 # Initialize Starship (must be at the end of .zshrc)
-eval "$(starship init zsh)"
+# DISABLED: Using zsh-native prompt instead (see custom/10-prompt.zsh)
+# eval "$(starship init zsh)"
 
 # Profiling - uncomment to see timing
 # zprof

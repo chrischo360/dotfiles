@@ -126,10 +126,8 @@ return {
       })
 
       -- LSP Server Configurations
-      local lspconfig = require("lspconfig")
-
       -- Lua
-      lspconfig.lua_ls.setup({
+      vim.lsp.config('lua_ls', {
         capabilities = capabilities,
         settings = {
           Lua = {
@@ -147,7 +145,7 @@ return {
       })
 
       -- Python
-      lspconfig.pyright.setup({
+      vim.lsp.config('pyright', {
         capabilities = capabilities,
         settings = {
           python = {
@@ -159,12 +157,12 @@ return {
       })
 
       -- TypeScript
-      lspconfig.ts_ls.setup({
+      vim.lsp.config('ts_ls', {
         capabilities = capabilities,
       })
 
       -- Java
-      lspconfig.jdtls.setup({
+      vim.lsp.config('jdtls', {
         capabilities = capabilities,
         settings = {
           java = {
@@ -213,7 +211,7 @@ return {
       })
 
       -- PHP
-      lspconfig.intelephense.setup({
+      vim.lsp.config('intelephense', {
         capabilities = capabilities,
         settings = {
           intelephense = {
@@ -311,7 +309,7 @@ return {
       })
 
       -- Rust
-      lspconfig.rust_analyzer.setup({
+      vim.lsp.config('rust_analyzer', {
         capabilities = capabilities,
         settings = {
           ["rust-analyzer"] = {
@@ -334,12 +332,12 @@ return {
       })
 
       -- Swift
-      lspconfig.sourcekit.setup({
+      vim.lsp.config('sourcekit', {
         capabilities = capabilities,
         cmd = { "sourcekit-lsp" },
         filetypes = { "swift", "objective-c", "objective-cpp" },
         root_dir = function(fname)
-          return require("lspconfig.util").root_pattern("Package.swift", ".git")(fname)
+          return vim.fs.root(fname, { "Package.swift", ".git" })
         end,
       })
       -- Completion Setup
