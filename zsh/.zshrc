@@ -1,3 +1,6 @@
+# Profiling - uncomment to debug slow startup
+# zmodload zsh/zprof
+
 # PHP 8.1 - Set as default
 export PATH="/opt/homebrew/opt/php@8.1/bin:$PATH"
 export PATH="/opt/homebrew/opt/php@8.1/sbin:$PATH"
@@ -8,9 +11,11 @@ export ZSH="$HOME/.oh-my-zsh"
 # Disable Oh My Zsh theme (using Starship instead)
 ZSH_THEME=""
 
-# Minimal essential plugins only (removed heavy ones)
+# Minimal essential plugins
 plugins=(
   git                    # Essential for git completions
+  npm                    # npm completions
+  command-not-found      # Suggests package to install
   zsh-autosuggestions   # Fish-like autosuggestions
   zsh-syntax-highlighting # Syntax highlighting (load last)
 )
@@ -45,3 +50,6 @@ for config ($HOME/dotfiles/zsh/custom/*.zsh) source $config
 
 # Initialize Starship (must be at the end of .zshrc)
 eval "$(starship init zsh)"
+
+# Profiling - uncomment to see timing
+# zprof

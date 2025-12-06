@@ -1,5 +1,8 @@
 # PATH Configuration
 
+# Local binaries (includes Claude Code CLI)
+export PATH="$HOME/.local/bin:$PATH"
+
 # Python
 export PATH="$PYENV_ROOT/shims:$PATH"
 
