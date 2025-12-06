@@ -29,3 +29,11 @@ alias gd="git diff"
 alias grep="grep --color=auto"
 alias df="df -h"
 alias du="du -h"
+
+# Nvim Memory Monitoring & Cleanup
+alias nvim-report='~/dotfiles/scripts/nvim-process-report.sh'
+alias nvim-summary='~/dotfiles/scripts/nvim-process-report.sh --summary'
+alias nvim-notify='~/dotfiles/scripts/nvim-memory-notify.sh'
+alias cleanup-nvim='~/dotfiles/scripts/cleanup-old-nvim.sh'
+alias cleanup-nvim-dry='~/dotfiles/scripts/cleanup-old-nvim.sh --dry-run'
+alias cleanup-nvim-idle='~/dotfiles/scripts/cleanup-old-nvim.sh --idle-only'

@@ -217,9 +217,35 @@ return {
           intelephense = {
             files = {
               maxSize = 1000000,
+              exclude = {
+                "**/.git/**",
+                "**/.svn/**",
+                "**/.hg/**",
+                "**/CVS/**",
+                "**/.DS_Store/**",
+                "**/node_modules/**",
+                "**/bower_components/**",
+                "**/vendor/**/Tests/**",
+                "**/vendor/**/tests/**",
+                "**/vendor/**/.git/**",
+                "**/vendor-bin/**",
+                "**/cache/**",
+                "**/tmp/**",
+                "**/temp/**",
+                "**/storage/framework/**",
+                "**/storage/logs/**",
+                "**/bootstrap/cache/**",
+                "**/tests/**", -- Exclude test directories for performance
+                "**/.buildkite/**",
+                "**/.github/**",
+                "**/bundler/**",
+                "**/*.min.js",
+                "**/*.min.css",
+              },
             },
             environment = {
               phpVersion = "8.1", -- Updated to PHP 8.1
+              includePaths = {}, -- Clear default include paths to reduce indexing
             },
             stubs = {
               "apache",
@@ -303,6 +329,15 @@ return {
             },
             format = {
               enable = true,
+            },
+            -- Performance optimizations
+            completion = {
+              insertUseDeclaration = true,
+              fullyQualifyGlobalConstantsAndFunctions = false,
+              maxItems = 100, -- Limit completion items
+            },
+            indexing = {
+              maxFileSize = 1000000, -- 1MB max file size for indexing
             },
           },
         },

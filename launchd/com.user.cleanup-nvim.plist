@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+    <key>Label</key>
+    <string>com.user.cleanup-nvim</string>
+
+    <key>ProgramArguments</key>
+    <array>
+        <string>/Users/cc446g/dotfiles/scripts/cleanup-old-nvim.sh</string>
+        <string>48</string>
+    </array>
+
+    <key>RunAtLoad</key>
+    <true/>
+
+    <key>StartCalendarInterval</key>
+    <dict>
+        <key>Hour</key>
+        <integer>2</integer>
+        <key>Minute</key>
+        <integer>0</integer>
+    </dict>
+
+    <!-- Run every 24 hours if computer is on -->
+    <key>StartInterval</key>
+    <integer>86400</integer>
+
+    <key>StandardOutPath</key>
+    <string>/Users/cc446g/.local/log/cleanup-nvim.log</string>
+
+    <key>StandardErrorPath</key>
+    <string>/Users/cc446g/.local/log/cleanup-nvim-error.log</string>
+
+    <key>ProcessType</key>
+    <string>Background</string>
+</dict>
+</plist>
