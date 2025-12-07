@@ -49,7 +49,25 @@ create_symlink() {
 }
 
 # Main installation steps
-echo -e "${BLUE}[1/5] Creating symlinks...${NC}"
+echo -e "${BLUE}[1/6] Installing Homebrew packages...${NC}"
+
+if command -v brew &> /dev/null; then
+    echo -e "${GREEN}  ✓ Homebrew detected${NC}"
+    if [ -f "$DOTFILES_DIR/Brewfile" ]; then
+        echo -e "${YELLOW}  Installing packages from Brewfile...${NC}"
+        brew bundle --file="$DOTFILES_DIR/Brewfile" --no-lock
+        echo -e "${GREEN}  ✓ Homebrew packages installed${NC}"
+    else
+        echo -e "${YELLOW}  ⚠ Brewfile not found, skipping package installation${NC}"
+    fi
+else
+    echo -e "${RED}  ✗ Homebrew not installed${NC}"
+    echo -e "${YELLOW}  Install Homebrew first: /bin/bash -c \"\$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)\"${NC}"
+    echo -e "${YELLOW}  Then re-run this script to install packages${NC}"
+fi
+
+echo ""
+echo -e "${BLUE}[2/6] Creating symlinks...${NC}"
 
 # Zsh
 create_symlink "$DOTFILES_DIR/zsh/.zshrc" "$HOME/.zshrc"
@@ -72,9 +90,6 @@ create_symlink "$DOTFILES_DIR/alacritty" "$HOME/.config/alacritty"
 # Neovim
 create_symlink "$DOTFILES_DIR/nvim" "$HOME/.config/nvim"
 
-# Starship
-create_symlink "$DOTFILES_DIR/starship/starship.toml" "$HOME/.config/starship.toml"
-
 # Claude Code
 mkdir -p "$HOME/.claude"
 create_symlink "$DOTFILES_DIR/claude/settings.json" "$HOME/.claude/settings.json"
@@ -83,7 +98,7 @@ create_symlink "$DOTFILES_DIR/claude/agents" "$HOME/.claude/agents"
 create_symlink "$DOTFILES_DIR/claude/CLAUDE.md" "$HOME/.claude/CLAUDE.md"
 
 echo ""
-echo -e "${BLUE}[2/5] Making scripts executable...${NC}"
+echo -e "${BLUE}[3/6] Making scripts executable...${NC}"
 
 # Make all shell scripts executable
 find "$DOTFILES_DIR/claude/scripts" -name "*.sh" -exec chmod +x {} \;
@@ -95,7 +110,7 @@ chmod +x "$DOTFILES_DIR/claude/status"
 echo -e "${GREEN}  ✓ Scripts made executable${NC}"
 
 echo ""
-echo -e "${BLUE}[3/5] Checking Oh My Zsh installation...${NC}"
+echo -e "${BLUE}[4/6] Checking Oh My Zsh installation...${NC}"
 
 if [ ! -d "$HOME/.oh-my-zsh" ]; then
     echo -e "${YELLOW}  ⚠ Oh My Zsh not found${NC}"
@@ -105,7 +120,7 @@ else
 fi
 
 echo ""
-echo -e "${BLUE}[4/5] Checking Zsh plugins...${NC}"
+echo -e "${BLUE}[5/6] Checking Zsh plugins...${NC}"
 
 ZSH_CUSTOM="${ZSH_CUSTOM:-$HOME/.oh-my-zsh/custom}"
 
@@ -126,7 +141,7 @@ else
 fi
 
 echo ""
-echo -e "${BLUE}[5/5] Checking required packages...${NC}"
+echo -e "${BLUE}[6/6] Verifying package installation...${NC}"
 
 check_command() {
     if command -v "$1" &> /dev/null; then
@@ -141,17 +156,16 @@ check_command() {
 # Check essential commands
 check_command "brew" || echo -e "${YELLOW}    Install: /bin/bash -c \"\$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)\"${NC}"
 check_command "git"
-check_command "tmux" || echo -e "${YELLOW}    Install: brew install tmux${NC}"
-check_command "nvim" || echo -e "${YELLOW}    Install: brew install neovim${NC}"
-check_command "starship" || echo -e "${YELLOW}    Install: brew install starship${NC}"
-check_command "terminal-notifier" || echo -e "${YELLOW}    Install: brew install terminal-notifier${NC}"
+check_command "tmux" || echo -e "${YELLOW}    Run: brew bundle --file=~/dotfiles/Brewfile${NC}"
+check_command "nvim" || echo -e "${YELLOW}    Run: brew bundle --file=~/dotfiles/Brewfile${NC}"
+check_command "terminal-notifier" || echo -e "${YELLOW}    Run: brew bundle --file=~/dotfiles/Brewfile${NC}"
 
 # Check if Alacritty is installed
 if [ -d "/Applications/Alacritty.app" ]; then
     echo -e "${GREEN}  ✓ Alacritty${NC}"
 else
     echo -e "${RED}  ✗ Alacritty (not installed)${NC}"
-    echo -e "${YELLOW}    Install: brew install --cask alacritty${NC}"
+    echo -e "${YELLOW}    Run: brew bundle --file=~/dotfiles/Brewfile${NC}"
 fi
 
 # Check if AeroSpace is installed
@@ -159,7 +173,7 @@ if [ -d "/Applications/AeroSpace.app" ]; then
     echo -e "${GREEN}  ✓ AeroSpace${NC}"
 else
     echo -e "${RED}  ✗ AeroSpace (not installed)${NC}"
-    echo -e "${YELLOW}    Install: brew install --cask aerospace${NC}"
+    echo -e "${YELLOW}    Run: brew bundle --file=~/dotfiles/Brewfile${NC}"
 fi
 
 # Check if Hammerspoon is installed
@@ -167,15 +181,16 @@ if [ -d "/Applications/Hammerspoon.app" ]; then
     echo -e "${GREEN}  ✓ Hammerspoon${NC}"
 else
     echo -e "${RED}  ✗ Hammerspoon (not installed)${NC}"
-    echo -e "${YELLOW}    Install: brew install --cask hammerspoon${NC}"
+    echo -e "${YELLOW}    Run: brew bundle --file=~/dotfiles/Brewfile${NC}"
 fi
 
 # Check if Raycast is installed
 if [ -d "/Applications/Raycast.app" ]; then
     echo -e "${GREEN}  ✓ Raycast${NC}"
+    echo -e "${YELLOW}    Note: Raycast is optional and not in Brewfile${NC}"
 else
-    echo -e "${RED}  ✗ Raycast (not installed)${NC}"
-    echo -e "${YELLOW}    Install: brew install --cask raycast${NC}"
+    echo -e "${YELLOW}  ⚠ Raycast (optional - not installed)${NC}"
+    echo -e "${YELLOW}    Install manually: brew install --cask raycast${NC}"
 fi
 
 # Check JetBrainsMono Nerd Font
@@ -185,7 +200,7 @@ if fc-list 2>/dev/null | grep -i "JetBrainsMono Nerd Font" > /dev/null || \
     echo -e "${GREEN}  ✓ JetBrainsMono Nerd Font${NC}"
 else
     echo -e "${RED}  ✗ JetBrainsMono Nerd Font (not installed)${NC}"
-    echo -e "${YELLOW}    Install: brew install font-jetbrains-mono-nerd-font${NC}"
+    echo -e "${YELLOW}    Run: brew bundle --file=~/dotfiles/Brewfile${NC}"
 fi
 
 echo ""
@@ -195,13 +210,14 @@ echo -e "${GREEN}╚════════════════════
 echo ""
 echo -e "${BLUE}Next steps:${NC}"
 echo -e "  1. Restart your terminal or run: ${YELLOW}exec zsh${NC}"
-echo -e "  2. Install missing packages listed above"
-echo -e "  3. Setup Raycast script commands:"
+echo -e "  2. If packages are missing, run: ${YELLOW}brew bundle --file=~/dotfiles/Brewfile${NC}"
+echo -e "  3. Setup Raycast script commands (optional):"
 echo -e "     - Open Raycast Settings (⌘,)"
 echo -e "     - Extensions → Script Commands"
 echo -e "     - Add directory: ${YELLOW}$DOTFILES_DIR/raycast${NC}"
 echo ""
 echo -e "${BLUE}Configuration locations:${NC}"
+echo -e "  Brewfile:   ~/dotfiles/Brewfile"
 echo -e "  Zsh:        ~/.zshrc"
 echo -e "  tmux:       ~/.tmux.conf"
 echo -e "  Neovim:     ~/.config/nvim"

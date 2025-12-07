@@ -87,6 +87,9 @@ vim.opt.smartcase = true -- Case sensitive if uppercase letters used
 vim.keymap.set("n", "n", "nzz", { desc = "Next search result (centered)" })
 vim.keymap.set("n", "N", "Nzz", { desc = "Previous search result (centered)" })
 
+-- Toggle between current and alternate buffer
+vim.keymap.set("n", "<leader><leader>", "<C-^>", { desc = "Toggle to alternate buffer" })
+
 -- Setup lazy.nvim
 require("lazy").setup({
   spec = {

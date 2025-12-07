@@ -18,9 +18,9 @@ Personal configuration files for macOS development environment.
 ├── hammerspoon/        # Hammerspoon automation (Slack keyboard navigation)
 ├── nvim/               # Neovim configuration
 ├── raycast/            # Raycast script commands (CodeForces workflows)
-├── starship/           # Starship prompt configuration
 ├── tmux/               # tmux terminal multiplexer config
 ├── zsh/                # Zsh shell configuration
+├── Brewfile            # Homebrew package dependencies
 ├── biome.json          # Biome code formatter config
 └── stylua.toml         # Lua code formatter config
 ```
@@ -36,51 +36,46 @@ The install script creates these symlinks:
 ~/.hammerspoon/           -> ~/dotfiles/hammerspoon/
 ~/.config/alacritty/      -> ~/dotfiles/alacritty/
 ~/.config/nvim/           -> ~/dotfiles/nvim/
-~/.config/starship.toml   -> ~/dotfiles/starship/starship.toml
 ~/.claude/settings.json   -> ~/dotfiles/claude/settings.json
 ~/.claude/statusline.sh   -> ~/dotfiles/claude/scripts/statusline.sh
 ~/.claude/agents/         -> ~/dotfiles/claude/agents/
 ~/.claude/CLAUDE.md       -> ~/dotfiles/claude/CLAUDE.md
 ```
 
-## Required Packages
+## Package Management
 
-### Core Tools
-- **Homebrew** - macOS package manager
-- **Git** - Version control
+All Homebrew dependencies are managed via **Brewfile**. The install script automatically installs packages from the Brewfile.
 
-### Terminal & Shell
-- **Alacritty** - GPU-accelerated terminal emulator
-- **tmux** - Terminal multiplexer
-- **Zsh** - Shell (macOS default)
-- **Oh My Zsh** - Zsh framework
-- **Starship** - Cross-shell prompt
+### Core Packages (from Brewfile)
 
-### Fonts
-- **JetBrainsMono Nerd Font** - Terminal font with icons
+**Terminal & Shell:**
+- tmux, neovim, zsh
+- zoxide, eza, bat, fd, btop
 
-### Window Management
-- **AeroSpace** - Tiling window manager
-- **Hammerspoon** - macOS automation
+**Development Tools:**
+- node, php@8.1, composer, biome
 
-### Utilities
-- **Raycast** - Launcher and productivity tool
-- **terminal-notifier** - macOS notifications
-- **bc** - Calculator (for Claude cost tracking)
+**Applications:**
+- alacritty, aerospace, hammerspoon, docker
 
-### Development
-- **Neovim** - Text editor
-- **Node.js** / **nvm** - JavaScript runtime
-- **Python** / **pyenv** - Python version manager
-- **PHP** - PHP interpreter
-- **Composer** - PHP package manager
-- **Rust** / **cargo** - Rust toolchain
-- **Docker** - Containerization
+**Fonts:**
+- font-jetbrains-mono-nerd-font
 
-### Optional
-- **zoxide** - Smarter cd command
-- **zsh-autosuggestions** - Fish-like autosuggestions
-- **zsh-syntax-highlighting** - Command syntax highlighting
+**Utilities:**
+- terminal-notifier, cloc
+
+### Manual Setup Required
+
+**Oh My Zsh & Plugins:**
+- Oh My Zsh framework (installed by install.sh)
+- zsh-autosuggestions plugin (installed by install.sh)
+- zsh-syntax-highlighting plugin (installed by install.sh)
+
+**Optional Tools:**
+- **Raycast** - Launcher (commented out in Brewfile)
+- **NVM** - Node version manager
+- **Pyenv** - Python version manager
+- **Rust** - Install via rustup
 
 ## Installation
 
@@ -92,11 +87,12 @@ cd ~/dotfiles
 ```
 
 The install script will:
-1. Backup existing config files
-2. Create all necessary symlinks
-3. Install Oh My Zsh plugins
+1. Install Homebrew packages from Brewfile
+2. Backup existing config files
+3. Create all necessary symlinks
 4. Make scripts executable
-5. Display installation summary
+5. Install Oh My Zsh plugins
+6. Verify installation and display summary
 
 ### Manual Installation
 
@@ -108,14 +104,8 @@ The install script will:
 
 2. **Install Homebrew packages:**
    ```bash
-   brew install --cask alacritty
-   brew install tmux neovim
-   brew install starship
-   brew install terminal-notifier
-   brew install font-jetbrains-mono-nerd-font
-   brew install --cask aerospace
-   brew install --cask hammerspoon
-   brew install --cask raycast
+   # Install all packages from Brewfile
+   brew bundle --file=~/dotfiles/Brewfile
    ```
 
 3. **Install Oh My Zsh:**
@@ -129,7 +119,7 @@ The install script will:
    git clone https://github.com/zsh-users/zsh-syntax-highlighting ${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/zsh-syntax-highlighting
    ```
 
-5. **Install development tools:**
+5. **Install optional development tools:**
    ```bash
    # NVM (Node Version Manager)
    curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.0/install.sh | bash
@@ -158,7 +148,6 @@ The install script will:
 
    ln -sf ~/dotfiles/alacritty ~/.config/alacritty
    ln -sf ~/dotfiles/nvim ~/.config/nvim
-   ln -sf ~/dotfiles/starship/starship.toml ~/.config/starship.toml
 
    # Claude Code configs
    mkdir -p ~/.claude
@@ -232,10 +221,30 @@ git push
 ```
 
 ### Moving to a New Computer
-1. Clone this repository
-2. Run `./install.sh`
-3. Install required packages via Homebrew
-4. Restart shell
+1. Install Homebrew: `/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"`
+2. Clone this repository: `git clone <your-repo-url> ~/dotfiles`
+3. Run install script: `cd ~/dotfiles && ./install.sh`
+4. Restart shell: `exec zsh`
+
+The install script will automatically install all packages from the Brewfile.
+
+### Managing Packages
+
+**Add a new package:**
+```bash
+# Add to Brewfile manually, then run:
+brew bundle --file=~/dotfiles/Brewfile
+```
+
+**Update Brewfile from current installation:**
+```bash
+brew bundle dump --file=~/dotfiles/Brewfile --force
+```
+
+**Check what would be installed:**
+```bash
+brew bundle check --file=~/dotfiles/Brewfile
+```
 
 ### Troubleshooting
 - If symlinks break, re-run the install script
