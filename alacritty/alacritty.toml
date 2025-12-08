@@ -1,6 +1,6 @@
 [general]
 import = [
-  "~/.config/alacritty/themes/themes/papercolor_light.toml"
+  "~/.config/alacritty/themes/themes/dayfox.toml"
 ]
 live_config_reload = true
 
@@ -17,6 +17,12 @@ startup_mode = "Maximized"
 
 [font]
 
+# normal = { family = "FiraCode Nerd Font", style = "Regular" }
+# normal = { family = "Hack Nerd Font", style = "Medium" }
+
+# normal = { family = "Monaspace Neon", style = "Regular" }
+# normal = { family = "Cascadia Code", style = "Regular" }
+# normal = { family = "Iosevka Nerd Font", style = "Regular" }
 normal = { family = "JetBrainsMono Nerd Font", style = "Medium" }
 bold = { family = "JetBrainsMono Nerd Font", style = "Bold" }
 italic = { family = "JetBrainsMono Nerd Font", style = "Italic" }

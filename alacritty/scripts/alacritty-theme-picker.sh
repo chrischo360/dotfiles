@@ -24,7 +24,8 @@ if [ -n "$TMUX" ] || [ "$1" = "--window" ]; then
             echo 'Press ENTER to select a theme'
             echo 'Press ESC to cancel and keep your current theme'
             echo ''
-            read -p 'Press ENTER to start browsing themes...' -r
+            echo -n 'Press ENTER to start browsing themes...'
+            read -r
             echo ''
 
             # Run the theme picker
@@ -48,7 +49,8 @@ else
     echo "Navigate with arrow keys to preview themes in real-time"
     echo "Press ENTER to select, ESC to cancel"
     echo ""
-    read -p "Press ENTER to start..." -r
+    echo -n "Press ENTER to start..."
+    read -r
     echo ""
     exec "$THEME_SCRIPT"
 fi

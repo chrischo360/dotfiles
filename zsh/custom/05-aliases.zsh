@@ -8,7 +8,7 @@ alias cfnext='~/codebase/codeforces/target/release/cf next'
 alias cfshow='~/codebase/codeforces/target/release/cf show'
 alias cfadd='~/codebase/codeforces/target/release/cf add'
 alias cfbuild='cd ~/codebase/codeforces && cargo build --release --bin cf'
-
+alias cftest='cargo run --bin test' 
 # Modern CLI Tools (eza, bat, fd, delta)
 alias ls="eza --icons"
 alias ll="eza -l --icons --git"
