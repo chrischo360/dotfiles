@@ -3,12 +3,9 @@
 # Alacritty theme picker
 alias at="$HOME/dotfiles/alacritty/scripts/alacritty-theme-picker.sh"
 
-# CodeForces - Unified CLI (Release Binary)
-alias cfnext='~/codebase/codeforces/target/release/cf next'
-alias cfshow='~/codebase/codeforces/target/release/cf show'
-alias cfadd='~/codebase/codeforces/target/release/cf add'
-alias cfbuild='cd ~/codebase/codeforces && cargo build --release --bin cf'
-alias cftest='cargo run --bin test' 
+# CodeForces - Unified CLI (installed to ~/.cargo/bin)
+alias cfbuild='(cd ~/codebase/codeforces && cargo install --path cf-cli --force)'
+
 # Modern CLI Tools (eza, bat, fd, delta)
 alias ls="eza --icons"
 alias ll="eza -l --icons --git"

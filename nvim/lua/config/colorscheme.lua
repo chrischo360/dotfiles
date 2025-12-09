@@ -236,3 +236,30 @@ end, {
 -- vim.keymap.set('n', '<leader>te', function() set_colorscheme('everforest') end, { desc = 'Everforest' })
 -- vim.keymap.set('n', '<leader>td', function() set_colorscheme('dracula') end, { desc = 'Dracula' })
 -- vim.keymap.set('n', '<leader>tn', function() set_colorscheme('nord') end, { desc = 'Nord' })
+
+-- Sync theme across sessions on window focus
+local last_checked_content = ""
+
+vim.api.nvim_create_autocmd("FocusGained", {
+  callback = function()
+    local file = io.open(vim.fn.stdpath('config') .. '/last-theme.txt', 'r')
+    if not file then return end
+
+    local theme = file:read('*l')
+    local bg = file:read('*l')
+    file:close()
+
+    local new_content = (theme or "") .. "\n" .. (bg or "")
+
+    -- Only reload if file changed
+    if new_content ~= last_checked_content and theme ~= vim.g.colors_name then
+      last_checked_content = new_content
+      if bg and (bg == 'light' or bg == 'dark') then
+        vim.o.background = bg
+      end
+      if theme and theme ~= "" then
+        pcall(vim.cmd.colorscheme, theme)
+      end
+    end
+  end,
+})

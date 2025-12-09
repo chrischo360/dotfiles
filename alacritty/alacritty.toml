@@ -1,6 +1,6 @@
 [general]
 import = [
-  "~/.config/alacritty/themes/themes/dayfox.toml"
+  "~/.config/alacritty/themes/themes/catppuccin_latte.toml"
 ]
 live_config_reload = true
 

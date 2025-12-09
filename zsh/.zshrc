@@ -33,9 +33,9 @@ setopt HIST_FIND_NO_DUPS     # Don't show duplicates in search
 # Completion caching - only rebuild cache once per day
 autoload -Uz compinit
 if [[ -n ~/.zcompdump(#qNmh+24) ]]; then
-  compinit
+  compinit -i  # Skip security check
 else
-  compinit -C  # Use cached version for faster startup
+  compinit -C -i  # Use cached version, skip security check
 fi
 
 # Source Oh My Zsh

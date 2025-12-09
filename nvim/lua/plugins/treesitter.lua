@@ -25,6 +25,11 @@ return {
         "markdown",
         "markdown_inline",
         "swift",
+        "python",
+        "php",
+        "java",
+        "rust",
+        "bash",
       },
     })
   end,
