@@ -13,8 +13,6 @@ ZSH_THEME=""
 
 # Minimal essential plugins
 plugins=(
-  git                    # Essential for git completions
-  # npm                  # DISABLED - slow completions, rarely needed
   command-not-found      # Suggests package to install
   zsh-autosuggestions   # Fish-like autosuggestions
   fast-syntax-highlighting # Fast syntax highlighting (load last)

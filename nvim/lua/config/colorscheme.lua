@@ -1,58 +1,25 @@
 -- Colorscheme Configuration
--- Syncs with Alacritty theme based on macOS appearance
+-- Independent theme management with persistence
 
--- Import theme mapping
+-- Import theme mapping for theme picker metadata
 local theme_mapping = require("config.theme-mapping")
 
 -- Function to detect macOS appearance
 local function get_macos_appearance()
   local handle = io.popen("defaults read -g AppleInterfaceStyle 2>/dev/null")
   if not handle then
-    return "dark" -- Fallback to dark if can't detect
+    return "light" -- Fallback to light if can't detect
   end
   local result = handle:read("*a")
   handle:close()
   return result:match("Dark") and "dark" or "light"
 end
 
--- Function to read Alacritty theme preferences
-local function get_alacritty_theme_pref()
+-- Simple fallback themes based on macOS appearance
+local function get_fallback_theme()
   local appearance = get_macos_appearance()
-  local prefs_file = vim.fn.expand("~/.config/alacritty/theme-prefs.conf")
-
-  -- Check if file exists
-  local file = io.open(prefs_file, "r")
-  if not file then
-    -- Fallback to defaults if prefs file doesn't exist
-    return appearance == "light" and "rose_pine_dawn" or "dracula"
-  end
-
-  -- Read preferences
-  local content = file:read("*all")
-  file:close()
-
-  -- Extract theme based on appearance
-  local theme_pref
-  if appearance == "light" then
-    theme_pref = content:match('LIGHT_THEME="([^"]+)"')
-  else
-    theme_pref = content:match('DARK_THEME="([^"]+)"')
-  end
-
-  return theme_pref or (appearance == "light" and "rose_pine_dawn" or "dracula")
+  return appearance == "light" and "rose-pine-dawn" or "dracula"
 end
-
--- Function to get coordinated theme
-local function get_coordinated_theme()
-  local appearance = get_macos_appearance()
-  local alacritty_theme = get_alacritty_theme_pref()
-  local nvim_theme = theme_mapping.get_nvim_theme(alacritty_theme, appearance)
-
-  return nvim_theme
-end
-
--- Default: Use coordinated theme
-local default_colorscheme = get_coordinated_theme()
 
 -- Function to safely set colorscheme
 local function set_colorscheme(name)
@@ -93,19 +60,22 @@ local function load_saved_colorscheme()
 end
 
 -- Set the default colorscheme on startup
--- First try saved theme, then coordinated theme
+-- First try saved theme, then simple fallback
 local saved_theme = load_saved_colorscheme()
 if saved_theme and saved_theme ~= "" then
   set_colorscheme(saved_theme)
 else
-  -- Fallback to coordinated theme on first launch
-  set_colorscheme(get_coordinated_theme())
+  -- Simple fallback on first launch based on macOS appearance
+  local appearance = get_macos_appearance()
+  vim.o.background = appearance
+  set_colorscheme(get_fallback_theme())
 end
 
 -- Keybinding for theme picker with live preview - ALL THEMES
 vim.keymap.set("n", "<leader>th", function()
-  -- Save current colorscheme to restore if cancelled
+  -- Save current colorscheme AND background to restore if cancelled
   local current_colorscheme = vim.g.colors_name
+  local current_background = vim.o.background
 
   -- Get all available themes
   local all_themes = theme_mapping.get_all_themes()
@@ -148,6 +118,16 @@ vim.keymap.set("n", "<leader>th", function()
       local preview_theme = function()
         local selection = action_state.get_selected_entry()
         if selection then
+          local theme_type = theme_mapping.get_theme_type(selection.value)
+
+          -- Set appropriate background before applying theme
+          if theme_type == "light" then
+            vim.o.background = "light"
+          elseif theme_type == "dark" then
+            vim.o.background = "dark"
+          end
+          -- For "dual" themes, keep current background
+
           pcall(vim.cmd.colorscheme, selection.value)
         end
       end
@@ -208,6 +188,8 @@ vim.keymap.set("n", "<leader>th", function()
       map('i', '<Esc>', function()
         actions.close(prompt_bufnr)
         if current_colorscheme then
+          -- Restore both background and colorscheme
+          vim.o.background = current_background
           vim.cmd.colorscheme(current_colorscheme)
         end
       end)
@@ -215,6 +197,8 @@ vim.keymap.set("n", "<leader>th", function()
       map('n', '<Esc>', function()
         actions.close(prompt_bufnr)
         if current_colorscheme then
+          -- Restore both background and colorscheme
+          vim.o.background = current_background
           vim.cmd.colorscheme(current_colorscheme)
         end
       end)
@@ -237,7 +221,7 @@ end, {
 -- vim.keymap.set('n', '<leader>td', function() set_colorscheme('dracula') end, { desc = 'Dracula' })
 -- vim.keymap.set('n', '<leader>tn', function() set_colorscheme('nord') end, { desc = 'Nord' })
 
--- Sync theme across sessions on window focus
+-- Sync theme across Neovim instances on window focus
 local last_checked_content = ""
 
 vim.api.nvim_create_autocmd("FocusGained", {
@@ -251,7 +235,7 @@ vim.api.nvim_create_autocmd("FocusGained", {
 
     local new_content = (theme or "") .. "\n" .. (bg or "")
 
-    -- Only reload if file changed
+    -- Only reload if file changed and theme is different
     if new_content ~= last_checked_content and theme ~= vim.g.colors_name then
       last_checked_content = new_content
       if bg and (bg == 'light' or bg == 'dark') then

@@ -4,7 +4,8 @@
 alias at="$HOME/dotfiles/alacritty/scripts/alacritty-theme-picker.sh"
 
 # CodeForces - Unified CLI (installed to ~/.cargo/bin)
-alias cfbuild='(cd ~/codebase/codeforces && cargo install --path cf-cli --force)'
+alias cfbuild='(cd ~/codebase/codeforces && cargo install --path cf-cli --force) && (cd ~/notes/projects/interview_bot/codejudge-tui && cargo install --path ~/notes/projects/interview_bot/codejudge-tui)'
+
 
 # Modern CLI Tools (eza, bat, fd, delta)
 alias ls="eza --icons"
@@ -21,6 +22,14 @@ alias gc="git commit"
 alias gp="git push"
 alias gl="git log --oneline --graph --decorate"
 alias gd="git diff"
+
+# Checkout local branch with fzf
+gb() {
+  local branch=$(git branch --format='%(refname:short)' | fzf --height 40% --reverse --border --prompt="Checkout branch: ")
+  if [ -n "$branch" ]; then
+    git checkout "$branch"
+  fi
+}
 
 # Better defaults
 alias grep="grep --color=auto"

@@ -65,8 +65,6 @@ vim.api.nvim_create_autocmd({ "BufEnter", "WinEnter", "ColorScheme" }, {
 -- vim.api.nvim_set_hl(0, "LineNr", { fg = "#6C7086", bg = "NONE" })
 -- vim.api.nvim_set_hl(0, "CursorLineNr", { fg = "#F38BA8", bg = "NONE", bold = true })
 -- vim.api.nvim_set_hl(0, "SignColumn", { bg = "NONE" })
--- Dark mode (for Modus Vivendi theme)
-vim.o.background = "dark"
 -- Enable clipboard integration
 vim.opt.clipboard = "unnamedplus"
 
