@@ -2,40 +2,40 @@
 
 Configuration files and utility scripts for Claude Code with GCP Vertex AI integration.
 
-## 📈 Status Line
+## Statusline
 
-The statusline displays real-time information about your Claude Code session directly in your terminal.
+Powered by [ccstatusline](https://github.com/sirmalloc/ccstatusline) - a beautiful, customizable statusline with powerline support and themes.
 
 ### Features
 
-- **Project name** - Shows the current working directory
-- **Provider** - Displays whether you're using GCP Vertex AI (☁️ GCP) or Anthropic API (🌐 API)
-- **Token usage** - Shows current context usage with visual indicators:
-  - 📊 Low usage (< 50%)
-  - ⚡ Medium usage (50-75%)
-  - 🔥 High usage (> 75%)
+- Powerline-style separators with Nerd Font support
+- Multiple built-in themes (dracula, nord, gruvbox, etc.)
+- Real-time metrics: model name, git branch, tokens, session duration
+- Interactive configuration UI
+- 256-color and truecolor support
 
-### Example Output
+### Configuration
 
-```
-🤖 dotfiles | ☁️ GCP | 📊 25k/200k (13%)
-🤖 my-project | 🌐 API | ⚡ 130k/200k (65%)
-🤖 backend | ☁️ GCP | 🔥 165k/200k (82%)
+Configure interactively:
+```bash
+ccstatusline
 ```
 
-### How It Works
+Or edit the config file directly:
+```bash
+~/.config/ccstatusline/config.json
+```
 
-The statusline script (`statusline.sh`):
-1. Reads JSON input from stdin (provided by Claude Code)
-2. Extracts the `transcript_path` to locate the conversation history
-3. Parses the latest "Token usage" warning from the transcript file
-4. Calculates usage percentage and displays formatted stats
+### Installation
 
-**Advantages:**
-- ✅ Real-time updates with every statusline refresh
-- ✅ Reliable (uses official transcript data from Claude Code)
-- ✅ No temporary files or complex hooks needed
-- ✅ Works automatically without configuration
+Installed automatically by `install.sh`, or manually:
+```bash
+npm install -g ccstatusline
+```
+
+### Documentation
+
+Full documentation: https://github.com/sirmalloc/ccstatusline
 
 ## 📊 Token Usage & Cost Tracking
 

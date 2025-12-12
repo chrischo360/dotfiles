@@ -13,8 +13,9 @@ Personal configuration files for macOS development environment.
 ├── claude/             # Claude Code configuration and tools
 │   ├── agents/         # Custom Claude Code agents
 │   ├── hooks/          # Session hooks (token tracking, cost logging)
-│   ├── scripts/        # Utilities (statusline, notifications, monitoring)
+│   ├── scripts/        # Utilities (notifications, monitoring)
 │   └── settings.json   # Claude Code settings
+├── ccstatusline/       # ccstatusline configuration
 ├── hammerspoon/        # Hammerspoon automation (Slack keyboard navigation)
 ├── nvim/               # Neovim configuration
 ├── raycast/            # Raycast script commands (CodeForces workflows)
@@ -36,8 +37,8 @@ The install script creates these symlinks:
 ~/.hammerspoon/           -> ~/dotfiles/hammerspoon/
 ~/.config/alacritty/      -> ~/dotfiles/alacritty/
 ~/.config/nvim/           -> ~/dotfiles/nvim/
+~/.config/ccstatusline/   -> ~/dotfiles/ccstatusline/
 ~/.claude/settings.json   -> ~/dotfiles/claude/settings.json
-~/.claude/statusline.sh   -> ~/dotfiles/claude/scripts/statusline.sh
 ~/.claude/agents/         -> ~/dotfiles/claude/agents/
 ~/.claude/CLAUDE.md       -> ~/dotfiles/claude/CLAUDE.md
 ```
@@ -53,7 +54,10 @@ All Homebrew dependencies are managed via **Brewfile**. The install script autom
 - zoxide, eza, bat, fd, fzf, ripgrep, btop
 
 **Development Tools:**
-- node, php@8.1, composer, biome
+- node (includes npm), php@8.1, composer, biome
+
+**npm Global Packages:**
+- ccstatusline - Claude Code statusline
 
 **Applications:**
 - alacritty, aerospace, hammerspoon, docker
@@ -148,11 +152,11 @@ The install script will:
 
    ln -sf ~/dotfiles/alacritty ~/.config/alacritty
    ln -sf ~/dotfiles/nvim ~/.config/nvim
+   ln -sf ~/dotfiles/ccstatusline ~/.config/ccstatusline
 
    # Claude Code configs
    mkdir -p ~/.claude
    ln -sf ~/dotfiles/claude/settings.json ~/.claude/settings.json
-   ln -sf ~/dotfiles/claude/scripts/statusline.sh ~/.claude/statusline.sh
    ln -sf ~/dotfiles/claude/agents ~/.claude/agents
    ```
 
@@ -182,7 +186,6 @@ The `~/dotfiles/claude/` directory contains Claude Code configuration and utilit
 - **agents/** - Custom agent definitions for specialized workflows
 - **hooks/** - Session hooks for token tracking and cost logging
 - **scripts/** - Utility scripts:
-  - `statusline.sh` - Real-time token usage display
   - `notify.sh` - macOS notification integration
   - `token-tracker.sh` - Cost calculation utilities
   - `monitor-buildkite.sh` - CI/CD build monitoring
@@ -192,16 +195,16 @@ See `claude/README.md` for detailed Claude Code documentation.
 
 ## Usage Notes
 
+### ccstatusline Configuration
+Configure the statusline interactively:
+```bash
+ccstatusline
+```
+
 ### Alacritty Theme Switching
 Use the theme picker alias:
 ```bash
 at  # Opens theme selection menu
-```
-
-### Claude Code Status
-Check token usage and costs:
-```bash
-~/dotfiles/claude/status [tokens] [model]
 ```
 
 ### Raycast CodeForces Commands

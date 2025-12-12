@@ -90,6 +90,9 @@ create_symlink "$DOTFILES_DIR/alacritty" "$HOME/.config/alacritty"
 # Neovim
 create_symlink "$DOTFILES_DIR/nvim" "$HOME/.config/nvim"
 
+# ccstatusline
+create_symlink "$DOTFILES_DIR/ccstatusline" "$HOME/.config/ccstatusline"
+
 # Claude Code
 mkdir -p "$HOME/.claude"
 create_symlink "$DOTFILES_DIR/claude/settings.json" "$HOME/.claude/settings.json"
