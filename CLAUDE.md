@@ -50,7 +50,7 @@ All Homebrew dependencies are managed via **Brewfile**. The install script autom
 
 **Terminal & Shell:**
 - tmux, neovim, zsh
-- zoxide, eza, bat, fd, btop
+- zoxide, eza, bat, fd, fzf, ripgrep, btop
 
 **Development Tools:**
 - node, php@8.1, composer, biome
@@ -250,3 +250,52 @@ brew bundle check --file=~/dotfiles/Brewfile
 - If symlinks break, re-run the install script
 - Check symlink status: `ls -la ~/.zshrc ~/.tmux.conf`
 - Verify paths match your username in scripts
+
+## Instructions for Claude Code
+
+When working in this dotfiles repository, follow these synchronization rules:
+
+### Adding New Shell Tools or Aliases
+
+**When adding new shell functions or aliases that depend on external tools:**
+
+1. **Check if the tool is in Brewfile**
+   - Read `Brewfile` to verify the dependency exists
+   - Example: Adding `nvimgrep` function that uses `ripgrep`
+
+2. **Add missing tools to Brewfile**
+   - Add the tool to the appropriate section (Shell Enhancements, Development Tools, etc.)
+   - Use format: `brew "tool-name"   # Brief description`
+   - Example: `brew "ripgrep"   # Fast text search (rg)`
+
+3. **Update CLAUDE.md documentation**
+   - Update "Core Packages (from Brewfile)" section (~line 49)
+   - Add the new tool to the relevant category
+   - Keep the list synchronized with actual Brewfile contents
+
+4. **Update function/alias comments**
+   - Ensure zsh functions have clear comments about their dependencies
+   - Example: `# Search file contents with ripgrep and open in neovim`
+
+### Keeping Documentation in Sync
+
+**When modifying any configuration files:**
+
+- If you add/remove tools from Brewfile → update CLAUDE.md "Core Packages" section
+- If you add/remove shell aliases → update CLAUDE.md if they're user-facing features
+- If you add/remove symlinks → update CLAUDE.md "Symlink Map" section
+- If you add new scripts → update relevant "Usage Notes" or directory descriptions
+
+### Example Workflow
+
+```
+User: "Add a new fzf function for searching files"
+Claude:
+  1. Create the function in zsh/custom/05-aliases.zsh
+  2. Check: Does it use fzf? → Read Brewfile
+  3. If fzf is missing → Add to Brewfile in Shell Enhancements
+  4. Update CLAUDE.md Core Packages section to include fzf
+  5. Commit changes: both code AND documentation together
+```
+
+**Key principle:** Keep Brewfile, zsh configs, and CLAUDE.md synchronized at all times.

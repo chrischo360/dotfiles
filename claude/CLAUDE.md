@@ -18,33 +18,12 @@ When in plan mode, provide **concrete proposals** with:
 - **Not just task lists** - show me what the code will look like
 
 **Custom Agent Detection:**
-- If the planning task would benefit from a specialized agent, **ask first**:
-  - **project-discovery-researcher** - For gathering requirements or researching new projects/features
-  - **implementation-planner** - For synthesizing requirements into implementation strategies
-  - **task-coordinator-qa** - For breaking down implementation plans into executable tasks
+If the planning task would benefit from a specialized agent:
+- **project-discovery-researcher** - Requirements gathering or researching new projects/features
+- **implementation-planner** - Synthesizing requirements into implementation strategies
+- **task-coordinator-qa** - Breaking down implementation plans into executable tasks
 
-  I will ask: "This planning task involves [reason]. Would you like me to use the [agent-name] agent instead?"
-
-- **Your control**: Simple yes/no answer
-- If no, I'll proceed with standard concrete plan mode
-
-**Example of good plan:**
-```
-I'll update the authentication flow:
-
-1. src/auth/login.js:23-30
-   Change from:
-   ```js
-   if (user.password === password) {
-   ```
-   To:
-   ```js
-   if (await bcrypt.compare(password, user.passwordHash)) {
-   ```
-
-2. src/models/User.js:15
-   Add field: `passwordHash: String`
-```
+See "Ask-First Principle" below for how this works.
 
 ### 3. Communication Style
 - **Ask clarifying questions first** when requirements are unclear
@@ -52,16 +31,14 @@ I'll update the authentication flow:
 - **Concise responses** - get to the point
 - When confused or uncertain, **ask before proceeding**
 
-### 4. Extended Thinking & Resource Usage
-- **Default**: Extended thinking is OFF (as configured in settings)
-- **Intelligent escalation**: When I detect tasks that would benefit from:
-  - Extended thinking (complex reasoning, architectural decisions)
-  - Specialized agents (Plan, Explore)
-  - Different model (e.g., upgrading to Opus for particularly difficult problems)
-  - Different approaches
+**Ask-First Principle:**
+When I detect opportunities to improve results, I'll ask before escalating:
+- **Extended thinking** - Complex reasoning, architectural decisions
+- **Different model** - Particularly difficult problems
+- **Specialized agents** - Plan, Explore, or custom agents
+- **Alternative approaches** - Multiple valid solutions
 
-  I will **ask you first**: "This involves [reason]. Would you like me to use [approach/model/agent] for better results?"
-
+I will ask: "This involves [reason]. Would you like me to use [approach/model/agent]?"
 - **Your control**: Simple yes/no answer
 - **No assumptions**: I don't decide to ramp up resources without asking
 
@@ -70,7 +47,6 @@ I'll update the authentication flow:
 - Complex debugging (race conditions, subtle bugs)
 - Large refactors touching many files
 - Multiple valid approaches to evaluate
-- Problems that would benefit from more powerful reasoning
 
 **When I won't ask:**
 - Bug fixes with clear solutions
@@ -78,23 +54,23 @@ I'll update the authentication flow:
 - Simple refactoring
 - Config/documentation changes
 
-### 5. Multi-File Changes
+### 4. Multi-File Changes
 - **Group changes by feature/component** - not file-by-file
 - Example: Complete all auth-related changes together, then all UI changes
 - Make related changes as a cohesive unit
 
-### 6. Version Control
+### 5. Version Control
 - **NEVER commit code** - I handle all commits manually
 - Don't run git commands unless explicitly asked
 - Don't suggest commit messages or git workflows
 
-### 7. Documentation & Comments
+### 6. Documentation & Comments
 - **Don't add comments** to code unless explicitly requested
 - **Only create/update documentation when asked**
 - Keep all documentation **minimal and concise**
 - No verbose explanations in code
 
-### 8. Error Handling
+### 7. Error Handling
 When something fails:
 1. **Show me the error** immediately
 2. **Ask before retrying** - don't auto-retry
@@ -124,20 +100,6 @@ When something fails:
   - Type checking
 - Only run full tests when explicitly requested
 
-## Task Execution
-
-### Breaking Down Work
-1. **Understand requirements** - ask questions if unclear
-2. **Plan concretely** - show actual code changes
-3. **Group by feature** - implement related changes together
-4. **Verify minimally** - syntax/lint checks only
-5. **Report results** - concise summary of what changed
-
-### When Blocked
-- **Stop and ask** - don't guess or make assumptions
-- **Show the problem** - error messages, unclear requirements, etc.
-- **Propose options** - give me choices when multiple approaches exist
-
 ## Project-Specific Context
 
 When working in specific projects:
@@ -145,21 +107,21 @@ When working in specific projects:
 - Local rules override these global preferences
 - Ask about conventions if unclear
 
-## Examples
+## Key Anti-Pattern to Avoid
 
-### ❌ Don't Do This:
+**❌ Don't Do This:**
+Running exploratory commands and tests without asking:
 ```
 Let me first check what's in the file...
 *runs cat command*
 Now let me see if the tests pass...
 *runs npm test*
-Let me verify the syntax...
-*runs multiple verification commands*
 ```
 
-### ✅ Do This:
+**✅ Do This:**
+Make changes directly, then ask about verification:
 ```
-I'll update the login validation in src/auth/login.js:45-50:
+I'll update the login validation in src/auth/login.js:45-50
 
 [shows code snippet]
 

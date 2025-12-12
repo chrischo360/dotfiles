@@ -16,6 +16,8 @@ brew "zoxide"            # Smarter cd command
 brew "eza"               # Modern ls replacement
 brew "bat"               # Modern cat with syntax highlighting
 brew "fd"                # Modern find
+brew "fzf"               # Fuzzy finder
+brew "ripgrep"           # Fast text search (rg)
 brew "btop"              # System monitor
 
 # ============================================
