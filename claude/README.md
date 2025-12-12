@@ -101,6 +101,60 @@ macOS notification integration for Claude Code events. Sends notifications via `
 
 ## ⚙️ Settings
 
+## 📁 Configuration Files
+
+Claude Code uses two different configuration files with distinct purposes:
+
+### ~/.claude/settings.json (Your Configuration)
+**Purpose**: User-managed configuration file
+**Location**: `~/.claude/settings.json` (symlinked to `~/dotfiles/claude/settings.json`)
+**Version Control**: ✅ Safe to commit to dotfiles (remove sensitive tokens first)
+
+Controls:
+- Permissions (allowed/denied tools)
+- Default model and mode (plan/code)
+- Hooks and status line
+- Allowed directories
+- MCP servers
+
+**You should edit this file** to customize Claude Code's behavior.
+
+For more configuration options, see:
+- Official docs: https://code.claude.com/docs/en/settings#settings-files
+- Run `claude --help` for command-line options
+
+### ~/.claude.json (Internal State)
+**Purpose**: Claude Code's internal state database (auto-managed)
+**Location**: `~/.claude.json`
+**Version Control**: ❌ Do NOT commit to git
+
+Contains:
+- Usage statistics (costs, tokens, session IDs)
+- UI preferences (vim mode, tips seen, onboarding)
+- Project-specific metadata (trusted directories, example files)
+- Session history and OAuth credentials
+- **Sensitive data**: API tokens, OAuth tokens
+
+**Do NOT manually edit this file** - let Claude Code manage it.
+
+### Viewing ~/.claude.json (Optional)
+
+If you want easy access to view the state file from your dotfiles directory:
+
+```bash
+# Create a symlink IN dotfiles that POINTS TO the original
+ln -s ~/.claude.json ~/dotfiles/claude/.claude.json
+
+# Add to .gitignore to prevent accidental commits
+echo ".claude.json" >> ~/dotfiles/claude/.gitignore
+```
+
+This keeps the real file at `~/.claude.json` (where Claude Code expects it) but lets you view it from `~/dotfiles/claude/.claude.json`.
+
+⚠️ **Warning**: The symlink direction matters:
+- ✅ **Correct**: `ln -s ~/.claude.json ~/dotfiles/claude/.claude.json` (points TO the real file)
+- ❌ **Wrong**: `ln -s ~/dotfiles/claude/.claude.json ~/.claude.json` (would move the file)
+
 ### Status Line Configuration
 
 In `~/.claude/settings.json`:

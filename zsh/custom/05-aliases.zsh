@@ -31,6 +31,59 @@ gb() {
   fi
 }
 
+# cd to directory with fzf
+cdfzf() {
+  local dir=$(fd --type d --hidden --follow \
+    --exclude .git \
+    --exclude node_modules \
+    --exclude .cache \
+    --exclude Library \
+    --exclude vendor \
+    --exclude target \
+    --exclude build \
+    --exclude dist \
+    --exclude .next \
+    --exclude .nuxt \
+    . ~ | fzf --height 40% --reverse --border --prompt="cd to directory: ")
+  if [ -n "$dir" ]; then
+    cd "$dir"
+  fi
+}
+
+# Open file in neovim with fzf
+nvimfzf() {
+  local file=$(fd --type f --hidden --follow \
+    --exclude .git \
+    --exclude node_modules \
+    --exclude .cache \
+    --exclude Library \
+    --exclude vendor \
+    --exclude target \
+    --exclude build \
+    --exclude dist \
+    --exclude .next \
+    --exclude .nuxt \
+    . ~ | fzf --height 40% --reverse --border --prompt="Open in nvim: " --preview 'bat --color=always --style=numbers --line-range=:500 {}')
+  if [ -n "$file" ]; then
+    nvim "$file"
+  fi
+}
+
+# Search file contents with ripgrep and open in neovim (interactive)
+nvimgrep() {
+  local result=$(fzf --height 40% --reverse --border \
+    --prompt="Search: " \
+    --header="Type to search, then select file to open in nvim" \
+    --disabled \
+    --bind "change:reload:rg --files-with-matches --no-messages {q} ~ || true" \
+    --preview "rg --color=always --context=3 {q} {}" \
+    --preview-window='up:60%')
+
+  if [ -n "$result" ]; then
+    nvim "$result"
+  fi
+}
+
 # Better defaults
 alias grep="grep --color=auto"
 alias df="df -h"

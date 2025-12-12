@@ -8,7 +8,8 @@
       "Task",
       "TodoWrite",
       "BashOutput",
-      "WebFetch"
+      "WebFetch",
+      "WebSearch"
     ],
     "deny": [
       "Read(./.env)",
@@ -20,7 +21,8 @@
       "Read(**/build/**)",
       "Read(**/dist/**)",
       "Read(**/*.log)"
-    ]
+    ],
+    "defaultMode": "plan"
   },
   "model": "opus",
   "hooks": {
@@ -51,7 +53,12 @@
     ],
     "SubagentStop": [
       {
-        "hooks": []
+        "hooks": [
+          {
+            "type": "command",
+            "command": "~/dotfiles/claude/scripts/track-agent.sh"
+          }
+        ]
       }
     ]
   },
@@ -60,7 +67,7 @@
     "command": "~/.claude/statusline.sh",
     "padding": 0
   },
-  "alwaysThinkingEnabled": true,
+  "alwaysThinkingEnabled": false,
   "defaultMode": "plan",
   "allowedTools": [
     {
@@ -160,18 +167,11 @@
   "mcpServers": {
     "MCP_DOCKER": {
       "command": "docker",
-      "args": [
-        "mcp",
-        "gateway",
-        "run"
-      ]
+      "args": ["mcp", "gateway", "run"]
     },
     "glean": {
       "command": "npx",
-      "args": [
-        "-y",
-        "@gleanwork/local-mcp-server"
-      ],
+      "args": ["-y", "@gleanwork/local-mcp-server"],
       "env": {
         "GLEAN_INSTANCE": "wayfair",
         "GLEAN_API_TOKEN": "***REMOVED-SECRET***"
@@ -180,10 +180,7 @@
     "playwright": {
       "type": "stdio",
       "command": "npx",
-      "args": [
-        "@playwright/mcp@latest",
-        "--extension"
-      ],
+      "args": ["@playwright/mcp@latest", "--extension"],
       "env": {}
     }
   }

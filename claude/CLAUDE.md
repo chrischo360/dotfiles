@@ -17,6 +17,17 @@ When in plan mode, provide **concrete proposals** with:
 - **Before/after examples** when helpful
 - **Not just task lists** - show me what the code will look like
 
+**Custom Agent Detection:**
+- If the planning task would benefit from a specialized agent, **ask first**:
+  - **project-discovery-researcher** - For gathering requirements or researching new projects/features
+  - **implementation-planner** - For synthesizing requirements into implementation strategies
+  - **task-coordinator-qa** - For breaking down implementation plans into executable tasks
+
+  I will ask: "This planning task involves [reason]. Would you like me to use the [agent-name] agent instead?"
+
+- **Your control**: Simple yes/no answer
+- If no, I'll proceed with standard concrete plan mode
+
 **Example of good plan:**
 ```
 I'll update the authentication flow:
@@ -41,23 +52,49 @@ I'll update the authentication flow:
 - **Concise responses** - get to the point
 - When confused or uncertain, **ask before proceeding**
 
-### 4. Multi-File Changes
+### 4. Extended Thinking & Resource Usage
+- **Default**: Extended thinking is OFF (as configured in settings)
+- **Intelligent escalation**: When I detect tasks that would benefit from:
+  - Extended thinking (complex reasoning, architectural decisions)
+  - Specialized agents (Plan, Explore)
+  - Different model (e.g., upgrading to Opus for particularly difficult problems)
+  - Different approaches
+
+  I will **ask you first**: "This involves [reason]. Would you like me to use [approach/model/agent] for better results?"
+
+- **Your control**: Simple yes/no answer
+- **No assumptions**: I don't decide to ramp up resources without asking
+
+**When I might suggest escalation:**
+- Architectural/design decisions with tradeoffs
+- Complex debugging (race conditions, subtle bugs)
+- Large refactors touching many files
+- Multiple valid approaches to evaluate
+- Problems that would benefit from more powerful reasoning
+
+**When I won't ask:**
+- Bug fixes with clear solutions
+- Features following existing patterns
+- Simple refactoring
+- Config/documentation changes
+
+### 5. Multi-File Changes
 - **Group changes by feature/component** - not file-by-file
 - Example: Complete all auth-related changes together, then all UI changes
 - Make related changes as a cohesive unit
 
-### 5. Version Control
+### 6. Version Control
 - **NEVER commit code** - I handle all commits manually
 - Don't run git commands unless explicitly asked
 - Don't suggest commit messages or git workflows
 
-### 6. Documentation & Comments
+### 7. Documentation & Comments
 - **Don't add comments** to code unless explicitly requested
 - **Only create/update documentation when asked**
 - Keep all documentation **minimal and concise**
 - No verbose explanations in code
 
-### 7. Error Handling
+### 8. Error Handling
 When something fails:
 1. **Show me the error** immediately
 2. **Ask before retrying** - don't auto-retry
