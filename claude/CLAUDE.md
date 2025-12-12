@@ -128,6 +128,22 @@ I'll update the login validation in src/auth/login.js:45-50
 Would you like me to run the linter to verify syntax?
 ```
 
+## Negative Examples
+
+**Add anti-patterns here as you encounter them repeatedly.**
+
+Format:
+```markdown
+**❌ Don't [bad pattern]** - [why/when not to do it]
+```
+
+<!--
+Examples to add:
+- Don't automatically fix linting issues - ask first
+- Don't add error handling unless requested
+- Don't refactor surrounding code while fixing a bug
+-->
+
 ---
 
 **Remember:** When in doubt, ask first. I prefer being consulted over autonomous decisions.
