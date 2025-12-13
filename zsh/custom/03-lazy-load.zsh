@@ -35,33 +35,8 @@ _load_nvm() {
   _nvm_loaded=1
 }
 
-# Auto-load NVM in Node projects
-if [[ -f "$(pwd)/.nvmrc" || -f "$(pwd)/package.json" ]]; then
-  _load_nvm
-else
-  nvm() {
-    _load_nvm
-    nvm "$@"
-  }
-
-  node() {
-    _load_nvm
-    unset -f node
-    node "$@"
-  }
-
-  npm() {
-    _load_nvm
-    unset -f npm
-    npm "$@"
-  }
-
-  npx() {
-    _load_nvm
-    unset -f npx
-    npx "$@"
-  }
-fi
+# Always load NVM at startup to ensure npm globals are available for tools like ccstatusline
+_load_nvm
 
 # --- Pyenv ---
 _pyenv_loaded=0

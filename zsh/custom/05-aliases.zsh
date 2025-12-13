@@ -6,6 +6,8 @@ alias at="$HOME/dotfiles/alacritty/scripts/alacritty-theme-picker.sh"
 # CodeForces - Unified CLI (installed to ~/.cargo/bin)
 alias cfbuild='(cd ~/codebase/codeforces && cargo install --path cf-cli --force) && (cd ~/notes/projects/interview_bot/codejudge-tui && cargo install --path ~/notes/projects/interview_bot/codejudge-tui)'
 
+# Tmux - Reload zsh config in idle panes only (skips vim, ssh, etc.)
+alias tmux-reload-all="~/dotfiles/tmux/scripts/reload-zsh-safe.sh"
 
 # Modern CLI Tools (eza, bat, fd, delta)
 alias ls="eza --icons"
