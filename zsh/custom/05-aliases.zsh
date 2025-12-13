@@ -98,3 +98,7 @@ alias nvim-notify='~/dotfiles/scripts/nvim-memory-notify.sh'
 alias cleanup-nvim='~/dotfiles/scripts/cleanup-old-nvim.sh'
 alias cleanup-nvim-dry='~/dotfiles/scripts/cleanup-old-nvim.sh --dry-run'
 alias cleanup-nvim-idle='~/dotfiles/scripts/cleanup-old-nvim.sh --idle-only'
+
+# Claude Code - MCP configuration aliases
+alias claude='command claude --strict-mcp-config --mcp-config ~/dotfiles/claude/no-mcp.json'
+alias claude-mcp='command claude --strict-mcp-config --mcp-config ~/dotfiles/claude/mcp-servers.json'
