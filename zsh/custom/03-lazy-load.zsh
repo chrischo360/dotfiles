@@ -35,34 +35,10 @@ _load_nvm() {
   _nvm_loaded=1
 }
 
-# Lazy-load wrappers for common node commands
-node() {
-  _load_nvm
-  unfunction node
-  command node "$@"
-}
-
-npm() {
-  _load_nvm
-  unfunction npm
-  command npm "$@"
-}
-
-npx() {
-  _load_nvm
-  unfunction npx
-  command npx "$@"
-}
-
+# NVM command wrapper (nvm is a shell function, needs full NVM loading)
 nvm() {
   _load_nvm
   command nvm "$@"
-}
-
-# Wrap claude command to ensure ccstatusline has node available
-claude() {
-  _load_nvm
-  command claude "$@"
 }
 
 # --- Pyenv ---
