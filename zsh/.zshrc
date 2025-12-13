@@ -46,13 +46,5 @@ source $ZSH/oh-my-zsh.sh
 # Load all custom configuration modules
 for config ($HOME/dotfiles/zsh/custom/*.zsh) source $config
 
-# ================================
-# Starship Prompt
-# ================================
-
-# Initialize Starship (must be at the end of .zshrc)
-# DISABLED: Using zsh-native prompt instead (see custom/10-prompt.zsh)
-# eval "$(starship init zsh)"
-
 # Profiling - uncomment to see timing
 # zprof

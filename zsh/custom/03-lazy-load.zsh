@@ -9,7 +9,7 @@ gcloud() {
     . "$HOME/google-cloud-sdk/completion.zsh.inc"
   fi
   unfunction gcloud
-  gcloud "$@"
+  command gcloud "$@"
 }
 
 # --- NVM (Node Version Manager) ---
@@ -35,8 +35,35 @@ _load_nvm() {
   _nvm_loaded=1
 }
 
-# Always load NVM at startup to ensure npm globals are available for tools like ccstatusline
-_load_nvm
+# Lazy-load wrappers for common node commands
+node() {
+  _load_nvm
+  unfunction node
+  command node "$@"
+}
+
+npm() {
+  _load_nvm
+  unfunction npm
+  command npm "$@"
+}
+
+npx() {
+  _load_nvm
+  unfunction npx
+  command npx "$@"
+}
+
+nvm() {
+  _load_nvm
+  command nvm "$@"
+}
+
+# Wrap claude command to ensure ccstatusline has node available
+claude() {
+  _load_nvm
+  command claude "$@"
+}
 
 # --- Pyenv ---
 _pyenv_loaded=0
@@ -51,19 +78,19 @@ _load_pyenv() {
 
 pyenv() {
   _load_pyenv
-  pyenv "$@"
+  command pyenv "$@"
 }
 
 python() {
   _load_pyenv
   unset -f python
-  python "$@"
+  command python "$@"
 }
 
 pip() {
   _load_pyenv
   unset -f pip
-  pip "$@"
+  command pip "$@"
 }
 
 # --- SDKMAN (Java) ---
@@ -79,25 +106,25 @@ _load_sdkman() {
 
 sdk() {
   _load_sdkman
-  sdk "$@"
+  command sdk "$@"
 }
 
 java() {
   _load_sdkman
   unset -f java
-  java "$@"
+  command java "$@"
 }
 
 mvn() {
   _load_sdkman
   unset -f mvn
-  mvn "$@"
+  command mvn "$@"
 }
 
 gradle() {
   _load_sdkman
   unset -f gradle
-  gradle "$@"
+  command gradle "$@"
 }
 
 # --- Zoxide ---

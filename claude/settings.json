@@ -164,24 +164,5 @@
     "~/codebase/sf-ui-web",
     "~/codebase/terraform"
   ],
-  "mcpServers": {
-    "MCP_DOCKER": {
-      "command": "docker",
-      "args": ["mcp", "gateway", "run"]
-    },
-    "glean": {
-      "command": "npx",
-      "args": ["-y", "@gleanwork/local-mcp-server"],
-      "env": {
-        "GLEAN_INSTANCE": "wayfair",
-        "GLEAN_API_TOKEN": "***REMOVED-SECRET***"
-      }
-    },
-    "playwright": {
-      "type": "stdio",
-      "command": "npx",
-      "args": ["@playwright/mcp@latest", "--extension"],
-      "env": {}
-    }
-  }
+  "mcpServers": {}
 }
