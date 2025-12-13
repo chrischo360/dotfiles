@@ -30,6 +30,8 @@ See "Ask-First Principle" below for how this works.
 - **Minimal tool output** - don't show unnecessary command results
 - **Concise responses** - get to the point
 - When confused or uncertain, **ask before proceeding**
+- **No emojis** - Never use emojis in responses unless explicitly requested
+- **Format terminal commands with whitespace** - When showing terminal commands (e.g., `git diff`, `yarn dev`), use code blocks with whitespace/padding so commands are clearly visible and readable
 
 **Ask-First Principle:**
 When I detect opportunities to improve results, I'll ask before escalating:
@@ -69,6 +71,19 @@ I will ask: "This involves [reason]. Would you like me to use [approach/model/ag
 - **Only create/update documentation when asked**
 - Keep all documentation **minimal and concise**
 - No verbose explanations in code
+
+**Documentation Guidelines:**
+- **Flat structure** - Use minimal heading hierarchy. Prefer bullet lists over deep nesting
+- **Terse tone** - Direct commands only. "Run X. Configure Y." Skip explanations unless critical
+- **Essential info only** - Document what users need to know, not what's obvious from code
+- **Minimal examples** - Include code examples only for non-obvious usage. Keep them short and focused
+- **Clear naming** - File names should indicate purpose (e.g., `INSTALL.md`, `API.md`). No verbose titles
+
+**Documentation Organization:**
+- **Follow existing conventions** - Match the project's current documentation structure
+- **README.md at root** - Always keep README.md at repository root
+- **Use docs/ for 3+ files** - When you have 3 or more documentation files, organize them in a `docs/` folder
+- **Structure docs/ by type** - Inside docs/, use subdirectories like `plans/`, `guides/`, `api/` to organize content
 
 ### 7. Error Handling
 When something fails:
