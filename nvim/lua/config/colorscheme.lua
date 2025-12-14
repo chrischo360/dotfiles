@@ -235,12 +235,17 @@ vim.api.nvim_create_autocmd("FocusGained", {
 
     local new_content = (theme or "") .. "\n" .. (bg or "")
 
-    -- Only reload if file changed and theme is different
-    if new_content ~= last_checked_content and theme ~= vim.g.colors_name then
+    -- Only reload if file changed
+    if new_content ~= last_checked_content then
       last_checked_content = new_content
+
+      -- Set background first
       if bg and (bg == 'light' or bg == 'dark') then
         vim.o.background = bg
       end
+
+      -- Always reload colorscheme after background change to apply new colors
+      -- Even if theme name is the same, it needs to reload for background change
       if theme and theme ~= "" then
         pcall(vim.cmd.colorscheme, theme)
       end

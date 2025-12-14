@@ -61,6 +61,16 @@ calculate_cost() {
     local output_tokens="$3"
     local model_tier="$4"
 
+    # Ensure numeric inputs (prevent bc errors)
+    input_tokens=${input_tokens:-0}
+    cache_creation=${cache_creation:-0}
+    output_tokens=${output_tokens:-0}
+
+    # Validate inputs are numbers
+    [[ ! "$input_tokens" =~ ^[0-9]+$ ]] && input_tokens=0
+    [[ ! "$cache_creation" =~ ^[0-9]+$ ]] && cache_creation=0
+    [[ ! "$output_tokens" =~ ^[0-9]+$ ]] && output_tokens=0
+
     # Billable input = regular input + cache creation (both charged)
     local total_input=$((input_tokens + cache_creation))
 
@@ -83,27 +93,42 @@ calculate_cost() {
     esac
 
     # Calculate: (tokens / 1M) * price_per_1M
-    echo "scale=6; ($total_input * $input_price + $output_tokens * $output_price) / 1000000" | bc
+    # Protect against empty values in bc
+    if [ "$total_input" -gt 0 ] || [ "$output_tokens" -gt 0 ]; then
+        echo "scale=6; ($total_input * $input_price + $output_tokens * $output_price) / 1000000" | bc
+    else
+        echo "0"
+    fi
 }
 
 # Parse transcript files and extract usage data
 parse_transcripts() {
     local cutoff="$1"
 
-    # Process files in parallel for speed (10 concurrent jq processes)
+    # Create temp jq filter that handles malformed JSON gracefully
+    local jq_filter=$(mktemp)
+    trap "rm -f $jq_filter" EXIT
+
+    cat > "$jq_filter" << 'JQEOF'
+# Read raw lines, try to parse as JSON
+select(type == "object") |
+select(.type == "assistant" and .message.usage != null) |
+select(.timestamp != null) |
+. as $msg |
+($msg.timestamp | sub("\\.\\d+Z$"; "Z") | fromdateiso8601) as $ts |
+select($ts >= $cutoff) |
+{
+    date: ($ts | strftime("%Y-%m-%d")),
+    model: $msg.message.model,
+    usage: $msg.message.usage
+}
+JQEOF
+
+    # Process files: use inputs to read all JSON objects, filtering out parse errors
     find ~/.claude/projects -name "*.jsonl" -type f 2>/dev/null | \
-    xargs -P 10 -I {} jq -c --argjson cutoff "$cutoff" '
-        select(.type == "assistant" and .message.usage != null) |
-        select(.timestamp != null) |
-        . as $msg |
-        ($msg.timestamp | sub("\\.\\d+Z$"; "Z") | fromdateiso8601) as $ts |
-        select($ts >= $cutoff) |
-        {
-            date: ($ts | strftime("%Y-%m-%d")),
-            model: $msg.message.model,
-            usage: $msg.message.usage
-        }
-    ' {} 2>/dev/null
+    xargs -P 10 -I {} sh -c '
+        jq -c --argjson cutoff "$1" -f "$2" "$3" 2>/dev/null || true
+    ' _ "$cutoff" "$jq_filter" {}
 }
 
 # Format number with commas
@@ -159,6 +184,12 @@ main() {
         cache_creation=$(echo "$json_line" | jq -r '.usage.cache_creation_input_tokens // 0')
         cache_read=$(echo "$json_line" | jq -r '.usage.cache_read_input_tokens // 0')
         output=$(echo "$json_line" | jq -r '.usage.output_tokens // 0')
+
+        # Validate numeric values before bc operations
+        [[ ! "$input" =~ ^[0-9]+$ ]] && input=0
+        [[ ! "$cache_creation" =~ ^[0-9]+$ ]] && cache_creation=0
+        [[ ! "$cache_read" =~ ^[0-9]+$ ]] && cache_read=0
+        [[ ! "$output" =~ ^[0-9]+$ ]] && output=0
 
         # Calculate cost for this message
         tier=$(map_model_to_tier "$model")

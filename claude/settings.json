@@ -9,7 +9,8 @@
       "TodoWrite",
       "BashOutput",
       "WebFetch",
-      "WebSearch"
+      "WebSearch",
+      "EnterPlanMode"
     ],
     "deny": [
       "Read(./.env)",
@@ -21,10 +22,9 @@
       "Read(**/build/**)",
       "Read(**/dist/**)",
       "Read(**/*.log)"
-    ],
-    "defaultMode": "plan"
+    ]
   },
-  "model": "opus",
+  "model": "sonnet",
   "hooks": {
     "SessionEnd": [
       {
@@ -68,8 +68,12 @@
     "padding": 0
   },
   "alwaysThinkingEnabled": false,
-  "defaultMode": "plan",
+  "defaultMode": "normal",
   "allowedTools": [
+    {
+      "tool": "EnterPlanMode",
+      "pathPattern": "**"
+    },
     {
       "tool": "Read",
       "pathPattern": "**"

@@ -4,7 +4,7 @@
 alias at="$HOME/dotfiles/alacritty/scripts/alacritty-theme-picker.sh"
 
 # CodeForces - Unified CLI (installed to ~/.cargo/bin)
-alias cfbuild='(cd ~/codebase/codeforces && cargo install --path cf-cli --force) && (cd ~/notes/projects/interview_bot/codejudge-tui && cargo install --path ~/notes/projects/interview_bot/codejudge-tui)'
+alias cfbuild='(cd ~/codebase/cp-toolkit && cargo install --path cp --force)'
 
 # Tmux - Reload zsh config in idle panes only (skips vim, ssh, etc.)
 alias tmux-reload-all="~/dotfiles/tmux/scripts/reload-zsh-safe.sh"
@@ -102,3 +102,6 @@ alias cleanup-nvim-idle='~/dotfiles/scripts/cleanup-old-nvim.sh --idle-only'
 # Claude Code - MCP configuration aliases
 alias claude='command claude --strict-mcp-config --mcp-config ~/dotfiles/claude/no-mcp.json'
 alias claude-mcp='command claude --strict-mcp-config --mcp-config ~/dotfiles/claude/mcp-servers.json'
+
+# Claude Code - Get costs
+alias claude-costs='~/dotfiles/claude/scripts/analyze-costs.py'
