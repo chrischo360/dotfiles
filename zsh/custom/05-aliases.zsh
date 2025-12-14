@@ -3,7 +3,6 @@
 # Alacritty theme picker
 alias at="$HOME/dotfiles/alacritty/scripts/alacritty-theme-picker.sh"
 
-# CodeForces - Unified CLI (installed to ~/.cargo/bin)
 alias cfbuild='(cd ~/codebase/cp-toolkit && cargo install --path cp --force)'
 
 # Tmux - Reload zsh config in idle panes only (skips vim, ssh, etc.)
