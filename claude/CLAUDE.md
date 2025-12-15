@@ -37,7 +37,6 @@ See "Ask-First Principle" below for how this works.
 When I detect opportunities to improve results, I'll ask before escalating:
 - **Extended thinking** - Complex reasoning, architectural decisions
 - **Different model** - Particularly difficult problems
-- **Specialized agents** - Plan, Explore, or custom agents
 - **Alternative approaches** - Multiple valid solutions
 
 I will ask: "This involves [reason]. Would you like me to use [approach/model/agent]?"
@@ -55,6 +54,17 @@ I will ask: "This involves [reason]. Would you like me to use [approach/model/ag
 - Features following existing patterns
 - Simple refactoring
 - Config/documentation changes
+
+**Auto-Escalation (No Asking Required):**
+For these tools, I will automatically use them when appropriate without asking:
+- **Explore agent** - Codebase exploration and investigation
+- **PAL tools** - External model consultation (clink, thinkdeep, planner, consensus, debug, apilookup)
+  - `apilookup` - API/SDK documentation, version info, breaking changes
+  - `clink` - Quick external model consultation for second opinions
+  - `thinkdeep` - Deep investigation (complex bugs, architecture, performance)
+  - `planner` - Implementation planning (features, migrations, system design)
+  - `consensus` - Multi-model decisions (tech choices, architectural decisions)
+  - `debug` - Systematic debugging (mysterious bugs, race conditions)
 
 ### 4. Multi-File Changes
 - **Group changes by feature/component** - not file-by-file
@@ -93,10 +103,6 @@ When something fails:
 4. **Propose a fix** and wait for approval
 
 ## Tool Usage Guidelines
-
-### MCP Tools
-- **Before using any MCP tools**, ask which approach I prefer
-- Don't assume I want to use external services
 
 ### Bash Commands
 - Avoid unnecessary bash commands for exploration

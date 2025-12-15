@@ -1,3 +1,20 @@
 {
-  "mcpServers": {}
+  "mcpServers": {
+    "pal": {
+      "command": "/Users/cc446g/.local/bin/uvx",
+      "args": [
+        "--from",
+        "git+https://github.com/BeehiveInnovations/pal-mcp-server.git",
+        "pal-mcp-server"
+      ],
+      "env": {
+        "PATH": "/Users/cc446g/.nvm/versions/node/v22.18.0/bin:/usr/local/bin:/usr/bin:/bin:/opt/homebrew/bin:/Users/cc446g/.local/bin",
+        "GOOGLE_GENAI_USE_VERTEXAI": "true",
+        "GOOGLE_CLOUD_PROJECT": "wf-gcp-us-sf-genai-pilot-sbx",
+        "GOOGLE_CLOUD_LOCATION": "us-east5",
+        "DISABLED_TOOLS": "analyze,refactor,testgen,secaudit,docgen,tracer",
+        "DEFAULT_MODEL": "auto"
+      }
+    }
+  }
 }

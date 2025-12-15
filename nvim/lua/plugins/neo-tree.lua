@@ -1,6 +1,6 @@
 -- Plugin: Neo-tree
 -- Description: File explorer sidebar with tree view. Shows hidden files by default and follows current file.
--- Keybindings: <leader>e (toggle explorer), <leader>o (focus current file in tree)
+-- Commands: :NT (toggle explorer)
 
 return {
   "nvim-neo-tree/neo-tree.nvim",
@@ -10,23 +10,6 @@ return {
     "nvim-tree/nvim-web-devicons", -- not strictly required, but recommended
     "MunifTanjim/nui.nvim",
     "3rd/image.nvim", -- Optional image support in preview window: See `# Preview Mode` for more information
-  },
-  keys = {
-    {
-      "<leader>e",
-      function()
-        require("neo-tree.command").execute({ toggle = true })
-      end,
-      desc = "Toggle Explorer",
-    },
-    -- Add a keymap to reveal current file
-    {
-      "<leader>o",
-      function()
-        require("neo-tree.command").execute({ action = "focus", reveal = true })
-      end,
-      desc = "Focus file in Explorer",
-    },
   },
   config = function()
     require("neo-tree").setup({
@@ -68,5 +51,10 @@ return {
     vim.keymap.set("n", "<C-j>", "<C-w>j", { noremap = true, silent = true })
     vim.keymap.set("n", "<C-k>", "<C-w>k", { noremap = true, silent = true })
     vim.keymap.set("n", "<C-l>", "<C-w>l", { noremap = true, silent = true })
+
+    -- Create :NT command to toggle NeoTree
+    vim.api.nvim_create_user_command("NT", function()
+      require("neo-tree.command").execute({ toggle = true })
+    end, { desc = "Toggle NeoTree" })
   end,
 }

@@ -10,7 +10,14 @@
       "BashOutput",
       "WebFetch",
       "WebSearch",
-      "EnterPlanMode"
+      "EnterPlanMode",
+      "mcp__pal__clink",
+      "mcp__pal__thinkdeep",
+      "mcp__pal__planner",
+      "mcp__pal__consensus",
+      "mcp__pal__debug",
+      "mcp__pal__apilookup",
+      "mcp__pal__listmodels"
     ],
     "deny": [
       "Read(./.env)",
@@ -22,7 +29,9 @@
       "Read(**/build/**)",
       "Read(**/dist/**)",
       "Read(**/*.log)"
-    ]
+    ],
+    "ask": [],
+    "defaultMode": "default"
   },
   "model": "sonnet",
   "hooks": {
@@ -67,7 +76,7 @@
     "command": "ccstatusline",
     "padding": 0
   },
-  "alwaysThinkingEnabled": false,
+  "alwaysThinkingEnabled": true,
   "defaultMode": "normal",
   "allowedTools": [
     {

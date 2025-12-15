@@ -183,6 +183,8 @@ The install script will:
 The `~/dotfiles/claude/` directory contains Claude Code configuration and utilities:
 
 - **settings.json** - Main Claude Code configuration (permissions, model, hooks, statusline)
+- **CLAUDE.md** - Global instructions and workflow rules
+- **PAL_CONFIG.md** - PAL MCP Server configuration guide
 - **agents/** - Custom agent definitions for specialized workflows
 - **hooks/** - Session hooks for token tracking and cost logging
 - **scripts/** - Utility scripts:
@@ -192,6 +194,18 @@ The `~/dotfiles/claude/` directory contains Claude Code configuration and utilit
   - `display-status.sh` - Token/cost status display
 
 See `claude/README.md` for detailed Claude Code documentation.
+
+## PAL MCP Workflow
+
+Claude automatically uses PAL tools for:
+- **apilookup** - API/SDK docs, version info, breaking changes
+- **clink** - Quick external model consultation
+- **thinkdeep** - Deep investigation (gemini-3-pro-preview)
+- **planner** - Implementation planning (gemini-3-pro-preview)
+- **consensus** - Multi-model decisions (mixed pro/flash)
+- **debug** - Systematic debugging (pro for complex, flash for simple)
+
+Configuration: See `claude/PAL_CONFIG.md` for setup details.
 
 ## Usage Notes
 

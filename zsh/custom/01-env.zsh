@@ -25,8 +25,20 @@ export SDKMAN_DIR="$HOME/.sdkman"
 export CLAUDE_CODE_USE_VERTEX=1
 export ANTHROPIC_VERTEX_PROJECT_ID=wf-gcp-us-sf-genai-pilot-sbx
 export CLOUD_ML_REGION=us-east5
+
 export ANTHROPIC_DEFAULT_OPUS_MODEL='claude-opus-4@20250514'
 export ANTHROPIC_DEFAULT_SONNET_MODEL='claude-sonnet-4-5@20250929'
 export ANTHROPIC_DEFAULT_HAIKU_MODEL='claude-sonnet-4-5@20250929'
 export ANTHROPIC_MODEL='claude-sonnet-4-5@20250929'
 export ANTHROPIC_SMALL_FAST_MODEL='claude-sonnet-4-5@20250929'
+
+# Gemini CLI on Vertex AI
+export GOOGLE_GENAI_USE_VERTEXAI=true
+export GOOGLE_CLOUD_PROJECT=wf-gcp-us-sf-genai-pilot-sbx
+export GOOGLE_CLOUD_LOCATION=us-east5
+
+# Google Gemini AI Studio API Key
+export GEMINI_API_KEY="REDACTED_GEMINI_API_KEY"
+
+# CD PATH - codebase
+export CDPATH=".:~:~/codebase"
