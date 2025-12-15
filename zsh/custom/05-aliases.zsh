@@ -103,7 +103,7 @@ alias cleanup-nvim-idle='~/dotfiles/scripts/cleanup-old-nvim.sh --idle-only'
 
 # Claude Code - MCP configuration aliases
 # alias claude='command claude'
-alias claude='command claude --strict-mcp-config ~/dotfiles/claude/no-mcp.json'
+alias claude='command claude --strict-mcp-config --mcp-config ~/dotfiles/claude/no-mcp.json'
 alias claude-mcp='command claude --strict-mcp-config --mcp-config ~/dotfiles/claude/mcp-servers.json'
 
 # Claude Code - Get costs

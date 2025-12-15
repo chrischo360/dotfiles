@@ -180,6 +180,76 @@ Current hooks in `settings.json`:
 
 All hooks currently call `notify.sh` for macOS notifications.
 
+## 📝 Custom Commands
+
+### Directory Structure
+
+```
+~/dotfiles/claude/commands/
+├── global/                         # Global commands (available everywhere)
+│   └── *.md                        # Symlinked to ~/.claude/commands/
+└── repos/                          # Per-repository commands
+    ├── notes/                      # Commands for ~/notes repo
+    │   └── archive-week.md         # Weekly plan archival
+    └── [other-repo]/               # Add more repos as needed
+```
+
+### Command Types
+
+**Global Commands** (`commands/global/`)
+- Available in all repositories
+- Symlinked to `~/.claude/commands/`
+- Use for general-purpose commands
+
+**Repo-Specific Commands** (`commands/repos/{repo-name}/`)
+- Available only in specific repositories
+- Symlinked to `~/path/to/repo/.claude/commands/`
+- Use for project-specific workflows
+
+### Adding New Commands
+
+**Global command:**
+```bash
+# Create command file
+echo "Your command prompt" > ~/dotfiles/claude/commands/global/my-command.md
+
+# Symlink to global directory
+ln -s ~/dotfiles/claude/commands/global/my-command.md ~/.claude/commands/my-command.md
+
+# Restart Claude Code and use
+/my-command
+```
+
+**Repo-specific command:**
+```bash
+# Create command for repo
+mkdir -p ~/dotfiles/claude/commands/repos/my-repo
+echo "Repo-specific prompt" > ~/dotfiles/claude/commands/repos/my-repo/my-command.md
+
+# Symlink to repo's .claude directory
+mkdir -p ~/path/to/my-repo/.claude/commands
+ln -s ~/dotfiles/claude/commands/repos/my-repo/my-command.md ~/path/to/my-repo/.claude/commands/my-command.md
+
+# Restart Claude Code in that repo and use
+/my-command
+```
+
+### Current Commands
+
+**notes repo:**
+- `/archive-week` - Archive current week plan and create new weekly plan
+
+**Global:**
+- `/buffers` - Intelligently fetch relevant files from Neovim tracked buffers for current project
+
+### Symlink Reference
+
+| Source | Target | Scope |
+|--------|--------|-------|
+| `~/dotfiles/claude/commands/global/*.md` | `~/.claude/commands/*.md` | All repos |
+| `~/dotfiles/claude/commands/global/buffers.md` | `~/.claude/commands/buffers.md` | All repos |
+| `~/dotfiles/claude/commands/repos/notes/*.md` | `~/notes/.claude/commands/*.md` | notes repo only |
+
 ## 🚀 Setup
 
 ### Add to PATH (Optional)
