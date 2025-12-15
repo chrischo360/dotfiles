@@ -99,6 +99,22 @@ macOS notification integration for Claude Code events. Sends notifications via `
 - AgentComplete
 - Custom events
 
+### `get-buffers.sh`
+Fetch Neovim buffer tracking data for current project. Returns JSON with all tracked buffers and importance scores. Used by Claude to proactively gather context.
+
+**Usage:**
+```bash
+~/dotfiles/claude/scripts/get-buffers.sh
+```
+
+**Output:** JSON with project name and buffer list (path, access count, save count, importance score)
+
+**Example:**
+```bash
+cd ~/dotfiles
+~/dotfiles/claude/scripts/get-buffers.sh | jq
+```
+
 ## ⚙️ Settings
 
 ## 📁 Configuration Files

@@ -35,6 +35,11 @@
   },
   "model": "sonnet",
   "hooks": {
+    "SessionStart": [
+      {
+        "hooks": []
+      }
+    ],
     "SessionEnd": [
       {
         "hooks": []

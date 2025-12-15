@@ -34,7 +34,7 @@ return {
       scss = { "prettier" },
       html = { "prettier" },
       yaml = { "prettier" },
-      markdown = { "prettier" },
+      -- markdown = { "prettier" }, -- DISABLED: No auto-formatting for markdown
       graphqls = { "prettier" },
       sh = { "shfmt" },
       bash = { "shfmt" },
@@ -64,6 +64,11 @@ return {
       -- DISABLE Swift formatting entirely
       if vim.bo[bufnr].filetype == "swift" then
         return false -- Skip Swift formatting
+      end
+
+      -- DISABLE Markdown formatting entirely
+      if vim.bo[bufnr].filetype == "markdown" then
+        return false -- Skip Markdown formatting
       end
 
       -- Standard timeout for other languages
