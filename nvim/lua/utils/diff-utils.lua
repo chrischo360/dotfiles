@@ -291,7 +291,7 @@ function M.setup_keymaps()
 
   vim.keymap.set(
     "n",
-    "<leader>d2",
+    "<leader>d2b",
     M.compare_branches_interactive,
     vim.tbl_extend("force", opts, { desc = "Compare two branches" })
   )

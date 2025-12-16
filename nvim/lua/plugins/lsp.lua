@@ -433,6 +433,9 @@ return {
           },
         },
       })
+
+      -- Enable all configured LSP servers once
+      vim.lsp.enable({ 'ts_ls', 'lua_ls', 'pyright', 'jdtls', 'intelephense', 'rust_analyzer', 'sourcekit' })
     end,
   },
 }

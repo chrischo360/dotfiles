@@ -54,7 +54,7 @@ All Homebrew dependencies are managed via **Brewfile**. The install script autom
 - zoxide, eza, bat, fd, fzf, ripgrep, btop
 
 **Development Tools:**
-- node (includes npm), php@8.1, composer, biome
+- fnm, node (includes npm), php@8.1, composer, biome
 
 **npm Global Packages:**
 - ccstatusline - Claude Code statusline
@@ -68,16 +68,14 @@ All Homebrew dependencies are managed via **Brewfile**. The install script autom
 **Utilities:**
 - terminal-notifier, cloc
 
-### Manual Setup Required
+**Zsh Plugins (included as git submodules):**
+- zsh-autosuggestions - Command suggestions
+- fast-syntax-highlighting - Syntax highlighting
 
-**Oh My Zsh & Plugins:**
-- Oh My Zsh framework (installed by install.sh)
-- zsh-autosuggestions plugin (installed by install.sh)
-- zsh-syntax-highlighting plugin (installed by install.sh)
+### Manual Setup Required
 
 **Optional Tools:**
 - **Raycast** - Launcher (commented out in Brewfile)
-- **NVM** - Node version manager
 - **Pyenv** - Python version manager
 - **Rust** - Install via rustup
 
@@ -92,17 +90,17 @@ cd ~/dotfiles
 
 The install script will:
 1. Install Homebrew packages from Brewfile
-2. Backup existing config files
-3. Create all necessary symlinks
-4. Make scripts executable
-5. Install Oh My Zsh plugins
+2. Initialize git submodules (zsh plugins)
+3. Backup existing config files
+4. Create all necessary symlinks
+5. Make scripts executable
 6. Verify installation and display summary
 
 ### Manual Installation
 
-1. **Clone the repository:**
+1. **Clone the repository (with submodules):**
    ```bash
-   git clone <your-repo-url> ~/dotfiles
+   git clone --recursive <your-repo-url> ~/dotfiles
    cd ~/dotfiles
    ```
 
@@ -112,22 +110,13 @@ The install script will:
    brew bundle --file=~/dotfiles/Brewfile
    ```
 
-3. **Install Oh My Zsh:**
+3. **Initialize git submodules (if not cloned with --recursive):**
    ```bash
-   sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
+   git submodule update --init --recursive
    ```
 
-4. **Install Zsh plugins:**
+4. **Install optional development tools:**
    ```bash
-   git clone https://github.com/zsh-users/zsh-autosuggestions ${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/zsh-autosuggestions
-   git clone https://github.com/zsh-users/zsh-syntax-highlighting ${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/zsh-syntax-highlighting
-   ```
-
-5. **Install optional development tools:**
-   ```bash
-   # NVM (Node Version Manager)
-   curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.0/install.sh | bash
-
    # Pyenv
    brew install pyenv
 
@@ -135,7 +124,7 @@ The install script will:
    curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
    ```
 
-6. **Create symlinks:**
+5. **Create symlinks:**
    ```bash
    # Backup existing configs
    mv ~/.zshrc ~/.zshrc.backup 2>/dev/null
@@ -160,7 +149,7 @@ The install script will:
    ln -sf ~/dotfiles/claude/agents ~/.claude/agents
    ```
 
-7. **Make scripts executable:**
+6. **Make scripts executable:**
    ```bash
    chmod +x ~/dotfiles/claude/scripts/*.sh
    chmod +x ~/dotfiles/alacritty/scripts/*.sh
@@ -168,12 +157,12 @@ The install script will:
    chmod +x ~/dotfiles/tmux/scripts/*.sh
    ```
 
-8. **Setup Raycast scripts:**
+7. **Setup Raycast scripts:**
    - Open Raycast Settings (⌘,)
    - Go to Extensions → Script Commands
    - Add Script Directory: `~/dotfiles/raycast`
 
-9. **Restart your shell:**
+8. **Restart your shell:**
    ```bash
    exec zsh
    ```
@@ -239,7 +228,7 @@ git push
 
 ### Moving to a New Computer
 1. Install Homebrew: `/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"`
-2. Clone this repository: `git clone <your-repo-url> ~/dotfiles`
+2. Clone this repository with submodules: `git clone --recursive <your-repo-url> ~/dotfiles`
 3. Run install script: `cd ~/dotfiles && ./install.sh`
 4. Restart shell: `exec zsh`
 

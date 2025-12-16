@@ -49,7 +49,7 @@ create_symlink() {
 }
 
 # Main installation steps
-echo -e "${BLUE}[1/6] Installing Homebrew packages...${NC}"
+echo -e "${BLUE}[1/5] Installing Homebrew packages...${NC}"
 
 if command -v brew &> /dev/null; then
     echo -e "${GREEN}  ✓ Homebrew detected${NC}"
@@ -67,7 +67,19 @@ else
 fi
 
 echo ""
-echo -e "${BLUE}[2/6] Creating symlinks...${NC}"
+echo -e "${BLUE}[2/5] Initializing git submodules...${NC}"
+
+if git -C "$DOTFILES_DIR" rev-parse --git-dir > /dev/null 2>&1; then
+    echo -e "${YELLOW}  Updating git submodules...${NC}"
+    git -C "$DOTFILES_DIR" submodule update --init --recursive
+    echo -e "${GREEN}  ✓ Git submodules initialized${NC}"
+else
+    echo -e "${RED}  ✗ Not a git repository${NC}"
+    echo -e "${YELLOW}  ⚠ Plugin submodules may not be initialized${NC}"
+fi
+
+echo ""
+echo -e "${BLUE}[3/5] Creating symlinks...${NC}"
 
 # Zsh
 create_symlink "$DOTFILES_DIR/zsh/.zshrc" "$HOME/.zshrc"
@@ -101,7 +113,7 @@ create_symlink "$DOTFILES_DIR/claude/agents" "$HOME/.claude/agents"
 create_symlink "$DOTFILES_DIR/claude/CLAUDE.md" "$HOME/.claude/CLAUDE.md"
 
 echo ""
-echo -e "${BLUE}[3/6] Making scripts executable...${NC}"
+echo -e "${BLUE}[4/5] Making scripts executable...${NC}"
 
 # Make all shell scripts executable
 find "$DOTFILES_DIR/claude/scripts" -name "*.sh" -exec chmod +x {} \;
@@ -113,38 +125,7 @@ chmod +x "$DOTFILES_DIR/claude/status"
 echo -e "${GREEN}  ✓ Scripts made executable${NC}"
 
 echo ""
-echo -e "${BLUE}[4/6] Checking Oh My Zsh installation...${NC}"
-
-if [ ! -d "$HOME/.oh-my-zsh" ]; then
-    echo -e "${YELLOW}  ⚠ Oh My Zsh not found${NC}"
-    echo -e "${YELLOW}  Install with: sh -c \"\$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)\"${NC}"
-else
-    echo -e "${GREEN}  ✓ Oh My Zsh installed${NC}"
-fi
-
-echo ""
-echo -e "${BLUE}[5/6] Checking Zsh plugins...${NC}"
-
-ZSH_CUSTOM="${ZSH_CUSTOM:-$HOME/.oh-my-zsh/custom}"
-
-if [ ! -d "$ZSH_CUSTOM/plugins/zsh-autosuggestions" ]; then
-    echo -e "${YELLOW}  ⚠ Installing zsh-autosuggestions...${NC}"
-    git clone https://github.com/zsh-users/zsh-autosuggestions "$ZSH_CUSTOM/plugins/zsh-autosuggestions"
-    echo -e "${GREEN}  ✓ zsh-autosuggestions installed${NC}"
-else
-    echo -e "${GREEN}  ✓ zsh-autosuggestions already installed${NC}"
-fi
-
-if [ ! -d "$ZSH_CUSTOM/plugins/zsh-syntax-highlighting" ]; then
-    echo -e "${YELLOW}  ⚠ Installing zsh-syntax-highlighting...${NC}"
-    git clone https://github.com/zsh-users/zsh-syntax-highlighting "$ZSH_CUSTOM/plugins/zsh-syntax-highlighting"
-    echo -e "${GREEN}  ✓ zsh-syntax-highlighting installed${NC}"
-else
-    echo -e "${GREEN}  ✓ zsh-syntax-highlighting already installed${NC}"
-fi
-
-echo ""
-echo -e "${BLUE}[6/6] Verifying package installation...${NC}"
+echo -e "${BLUE}[5/5] Verifying package installation...${NC}"
 
 check_command() {
     if command -v "$1" &> /dev/null; then

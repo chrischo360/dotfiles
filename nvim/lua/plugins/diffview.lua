@@ -18,7 +18,10 @@ return {
       "<leader>dv",
       function()
         if next(require("diffview.lib").views) == nil then
+          local start = vim.loop.hrtime()
           vim.cmd("DiffviewOpen")
+          local elapsed = (vim.loop.hrtime() - start) / 1e6
+          print(string.format("DiffviewOpen took %.2f ms", elapsed))
         else
           vim.cmd("DiffviewClose")
         end
@@ -36,14 +39,25 @@ return {
       "<cmd>DiffviewFileHistory<cr>",
       desc = "File History (all files)",
     },
-    -- Note: <leader>dm, <leader>db, <leader>d2, <leader>dq are provided by diff-utils.lua
+    -- Quick HEAD~n comparisons
+    { "<leader>d1", "<cmd>DiffviewOpen HEAD~1<cr>", desc = "Diff with HEAD~1" },
+    { "<leader>d2", "<cmd>DiffviewOpen HEAD~2<cr>", desc = "Diff with HEAD~2" },
+    { "<leader>d3", "<cmd>DiffviewOpen HEAD~3<cr>", desc = "Diff with HEAD~3" },
+    { "<leader>d4", "<cmd>DiffviewOpen HEAD~4<cr>", desc = "Diff with HEAD~4" },
+    { "<leader>d5", "<cmd>DiffviewOpen HEAD~5<cr>", desc = "Diff with HEAD~5" },
+    { "<leader>d6", "<cmd>DiffviewOpen HEAD~6<cr>", desc = "Diff with HEAD~6" },
+    { "<leader>d7", "<cmd>DiffviewOpen HEAD~7<cr>", desc = "Diff with HEAD~7" },
+    { "<leader>d8", "<cmd>DiffviewOpen HEAD~8<cr>", desc = "Diff with HEAD~8" },
+    { "<leader>d9", "<cmd>DiffviewOpen HEAD~9<cr>", desc = "Diff with HEAD~9" },
+    { "<leader>d0", "<cmd>DiffviewOpen HEAD~10<cr>", desc = "Diff with HEAD~10" },
+    -- Note: <leader>dm, <leader>db, <leader>d2b, <leader>dq are provided by diff-utils.lua
   },
   config = function()
     local actions = require("diffview.actions")
 
     require("diffview").setup({
       diff_binaries = false,
-      enhanced_diff_hl = true,
+      enhanced_diff_hl = false, -- Disabled: Treesitter already provides syntax highlighting
       git_cmd = { "git" },
       use_icons = true,
       show_help_hints = true,

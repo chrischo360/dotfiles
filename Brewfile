@@ -23,7 +23,7 @@ brew "btop"              # System monitor
 # ============================================
 # Development Tools
 # ============================================
-brew "node"              # JavaScript runtime
+brew "fnm"               # Fast Node Manager (replaces NVM)
 brew "php@8.1"           # PHP 8.1
 brew "composer"          # PHP package manager
 brew "biome"             # Code formatter/linter

@@ -12,35 +12,6 @@ gcloud() {
   command gcloud "$@"
 }
 
-# --- NVM (Node Version Manager) ---
-_nvm_loaded=0
-
-_load_nvm() {
-  if [ $_nvm_loaded -eq 1 ]; then
-    return
-  fi
-
-  if [ -s "$NVM_DIR/nvm.sh" ]; then
-    . "$NVM_DIR/nvm.sh"
-  elif [ -s "/usr/local/opt/nvm/nvm.sh" ]; then
-    . "/usr/local/opt/nvm/nvm.sh"
-  fi
-
-  if [ -s "$NVM_DIR/bash_completion" ]; then
-    . "$NVM_DIR/bash_completion"
-  elif [ -s "/usr/local/opt/nvm/etc/bash_completion" ]; then
-    . "/usr/local/opt/nvm/etc/bash_completion"
-  fi
-
-  _nvm_loaded=1
-}
-
-# NVM command wrapper (nvm is a shell function, needs full NVM loading)
-nvm() {
-  _load_nvm
-  command nvm "$@"
-}
-
 # --- Pyenv ---
 _pyenv_loaded=0
 
@@ -67,6 +38,40 @@ pip() {
   _load_pyenv
   unset -f pip
   command pip "$@"
+}
+
+# --- Rbenv (Ruby) ---
+_rbenv_loaded=0
+
+_load_rbenv() {
+  if [ $_rbenv_loaded -eq 1 ]; then
+    return
+  fi
+  eval "$(rbenv init - --no-rehash zsh)"
+  _rbenv_loaded=1
+}
+
+rbenv() {
+  _load_rbenv
+  command rbenv "$@"
+}
+
+ruby() {
+  _load_rbenv
+  unset -f ruby
+  command ruby "$@"
+}
+
+gem() {
+  _load_rbenv
+  unset -f gem
+  command gem "$@"
+}
+
+bundle() {
+  _load_rbenv
+  unset -f bundle
+  command bundle "$@"
 }
 
 # --- SDKMAN (Java) ---

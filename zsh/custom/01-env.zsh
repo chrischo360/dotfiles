@@ -12,7 +12,6 @@ setopt HIST_IGNORE_SPACE         # Ignore commands starting with space
 setopt HIST_REDUCE_BLANKS        # Remove superfluous blanks
 
 # Node.js
-export NVM_DIR="$HOME/.nvm"
 export NODE_EXTRA_CA_CERTS="$HOME/certificates/wayfair-certs.pem"
 
 # Python
