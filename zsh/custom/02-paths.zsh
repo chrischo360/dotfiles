@@ -3,18 +3,25 @@
 # Local binaries (includes Claude Code CLI)
 export PATH="$HOME/.local/bin:$PATH"
 
-# NVM default node version (fast, no full nvm loading)
-if [ -d "$NVM_DIR/versions/node" ]; then
-  # Get the default version from alias or fallback to latest
-  if [ -f "$NVM_DIR/alias/default" ]; then
-    DEFAULT_NODE_VERSION="v$(cat "$NVM_DIR/alias/default")"
-  else
-    # Fallback to the first installed version
-    DEFAULT_NODE_VERSION=$(ls "$NVM_DIR/versions/node" | head -n 1)
-  fi
+# FNM default node version (fast, adds to PATH before lazy loading)
+# This ensures Node is available for tools like neovim LSP
+if command -v fnm &> /dev/null; then
+  FNM_DIR="${FNM_DIR:-$HOME/.local/share/fnm}"
+  if [ -d "$FNM_DIR" ]; then
+    # Get the default alias path (symlink points to installation dir)
+    if [ -L "$FNM_DIR/aliases/default" ]; then
+      NODE_INSTALLATION=$(readlink "$FNM_DIR/aliases/default")
+    elif [ -L "$FNM_DIR/aliases/lts-latest" ]; then
+      NODE_INSTALLATION=$(readlink "$FNM_DIR/aliases/lts-latest")
+    elif [ -d "$FNM_DIR/node-versions" ]; then
+      # Fallback: get latest installed version
+      LATEST_VERSION=$(ls "$FNM_DIR/node-versions" | sort -V | tail -n 1)
+      NODE_INSTALLATION="$FNM_DIR/node-versions/$LATEST_VERSION/installation"
+    fi
 
-  if [ -d "$NVM_DIR/versions/node/$DEFAULT_NODE_VERSION/bin" ]; then
-    export PATH="$NVM_DIR/versions/node/$DEFAULT_NODE_VERSION/bin:$PATH"
+    if [ -n "$NODE_INSTALLATION" ] && [ -d "$NODE_INSTALLATION/bin" ]; then
+      export PATH="$NODE_INSTALLATION/bin:$PATH"
+    fi
   fi
 fi
 
