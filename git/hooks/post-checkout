@@ -1,0 +1,65 @@
+#!/bin/bash
+# post-checkout - Auto-clean and rebuild sf-ui-web on branch changes
+#
+# This hook runs automatically after 'git checkout' when switching branches.
+# It cleans stale build artifacts and rebuilds to prevent import errors.
+#
+# To skip: SKIP_AUTO_CLEAN=1 git checkout <branch>
+
+# Exit if skip flag is set
+if [[ -n "$SKIP_AUTO_CLEAN" ]]; then
+    exit 0
+fi
+
+# Hook arguments:
+# $1 = previous HEAD
+# $2 = new HEAD
+# $3 = flag (1 = branch checkout, 0 = file checkout)
+prev_head=$1
+new_head=$2
+branch_checkout=$3
+
+# Only run on branch checkout, not file checkout
+if [[ "$branch_checkout" != "1" ]]; then
+    exit 0
+fi
+
+# Check if we're in sf-ui-web repo
+if [[ ! -f "package.json" ]]; then
+    exit 0
+fi
+
+# Check if package.json contains "sf-ui-web"
+if ! grep -q '"name": "sf-ui-web"' package.json 2>/dev/null; then
+    exit 0
+fi
+
+# Get branch names for display
+prev_branch=$(git name-rev --name-only "$prev_head" 2>/dev/null || echo "$prev_head")
+new_branch=$(git name-rev --name-only "$new_head" 2>/dev/null || echo "$new_head")
+
+# Clean up branch names (remove remotes/origin/ prefix if present)
+prev_branch=${prev_branch#remotes/origin/}
+new_branch=${new_branch#remotes/origin/}
+
+# Colors for output
+BLUE='\033[0;34m'
+GREEN='\033[0;32m'
+NC='\033[0m' # No Color
+
+echo ""
+echo -e "${BLUE}🔄 Branch changed: ${prev_branch} → ${new_branch}${NC}"
+echo -e "${BLUE}🧹 Running: sfb -d -r (clean dist + rebuild)${NC}"
+echo ""
+
+# Run the clean script
+if ~/dotfiles/codebase/sf-ui-web/sf -d -r; then
+    echo ""
+    echo -e "${GREEN}✅ Auto-clean complete!${NC}"
+    echo -e "${BLUE}ℹ  To skip auto-clean: SKIP_AUTO_CLEAN=1 git checkout <branch>${NC}"
+    echo ""
+else
+    echo ""
+    echo "⚠️  Auto-clean failed. You may need to run 'sfb -d -r' manually."
+    echo ""
+fi

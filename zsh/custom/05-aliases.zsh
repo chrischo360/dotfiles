@@ -108,3 +108,6 @@ alias claude-mcp='command claude --strict-mcp-config --mcp-config ~/dotfiles/cla
 
 # Claude Code - Get costs
 alias claude-costs='~/dotfiles/claude/scripts/analyze-costs.py'
+
+# sf-ui-web - Build/clean utility
+alias sfb='~/dotfiles/codebase/sf-ui-web/sf'

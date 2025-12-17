@@ -1,7 +1,7 @@
 # Keybindings
 
 # Vim keybindings
-bindkey -v
+# bindkey -v
 
 # Better search with arrow keys
 bindkey '^[[A' history-search-backward
