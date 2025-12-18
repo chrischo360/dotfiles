@@ -81,8 +81,8 @@
     "command": "ccstatusline",
     "padding": 0
   },
-  "alwaysThinkingEnabled": true,
-  "defaultMode": "normal",
+  "alwaysThinkingEnabled": false,
+  "defaultMode": "plan",
   "allowedTools": [
     {
       "tool": "EnterPlanMode",
