@@ -18,15 +18,16 @@ async function main() {
     const user = await getCurrentUser();
     console.log(`   ✅ User: ${user.username} (${user.name})`);
 
-    // Discover repos
-    console.log('\n2. Discovering your repos (filtering by contributions)...');
-    console.log('   This may take a minute...');
+    // Discover repos (derived from PRs - much faster!)
+    console.log('\n2. Discovering your repos...');
     const repos = await discoverRepos();
     console.log(`   ✅ Found ${repos.length} repos with contributions`);
     if (repos.length > 0) {
-      console.log(`   Top 5 by recent activity:`);
+      console.log(`\n   Top 5 by recent activity:`);
       repos.slice(0, 5).forEach(repo => {
-        const commitInfo = repo.last_commit ? `last: ${repo.last_commit.date.split('T')[0]}` : 'no commits';
+        const commitInfo = repo.last_commit
+          ? `commit: ${repo.last_commit.date.split('T')[0]}`
+          : 'commit: fetching...';
         console.log(`      - ${repo.name} (${repo.pr_count} PRs, ${commitInfo})`);
       });
       if (repos.length > 5) {

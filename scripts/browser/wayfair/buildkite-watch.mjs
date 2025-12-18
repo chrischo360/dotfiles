@@ -46,11 +46,23 @@ async function main() {
     while (true) {
       await page.reload({ waitUntil: 'domcontentloaded' });
 
+      // Debug: Look for status elements
+      const statusElements = await page.locator('[class*="state"], [data-state]').all();
+      console.log(`[DEBUG] Found ${statusElements.length} status elements`);
+      for (const el of statusElements.slice(0, 5)) {
+        const classes = await el.getAttribute('class').catch(() => '');
+        const dataState = await el.getAttribute('data-state').catch(() => '');
+        const text = await el.textContent().catch(() => '');
+        console.log(`[DEBUG]   class="${classes}" data-state="${dataState}" text="${text.trim().substring(0, 50)}"`);
+      }
+
       // Check build status using Buildkite's classes
       const isPassed = await page.locator('.build-state--passed, [data-state="passed"]').isVisible({ timeout: 1000 }).catch(() => false);
       const isFailed = await page.locator('.build-state--failed, [data-state="failed"]').isVisible({ timeout: 1000 }).catch(() => false);
       const isCanceled = await page.locator('.build-state--canceled, [data-state="canceled"]').isVisible({ timeout: 1000 }).catch(() => false);
       const isRunning = await page.locator('.build-state--running, [data-state="running"]').isVisible({ timeout: 1000 }).catch(() => false);
+
+      console.log(`[DEBUG] isPassed=${isPassed} isFailed=${isFailed} isCanceled=${isCanceled} isRunning=${isRunning}`);
 
       if (isPassed) {
         await notify('✅ Build Passed', pipeline || 'Buildkite Build', `Build #${buildNumber || 'Unknown'}`);

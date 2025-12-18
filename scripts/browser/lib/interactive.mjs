@@ -37,15 +37,26 @@ export async function selectPR() {
     throw new Error('No PRs found. Run: scout discover');
   }
 
-  // Format PRs for fzf display with repo prefix and relative time
+  // ANSI color codes
+  const cyan = '\x1b[36m';
+  const yellow = '\x1b[33m';
+  const dim = '\x1b[2m';
+  const reset = '\x1b[0m';
+
+  // Format PRs for fzf display with repo prefix, relative time, and colors
   const fzfInput = prs.map(pr => {
     const repoShort = pr.repo.split('/')[1]; // Get just the repo name without owner
     const timeAgo = formatRelativeTime(pr.updated_at);
-    return `${pr.url}\t[${repoShort}] #${pr.number}: ${pr.title} (updated ${timeAgo})`;
+    return `${cyan}[${repoShort}]${reset} ${yellow}#${pr.number}${reset}: ${pr.title} ${dim}(updated ${timeAgo})${reset} ${dim}[${pr.url}]${reset}\t${pr.url}`;
   }).join('\n');
 
   return new Promise((resolve, reject) => {
-    const fzf = spawn('fzf', ['--height', '40%', '--reverse', '--header', 'Select a PR:'], {
+    const fzf = spawn('fzf', [
+      '--ansi',  // Enable ANSI colors
+      '--height', '40%',
+      '--reverse',
+      '--header', 'Select a PR:'
+    ], {
       stdio: ['pipe', 'pipe', 'inherit']
     });
 
@@ -59,8 +70,8 @@ export async function selectPR() {
       if (code === 130) {
         reject(new Error('Selection cancelled'));
       } else if (code === 0) {
-        // Extract URL from selected line (first column)
-        const selectedUrl = output.trim().split('\t')[0];
+        // Extract URL from selected line (second column after tab)
+        const selectedUrl = output.trim().split('\t')[1];
         resolve(selectedUrl);
       } else {
         reject(new Error(`fzf exited with code ${code}`));

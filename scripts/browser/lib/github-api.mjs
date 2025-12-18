@@ -51,15 +51,10 @@ export async function getCurrentUser() {
 }
 
 /**
- * Check if user has commits in a repo
+ * Sleep helper for rate limiting
  */
-async function hasCommits(repoFullName, username) {
-  try {
-    const commits = await ghApi(`/repos/${repoFullName}/commits?author=${username}&per_page=1`);
-    return commits.length > 0;
-  } catch {
-    return false;
-  }
+async function sleep(ms) {
+  return new Promise(resolve => setTimeout(resolve, ms));
 }
 
 /**
@@ -82,69 +77,53 @@ async function getLastCommit(repoFullName, username) {
 }
 
 /**
- * Count user's PRs in a repo
- */
-async function countRepoPRs(repoFullName) {
-  try {
-    const { stdout } = await execAsync(`gh search prs --repo=${repoFullName} --author=@me --limit 1 --json url`);
-    const prs = JSON.parse(stdout);
-    // gh search doesn't return total count easily, so we'll use a workaround
-    // Get all PRs and count them (limit to 100 for performance)
-    const { stdout: allPrs } = await execAsync(`gh search prs --repo=${repoFullName} --author=@me --limit 100 --json url`);
-    return JSON.parse(allPrs).length;
-  } catch {
-    return 0;
-  }
-}
-
-/**
  * Discover repos user contributes to
- * Filters repos where user has commits OR PRs, adds metadata
+ * Derives repos from PRs (much faster than checking each repo)
  */
 export async function discoverRepos() {
   try {
-    // Get current user first
+    console.log('   Fetching all your PRs...');
+    // Get ALL user's PRs (both open and closed)
+    const allPrs = await discoverPRs(true); // includeAll=true
+
+    // Group PRs by repo
+    const repoMap = new Map();
+    for (const pr of allPrs) {
+      if (!repoMap.has(pr.repo)) {
+        repoMap.set(pr.repo, { name: pr.repo, prs: [] });
+      }
+      repoMap.get(pr.repo).prs.push(pr);
+    }
+
+    console.log(`   Found ${repoMap.size} repos with PRs`);
+
+    // Convert to array with metadata
+    const repos = Array.from(repoMap.values()).map(repo => ({
+      name: repo.name,
+      pr_count: repo.prs.length,
+      last_pr_update: repo.prs[0].updated_at, // Most recent PR
+      last_commit: null, // Will be filled for top repos
+    }));
+
+    // Sort by most recent PR activity
+    repos.sort((a, b) => {
+      return new Date(b.last_pr_update) - new Date(a.last_pr_update);
+    });
+
+    // Get commit metadata for top 20 most active repos (to avoid rate limits)
+    console.log('   Fetching commit metadata for top 20 repos...');
     const user = await getCurrentUser();
     const username = user.username;
 
-    // Get all repos owned/collaborated by user
-    const ownedRepos = await ghApi('/user/repos?per_page=100&affiliation=owner,collaborator');
-
-    const reposWithMetadata = [];
-
-    // Filter repos and add metadata
-    for (const repo of ownedRepos) {
-      if (repo.archived || repo.fork) continue; // Skip archived and forked repos
-
-      const repoName = repo.full_name;
-
-      // Check if user has contributed (commits OR PRs)
-      const [hasUserCommits, prCount] = await Promise.all([
-        hasCommits(repoName, username),
-        countRepoPRs(repoName),
-      ]);
-
-      // Skip repos with no contributions
-      if (!hasUserCommits && prCount === 0) continue;
-
-      // Get last commit metadata
-      const lastCommit = await getLastCommit(repoName, username);
-
-      reposWithMetadata.push({
-        name: repoName,
-        pr_count: prCount,
-        last_commit: lastCommit,
-      });
+    const topRepos = repos.slice(0, 20);
+    for (let i = 0; i < topRepos.length; i++) {
+      const repo = topRepos[i];
+      console.log(`   [${i + 1}/20] ${repo.name}`);
+      repo.last_commit = await getLastCommit(repo.name, username);
+      await sleep(100); // 100ms delay to avoid rate limits
     }
 
-    // Sort by most recent commit
-    reposWithMetadata.sort((a, b) => {
-      if (!a.last_commit) return 1;
-      if (!b.last_commit) return -1;
-      return new Date(b.last_commit.date) - new Date(a.last_commit.date);
-    });
-
-    return reposWithMetadata;
+    return repos;
   } catch (err) {
     throw new Error(`Failed to discover repos: ${err.message}`);
   }

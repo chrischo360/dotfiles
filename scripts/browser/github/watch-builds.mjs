@@ -1,5 +1,6 @@
 #!/usr/bin/env node
 import { setTimeout } from 'timers/promises';
+import { spawn } from 'child_process';
 import { launchBrowser, needsAuth } from '../lib/browser.mjs';
 import { notify } from '../lib/notify.mjs';
 import { parsePrUrl } from '../lib/github.mjs';
@@ -89,6 +90,7 @@ async function main() {
       let failedCount = 0;
       let pendingCount = 0;
       let neutralCount = 0;
+      const failedBuildkiteUrls = [];
 
       for (const check of allChecks) {
         const hasSuccess = await check.locator('.octicon-check').count() > 0;
@@ -99,6 +101,16 @@ async function main() {
           passedCount++;
         } else if (hasFail) {
           failedCount++;
+
+          // Extract URL from failed check
+          const linkElement = await check.locator('a[href]').first();
+          const href = await linkElement.getAttribute('href').catch(() => null);
+
+          if (href && href.includes('buildkite.com')) {
+            // Use direct buildkite URL
+            const buildkiteUrl = href.startsWith('http') ? href : `https://buildkite.com${href}`;
+            failedBuildkiteUrls.push(buildkiteUrl);
+          }
         } else if (hasNeutral) {
           neutralCount++;
         } else {
@@ -123,6 +135,15 @@ async function main() {
           console.log('✅ All checks passed!');
         } else if (currentState === 'failed') {
           console.log(`❌ ${failedCount} check(s) failed.`);
+
+          // Display Buildkite URLs in --once mode (but don't auto-launch)
+          if (failedBuildkiteUrls.length > 0) {
+            const uniqueUrls = [...new Set(failedBuildkiteUrls)];
+            console.log(`\n🔗 Failed Buildkite build(s):`);
+            for (const url of uniqueUrls) {
+              console.log(`   ${url}`);
+            }
+          }
         } else if (currentState === 'pending') {
           console.log(`⏳ Checks still running: ${pendingCount} pending`);
         } else {
@@ -132,8 +153,40 @@ async function main() {
         break;
       }
 
-      // Watch mode: only notify on transition from pending to complete
-      if (currentState !== previousState && currentState !== 'unknown') {
+      // Watch mode: handle state changes and initial state
+      if (previousState === null) {
+        // First check: if already failed, auto-launch buildkite-watch
+        if (currentState === 'failed' && failedBuildkiteUrls.length > 0) {
+          console.log(`❌ ${failedCount} check(s) already failed.`);
+
+          const uniqueUrls = [...new Set(failedBuildkiteUrls)];
+          console.log(`\n🔗 Found ${uniqueUrls.length} failed Buildkite build(s):`);
+
+          for (const url of uniqueUrls) {
+            console.log(`   ${url}`);
+          }
+
+          // Launch buildkite-watch for the first failed build
+          const buildUrl = uniqueUrls[0];
+          console.log(`\n🚀 Auto-launching buildkite-watch for: ${buildUrl}\n`);
+
+          const scriptDir = new URL('../wayfair/', import.meta.url).pathname;
+          const buildkiteScript = `${scriptDir}buildkite-watch.mjs`;
+
+          spawn('node', [buildkiteScript, buildUrl], {
+            detached: true,
+            stdio: 'inherit'
+          });
+
+          break;
+        } else if (currentState === 'passed') {
+          console.log('✅ All checks already passed!');
+          break;
+        }
+
+        // Set initial state and continue watching
+        previousState = currentState;
+      } else if (currentState !== previousState && currentState !== 'unknown') {
         // Only exit if transitioning FROM pending or if we've seen pending before
         const shouldNotify = previousState === 'pending' ||
                             (previousState !== null && currentState !== 'pending');
@@ -146,12 +199,32 @@ async function main() {
           } else if (currentState === 'failed') {
             await notify('❌ CI Failed', `PR #${prNumber}`, `${owner}/${repo} - Some checks failed`);
             console.log(`❌ ${failedCount} check(s) failed.`);
+
+            // Auto-launch buildkite-watch for failed Buildkite checks
+            if (failedBuildkiteUrls.length > 0) {
+              const uniqueUrls = [...new Set(failedBuildkiteUrls)];
+              console.log(`\n🔗 Found ${uniqueUrls.length} failed Buildkite build(s):`);
+
+              for (const url of uniqueUrls) {
+                console.log(`   ${url}`);
+              }
+
+              // Launch buildkite-watch for the first failed build
+              const buildUrl = uniqueUrls[0];
+              console.log(`\n🚀 Auto-launching buildkite-watch for: ${buildUrl}\n`);
+
+              const scriptDir = new URL('../wayfair/', import.meta.url).pathname;
+              const buildkiteScript = `${scriptDir}buildkite-watch.mjs`;
+
+              spawn('node', [buildkiteScript, buildUrl], {
+                detached: true,
+                stdio: 'inherit'
+              });
+            }
+
             break;
           }
         }
-        previousState = currentState;
-      } else if (previousState === null) {
-        // First check: set initial state
         previousState = currentState;
       }
 
