@@ -111,3 +111,7 @@ alias claude-costs='~/dotfiles/claude/scripts/analyze-costs.py'
 
 # sf-ui-web - Build/clean utility
 alias sfb='~/dotfiles/codebase/sf-ui-web/sf'
+
+# PR Auto-merge watcher
+alias watch-pr='node ~/dotfiles/scripts/browser/watch-pr.mjs'
+alias watch-pr-setup='~/dotfiles/scripts/browser/chrome-automation-setup.sh'

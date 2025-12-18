@@ -87,6 +87,9 @@ create_symlink "$DOTFILES_DIR/zsh/.zshrc" "$HOME/.zshrc"
 # tmux
 create_symlink "$DOTFILES_DIR/tmux/tmux.conf" "$HOME/.tmux.conf"
 
+# Git
+create_symlink "$DOTFILES_DIR/git/gitconfig" "$HOME/.gitconfig"
+
 # AeroSpace
 create_symlink "$DOTFILES_DIR/aerospace/aerospace.toml" "$HOME/.aerospace.toml"
 
