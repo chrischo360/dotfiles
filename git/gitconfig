@@ -1,0 +1,28 @@
+[user]
+	email = “ccho@wayfair.com”
+	name = Christopher Cho
+[color]
+	ui = true
+[push]
+	default = current
+[fetch]
+	prune = true
+[core]
+	autocrlf = false
+	preloadindex = true
+	symlinks = true
+	longpaths = true
+	pager = less -FRX
+	hooksPath = /dev/null
+[log]
+	decorate = short
+[http]
+	sslVerify = false
+[pack]
+	useSparse = true
+[pull]
+	rebase = true
+[credential]
+	helper = osxkeychain
+[pager]
+	branch = false
