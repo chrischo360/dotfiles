@@ -71,7 +71,38 @@ process.on('SIGINT', async () => {
 
     console.log('✅ Authentication saved (Okta + GitHub Enterprise)!');
     console.log(`Saved to: ${authFile}`);
-    console.log('You can now run: watch-pr <PR_URL>');
+
+    // Run discovery
+    console.log('\n🔍 Discovering your repos and PRs...');
+    try {
+      const { checkGhAuth, getCurrentUser, discoverRepos, discoverPRs, cacheUserData } = await import('./lib/github-api.mjs');
+
+      if (await checkGhAuth()) {
+        const user = await getCurrentUser();
+        console.log(`   User: ${user.username}`);
+
+        const repos = await discoverRepos();
+        console.log(`   Found ${repos.length} repos`);
+
+        const prs = await discoverPRs();
+        console.log(`   Found ${prs.length} open PRs`);
+
+        await cacheUserData({
+          github_username: user.username,
+          watched_repos: repos,
+          recent_prs: prs,
+        });
+
+        console.log('✅ Discovery complete! Data cached to config.json');
+      } else {
+        console.log('⚠️  gh CLI not authenticated - run `gh auth login` to enable auto-discovery');
+      }
+    } catch (err) {
+      console.log(`⚠️  Discovery failed: ${err.message}`);
+      console.log('   You can run discovery later with `scout discover`');
+    }
+
+    console.log('\nYou can now run: scout watch-builds');
     process.exit(0);
   } catch (err) {
     console.error('Error saving authentication:', err.message);

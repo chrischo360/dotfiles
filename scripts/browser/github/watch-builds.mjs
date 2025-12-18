@@ -7,19 +7,30 @@ import { loadConfig } from '../lib/config.mjs';
 
 async function main() {
   const args = process.argv.slice(2);
-  const prUrl = args[0];
+  let prUrl = args[0];
   const headless = !args.includes('--no-headless');
   const onceMode = args.includes('--once');
 
-  if (!prUrl) {
-    console.error('Usage: watch-builds <PR_URL> [--once] [--no-headless] [--interval <ms>]');
-    console.error('Example: watch-builds https://github.com/owner/repo/pull/123');
-    console.error('');
-    console.error('Flags:');
-    console.error('  --once        Report current state and exit (no watching)');
-    console.error('  --no-headless Run browser in visible mode');
-    console.error('  --interval    Custom polling interval in ms (default: 30000)');
-    process.exit(1);
+  // If no URL provided, use fzf to select from cached PRs
+  if (!prUrl || prUrl.startsWith('--')) {
+    try {
+      const { selectPR, checkFzf } = await import('../lib/interactive.mjs');
+
+      if (!await checkFzf()) {
+        console.error('❌ fzf is not installed. Install with: brew install fzf');
+        console.error('Or provide a PR URL directly: scout watch-builds <PR_URL>');
+        process.exit(1);
+      }
+
+      console.log('📋 Select a PR to watch:\n');
+      prUrl = await selectPR();
+      console.log(`Selected: ${prUrl}\n`);
+    } catch (err) {
+      console.error(`❌ ${err.message}`);
+      console.error('\nUsage: watch-builds <PR_URL> [--once] [--no-headless] [--interval <ms>]');
+      console.error('Example: watch-builds https://github.com/owner/repo/pull/123');
+      process.exit(1);
+    }
   }
 
   const config = await loadConfig();

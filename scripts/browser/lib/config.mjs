@@ -8,6 +8,12 @@ const __dirname = dirname(__filename);
 const CONFIG_FILE = join(__dirname, '..', 'config.json');
 
 export const DEFAULTS = {
+  user: {
+    github_username: null,
+    watched_repos: [],
+    recent_prs: [],
+    last_updated: null,
+  },
   polling: {
     builds: 30000,
     reviews: 60000,

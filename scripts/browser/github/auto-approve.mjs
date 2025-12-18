@@ -7,13 +7,29 @@ import { loadConfig } from '../lib/config.mjs';
 
 async function main() {
   const args = process.argv.slice(2);
-  const repoArg = args[0];
+  let repoArg = args[0];
   const headless = !args.includes('--no-headless');
 
-  if (!repoArg) {
-    console.error('Usage: auto-approve <REPO> [--mode <notify|auto>] [--no-headless] [--interval <ms>]');
-    console.error('Example: auto-approve wayfair-shared/sf-ui-web --mode notify');
-    process.exit(1);
+  // If no repo provided, use fzf to select from cached repos
+  if (!repoArg || repoArg.startsWith('--')) {
+    try {
+      const { selectRepo, checkFzf } = await import('../lib/interactive.mjs');
+
+      if (!await checkFzf()) {
+        console.error('❌ fzf is not installed. Install with: brew install fzf');
+        console.error('Or provide a repo directly: scout auto-approve <REPO>');
+        process.exit(1);
+      }
+
+      console.log('📋 Select a repo:\n');
+      repoArg = await selectRepo();
+      console.log(`Selected: ${repoArg}\n`);
+    } catch (err) {
+      console.error(`❌ ${err.message}`);
+      console.error('\nUsage: auto-approve <REPO> [--mode <notify|auto>] [--no-headless] [--interval <ms>]');
+      console.error('Example: auto-approve wayfair-shared/sf-ui-web --mode notify');
+      process.exit(1);
+    }
   }
 
   const config = await loadConfig();

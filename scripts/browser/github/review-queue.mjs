@@ -5,13 +5,29 @@ import { buildPullsUrl } from '../lib/github.mjs';
 
 async function main() {
   const args = process.argv.slice(2);
-  const repoArg = args[0];
+  let repoArg = args[0];
   const headless = !args.includes('--no-headless');
 
-  if (!repoArg) {
-    console.error('Usage: review-queue <REPO> [--user <username>] [--limit <n>] [--no-headless]');
-    console.error('Example: review-queue wayfair-shared/sf-ui-web --limit 5');
-    process.exit(1);
+  // If no repo provided, use fzf to select from cached repos
+  if (!repoArg || repoArg.startsWith('--')) {
+    try {
+      const { selectRepo, checkFzf } = await import('../lib/interactive.mjs');
+
+      if (!await checkFzf()) {
+        console.error('❌ fzf is not installed. Install with: brew install fzf');
+        console.error('Or provide a repo directly: scout review-queue <REPO>');
+        process.exit(1);
+      }
+
+      console.log('📋 Select a repo:\n');
+      repoArg = await selectRepo();
+      console.log(`Selected: ${repoArg}\n`);
+    } catch (err) {
+      console.error(`❌ ${err.message}`);
+      console.error('\nUsage: review-queue <REPO> [--user <username>] [--limit <n>] [--no-headless]');
+      console.error('Example: review-queue wayfair-shared/sf-ui-web --limit 5');
+      process.exit(1);
+    }
   }
 
   const userIndex = args.indexOf('--user');
