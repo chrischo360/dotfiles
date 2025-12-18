@@ -11,13 +11,7 @@
       "WebFetch",
       "WebSearch",
       "EnterPlanMode",
-      "mcp__pal__clink",
-      "mcp__pal__thinkdeep",
-      "mcp__pal__planner",
-      "mcp__pal__consensus",
-      "mcp__pal__debug",
-      "mcp__pal__apilookup",
-      "mcp__pal__listmodels"
+      "mcp__pal__clink"
     ],
     "deny": [
       "Read(./.env)",
@@ -162,6 +156,9 @@
     {
       "tool": "WebFetch",
       "urlPattern": "https://**"
+    },
+    {
+      "tool": "mcp__pal__clink"
     }
   ],
   "allowedDirectories": [

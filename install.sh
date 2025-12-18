@@ -125,6 +125,29 @@ find "$DOTFILES_DIR/raycast" -name "*.sh" -exec chmod +x {} \;
 find "$DOTFILES_DIR/tmux/scripts" -name "*.sh" -exec chmod +x {} \;
 chmod +x "$DOTFILES_DIR/claude/status"
 
+# Browser automation scripts
+if [ -d "$DOTFILES_DIR/scripts/browser" ]; then
+    echo -e "${YELLOW}  Setting up browser automation scripts...${NC}"
+
+    # Make all .mjs and .sh scripts executable
+    find "$DOTFILES_DIR/scripts/browser" -name "*.mjs" -exec chmod +x {} \;
+    find "$DOTFILES_DIR/scripts/browser" -name "*.sh" -exec chmod +x {} \;
+
+    # Install npm dependencies
+    if [ -f "$DOTFILES_DIR/scripts/browser/package.json" ]; then
+        echo -e "${YELLOW}  Installing npm dependencies...${NC}"
+        cd "$DOTFILES_DIR/scripts/browser"
+        npm install --silent
+
+        # Install Playwright Chromium browser
+        echo -e "${YELLOW}  Installing Playwright Chromium...${NC}"
+        npx playwright install chromium --with-deps
+
+        cd "$DOTFILES_DIR"
+        echo -e "${GREEN}  ✓ Browser automation setup complete${NC}"
+    fi
+fi
+
 echo -e "${GREEN}  ✓ Scripts made executable${NC}"
 
 echo ""
@@ -146,6 +169,14 @@ check_command "git"
 check_command "tmux" || echo -e "${YELLOW}    Run: brew bundle --file=~/dotfiles/Brewfile${NC}"
 check_command "nvim" || echo -e "${YELLOW}    Run: brew bundle --file=~/dotfiles/Brewfile${NC}"
 check_command "terminal-notifier" || echo -e "${YELLOW}    Run: brew bundle --file=~/dotfiles/Brewfile${NC}"
+
+# Check browser automation setup
+if [ -d "$DOTFILES_DIR/scripts/browser/node_modules" ]; then
+    echo -e "${GREEN}  ✓ Browser automation (Playwright)${NC}"
+else
+    echo -e "${RED}  ✗ Browser automation (npm dependencies missing)${NC}"
+    echo -e "${YELLOW}    Run: cd ~/dotfiles/scripts/browser && npm install && npx playwright install chromium${NC}"
+fi
 
 # Check if Alacritty is installed
 if [ -d "/Applications/Alacritty.app" ]; then

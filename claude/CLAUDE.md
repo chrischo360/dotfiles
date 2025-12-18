@@ -57,14 +57,21 @@ I will ask: "This involves [reason]. Would you like me to use [approach/model/ag
 
 **Auto-Escalation (No Asking Required):**
 For these tools, I will automatically use them when appropriate without asking:
-- **Explore agent** - Codebase exploration and investigation
-- **PAL tools** - External model consultation (clink, thinkdeep, planner, consensus, debug, apilookup)
-  - `apilookup` - API/SDK documentation, version info, breaking changes
-  - `clink` - Quick external model consultation for second opinions
-  - `thinkdeep` - Deep investigation (complex bugs, architecture, performance)
-  - `planner` - Implementation planning (features, migrations, system design)
-  - `consensus` - Multi-model decisions (tech choices, architectural decisions)
-  - `debug` - Systematic debugging (mysterious bugs, race conditions)
+- **mcp__pal__clink** - PREFERRED for codebase exploration and investigation (uses Gemini). Always use this instead of Explore agent for:
+  - Finding files and searching code
+  - Understanding codebase structure
+  - Exploring existing implementations
+  - Answering questions about the codebase
+  - Any exploratory investigation tasks
+
+  **Usage guidelines:**
+  - **One-shot queries only** - Send task, get results, done. No back-and-forth conversation between models
+  - **Data gathering focus** - Use for collecting information, not for iterative discussions
+  - **Parallel execution** - When exploring multiple areas, spawn multiple clink agents in parallel (single message, multiple tool calls)
+  - Example: Instead of one clink exploring everything sequentially, spawn 2-3 clink calls in parallel for different search focuses
+
+- **PAL tools** - External model consultation (only clink is enabled)
+  - `clink` - Quick external model consultation, codebase exploration (ENABLED)
 
 ### 4. Multi-File Changes
 - **Group changes by feature/component** - not file-by-file

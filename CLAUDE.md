@@ -22,6 +22,12 @@ Personal configuration files for macOS development environment.
 ├── hammerspoon/        # Hammerspoon automation (Slack keyboard navigation)
 ├── nvim/               # Neovim configuration
 ├── raycast/            # Raycast script commands (CodeForces workflows)
+├── scripts/            # Automation scripts
+│   └── browser/        # GitHub & Wayfair browser automations (Playwright)
+│       ├── lib/        # Shared utilities (notify, auth, config, browser, github)
+│       ├── github/     # GitHub automations (builds, reviews, auto-approve, dashboard)
+│       ├── wayfair/    # Wayfair automations (buildkite, deploys)
+│       └── templates/  # Script templates for new automations
 ├── tmux/               # tmux terminal multiplexer config
 ├── zsh/                # Zsh shell configuration
 ├── Brewfile            # Homebrew package dependencies
@@ -62,6 +68,9 @@ All Homebrew dependencies are managed via **Brewfile**. The install script autom
 
 **npm Global Packages:**
 - ccstatusline - Claude Code statusline
+
+**Node.js (via fnm):**
+- Browser automation scripts use Playwright (installed locally in scripts/browser/)
 
 **Applications:**
 - alacritty, aerospace, hammerspoon, docker
@@ -218,6 +227,44 @@ at  # Opens theme selection menu
 - `CF Next Problem` - Find next unsolved problem
 - `CF Add Progress` - Log completed problem
 - `CF Show Progress` - View training stats
+
+### Browser Automation (GitHub & Wayfair)
+
+Playwright-based automation for GitHub PRs, CI checks, and Wayfair deployments.
+
+**Setup:**
+```bash
+# One-time authentication setup
+scout setup
+```
+
+**GitHub Commands:**
+```bash
+# Monitor CI/check status for a PR
+scout watch-builds https://github.com/owner/repo/pull/123
+
+# Auto-approve Dependabot PRs (notify mode by default)
+scout auto-approve wayfair-shared/sf-ui-web
+
+# Generate PR dashboard
+scout pr-dashboard wayfair-shared/sf-ui-web
+
+# Find PRs needing review
+scout review-queue wayfair-shared/sf-ui-web
+```
+
+**Wayfair Commands:**
+```bash
+# Monitor Buildkite builds
+scout buildkite-watch https://buildkite.com/wayfair/sf-ui-web-dev/builds/12345
+```
+
+**Configuration:**
+Customize polling intervals, notification settings, and auto-approve behavior:
+```bash
+cp ~/dotfiles/scripts/browser/config.example.json ~/dotfiles/scripts/browser/config.json
+# Edit config.json to customize settings
+```
 
 ## Maintenance
 
