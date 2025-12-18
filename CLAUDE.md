@@ -16,6 +16,9 @@ Personal configuration files for macOS development environment.
 │   ├── scripts/        # Utilities (notifications, monitoring)
 │   └── settings.json   # Claude Code settings
 ├── ccstatusline/       # ccstatusline configuration
+├── git/                # Git configuration
+│   ├── gitconfig       # Global git config
+│   └── hooks/          # Git hooks
 ├── hammerspoon/        # Hammerspoon automation (Slack keyboard navigation)
 ├── nvim/               # Neovim configuration
 ├── raycast/            # Raycast script commands (CodeForces workflows)
@@ -33,6 +36,7 @@ The install script creates these symlinks:
 ```
 ~/.zshrc                  -> ~/dotfiles/zsh/.zshrc
 ~/.tmux.conf              -> ~/dotfiles/tmux/tmux.conf
+~/.gitconfig              -> ~/dotfiles/git/gitconfig
 ~/.aerospace.toml         -> ~/dotfiles/aerospace/aerospace.toml
 ~/.hammerspoon/           -> ~/dotfiles/hammerspoon/
 ~/.config/alacritty/      -> ~/dotfiles/alacritty/
