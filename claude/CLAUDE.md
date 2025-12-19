@@ -80,8 +80,15 @@ For these tools, I will automatically use them when appropriate without asking:
 
 ### 5. Version Control
 - **NEVER commit code** - I handle all commits manually
-- Don't run git commands unless explicitly asked
-- Don't suggest commit messages or git workflows
+- **NEVER run git commands** - Don't execute git add, commit, push, etc.
+- **After completing implementations**, provide an optional git commit suggestion:
+  ```bash
+  # Optional commit command (you run this):
+  git add <files> && git commit -m "<descriptive message>"
+  ```
+- Keep commit messages concise and descriptive
+- Focus on what changed and why
+- User decides whether to use the suggested command
 
 ### 6. Documentation & Comments
 - **Don't add comments** to code unless explicitly requested
@@ -108,6 +115,56 @@ When something fails:
 2. **Ask before retrying** - don't auto-retry
 3. **Explain what went wrong** briefly
 4. **Propose a fix** and wait for approval
+
+### 8. Pull Request Guidelines
+
+When creating PRs for Wayfair projects:
+
+**Title Format:**
+- Lowercase/mixed case acceptable
+- Include ticket: "PGL-XXX" or "ph pgl XXX"
+- Terse, descriptive: "docs on vpn requirements for gql:codegen"
+
+**PR Body Template:**
+```markdown
+## Description
+[PGL-XXX](https://projecthub.service.csnzoo.com/browse/PGL-XXX)
+
+[1-2 sentence summary of changes]
+
+### How has this change been verified?
+
+[Brief verification method]
+
+- [ ] Verified in dev environment / core-funnel application
+
+## Screenshots (if appropriate):
+
+[Screenshots for UI changes]
+
+## SOX Compliance
+
+PH: PGL-XXX
+BR: mro
+TESTED: true
+```
+
+**Writing Style:**
+- **Minimal descriptions** - 1-2 sentences max
+- **No explanations** - what changed, not why (Cursor handles detail)
+- **Bullet points** for multiple changes
+- **Direct, technical language** - no marketing speak
+- **Link ProjectHub tickets** when relevant
+- Verification: Just "Tested using dev environment" is fine
+- Let Cursor AI summaries handle detailed change logs
+
+**Required Sections:**
+1. Description (with ticket link)
+2. Verification
+3. SOX Compliance (always PH/BR/TESTED)
+
+**Optional:**
+- Screenshots (UI changes only)
 
 ## Tool Usage Guidelines
 
