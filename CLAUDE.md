@@ -22,12 +22,6 @@ Personal configuration files for macOS development environment.
 ├── hammerspoon/        # Hammerspoon automation (Slack keyboard navigation)
 ├── nvim/               # Neovim configuration
 ├── raycast/            # Raycast script commands (CodeForces workflows)
-├── scripts/            # Automation scripts
-│   └── browser/        # GitHub & Wayfair browser automations (Playwright)
-│       ├── lib/        # Shared utilities (notify, auth, config, browser, github)
-│       ├── github/     # GitHub automations (builds, reviews, auto-approve, dashboard)
-│       ├── wayfair/    # Wayfair automations (buildkite, deploys)
-│       └── templates/  # Script templates for new automations
 ├── tmux/               # tmux terminal multiplexer config
 ├── zsh/                # Zsh shell configuration
 ├── Brewfile            # Homebrew package dependencies
@@ -42,6 +36,7 @@ The install script creates these symlinks:
 ```
 ~/.zshrc                  -> ~/dotfiles/zsh/.zshrc
 ~/.tmux.conf              -> ~/dotfiles/tmux/tmux.conf
+~/.config/tmux/scripts/   -> ~/dotfiles/tmux/scripts/
 ~/.gitconfig              -> ~/dotfiles/git/gitconfig
 ~/.aerospace.toml         -> ~/dotfiles/aerospace/aerospace.toml
 ~/.hammerspoon/           -> ~/dotfiles/hammerspoon/
@@ -188,8 +183,13 @@ The `~/dotfiles/claude/` directory contains Claude Code configuration and utilit
 - **CLAUDE.md** - Global instructions and workflow rules
 - **PAL_CONFIG.md** - PAL MCP Server configuration guide
 - **agents/** - Custom agent definitions for specialized workflows
-- **hooks/** - Session hooks for token tracking and cost logging
+- **hooks/** - Session event handlers:
+  - `session-start.sh` - Initialize session state tracking
+  - `session-end.sh` - Cleanup session state
+  - `claude-stop.sh` - Mark session as idle/waiting
+  - `user-input.sh` - Mark session as active (placeholder)
 - **scripts/** - Utility scripts:
+  - `update-session-state.sh` - Core state management (start, active, idle, waiting, stop)
   - `notify.sh` - macOS notification integration
   - `token-tracker.sh` - Cost calculation utilities
   - `monitor-buildkite.sh` - CI/CD build monitoring
@@ -217,6 +217,27 @@ Configure the statusline interactively:
 ccstatusline
 ```
 
+### Claude Session State Tracking
+
+Multi-session awareness in tmux statusline. Tracks Claude Code sessions across panes.
+
+**Display format:** `[C: ⚡2 ⏸️1 ⏳1]`
+- Active sessions
+- Idle sessions (finished responding)
+- Waiting for input
+
+**How it works:**
+- State file: `~/.claude/session-state.json`
+- Hooks automatically update state on session events
+- tmux statusline refreshes every 2 seconds
+- Sessions tracked by tmux pane ID with git context
+
+**Manual testing:**
+```bash
+~/dotfiles/claude/scripts/update-session-state.sh <action>
+# Actions: start, active, idle, waiting, stop
+```
+
 ### Alacritty Theme Switching
 Use the theme picker alias:
 ```bash
@@ -228,22 +249,16 @@ at  # Opens theme selection menu
 - `CF Add Progress` - Log completed problem
 - `CF Show Progress` - View training stats
 
-### Browser Automation (GitHub & Wayfair)
+### Scout CLI (Browser Automation)
 
-Playwright-based automation for GitHub PRs, CI checks, and Wayfair deployments.
-
-**Setup:**
-```bash
-# One-time authentication setup
-scout setup
-```
+Scout is now a standalone npm package at `~/codebase/scout`.
 
 **GitHub Commands:**
 ```bash
 # Monitor CI/check status for a PR
 scout watch-builds https://github.com/owner/repo/pull/123
 
-# Auto-approve Dependabot PRs (notify mode by default)
+# Auto-approve Dependabot PRs
 scout auto-approve wayfair-shared/sf-ui-web
 
 # Generate PR dashboard
@@ -259,12 +274,18 @@ scout review-queue wayfair-shared/sf-ui-web
 scout buildkite-watch https://buildkite.com/wayfair/sf-ui-web-dev/builds/12345
 ```
 
-**Configuration:**
-Customize polling intervals, notification settings, and auto-approve behavior:
+**Setup:**
 ```bash
-cp ~/dotfiles/scripts/browser/config.example.json ~/dotfiles/scripts/browser/config.json
-# Edit config.json to customize settings
+# One-time authentication setup
+scout setup
 ```
+
+**Configuration:**
+User data stored in `~/.scout/`:
+- `config.json` - Polling intervals, notifications, auto-approve settings
+- `github-auth.json` - Browser authentication state (gitignored)
+
+See [scout repository](~/codebase/scout) for development.
 
 ## Maintenance
 
