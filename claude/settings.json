@@ -22,7 +22,44 @@
       "Read(**/.git/**)",
       "Read(**/build/**)",
       "Read(**/dist/**)",
-      "Read(**/*.log)"
+      "Read(**/*.log)",
+      "Read(**/.next/**)",
+      "Read(**/coverage/**)",
+      "Read(**/.cache/**)",
+      "Read(**/__pycache__/**)",
+      "Read(**/.pytest_cache/**)",
+      "Read(**/.tox/**)",
+      "Read(**/*.pyc)",
+      "Read(**/.DS_Store)",
+      "Read(**/vendor/**)",
+      "Read(**/.gradle/**)",
+      "Read(**/.idea/**)",
+      "Read(**/.vscode/**)",
+      "Read(**/*.map)",
+      "Read(**/.terraform/**)",
+      "Read(**/*.tfstate)",
+      "Read(**/*.tfstate.backup)",
+      "Read(**/package-lock.json)",
+      "Read(**/yarn.lock)",
+      "Read(**/pnpm-lock.yaml)",
+      "Read(**/composer.lock)",
+      "Read(**/.turbo/**)",
+      "Read(**/.webpack/**)",
+      "Read(**/.parcel-cache/**)",
+      "Read(**/.vite/**)",
+      "Read(**/.nuxt/**)",
+      "Read(**/.output/**)",
+      "Read(**/out/**)",
+      "Read(**/.yarn/cache/**)",
+      "Read(**/.yarn/unplugged/**)",
+      "Read(**/.pnpm-store/**)",
+      "Read(**/.npm/**)",
+      "Read(**/.nyc_output/**)",
+      "Read(**/htmlcov/**)",
+      "Read(**/test-results/**)",
+      "Read(**/*.swp)",
+      "Read(**/*.swo)",
+      "Read(**/*~)"
     ],
     "ask": [],
     "defaultMode": "default"
@@ -31,12 +68,22 @@
   "hooks": {
     "SessionStart": [
       {
-        "hooks": []
+        "hooks": [
+          {
+            "type": "command",
+            "command": "~/dotfiles/claude/hooks/session-start.sh"
+          }
+        ]
       }
     ],
     "SessionEnd": [
       {
-        "hooks": []
+        "hooks": [
+          {
+            "type": "command",
+            "command": "~/dotfiles/claude/hooks/session-end.sh"
+          }
+        ]
       }
     ],
     "Notification": [
@@ -55,6 +102,10 @@
           {
             "type": "command",
             "command": "~/dotfiles/claude/scripts/notify.sh"
+          },
+          {
+            "type": "command",
+            "command": "~/dotfiles/claude/hooks/claude-stop.sh"
           }
         ]
       }

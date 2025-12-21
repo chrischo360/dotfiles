@@ -118,53 +118,31 @@ When something fails:
 
 ### 8. Pull Request Guidelines
 
-When creating PRs for Wayfair projects:
+**Auto-generation:** Use `/pr-template` command to generate PR descriptions from git changes. Analyzes git diff and outputs formatted PR body.
 
-**Title Format:**
-- Lowercase/mixed case acceptable
-- Include ticket: "PGL-XXX" or "ph pgl XXX"
-- Terse, descriptive: "docs on vpn requirements for gql:codegen"
+**Title:** Include ticket ID (PGL-XXX), terse description
 
-**PR Body Template:**
+**Template:**
 ```markdown
 ## Description
 [PGL-XXX](https://projecthub.service.csnzoo.com/browse/PGL-XXX)
 
-[1-2 sentence summary of changes]
+[1-2 sentence summary]
 
 ### How has this change been verified?
+[Brief method - "Tested using dev environment"]
 
-[Brief verification method]
-
-- [ ] Verified in dev environment / core-funnel application
+- [ ] Verified in dev/core-funnel
 
 ## Screenshots (if appropriate):
 
-[Screenshots for UI changes]
-
 ## SOX Compliance
-
 PH: PGL-XXX
 BR: mro
 TESTED: true
 ```
 
-**Writing Style:**
-- **Minimal descriptions** - 1-2 sentences max
-- **No explanations** - what changed, not why (Cursor handles detail)
-- **Bullet points** for multiple changes
-- **Direct, technical language** - no marketing speak
-- **Link ProjectHub tickets** when relevant
-- Verification: Just "Tested using dev environment" is fine
-- Let Cursor AI summaries handle detailed change logs
-
-**Required Sections:**
-1. Description (with ticket link)
-2. Verification
-3. SOX Compliance (always PH/BR/TESTED)
-
-**Optional:**
-- Screenshots (UI changes only)
+**Style:** Minimal descriptions (1-2 sentences), no explanations, direct technical language. Let Cursor AI handle detailed summaries.
 
 ## Tool Usage Guidelines
 

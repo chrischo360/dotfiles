@@ -38,33 +38,6 @@
         "type": "separator"
       },
       {
-        "id": "8",
-        "type": "tokens-input",
-        "color": "blue"
-      },
-      {
-        "id": "9",
-        "type": "separator"
-      },
-      {
-        "id": "10",
-        "type": "tokens-cached",
-        "color": "green"
-      },
-      {
-        "id": "11",
-        "type": "separator"
-      },
-      {
-        "id": "12",
-        "type": "tokens-output",
-        "color": "magenta"
-      },
-      {
-        "id": "13",
-        "type": "separator"
-      },
-      {
         "id": "14",
         "type": "session-cost",
         "color": "red"

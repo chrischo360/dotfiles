@@ -58,23 +58,38 @@ All Homebrew dependencies are managed via **Brewfile**. The install script autom
 - tmux, neovim, zsh
 - zoxide, eza, bat, fd, fzf, ripgrep, btop
 
+**Version Control:**
+- git, gh (GitHub CLI)
+
 **Development Tools:**
-- fnm, node (includes npm), php@8.1, composer, biome
+- fnm (Fast Node Manager), yarn
+- pyenv (Python), rbenv (Ruby)
+- php@8.1, maven (Java)
+- coursier, sbt (Scala)
+- kubernetes-cli, jq
+
+**Code Quality & Formatters:**
+- biome, stylua, swiftlint
+
+**Utilities:**
+- terminal-notifier, cloc, curl, rsync
+- mkcert, hyperfine, tree-sitter
 
 **npm Global Packages:**
 - ccstatusline - Claude Code statusline
 
-**Node.js (via fnm):**
-- Browser automation scripts use Playwright (installed locally in scripts/browser/)
-
 **Applications:**
-- alacritty, aerospace, hammerspoon, docker
+- aerospace, hammerspoon, docker-desktop
+- claude-code, chromium, homerow, block-goose
 
 **Fonts:**
 - font-jetbrains-mono-nerd-font
-
-**Utilities:**
-- terminal-notifier, cloc
+- font-cascadia-code
+- font-fira-code-nerd-font
+- font-hack-nerd-font
+- font-iosevka-nerd-font
+- font-monaspice-nerd-font
+- font-victor-mono-nerd-font
 
 **Zsh Plugins (included as git submodules):**
 - zsh-autosuggestions - Command suggestions
@@ -221,16 +236,17 @@ ccstatusline
 
 Multi-session awareness in tmux statusline. Tracks Claude Code sessions across panes.
 
-**Display format:** `[C: ⚡2 ⏸️1 ⏳1]`
-- Active sessions
-- Idle sessions (finished responding)
-- Waiting for input
+**Display format:** `C: main⚡ work⏸️ dotfiles⏳`
+- Shows each tmux session with its Claude state
+- ⚡ = Active (processing)
+- ⏸️ = Idle (finished, ready for input)
+- ⏳ = Waiting for input (asked a question)
 
 **How it works:**
 - State file: `~/.claude/session-state.json`
 - Hooks automatically update state on session events
 - tmux statusline refreshes every 2 seconds
-- Sessions tracked by tmux pane ID with git context
+- Displays: `tmux-session-name + state-icon`
 
 **Manual testing:**
 ```bash
