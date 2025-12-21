@@ -2,3 +2,10 @@
 
 # Environment variables (secrets)
 .env
+
+# Gemini CLI sensitive files
+.gemini/google_accounts.json
+.gemini/mcp-oauth-tokens-v2.json
+.gemini/installation_id
+.gemini/state.json
+.gemini/tmp/

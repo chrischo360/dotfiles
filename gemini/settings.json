@@ -1,0 +1,30 @@
+{
+  "security": {
+    "auth": {
+      "selectedType": "vertex-ai"
+    }
+  },
+  "general": {
+    "preferredEditor": "neovim",
+    "previewFeatures": false,
+    "vimMode": true
+  },
+  "output": {
+    "format": "text"
+  },
+  "ui": {
+    "showStatusInTitle": false,
+    "hideTips": false,
+    "showMemoryUsage": true
+  },
+  "tools": {
+    "shell": {
+      "showColor": true
+    }
+  },
+  "mcpServers": {
+    "pal": {
+      "command": "/Users/cc446g/pal-mcp-server/pal-mcp-server"
+    }
+  }
+}

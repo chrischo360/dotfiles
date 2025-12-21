@@ -141,6 +141,23 @@ create_symlink "$DOTFILES_DIR/claude/agents" "$HOME/.claude/agents"
 create_symlink "$DOTFILES_DIR/claude/commands" "$HOME/.claude/commands"
 create_symlink "$DOTFILES_DIR/claude/CLAUDE.md" "$HOME/.claude/CLAUDE.md"
 
+# Gemini CLI
+mkdir -p "$HOME/.gemini"
+create_symlink "$DOTFILES_DIR/gemini/settings.json" "$HOME/.gemini/settings.json"
+
+# Create stable binary symlink
+if command -v npm &> /dev/null; then
+    NPM_GLOBAL_BIN="$(npm bin -g)"
+    if [ -f "$NPM_GLOBAL_BIN/gemini" ]; then
+        create_symlink "$NPM_GLOBAL_BIN/gemini" "$HOME/.local/bin/gemini"
+        echo -e "${GREEN}  ✓ Gemini CLI binary linked${NC}"
+    else
+        echo -e "${YELLOW}  ⚠ Gemini CLI not found. Install with: npm install -g @google/gemini-cli${NC}"
+    fi
+else
+    echo -e "${YELLOW}  ⚠ npm not found. Install Node.js/fnm first${NC}"
+fi
+
 echo ""
 echo -e "${BLUE}[5/5] Making scripts executable...${NC}"
 
