@@ -1,9 +1,11 @@
 #!/bin/bash
 # Core script to manage Claude session state tracking
-# Usage: update-session-state.sh <action>
+# Usage: update-session-state.sh <action> [tool]
 # Actions: start, active, idle, waiting, stop
+# Tool: Optional specific tool/action being performed (read, edit, bash, etc.)
 
 ACTION="$1"
+TOOL="$2"
 STATE_FILE="$HOME/.claude/session-state.json"
 
 # Get session context
@@ -54,42 +56,69 @@ update_state() {
   case "$action" in
     start|active)
       # Add or update session with 'active' status
-      jq --arg pane "$pane_id" \
-         --arg status "active" \
-         --arg dir "$dir" \
-         --arg repo "$repo" \
-         --arg branch "$branch" \
-         --arg session "$tmux_session_name" \
-         --arg time "$timestamp" \
-         '.sessions[$pane] = {
-           status: $status,
-           context: {
-             dir: $dir,
-             repo: $repo,
-             branch: $branch,
-             tmux_session: $session,
-             tmux_pane: $pane
-           },
-           last_update: $time
-         }' "$STATE_FILE" > "$STATE_FILE.tmp" && mv "$STATE_FILE.tmp" "$STATE_FILE"
+      if [[ -n "$TOOL" ]]; then
+        # Tool-specific action
+        jq --arg pane "$pane_id" \
+           --arg status "active" \
+           --arg tool "$TOOL" \
+           --arg dir "$dir" \
+           --arg repo "$repo" \
+           --arg branch "$branch" \
+           --arg session "$tmux_session_name" \
+           --arg time "$timestamp" \
+           '.sessions[$pane] = {
+             status: $status,
+             action: $tool,
+             context: {
+               dir: $dir,
+               repo: $repo,
+               branch: $branch,
+               tmux_session: $session,
+               tmux_pane: $pane
+             },
+             last_update: $time
+           }' "$STATE_FILE" > "$STATE_FILE.tmp" && mv "$STATE_FILE.tmp" "$STATE_FILE"
+      else
+        # Generic active state (no specific tool)
+        jq --arg pane "$pane_id" \
+           --arg status "active" \
+           --arg dir "$dir" \
+           --arg repo "$repo" \
+           --arg branch "$branch" \
+           --arg session "$tmux_session_name" \
+           --arg time "$timestamp" \
+           '.sessions[$pane] = {
+             status: $status,
+             context: {
+               dir: $dir,
+               repo: $repo,
+               branch: $branch,
+               tmux_session: $session,
+               tmux_pane: $pane
+             },
+             last_update: $time
+           }' "$STATE_FILE" > "$STATE_FILE.tmp" && mv "$STATE_FILE.tmp" "$STATE_FILE"
+      fi
       ;;
 
     idle)
-      # Mark session as idle
+      # Mark session as idle, clear action
       jq --arg pane "$pane_id" \
          --arg status "idle" \
          --arg time "$timestamp" \
          '.sessions[$pane].status = $status |
-          .sessions[$pane].last_update = $time' \
+          .sessions[$pane].last_update = $time |
+          del(.sessions[$pane].action)' \
          "$STATE_FILE" > "$STATE_FILE.tmp" && mv "$STATE_FILE.tmp" "$STATE_FILE"
       ;;
 
     waiting)
-      # Mark session as waiting for input
+      # Mark session as waiting for input (asking question)
       jq --arg pane "$pane_id" \
          --arg status "waiting_for_input" \
          --arg time "$timestamp" \
          '.sessions[$pane].status = $status |
+          .sessions[$pane].action = "asking" |
           .sessions[$pane].last_update = $time' \
          "$STATE_FILE" > "$STATE_FILE.tmp" && mv "$STATE_FILE.tmp" "$STATE_FILE"
       ;;

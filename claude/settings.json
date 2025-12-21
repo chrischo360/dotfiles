@@ -130,9 +130,18 @@
         ]
       }
     ],
+    "PreToolUse": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "~/dotfiles/claude/hooks/pre-tool-use.sh"
+          }
+        ]
+      }
+    ],
     "PostToolUse": [
       {
-        "matcher": "AskUserQuestion",
         "hooks": [
           {
             "type": "command",
