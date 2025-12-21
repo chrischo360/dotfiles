@@ -13,6 +13,13 @@ compinit -C -i
 # Enable prompt substitution (for git branch in prompt)
 setopt PROMPT_SUBST
 
+# Load environment variables from .env
+if [ -f ~/dotfiles/.env ]; then
+  set -a
+  source ~/dotfiles/.env
+  set +a
+fi
+
 # Load zsh plugins (from dotfiles repo)
 source ~/dotfiles/zsh/plugins/zsh-autosuggestions/zsh-autosuggestions.zsh
 source ~/dotfiles/zsh/plugins/fast-syntax-highlighting/fast-syntax-highlighting.plugin.zsh

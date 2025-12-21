@@ -79,7 +79,21 @@ else
 fi
 
 echo ""
-echo -e "${BLUE}[3/5] Creating symlinks...${NC}"
+echo -e "${BLUE}[3/5] Setting up environment variables...${NC}"
+
+# Copy .env.example to .env if .env doesn't exist
+if [ ! -f "$DOTFILES_DIR/.env" ]; then
+    if [ -f "$DOTFILES_DIR/.env.example" ]; then
+        cp "$DOTFILES_DIR/.env.example" "$DOTFILES_DIR/.env"
+        echo -e "${GREEN}  ✓ Created .env from .env.example${NC}"
+        echo -e "${YELLOW}  ⚠ Edit ~/dotfiles/.env and add your API keys${NC}"
+    fi
+else
+    echo -e "${GREEN}  ✓ .env already exists${NC}"
+fi
+
+echo ""
+echo -e "${BLUE}[4/5] Creating symlinks...${NC}"
 
 # Zsh
 create_symlink "$DOTFILES_DIR/zsh/.zshrc" "$HOME/.zshrc"
@@ -88,8 +102,18 @@ create_symlink "$DOTFILES_DIR/zsh/.zshrc" "$HOME/.zshrc"
 create_symlink "$DOTFILES_DIR/tmux/tmux.conf" "$HOME/.tmux.conf"
 create_symlink "$DOTFILES_DIR/tmux/scripts" "$HOME/.config/tmux/scripts"
 
-# Git
-create_symlink "$DOTFILES_DIR/git/gitconfig" "$HOME/.gitconfig"
+# Git (substitute environment variables into gitconfig)
+if [ -f "$DOTFILES_DIR/.env" ]; then
+    # Load .env and substitute variables in gitconfig
+    set -a
+    source "$DOTFILES_DIR/.env"
+    set +a
+    envsubst < "$DOTFILES_DIR/git/gitconfig" > "$HOME/.gitconfig"
+    echo -e "${GREEN}  ✓ Created: $HOME/.gitconfig (with env vars substituted)${NC}"
+else
+    echo -e "${YELLOW}  ⚠ .env not found, using gitconfig template as-is${NC}"
+    create_symlink "$DOTFILES_DIR/git/gitconfig" "$HOME/.gitconfig"
+fi
 
 # AeroSpace
 create_symlink "$DOTFILES_DIR/aerospace/aerospace.toml" "$HOME/.aerospace.toml"
@@ -118,7 +142,7 @@ create_symlink "$DOTFILES_DIR/claude/commands" "$HOME/.claude/commands"
 create_symlink "$DOTFILES_DIR/claude/CLAUDE.md" "$HOME/.claude/CLAUDE.md"
 
 echo ""
-echo -e "${BLUE}[4/5] Making scripts executable...${NC}"
+echo -e "${BLUE}[5/5] Making scripts executable...${NC}"
 
 # Make all shell scripts executable
 find "$DOTFILES_DIR/claude/scripts" -name "*.sh" -exec chmod +x {} \;
@@ -153,7 +177,7 @@ fi
 echo -e "${GREEN}  ✓ Scripts made executable${NC}"
 
 echo ""
-echo -e "${BLUE}[5/5] Verifying package installation...${NC}"
+echo -e "${BLUE}[6/6] Verifying package installation...${NC}"
 
 check_command() {
     if command -v "$1" &> /dev/null; then

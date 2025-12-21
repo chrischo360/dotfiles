@@ -12,7 +12,7 @@
 
 # Documentation:
 # @raycast.description Show CodeForces training progress
-# @raycast.author cc446g
+# @raycast.author ${RAYCAST_AUTHOR:-cc446g}
 
 # Run the command
 cd ~/codebase/codeforces/training && cargo run -- show

@@ -22,8 +22,37 @@ Personal configuration files for macOS development environment.
 ├── zsh/                # Zsh shell configuration
 ├── Brewfile            # Homebrew package dependencies
 ├── biome.json          # Biome code formatter config
-└── stylua.toml         # Lua code formatter config
+├── stylua.toml         # Lua code formatter config
+├── .env.example        # Environment variables template
+└── .env                # Your API keys (gitignored, not committed)
 ```
+
+## Environment Variables
+
+API keys and secrets are stored in `.env` (gitignored, never committed).
+
+**Setup:**
+```bash
+# Automatically created by install.sh
+cp .env.example .env
+
+# Edit with your API keys
+vim ~/dotfiles/.env
+```
+
+**Variables:**
+- `GITHUB_TOKEN` - GitHub personal access token (gh CLI, scout)
+- `ANTHROPIC_API_KEY` - Claude API key
+- `BUILDKITE_TOKEN` - Buildkite API token (CI monitoring)
+- `GLEAN_API_TOKEN` - Glean API token (Wayfair knowledge base)
+- `GLEAN_INSTANCE` - Glean instance name (default: wayfair)
+- `GIT_AUTHOR_EMAIL` - Git user email (substituted into gitconfig)
+- `GIT_AUTHOR_NAME` - Git user name (substituted into gitconfig)
+- `RAYCAST_AUTHOR` - Raycast script author metadata
+
+See `.env.example` for full list.
+
+**Important:** The install script substitutes environment variables into `~/.gitconfig` from your `.env` file. Update `.env` with your git credentials before running the install script.
 
 ## Symlink Map
 

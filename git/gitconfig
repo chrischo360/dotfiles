@@ -1,6 +1,6 @@
 [user]
-	email = “ccho@wayfair.com”
-	name = Christopher Cho
+	email = ${GIT_AUTHOR_EMAIL}
+	name = ${GIT_AUTHOR_NAME}
 [color]
 	ui = true
 [push]

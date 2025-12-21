@@ -12,7 +12,7 @@
 
 # Documentation:
 # @raycast.description Find the next unsolved CodeForces problem
-# @raycast.author cc446g
+# @raycast.author ${RAYCAST_AUTHOR:-cc446g}
 
 # Run the cfnext command (zsh will load .zshrc automatically in interactive mode)
 cd ~/codebase/codeforces && cargo run -p tools --bin next-unsolved
