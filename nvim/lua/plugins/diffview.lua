@@ -21,7 +21,8 @@ return {
           local start = vim.loop.hrtime()
           vim.cmd("DiffviewOpen")
           local elapsed = (vim.loop.hrtime() - start) / 1e6
-          print(string.format("DiffviewOpen took %.2f ms", elapsed))
+          -- Below print command for debugging time took
+          -- print(string.format("DiffviewOpen took %.2f ms", elapsed))
         else
           vim.cmd("DiffviewClose")
         end

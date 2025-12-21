@@ -6,6 +6,9 @@
 export PATH="/opt/homebrew/opt/php@8.1/bin:$PATH"
 export PATH="/opt/homebrew/opt/php@8.1/sbin:$PATH"
 
+# Dotfiles directory - dynamically detect location by resolving symlinks
+export DOTFILES_DIR="$(cd "$(dirname "$(readlink -f "${(%):-%x}" 2>/dev/null || readlink "${(%):-%x}" 2>/dev/null || echo "${(%):-%x}")")" && cd .. && pwd)"
+
 # Completion system
 autoload -Uz compinit
 compinit -C -i
@@ -14,18 +17,18 @@ compinit -C -i
 setopt PROMPT_SUBST
 
 # Load environment variables from .env
-if [ -f ~/dotfiles/.env ]; then
+if [ -f "$DOTFILES_DIR/.env" ]; then
   set -a
-  source ~/dotfiles/.env
+  source "$DOTFILES_DIR/.env"
   set +a
 fi
 
 # Load zsh plugins (from dotfiles repo)
-source ~/dotfiles/zsh/plugins/zsh-autosuggestions/zsh-autosuggestions.zsh
-source ~/dotfiles/zsh/plugins/fast-syntax-highlighting/fast-syntax-highlighting.plugin.zsh
+source "$DOTFILES_DIR/zsh/plugins/zsh-autosuggestions/zsh-autosuggestions.zsh"
+source "$DOTFILES_DIR/zsh/plugins/fast-syntax-highlighting/fast-syntax-highlighting.plugin.zsh"
 
 # Load custom configuration modules
-for config ($HOME/dotfiles/zsh/custom/*.zsh); do
+for config ($DOTFILES_DIR/zsh/custom/*.zsh); do
   source $config
 done
 

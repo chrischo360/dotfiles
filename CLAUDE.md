@@ -404,6 +404,26 @@ brew bundle check --file=~/dotfiles/Brewfile
 - Check symlink status: `ls -la ~/.zshrc ~/.tmux.conf`
 - Verify paths match your username in scripts
 
+## Portability
+
+### Path Configuration
+All shell scripts use `$DOTFILES_DIR` environment variable:
+- Set automatically in `.zshrc` - no manual configuration needed
+- Works regardless of where dotfiles repository is cloned
+- Dynamically detected on shell startup
+
+### JSON Configuration Files
+JSON files cannot use environment variables directly. If you move the dotfiles directory, manually update paths in:
+- `claude/settings.json` - Hook script paths
+- `gemini/settings.json` - Script and config paths
+- Any other JSON configs with absolute paths
+
+### API Keys and Secrets
+All sensitive credentials are stored in `.env` (gitignored):
+1. Copy `.env.example` to `.env`
+2. Add your actual API keys
+3. Never commit `.env` to version control
+
 ## Instructions for Claude Code
 
 When working in this dotfiles repository, follow these synchronization rules:

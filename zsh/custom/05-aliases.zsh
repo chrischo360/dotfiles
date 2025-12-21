@@ -4,7 +4,7 @@
 alias icat="kitty +kitten icat"
 
 # Tmux - Reload zsh config in idle panes only (skips vim, ssh, etc.)
-alias tmux-reload="~/dotfiles/tmux/scripts/reload-zsh-safe.sh"
+alias tmux-reload="$DOTFILES_DIR/tmux/scripts/reload-zsh-safe.sh"
 
 # Modern CLI Tools (eza, bat, fd, delta)
 alias ls="eza --icons"
@@ -62,21 +62,16 @@ nvim() {
 ############################# SCRIPTS ############################# 
 
 # Nvim Memory Monitoring & Cleanup
-alias nvim-memory='~/dotfiles/scripts/nvim/memory.sh'
-
-
-# claude() {
-#   command claude --strict-mcp-config --mcp-config ~/dotfiles/claude/no-mcp.json -- "$@"
-# }
+alias memory='$DOTFILES_DIR/scripts/nvim/memory.sh'
 
 claude-mcp() {
-  command claude --strict-mcp-config --mcp-config ~/dotfiles/claude/mcp-servers.json -- "$@"
+  command claude --strict-mcp-config --mcp-config $DOTFILES_DIR/claude/mcp-servers.json -- "$@"
 }
 
 # Claude Code - Get costs
-alias claude-costs='~/dotfiles/claude/scripts/analyze-costs.py'
+alias claude-costs='$DOTFILES_DIR/claude/scripts/analyze-costs.py'
 
 # sf-ui-web - Build/clean utility
-alias sfb='~/dotfiles/scripts/codebase/sf-ui-web/sfb.sh'
+alias sfb='$DOTFILES_DIR/scripts/codebase/sf-ui-web/sfb.sh'
 
  alias cfbuild='(cd ~/codebase/cp-toolkit && cargo install --path cp --force && cargo install --path interview --force && cargo install --path interview-tui --force)'

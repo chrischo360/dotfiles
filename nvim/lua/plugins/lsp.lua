@@ -379,6 +379,10 @@ return {
       -- Scala
       vim.lsp.config('metals', {
         capabilities = capabilities,
+        root_dir = function(fname)
+          -- Ensure URI has no authority component
+          return vim.fs.root(fname, { "build.sbt", "build.sc", "build.gradle", "pom.xml", ".git" })
+        end,
         settings = {
           metals = {
             showImplicitArguments = true,

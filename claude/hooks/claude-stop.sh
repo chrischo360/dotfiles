@@ -14,7 +14,7 @@ if [[ -f "$STATE_FILE" && -n "$PANE_ID" ]]; then
   # Only set to idle if not already waiting_for_input
   if [[ "$current_status" != "waiting_for_input" ]]; then
     echo "[$(date '+%H:%M:%S')] Setting to idle (current: $current_status)" >> ~/.claude/hook-debug.log
-    ~/dotfiles/claude/scripts/update-session-state.sh idle
+    $DOTFILES_DIR/claude/scripts/update-session-state.sh idle
   else
     echo "[$(date '+%H:%M:%S')] Preserving waiting_for_input state" >> ~/.claude/hook-debug.log
   fi

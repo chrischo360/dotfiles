@@ -18,4 +18,4 @@ fi
 
 echo ""
 echo "=== Current tmux statusline output ==="
-~/dotfiles/tmux/scripts/claude_status.sh
+$DOTFILES_DIR/tmux/scripts/claude_status.sh

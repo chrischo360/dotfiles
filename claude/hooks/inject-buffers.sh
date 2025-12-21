@@ -7,7 +7,7 @@
   echo ""
 
   # Get and process buffer data
-  BUFFER_DATA=$(~/dotfiles/claude/scripts/get-buffers.sh)
+  BUFFER_DATA=$($DOTFILES_DIR/claude/scripts/get-buffers.sh)
 
   # Extract and display high-score files (>= 0.6)
   echo "High-activity files (score >= 0.6):"

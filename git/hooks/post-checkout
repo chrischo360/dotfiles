@@ -53,7 +53,7 @@ echo -e "${BLUE}🧹 Running: sfb -d -r (clean dist + rebuild)${NC}"
 echo ""
 
 # Run the clean script
-if ~/dotfiles/scripts/codebase/sf-ui-web/sf -d -r; then
+if $DOTFILES_DIR/scripts/codebase/sf-ui-web/sf -d -r; then
     echo ""
     echo -e "${GREEN}✅ Auto-clean complete!${NC}"
     echo -e "${BLUE}ℹ  To skip auto-clean: SKIP_AUTO_CLEAN=1 git checkout <branch>${NC}"

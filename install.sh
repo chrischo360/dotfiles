@@ -86,7 +86,7 @@ if [ ! -f "$DOTFILES_DIR/.env" ]; then
     if [ -f "$DOTFILES_DIR/.env.example" ]; then
         cp "$DOTFILES_DIR/.env.example" "$DOTFILES_DIR/.env"
         echo -e "${GREEN}  ✓ Created .env from .env.example${NC}"
-        echo -e "${YELLOW}  ⚠ Edit ~/dotfiles/.env and add your API keys${NC}"
+        echo -e "${YELLOW}  ⚠ Edit $DOTFILES_DIR/.env and add your API keys${NC}"
     fi
 else
     echo -e "${GREEN}  ✓ .env already exists${NC}"
@@ -209,16 +209,16 @@ check_command() {
 # Check essential commands
 check_command "brew" || echo -e "${YELLOW}    Install: /bin/bash -c \"\$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)\"${NC}"
 check_command "git"
-check_command "tmux" || echo -e "${YELLOW}    Run: brew bundle --file=~/dotfiles/Brewfile${NC}"
-check_command "nvim" || echo -e "${YELLOW}    Run: brew bundle --file=~/dotfiles/Brewfile${NC}"
-check_command "terminal-notifier" || echo -e "${YELLOW}    Run: brew bundle --file=~/dotfiles/Brewfile${NC}"
+check_command "tmux" || echo -e "${YELLOW}    Run: brew bundle --file=$DOTFILES_DIR/Brewfile${NC}"
+check_command "nvim" || echo -e "${YELLOW}    Run: brew bundle --file=$DOTFILES_DIR/Brewfile${NC}"
+check_command "terminal-notifier" || echo -e "${YELLOW}    Run: brew bundle --file=$DOTFILES_DIR/Brewfile${NC}"
 
 # Check browser automation setup
 if [ -d "$DOTFILES_DIR/scripts/browser/node_modules" ]; then
     echo -e "${GREEN}  ✓ Browser automation (Playwright)${NC}"
 else
     echo -e "${RED}  ✗ Browser automation (npm dependencies missing)${NC}"
-    echo -e "${YELLOW}    Run: cd ~/dotfiles/scripts/browser && npm install && npx playwright install chromium${NC}"
+    echo -e "${YELLOW}    Run: cd $DOTFILES_DIR/scripts/browser && npm install && npx playwright install chromium${NC}"
 fi
 
 # Check if Alacritty is installed
@@ -226,7 +226,7 @@ if [ -d "/Applications/Alacritty.app" ]; then
     echo -e "${GREEN}  ✓ Alacritty${NC}"
 else
     echo -e "${RED}  ✗ Alacritty (not installed)${NC}"
-    echo -e "${YELLOW}    Run: brew bundle --file=~/dotfiles/Brewfile${NC}"
+    echo -e "${YELLOW}    Run: brew bundle --file=$DOTFILES_DIR/Brewfile${NC}"
 fi
 
 # Check if AeroSpace is installed
@@ -234,7 +234,7 @@ if [ -d "/Applications/AeroSpace.app" ]; then
     echo -e "${GREEN}  ✓ AeroSpace${NC}"
 else
     echo -e "${RED}  ✗ AeroSpace (not installed)${NC}"
-    echo -e "${YELLOW}    Run: brew bundle --file=~/dotfiles/Brewfile${NC}"
+    echo -e "${YELLOW}    Run: brew bundle --file=$DOTFILES_DIR/Brewfile${NC}"
 fi
 
 # Check if Hammerspoon is installed
@@ -242,7 +242,7 @@ if [ -d "/Applications/Hammerspoon.app" ]; then
     echo -e "${GREEN}  ✓ Hammerspoon${NC}"
 else
     echo -e "${RED}  ✗ Hammerspoon (not installed)${NC}"
-    echo -e "${YELLOW}    Run: brew bundle --file=~/dotfiles/Brewfile${NC}"
+    echo -e "${YELLOW}    Run: brew bundle --file=$DOTFILES_DIR/Brewfile${NC}"
 fi
 
 # Check if Raycast is installed
@@ -261,7 +261,7 @@ if fc-list 2>/dev/null | grep -i "JetBrainsMono Nerd Font" > /dev/null || \
     echo -e "${GREEN}  ✓ JetBrainsMono Nerd Font${NC}"
 else
     echo -e "${RED}  ✗ JetBrainsMono Nerd Font (not installed)${NC}"
-    echo -e "${YELLOW}    Run: brew bundle --file=~/dotfiles/Brewfile${NC}"
+    echo -e "${YELLOW}    Run: brew bundle --file=$DOTFILES_DIR/Brewfile${NC}"
 fi
 
 echo ""
@@ -271,14 +271,14 @@ echo -e "${GREEN}╚════════════════════
 echo ""
 echo -e "${BLUE}Next steps:${NC}"
 echo -e "  1. Restart your terminal or run: ${YELLOW}exec zsh${NC}"
-echo -e "  2. If packages are missing, run: ${YELLOW}brew bundle --file=~/dotfiles/Brewfile${NC}"
+echo -e "  2. If packages are missing, run: ${YELLOW}brew bundle --file=$DOTFILES_DIR/Brewfile${NC}"
 echo -e "  3. Setup Raycast script commands (optional):"
 echo -e "     - Open Raycast Settings (⌘,)"
 echo -e "     - Extensions → Script Commands"
 echo -e "     - Add directory: ${YELLOW}$DOTFILES_DIR/raycast${NC}"
 echo ""
 echo -e "${BLUE}Configuration locations:${NC}"
-echo -e "  Brewfile:   ~/dotfiles/Brewfile"
+echo -e "  Brewfile:   $DOTFILES_DIR/Brewfile"
 echo -e "  Zsh:        ~/.zshrc"
 echo -e "  tmux:       ~/.tmux.conf"
 echo -e "  Neovim:     ~/.config/nvim"
