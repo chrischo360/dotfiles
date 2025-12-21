@@ -21,38 +21,64 @@ brew "ripgrep"           # Fast text search (rg)
 brew "btop"              # System monitor
 
 # ============================================
+# Version Control
+# ============================================
+brew "git"               # Distributed version control
+brew "gh"                # GitHub CLI
+
+# ============================================
 # Development Tools
 # ============================================
-brew "fnm"               # Fast Node Manager (replaces NVM)
+brew "fnm"               # Fast Node Manager
+brew "yarn"              # JavaScript package manager
+brew "pyenv"             # Python version manager
+brew "rbenv"             # Ruby version manager
 brew "php@8.1"           # PHP 8.1
-brew "composer"          # PHP package manager
+brew "maven"             # Java build tool
+brew "coursier"          # Scala application manager
+brew "sbt"               # Scala build tool
+brew "kubernetes-cli"    # kubectl for Kubernetes
+brew "jq"                # JSON processor
+
+# ============================================
+# Code Quality & Formatters
+# ============================================
 brew "biome"             # Code formatter/linter
+brew "stylua"            # Lua formatter (for nvim config)
+brew "swiftlint"         # Swift linter
 
 # ============================================
 # Utilities
 # ============================================
 brew "terminal-notifier" # macOS notifications
 brew "cloc"              # Count lines of code
+brew "curl"              # HTTP client
+brew "rsync"             # File sync
+brew "mkcert"            # Local SSL certificates
+brew "hyperfine"         # Benchmarking tool
+brew "tree-sitter"       # Parser generator (nvim dependency)
 
 # ============================================
 # Fonts
 # ============================================
 cask "font-jetbrains-mono-nerd-font"
-
-# Alternative fonts (uncomment to try):
-# cask "font-monaspace-nerd-font"
-# cask "font-cascadia-code"
-# cask "font-fira-code-nerd-font"
-# cask "font-iosevka-nerd-font"
-# cask "font-hack-nerd-font"
+cask "font-cascadia-code"
+cask "font-fira-code-nerd-font"
+cask "font-hack-nerd-font"
+cask "font-iosevka-nerd-font"
+cask "font-monaspice-nerd-font"
+cask "font-victor-mono-nerd-font"
 
 # ============================================
 # Applications
 # ============================================
-cask "alacritty"         # GPU-accelerated terminal
 cask "aerospace"         # Tiling window manager
 cask "hammerspoon"       # macOS automation
-cask "docker"            # Container runtime
+cask "docker-desktop"    # Container runtime with GUI
+cask "claude-code"       # Claude AI CLI
+cask "chromium"          # Open-source browser
+cask "homerow"           # Keyboard navigation
+cask "block-goose"       # Browser automation tool
 
 # Optional applications:
 # cask "raycast"         # Launcher (requires manual setup)
