@@ -4,7 +4,7 @@
 alias icat="kitty +kitten icat"
 
 # Tmux - Reload zsh config in idle panes only (skips vim, ssh, etc.)
-alias tmux-reload-all="~/dotfiles/tmux/scripts/reload-zsh-safe.sh"
+alias tmux-reload="~/dotfiles/tmux/scripts/reload-zsh-safe.sh"
 
 # Modern CLI Tools (eza, bat, fd, delta)
 alias ls="eza --icons"
@@ -77,6 +77,6 @@ claude-mcp() {
 alias claude-costs='~/dotfiles/claude/scripts/analyze-costs.py'
 
 # sf-ui-web - Build/clean utility
-alias sfb='~/dotfiles/scripts/codebase/sf-ui-web/sf'
+alias sfb='~/dotfiles/scripts/codebase/sf-ui-web/sfb.sh'
 
  alias cfbuild='(cd ~/codebase/cp-toolkit && cargo install --path cp --force && cargo install --path interview --force && cargo install --path interview-tui --force)'
