@@ -43,6 +43,7 @@ return {
       cpp = { "clang-format" },
       c = { "clang-format" },
       swift = { "swift_format" },
+      scala = { "scalafmt" },
       -- php = { "company_php_fixer" }, -- DISABLED
     },
     -- Set default options

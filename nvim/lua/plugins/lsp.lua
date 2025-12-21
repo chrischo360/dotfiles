@@ -375,6 +375,21 @@ return {
           return vim.fs.root(fname, { "Package.swift", ".git" })
         end,
       })
+
+      -- Scala
+      vim.lsp.config('metals', {
+        capabilities = capabilities,
+        settings = {
+          metals = {
+            showImplicitArguments = true,
+            showImplicitConversions = true,
+            showInferredType = true,
+            superMethodLensesEnabled = true,
+            enableSemanticHighlighting = false,
+          },
+        },
+      })
+
       -- Completion Setup
       local cmp = require("cmp")
       local luasnip = require("luasnip")
@@ -435,7 +450,7 @@ return {
       })
 
       -- Enable all configured LSP servers once
-      vim.lsp.enable({ 'ts_ls', 'lua_ls', 'pyright', 'jdtls', 'intelephense', 'rust_analyzer', 'sourcekit' })
+      vim.lsp.enable({ 'ts_ls', 'lua_ls', 'pyright', 'jdtls', 'intelephense', 'rust_analyzer', 'sourcekit', 'metals' })
     end,
   },
 }
