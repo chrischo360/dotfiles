@@ -86,6 +86,7 @@ create_symlink "$DOTFILES_DIR/zsh/.zshrc" "$HOME/.zshrc"
 
 # tmux
 create_symlink "$DOTFILES_DIR/tmux/tmux.conf" "$HOME/.tmux.conf"
+create_symlink "$DOTFILES_DIR/tmux/scripts" "$HOME/.config/tmux/scripts"
 
 # Git
 create_symlink "$DOTFILES_DIR/git/gitconfig" "$HOME/.gitconfig"
@@ -113,6 +114,7 @@ mkdir -p "$HOME/.claude"
 create_symlink "$DOTFILES_DIR/claude/settings.json" "$HOME/.claude/settings.json"
 create_symlink "$DOTFILES_DIR/claude/scripts/statusline.sh" "$HOME/.claude/statusline.sh"
 create_symlink "$DOTFILES_DIR/claude/agents" "$HOME/.claude/agents"
+create_symlink "$DOTFILES_DIR/claude/commands" "$HOME/.claude/commands"
 create_symlink "$DOTFILES_DIR/claude/CLAUDE.md" "$HOME/.claude/CLAUDE.md"
 
 echo ""

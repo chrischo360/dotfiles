@@ -108,10 +108,33 @@ gradle() {
   command gradle "$@"
 }
 
+scala() {
+  _load_sdkman
+  unset -f scala
+  command scala "$@"
+}
+
+sbt() {
+  _load_sdkman
+  unset -f sbt
+  command sbt "$@"
+}
+
+_apply_sdkman_env() {
+  if [[ -f .sdkmanrc ]]; then
+    _load_sdkman
+    sdk env
+  fi
+}
+
 # --- Zoxide ---
 cd() {
   if ! command -v __zoxide_z >/dev/null 2>&1; then
     eval "$(zoxide init zsh --cmd cd)"
   fi
   __zoxide_z "$@"
+  _apply_sdkman_env
 }
+
+# Apply sdkman env on shell startup if in a directory with .sdkmanrc
+_apply_sdkman_env
