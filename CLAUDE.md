@@ -7,19 +7,15 @@ Personal configuration files for macOS development environment.
 ```
 ~/dotfiles/
 ├── aerospace/          # AeroSpace window manager config
-├── alacritty/          # Alacritty terminal emulator
-│   ├── scripts/        # Theme switching and management
-│   └── themes/         # Color scheme collection
 ├── claude/             # Claude Code configuration and tools
 │   ├── agents/         # Custom Claude Code agents
+│   ├── ccstatusline/   # ccstatusline configuration
 │   ├── hooks/          # Session hooks (token tracking, cost logging)
 │   ├── scripts/        # Utilities (notifications, monitoring)
 │   └── settings.json   # Claude Code settings
-├── ccstatusline/       # ccstatusline configuration
 ├── git/                # Git configuration
 │   ├── gitconfig       # Global git config
 │   └── hooks/          # Git hooks
-├── hammerspoon/        # Hammerspoon automation (Slack keyboard navigation)
 ├── nvim/               # Neovim configuration
 ├── raycast/            # Raycast script commands (CodeForces workflows)
 ├── tmux/               # tmux terminal multiplexer config
@@ -42,7 +38,7 @@ The install script creates these symlinks:
 ~/.hammerspoon/           -> ~/dotfiles/hammerspoon/
 ~/.config/alacritty/      -> ~/dotfiles/alacritty/
 ~/.config/nvim/           -> ~/dotfiles/nvim/
-~/.config/ccstatusline/   -> ~/dotfiles/ccstatusline/
+~/.config/ccstatusline/   -> ~/dotfiles/claude/ccstatusline/
 ~/.claude/settings.json   -> ~/dotfiles/claude/settings.json
 ~/.claude/agents/         -> ~/dotfiles/claude/agents/
 ~/.claude/CLAUDE.md       -> ~/dotfiles/claude/CLAUDE.md
@@ -79,17 +75,11 @@ All Homebrew dependencies are managed via **Brewfile**. The install script autom
 - ccstatusline - Claude Code statusline
 
 **Applications:**
-- aerospace, hammerspoon, docker-desktop
-- claude-code, chromium, homerow, block-goose
+- aerospace, docker-desktop
+- claude-code, chromium
 
 **Fonts:**
 - font-jetbrains-mono-nerd-font
-- font-cascadia-code
-- font-fira-code-nerd-font
-- font-hack-nerd-font
-- font-iosevka-nerd-font
-- font-monaspice-nerd-font
-- font-victor-mono-nerd-font
 
 **Zsh Plugins (included as git submodules):**
 - zsh-autosuggestions - Command suggestions

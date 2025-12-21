@@ -62,23 +62,15 @@ brew "tree-sitter"       # Parser generator (nvim dependency)
 # Fonts
 # ============================================
 cask "font-jetbrains-mono-nerd-font"
-cask "font-cascadia-code"
-cask "font-fira-code-nerd-font"
-cask "font-hack-nerd-font"
-cask "font-iosevka-nerd-font"
-cask "font-monaspice-nerd-font"
-cask "font-victor-mono-nerd-font"
 
 # ============================================
 # Applications
 # ============================================
 cask "aerospace"         # Tiling window manager
-cask "hammerspoon"       # macOS automation
 cask "docker-desktop"    # Container runtime with GUI
 cask "claude-code"       # Claude AI CLI
 cask "chromium"          # Open-source browser
 cask "homerow"           # Keyboard navigation
-cask "block-goose"       # Browser automation tool
 
 # Optional applications:
 # cask "raycast"         # Launcher (requires manual setup)

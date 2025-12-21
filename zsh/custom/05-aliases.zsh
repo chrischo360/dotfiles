@@ -114,4 +114,4 @@ claude-mcp() {
 alias claude-costs='~/dotfiles/claude/scripts/analyze-costs.py'
 
 # sf-ui-web - Build/clean utility
-alias sfb='~/dotfiles/codebase/sf-ui-web/sf'
+alias sfb='~/dotfiles/scripts/codebase/sf-ui-web/sf'
