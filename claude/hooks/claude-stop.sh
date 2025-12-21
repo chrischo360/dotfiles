@@ -1,10 +1,24 @@
 #!/bin/bash
 # Hook: Stop - Called when Claude finishes responding
-# Check if last message contains AskUserQuestion to determine state
+# Sets state to idle unless already waiting_for_input (from AskUserQuestion)
 
-# For now, default to idle (we can enhance this later to detect questions)
-~/dotfiles/claude/scripts/update-session-state.sh idle
+echo "[$(date '+%H:%M:%S')] Stop hook fired" >> ~/.claude/hook-debug.log
 
-# TODO: Parse Claude's last output to detect if waiting for user input
-# If AskUserQuestion was used, call:
-# ~/dotfiles/claude/scripts/update-session-state.sh waiting
+STATE_FILE="$HOME/.claude/session-state.json"
+PANE_ID="$TMUX_PANE"
+
+# Check current state
+if [[ -f "$STATE_FILE" && -n "$PANE_ID" ]]; then
+  current_status=$(jq -r --arg pane "$PANE_ID" '.sessions[$pane].status // ""' "$STATE_FILE" 2>/dev/null)
+
+  # Only set to idle if not already waiting_for_input
+  if [[ "$current_status" != "waiting_for_input" ]]; then
+    echo "[$(date '+%H:%M:%S')] Setting to idle (current: $current_status)" >> ~/.claude/hook-debug.log
+    ~/dotfiles/claude/scripts/update-session-state.sh idle
+  else
+    echo "[$(date '+%H:%M:%S')] Preserving waiting_for_input state" >> ~/.claude/hook-debug.log
+  fi
+else
+  # Default to idle if can't check state
+  ~/dotfiles/claude/scripts/update-session-state.sh idle
+fi

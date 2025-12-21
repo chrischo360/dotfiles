@@ -50,24 +50,40 @@ jq -r '.sessions | to_entries[] | "\(.value.status)|\(.value.context.tmux_sessio
   echo "$priority|$status|$display_name" >> "$temp_file"
 done
 
-# Group by display_name, keep highest priority status
+# Group by display_name, show all statuses for each session
+# State transitions:
+#   SessionStart → active (processing starts)
+#   UserPromptSubmit → active (user sent input)
+#   PostToolUse(AskUserQuestion) → waiting_for_input (Claude asked a question)
+#   Stop → idle (Claude finished responding)
 session_displays=()
 for session_name in $(cut -d'|' -f3 "$temp_file" | sort -u); do
-  # Get highest priority status for this session
-  status=$(grep "|$session_name$" "$temp_file" | sort -rn | head -1 | cut -d'|' -f2)
+  # Get all statuses for this session, sorted by priority (active first, then waiting, then idle)
+  statuses=$(grep "|$session_name$" "$temp_file" | sort -rn | cut -d'|' -f2)
 
-  # Add icon based on status
-  case "$status" in
-    active)
-      session_displays+=("${session_name}⚡")
-      ;;
-    idle)
-      session_displays+=("${session_name}⏸️")
-      ;;
-    waiting_for_input)
-      session_displays+=("${session_name}⏳")
-      ;;
-  esac
+  # Build icon string with all statuses
+  icons=""
+  while IFS= read -r status; do
+    case "$status" in
+      active)
+        # ⚡ Lightning: Claude is actively processing/responding
+        icons="${icons}⚡"
+        ;;
+      idle)
+        # ⏸️ Pause: Claude finished, waiting for user input
+        icons="${icons}⏸️"
+        ;;
+      waiting_for_input)
+        # ⏳ Hourglass: Claude asked a question, needs user response
+        icons="${icons}⏳"
+        ;;
+    esac
+  done <<< "$statuses"
+
+  # Add session with all its icons
+  if [[ -n "$icons" ]]; then
+    session_displays+=("${session_name}${icons}")
+  fi
 done
 
 # Format output
