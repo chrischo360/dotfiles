@@ -71,6 +71,8 @@ The install script creates these symlinks:
 ~/.claude/settings.json   -> ~/dotfiles/claude/settings.json
 ~/.claude/agents/         -> ~/dotfiles/claude/agents/
 ~/.claude/CLAUDE.md       -> ~/dotfiles/claude/CLAUDE.md
+~/.gemini/settings.json   -> ~/dotfiles/gemini/settings.json
+~/.local/bin/gemini       -> $(npm bin -g)/gemini
 ```
 
 ## Package Management
@@ -102,6 +104,7 @@ All Homebrew dependencies are managed via **Brewfile**. The install script autom
 
 **npm Global Packages:**
 - ccstatusline - Claude Code statusline
+- @google/gemini-cli - Gemini AI CLI (settings: ~/dotfiles/gemini/)
 
 **Applications:**
 - aerospace, docker-desktop
@@ -231,6 +234,18 @@ The `~/dotfiles/claude/` directory contains Claude Code configuration and utilit
 
 See `claude/README.md` for detailed Claude Code documentation.
 
+## Gemini CLI Directory
+
+`~/dotfiles/gemini/` contains Gemini CLI configuration:
+
+- **settings.json** - Gemini CLI config (auth type, editor, UI, MCP servers)
+
+**Sensitive files** (gitignored, local in `~/.gemini/`):
+- `google_accounts.json`, `mcp-oauth-tokens-v2.json` - Authentication
+- `installation_id`, `state.json` - Session tracking
+
+**Binary:** `~/.local/bin/gemini` → stable symlink to npm global
+
 ## PAL MCP Workflow
 
 Claude automatically uses PAL tools for:
@@ -255,20 +270,45 @@ ccstatusline
 
 Multi-session awareness in tmux statusline. Tracks Claude Code sessions across panes.
 
-**Display format:** `C: main⚡ work⏸️ dotfiles⏳`
-- Shows each tmux session with its Claude state
-- ⚡ = Active (processing)
-- ⏸️ = Idle (finished, ready for input)
-- ⏳ = Waiting for input (asked a question)
+**Display format:** `C: main📖✏️ work❓ dotfiles✅`
+- 📖 Reading = Read, Glob (finding/reading files)
+- 🔍 Searching = Grep (searching code)
+- ✏️ Editing = Edit, Write (modifying files)
+- ⚙️ Running = Bash (executing commands)
+- 🤖 Delegating = Task (spawning agents)
+- 🌐 Fetching = WebFetch, WebSearch (web requests)
+- 🔄 Thinking = Generic active (processing, no specific tool)
+- ❓ Question = AskUserQuestion (Claude asked a question)
+- ✅ Ready = Idle (Claude finished, waiting for user input)
+- Multiple icons = Multiple Claude sessions in that tmux session
 
-**How it works:**
+**Quick reference:**
 - State file: `~/.claude/session-state.json`
-- Hooks automatically update state on session events
-- tmux statusline refreshes every 2 seconds
-- Displays: `tmux-session-name + state-icon`
+- Hooks configured in: `claude/settings.json`
+- tmux statusline refreshes: Every 2 seconds
+- Display format: `tmux-session-name + state-icons`
 
-**Manual testing:**
+**See `claude/STATE_FLOW.md` for comprehensive documentation:**
+- Complete hook execution order and timing
+- State transition diagrams
+- Edge cases and limitations (user interrupts, tool rejections, etc.)
+- Testing and debugging procedures
+
+**State transitions:**
+- `SessionStart` → active (when session begins)
+- `UserPromptSubmit` → active (when user sends input)
+- `PreToolUse(AskUserQuestion)` → waiting_for_input (when Claude is about to ask a question)
+- `Stop` → idle (when Claude finishes responding, unless already waiting)
+
+**Quick debugging:**
 ```bash
+# View current state and recent hook activity
+~/dotfiles/claude/scripts/debug-status.sh
+
+# Monitor hook execution in real-time
+tail -f ~/.claude/hook-debug.log
+
+# Manual state updates for testing
 ~/dotfiles/claude/scripts/update-session-state.sh <action>
 # Actions: start, active, idle, waiting, stop
 ```
