@@ -21,25 +21,32 @@ return {
     -- Setup bufferin with default config
     bufferin.setup()
 
-    -- Cache for top 5 buffers (rebuilt when Bufferin opens)
+    -- Cache for top 5 buffers and from_main markers (rebuilt when Bufferin opens)
     local top_5_cache = {}
+    local from_main_cache = {}
 
-    -- Override get_buffers to sort by importance AND rebuild top 5 cache
+    -- Override get_buffers to sort by importance AND rebuild caches
     local original_get_buffers = buffer_mod.get_buffers
     buffer_mod.get_buffers = function()
       local buffers = original_get_buffers()
 
-      -- Get importance scores
+      -- Get importance scores (includes merged main files on feature branches)
       local scored_buffers = importance.get_all()
       local score_map = {}
       for _, scored in ipairs(scored_buffers) do
         score_map[scored.filepath] = scored.score
       end
 
-      -- Rebuild top 5 cache for O(1) lookups in get_display_name
+      -- Rebuild top 5 cache and from_main cache for O(1) lookups in get_display_name
       top_5_cache = {}
+      from_main_cache = {}
       for i = 1, math.min(5, #scored_buffers) do
         top_5_cache[scored_buffers[i].filepath] = true
+      end
+      for _, scored in ipairs(scored_buffers) do
+        if scored.from_main then
+          from_main_cache[scored.filepath] = true
+        end
       end
 
       -- Sort by importance
@@ -57,17 +64,24 @@ return {
       return buffers
     end
 
-    -- Override get_display_name to add pins for top 5 (using cache)
+    -- Override get_display_name to add pins for top 5 and markers for main files
     local original_get_display_name = utils.get_display_name
     utils.get_display_name = function(name)
       local base_name = original_get_display_name(name)
 
-      -- O(1) lookup instead of O(n) search
-      if top_5_cache[name] then
-        return "📌 " .. base_name
-      end
+      -- O(1) lookups
+      local is_top_5 = top_5_cache[name]
+      local from_main = from_main_cache[name]
 
-      return base_name
+      if is_top_5 and from_main then
+        return "📌 " .. base_name .. " (main)"
+      elseif is_top_5 then
+        return "📌 " .. base_name
+      elseif from_main then
+        return base_name .. " (main)"
+      else
+        return base_name
+      end
     end
   end,
   --[[ OLD DISABLED CODE FOR REFERENCE

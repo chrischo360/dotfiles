@@ -36,7 +36,7 @@ return {
       end,
 
       save_dir = vim.fn.expand(vim.fn.stdpath("data") .. "/sessions/"), -- Directory where session files are saved
-      use_git_branch = false, -- Don't include git branch in session file name
+      use_git_branch = true, -- Include git branch in session file name (matches buffer tracking)
 
       -- Function to run when `autoload = true` but there is no session to load
       on_autoload_no_session = function()

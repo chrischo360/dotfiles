@@ -412,7 +412,7 @@ local function calculate_score(access, saves)
   return (normalized.access * 0.6) + (normalized.saves * 0.4)
 end
 
--- Get all tracked buffers
+-- Get all tracked buffers (with merge from main if on feature branch)
 function M.get_all()
   if not M.initialized then
     return {}
@@ -420,14 +420,57 @@ function M.get_all()
 
   local results = {}
 
+  -- Add all buffers from current branch
   for filepath, data in pairs(buffer_data) do
     local score = calculate_score(data.access, data.saves)
     table.insert(results, {
       filepath = filepath,
       access = data.access,
       saves = data.saves,
-      score = score
+      score = score,
+      from_main = false
     })
+  end
+
+  -- If on feature branch, merge high-importance files from main
+  if current_project_root and current_branch then
+    local main_branch = detect_main_branch(current_project_root)
+    if current_branch ~= main_branch then
+      local project_dir = vim.fn.fnamemodify(data_file, ":h")
+      local main_file = project_dir .. "/" .. main_branch .. ".json"
+
+      -- Try to read main branch data
+      local f = io.open(main_file, "r")
+      if f then
+        local content = f:read("*a")
+        f:close()
+
+        local ok, main_data = pcall(vim.json.decode, content)
+        if ok and type(main_data) == "table" then
+          -- Create lookup of current branch files
+          local current_files = {}
+          for filepath, _ in pairs(buffer_data) do
+            current_files[filepath] = true
+          end
+
+          -- Add high-importance files from main (score >= 0.5, not in feature branch)
+          for filepath, data in pairs(main_data) do
+            if not current_files[filepath] then
+              local score = calculate_score(data.access, data.saves)
+              if score >= 0.5 then
+                table.insert(results, {
+                  filepath = filepath,
+                  access = data.access,
+                  saves = data.saves,
+                  score = score,
+                  from_main = true
+                })
+              end
+            end
+          end
+        end
+      end
+    end
   end
 
   -- Sort by importance score
