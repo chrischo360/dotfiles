@@ -37,27 +37,44 @@ gb() {
 }
 
 # Search file contents with ripgrep and open in neovim (interactive)
-# nvim() {
-#   # If arguments provided, use actual nvim
-#   if [ $# -gt 0 ]; then
-#     command nvim "$@"
-#     return
-#   fi
-#
-#   # No arguments: use fzf search
-#   local result=$(fzf --height 40% --reverse --border \
-#     --prompt="Search: " \
-#     --header="Type to search, then select file to open in nvim" \
-#     --disabled \
-#     --bind "change:reload:rg --files-with-matches --no-messages {q} . || true" \
-#     --preview "rg --color=always --context=3 {q} {}" \
-#     --preview-window='up:60%')
-#
-#   if [ -n "$result" ]; then
-#     command nvim "$result"
-#   fi
-# }
+nvim-fzf() {
+  # If arguments provided, use actual nvim
+  if [ $# -gt 0 ]; then
+    command nvim "$@"
+    return
+  fi
 
+  # No arguments: use fzf search
+  local result=$(fzf --height 40% --reverse --border \
+    --prompt="Search: " \
+    --header="Type to search, then select file to open in nvim" \
+    --disabled \
+    --bind "change:reload:rg --files-with-matches --no-messages {q} . || true" \
+    --preview "rg --color=always --context=3 {q} {}" \
+    --preview-window='up:60%')
+
+  if [ -n "$result" ]; then
+    command nvim "$result"
+  fi
+}
+
+nvim-grep() {
+  local result=$(rg --line-number --column --no-heading --color=always . | \
+    fzf --ansi \
+      --height 40% \
+      --reverse \
+      --border \
+      --delimiter ':' \
+      --preview 'bat --color=always --highlight-line {2} {1}' \
+      --preview-window='up:60%:+{2}-/2')
+
+  if [ -n "$result" ]; then
+    local file=$(echo "$result" | cut -d':' -f1)
+    local line=$(echo "$result" | cut -d':' -f2)
+    local col=$(echo "$result" | cut -d':' -f3)
+    command nvim "+call cursor($line,$col)" "$file"
+  fi
+}
 
 ############################# SCRIPTS ############################# 
 
