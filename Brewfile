@@ -1,3 +1,7 @@
+# ⚠️ DEPRECATED - Most tools now managed via mise (.mise.toml)
+# For macOS-specific packages (GUI apps, fonts), use Brewfile.macos
+# This file kept for backward compatibility only
+
 # Dotfiles Brewfile
 # Install all dependencies: brew bundle --file=~/dotfiles/Brewfile
 # Update this file: brew bundle dump --file=~/dotfiles/Brewfile --force
@@ -18,7 +22,7 @@ brew "bat"               # Modern cat with syntax highlighting
 brew "fd"                # Modern find
 brew "fzf"               # Fuzzy finder
 brew "ripgrep"           # Fast text search (rg)
-brew "btop"              # System monitor
+# brew "btop"            # Replaced by cargo:bottom in mise
 
 # ============================================
 # Version Control
@@ -29,13 +33,13 @@ brew "gh"                # GitHub CLI
 # ============================================
 # Development Tools
 # ============================================
-brew "fnm"               # Fast Node Manager
+# brew "fnm"             # Replaced by mise (node runtime)
 brew "yarn"              # JavaScript package manager
-brew "pyenv"             # Python version manager
-brew "rbenv"             # Ruby version manager
+# brew "pyenv"           # Replaced by mise (python runtime)
+# brew "rbenv"           # Replaced by mise (ruby runtime)
 brew "php@8.1"           # PHP 8.1
 brew "maven"             # Java build tool
-brew "coursier"          # Scala application manager
+brew "coursier"          # Scala application manager (keep Homebrew version, more stable)
 brew "sbt"               # Scala build tool
 brew "kubernetes-cli"    # kubectl for Kubernetes
 brew "jq"                # JSON processor
@@ -43,20 +47,20 @@ brew "jq"                # JSON processor
 # ============================================
 # Code Quality & Formatters
 # ============================================
-brew "biome"             # Code formatter/linter
-brew "stylua"            # Lua formatter (for nvim config)
-brew "swiftlint"         # Swift linter
+# brew "biome"           # Replaced by npm:@biomejs/biome in mise
+# brew "stylua"          # Replaced by cargo:stylua in mise
+brew "swiftlint"         # Swift linter (macOS-specific)
 
 # ============================================
 # Utilities
 # ============================================
 brew "terminal-notifier" # macOS notifications
-brew "cloc"              # Count lines of code
+# brew "cloc"            # Replaced by cargo:tokei in mise
 brew "curl"              # HTTP client
 brew "rsync"             # File sync
 brew "mkcert"            # Local SSL certificates
-brew "hyperfine"         # Benchmarking tool
-brew "tree-sitter"       # Parser generator (nvim dependency)
+# brew "hyperfine"       # Replaced by hyperfine in mise
+brew "tree-sitter"       # Parser generator (nvim dependency, complex build)
 
 # ============================================
 # Fonts

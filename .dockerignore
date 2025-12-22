@@ -1,0 +1,36 @@
+# Don't copy these into Docker image during testing
+
+# Environment files (contain secrets)
+.env
+
+# Git (we'll initialize fresh)
+.git
+
+# IDE/Editor
+.vscode
+.idea
+*.swp
+*.swo
+
+# macOS
+.DS_Store
+
+# Node modules (large and not needed for testing)
+node_modules
+*/node_modules
+
+# Build artifacts
+*.o
+*.a
+*.so
+
+# Logs
+*.log
+
+# Cache directories
+.cache
+__pycache__
+
+# Misc
+.tmp
+tmp/

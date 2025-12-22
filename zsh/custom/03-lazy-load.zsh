@@ -12,67 +12,9 @@ gcloud() {
   command gcloud "$@"
 }
 
-# --- Pyenv ---
-_pyenv_loaded=0
-
-_load_pyenv() {
-  if [ $_pyenv_loaded -eq 1 ]; then
-    return
-  fi
-  eval "$(pyenv init -)"
-  _pyenv_loaded=1
-}
-
-pyenv() {
-  _load_pyenv
-  command pyenv "$@"
-}
-
-python() {
-  _load_pyenv
-  unset -f python
-  command python "$@"
-}
-
-pip() {
-  _load_pyenv
-  unset -f pip
-  command pip "$@"
-}
-
-# --- Rbenv (Ruby) ---
-_rbenv_loaded=0
-
-_load_rbenv() {
-  if [ $_rbenv_loaded -eq 1 ]; then
-    return
-  fi
-  eval "$(rbenv init - --no-rehash zsh)"
-  _rbenv_loaded=1
-}
-
-rbenv() {
-  _load_rbenv
-  command rbenv "$@"
-}
-
-ruby() {
-  _load_rbenv
-  unset -f ruby
-  command ruby "$@"
-}
-
-gem() {
-  _load_rbenv
-  unset -f gem
-  command gem "$@"
-}
-
-bundle() {
-  _load_rbenv
-  unset -f bundle
-  command bundle "$@"
-}
+# NOTE: pyenv, rbenv, fnm have been replaced by mise
+# mise handles Node.js, Python, Ruby version management
+# Configuration: ~/dotfiles/.mise.toml
 
 # --- SDKMAN (Java) ---
 _sdkman_loaded=0

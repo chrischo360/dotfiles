@@ -84,52 +84,62 @@ The install script creates these symlinks:
 
 ## Package Management
 
-All Homebrew dependencies are managed via **Brewfile**. The install script automatically installs packages from the Brewfile.
+Uses **mise** for cross-platform dev tools + **Homebrew** (macOS only) for GUI apps.
 
-### Core Packages (from Brewfile)
+**Why mise?**
+- Cross-platform (macOS, Linux, Docker)
+- Unified runtime management (replaces fnm, pyenv, rbenv)
+- Fast, single binary
+- Works in containers
+
+See `MISE_MIGRATION.md` for migration details and limitations.
+
+### Core Tools (from .mise.toml)
+
+**Development Runtimes:**
+- node (lts), python, ruby, java, php
+- bun, deno, scala
 
 **Terminal & Shell:**
-- tmux, neovim, zsh
-- zoxide, eza, bat, fd, fzf, ripgrep, btop
+- tmux, neovim, fzf
+- zoxide, eza, bat, fd, ripgrep, bottom
 
 **Version Control:**
-- git, gh (GitHub CLI)
+- git, gh (GitHub CLI), delta
 
 **Development Tools:**
-- fnm (Fast Node Manager), yarn
-- pyenv (Python), rbenv (Ruby)
-- php@8.1, maven (Java)
-- coursier, sbt (Scala)
-- kubernetes-cli, jq
+- yarn, maven, gradle, sbt
+- kubectl, jq, terraform, awscli
 
 **Code Quality & Formatters:**
-- biome, stylua, swiftlint
+- biome, stylua, taplo, actionlint, shellcheck
 
 **Utilities:**
-- terminal-notifier, cloc, curl, rsync
-- mkcert, hyperfine, tree-sitter
+- sd, tokei, du-dust, procs, tealdeer
+- mkcert, direnv, watchexec, just
+- pipx, cargo-binstall
 
 **npm Global Packages:**
 - ccstatusline - Claude Code statusline
 - @google/gemini-cli - Gemini AI CLI (settings: ~/dotfiles/gemini/)
 
+**Zsh Plugins (git submodules):**
+- zsh-autosuggestions - Command suggestions
+- fast-syntax-highlighting - Syntax highlighting
+
+### macOS-Only Packages (from Brewfile.macos)
+
+**CLI Tools:**
+- terminal-notifier, rsync, curl, swiftlint
+
 **Applications:**
-- aerospace, docker-desktop
-- claude-code, chromium
+- aerospace, docker-desktop, claude-code, chromium, homerow
 
 **Fonts:**
 - font-jetbrains-mono-nerd-font
 
-**Zsh Plugins (included as git submodules):**
-- zsh-autosuggestions - Command suggestions
-- fast-syntax-highlighting - Syntax highlighting
-
-### Manual Setup Required
-
-**Optional Tools:**
-- **Raycast** - Launcher (commented out in Brewfile)
-- **Pyenv** - Python version manager
-- **Rust** - Install via rustup
+**Optional:**
+- Raycast (commented out)
 
 ## Installation
 
@@ -141,12 +151,14 @@ cd ~/dotfiles
 ```
 
 The install script will:
-1. Install Homebrew packages from Brewfile
-2. Initialize git submodules (zsh plugins)
-3. Backup existing config files
-4. Create all necessary symlinks
-5. Make scripts executable
-6. Verify installation and display summary
+1. Install mise (dev tools manager)
+2. Install tools from .mise.toml
+3. Install macOS-specific packages from Brewfile.macos (if on macOS)
+4. Initialize git submodules (zsh plugins)
+5. Backup existing config files
+6. Create all necessary symlinks
+7. Make scripts executable
+8. Verify installation and display summary
 
 ### Manual Installation
 
@@ -156,27 +168,29 @@ The install script will:
    cd ~/dotfiles
    ```
 
-2. **Install Homebrew packages:**
+2. **Install mise:**
    ```bash
-   # Install all packages from Brewfile
-   brew bundle --file=~/dotfiles/Brewfile
+   curl https://mise.run | sh
+   export PATH="$HOME/.local/bin:$PATH"
    ```
 
-3. **Initialize git submodules (if not cloned with --recursive):**
+3. **Install tools from .mise.toml:**
+   ```bash
+   cd ~/dotfiles
+   mise install
+   ```
+
+4. **Install macOS-specific packages (if on macOS):**
+   ```bash
+   brew bundle --file=~/dotfiles/Brewfile.macos
+   ```
+
+5. **Initialize git submodules (if not cloned with --recursive):**
    ```bash
    git submodule update --init --recursive
    ```
 
-4. **Install optional development tools:**
-   ```bash
-   # Pyenv
-   brew install pyenv
-
-   # Rust
-   curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
-   ```
-
-5. **Create symlinks:**
+6. **Create symlinks:**
    ```bash
    # Backup existing configs
    mv ~/.zshrc ~/.zshrc.backup 2>/dev/null
@@ -201,7 +215,7 @@ The install script will:
    ln -sf ~/dotfiles/claude/agents ~/.claude/agents
    ```
 
-6. **Make scripts executable:**
+7. **Make scripts executable:**
    ```bash
    chmod +x ~/dotfiles/claude/scripts/*.sh
    chmod +x ~/dotfiles/alacritty/scripts/*.sh
@@ -209,12 +223,12 @@ The install script will:
    chmod +x ~/dotfiles/tmux/scripts/*.sh
    ```
 
-7. **Setup Raycast scripts:**
+8. **Setup Raycast scripts:**
    - Open Raycast Settings (⌘,)
    - Go to Extensions → Script Commands
    - Add Script Directory: `~/dotfiles/raycast`
 
-8. **Restart your shell:**
+9. **Restart your shell:**
    ```bash
    exec zsh
    ```
@@ -379,35 +393,73 @@ git push
 ```
 
 ### Moving to a New Computer
-1. Install Homebrew: `/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"`
-2. Clone this repository with submodules: `git clone --recursive <your-repo-url> ~/dotfiles`
-3. Run install script: `cd ~/dotfiles && ./install.sh`
-4. Restart shell: `exec zsh`
+1. Clone repository with submodules: `git clone --recursive <your-repo-url> ~/dotfiles`
+2. Run install script: `cd ~/dotfiles && ./install.sh`
+3. Restart shell: `exec zsh`
 
-The install script will automatically install all packages from the Brewfile.
+The install script automatically installs:
+- mise and all tools from .mise.toml
+- macOS packages from Brewfile.macos (if on macOS)
 
 ### Managing Packages
 
-**Add a new package:**
+**Add a new tool:**
 ```bash
-# Add to Brewfile manually, then run:
-brew bundle --file=~/dotfiles/Brewfile
+# Add to .mise.toml manually, then:
+cd ~/dotfiles
+mise install
+
+# Or install globally:
+mise use -g <tool>@<version>
 ```
 
-**Update Brewfile from current installation:**
+**Update tools:**
 ```bash
-brew bundle dump --file=~/dotfiles/Brewfile --force
+# Update all tools
+mise upgrade
+
+# Update specific tool
+mise upgrade node
 ```
 
-**Check what would be installed:**
+**macOS packages (Homebrew):**
 ```bash
-brew bundle check --file=~/dotfiles/Brewfile
+# Add to Brewfile.macos, then:
+brew bundle --file=~/dotfiles/Brewfile.macos
 ```
+
+**Check tool availability:**
+```bash
+# Search mise registry
+mise registry <tool-name>
+
+# List installed tools
+mise list
+```
+
+### Testing Installation (Docker)
+
+Test the install script in a clean environment:
+
+```bash
+# Run full installation test
+./test-install.sh
+```
+
+**What gets tested:**
+- mise installation
+- Tool installation from .mise.toml
+- Symlink creation
+- Configuration generation
+
+**Note:** Docker test runs on Ubuntu, so macOS-specific packages are not tested.
 
 ### Troubleshooting
 - If symlinks break, re-run the install script
 - Check symlink status: `ls -la ~/.zshrc ~/.tmux.conf`
 - Verify paths match your username in scripts
+- mise not found: `export PATH="$HOME/.local/bin:$PATH"`
+- Tool missing: `cd ~/dotfiles && mise install`
 
 ## Portability
 

@@ -75,25 +75,70 @@ substitute_json_template() {
 }
 
 # Main installation steps
-echo -e "${BLUE}[1/5] Installing Homebrew packages...${NC}"
+echo -e "${BLUE}[1/6] Installing mise (dev tools manager)...${NC}"
 
-if command -v brew &> /dev/null; then
-    echo -e "${GREEN}  ✓ Homebrew detected${NC}"
-    if [ -f "$DOTFILES_DIR/Brewfile" ]; then
-        echo -e "${YELLOW}  Installing packages from Brewfile...${NC}"
-        brew bundle --file="$DOTFILES_DIR/Brewfile"
-        echo -e "${GREEN}  ✓ Homebrew packages installed${NC}"
+# Install mise if not present
+if ! command -v mise &> /dev/null; then
+    echo -e "${YELLOW}  Installing mise...${NC}"
+    curl https://mise.run | sh
+
+    # Add mise to PATH for this session
+    export PATH="$HOME/.local/bin:$PATH"
+
+    # Verify installation
+    if command -v mise &> /dev/null; then
+        echo -e "${GREEN}  ✓ mise installed successfully${NC}"
     else
-        echo -e "${YELLOW}  ⚠ Brewfile not found, skipping package installation${NC}"
+        echo -e "${RED}  ✗ mise installation failed${NC}"
+        echo -e "${YELLOW}  You may need to add ~/.local/bin to your PATH${NC}"
     fi
 else
-    echo -e "${RED}  ✗ Homebrew not installed${NC}"
-    echo -e "${YELLOW}  Install Homebrew first: /bin/bash -c \"\$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)\"${NC}"
-    echo -e "${YELLOW}  Then re-run this script to install packages${NC}"
+    echo -e "${GREEN}  ✓ mise already installed${NC}"
+fi
+
+# Install tools from .mise.toml
+if command -v mise &> /dev/null && [ -f "$DOTFILES_DIR/.mise.toml" ]; then
+    echo -e "${YELLOW}  Installing development tools from .mise.toml...${NC}"
+    echo -e "${YELLOW}  (This may take several minutes on first run)${NC}"
+
+    # Change to dotfiles directory so mise picks up .mise.toml
+    cd "$DOTFILES_DIR"
+    mise install
+
+    echo -e "${GREEN}  ✓ mise tools installed${NC}"
+else
+    echo -e "${YELLOW}  ⚠ .mise.toml not found, skipping tool installation${NC}"
 fi
 
 echo ""
-echo -e "${BLUE}[2/5] Initializing git submodules...${NC}"
+echo -e "${BLUE}[2/6] Installing macOS-specific packages...${NC}"
+
+# Detect OS
+OS="$(uname -s)"
+
+if [[ "$OS" == "Darwin" ]]; then
+    # macOS - install Homebrew packages
+    if command -v brew &> /dev/null; then
+        echo -e "${GREEN}  ✓ Homebrew detected${NC}"
+        if [ -f "$DOTFILES_DIR/Brewfile.macos" ]; then
+            echo -e "${YELLOW}  Installing macOS packages from Brewfile.macos...${NC}"
+            brew bundle --file="$DOTFILES_DIR/Brewfile.macos"
+            echo -e "${GREEN}  ✓ macOS packages installed${NC}"
+        else
+            echo -e "${YELLOW}  ⚠ Brewfile.macos not found, skipping package installation${NC}"
+        fi
+    else
+        echo -e "${RED}  ✗ Homebrew not installed${NC}"
+        echo -e "${YELLOW}  Install Homebrew first: /bin/bash -c \"\$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)\"${NC}"
+        echo -e "${YELLOW}  Then re-run this script to install macOS packages${NC}"
+    fi
+else
+    echo -e "${YELLOW}  ⚠ Not on macOS - skipping Homebrew packages${NC}"
+    echo -e "${YELLOW}  Most tools are installed via mise instead${NC}"
+fi
+
+echo ""
+echo -e "${BLUE}[3/6] Initializing git submodules...${NC}"
 
 if git -C "$DOTFILES_DIR" rev-parse --git-dir > /dev/null 2>&1; then
     echo -e "${YELLOW}  Updating git submodules...${NC}"
@@ -105,7 +150,7 @@ else
 fi
 
 echo ""
-echo -e "${BLUE}[3/5] Setting up environment variables...${NC}"
+echo -e "${BLUE}[4/6] Setting up environment variables...${NC}"
 
 # Copy .env.example to .env if .env doesn't exist
 if [ ! -f "$DOTFILES_DIR/.env" ]; then
@@ -119,7 +164,7 @@ else
 fi
 
 echo ""
-echo -e "${BLUE}[4/5] Creating symlinks...${NC}"
+echo -e "${BLUE}[5/6] Creating symlinks...${NC}"
 
 # Zsh
 create_symlink "$DOTFILES_DIR/zsh/.zshrc" "$HOME/.zshrc"
@@ -180,11 +225,11 @@ if command -v npm &> /dev/null; then
         echo -e "${YELLOW}  ⚠ Gemini CLI not found. Install with: npm install -g @google/gemini-cli${NC}"
     fi
 else
-    echo -e "${YELLOW}  ⚠ npm not found. Install Node.js/fnm first${NC}"
+    echo -e "${YELLOW}  ⚠ npm not found. Ensure mise tools are installed${NC}"
 fi
 
 echo ""
-echo -e "${BLUE}[5/5] Making scripts executable...${NC}"
+echo -e "${BLUE}[6/6] Making scripts executable...${NC}"
 
 # Make all shell scripts executable
 find "$DOTFILES_DIR/claude/scripts" -type f -name "*.sh" -exec chmod +x {} \;
@@ -220,10 +265,9 @@ fi
 echo -e "${GREEN}  ✓ Scripts made executable${NC}"
 
 echo ""
-echo -e "${BLUE}[6/6] Verifying package installation...${NC}"
+echo -e "${BLUE}[7/7] Verifying installation...${NC}"
 
-# Detect operating system
-OS="$(uname -s)"
+# OS already detected earlier
 
 check_command() {
     if command -v "$1" &> /dev/null; then
@@ -236,11 +280,15 @@ check_command() {
 }
 
 # Check essential commands
-check_command "brew" || echo -e "${YELLOW}    Install: /bin/bash -c \"\$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)\"${NC}"
-check_command "git"
-check_command "tmux" || echo -e "${YELLOW}    Run: brew bundle --file=$DOTFILES_DIR/Brewfile${NC}"
-check_command "nvim" || echo -e "${YELLOW}    Run: brew bundle --file=$DOTFILES_DIR/Brewfile${NC}"
-check_command "terminal-notifier" || echo -e "${YELLOW}    Run: brew bundle --file=$DOTFILES_DIR/Brewfile${NC}"
+check_command "mise" || echo -e "${YELLOW}    Install: curl https://mise.run | sh${NC}"
+check_command "git" || echo -e "${YELLOW}    Run: mise install${NC}"
+check_command "tmux" || echo -e "${YELLOW}    Run: mise install${NC}"
+check_command "nvim" || echo -e "${YELLOW}    Run: mise install${NC}"
+
+if [[ "$OS" == "Darwin" ]]; then
+    check_command "brew" || echo -e "${YELLOW}    Install: /bin/bash -c \"\$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)\"${NC}"
+    check_command "terminal-notifier" || echo -e "${YELLOW}    Run: brew bundle --file=$DOTFILES_DIR/Brewfile.macos${NC}"
+fi
 
 # Check browser automation setup
 if [ -d "$DOTFILES_DIR/scripts/browser/node_modules" ]; then
@@ -264,19 +312,19 @@ if [[ "$OS" == "Darwin" ]]; then
         echo -e "${GREEN}  ✓ AeroSpace${NC}"
     else
         echo -e "${RED}  ✗ AeroSpace (not installed)${NC}"
-        echo -e "${YELLOW}    Run: brew bundle --file=$DOTFILES_DIR/Brewfile${NC}"
+        echo -e "${YELLOW}    Run: brew bundle --file=$DOTFILES_DIR/Brewfile.macos${NC}"
     fi
 
     if [ -d "/Applications/Hammerspoon.app" ]; then
         echo -e "${GREEN}  ✓ Hammerspoon${NC}"
     else
         echo -e "${RED}  ✗ Hammerspoon (not installed)${NC}"
-        echo -e "${YELLOW}    Run: brew bundle --file=$DOTFILES_DIR/Brewfile${NC}"
+        echo -e "${YELLOW}    Run: brew bundle --file=$DOTFILES_DIR/Brewfile.macos${NC}"
     fi
 
     if [ -d "/Applications/Raycast.app" ]; then
         echo -e "${GREEN}  ✓ Raycast${NC}"
-        echo -e "${YELLOW}    Note: Raycast is optional and not in Brewfile${NC}"
+        echo -e "${YELLOW}    Note: Raycast is optional and not in Brewfile.macos${NC}"
     else
         echo -e "${YELLOW}  ⚠ Raycast (optional - not installed)${NC}"
         echo -e "${YELLOW}    Install manually: brew install --cask raycast${NC}"
@@ -289,7 +337,7 @@ if [[ "$OS" == "Darwin" ]]; then
         echo -e "${GREEN}  ✓ JetBrainsMono Nerd Font${NC}"
     else
         echo -e "${RED}  ✗ JetBrainsMono Nerd Font (not installed)${NC}"
-        echo -e "${YELLOW}    Run: brew bundle --file=$DOTFILES_DIR/Brewfile${NC}"
+        echo -e "${YELLOW}    Run: brew bundle --file=$DOTFILES_DIR/Brewfile.macos${NC}"
     fi
 elif [[ "$OS" == "Linux" ]]; then
     # Linux-specific checks
@@ -315,14 +363,22 @@ echo -e "${GREEN}╚════════════════════
 echo ""
 echo -e "${BLUE}Next steps:${NC}"
 echo -e "  1. Restart your terminal or run: ${YELLOW}exec zsh${NC}"
-echo -e "  2. If packages are missing, run: ${YELLOW}brew bundle --file=$DOTFILES_DIR/Brewfile${NC}"
+echo -e "  2. If tools are missing, run: ${YELLOW}cd $DOTFILES_DIR && mise install${NC}"
+if [[ "$OS" == "Darwin" ]]; then
+echo -e "  3. If macOS apps are missing, run: ${YELLOW}brew bundle --file=$DOTFILES_DIR/Brewfile.macos${NC}"
+echo -e "  4. Setup Raycast script commands (optional):"
+else
 echo -e "  3. Setup Raycast script commands (optional):"
+fi
 echo -e "     - Open Raycast Settings (⌘,)"
 echo -e "     - Extensions → Script Commands"
 echo -e "     - Add directory: ${YELLOW}$DOTFILES_DIR/raycast${NC}"
 echo ""
 echo -e "${BLUE}Configuration locations:${NC}"
-echo -e "  Brewfile:   $DOTFILES_DIR/Brewfile"
+echo -e "  mise:       $DOTFILES_DIR/.mise.toml"
+if [[ "$OS" == "Darwin" ]]; then
+echo -e "  Brewfile:   $DOTFILES_DIR/Brewfile.macos"
+fi
 echo -e "  Zsh:        ~/.zshrc"
 echo -e "  tmux:       ~/.tmux.conf"
 echo -e "  Neovim:     ~/.config/nvim"

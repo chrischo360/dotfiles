@@ -14,10 +14,7 @@ setopt HIST_REDUCE_BLANKS        # Remove superfluous blanks
 # Node.js
 export NODE_EXTRA_CA_CERTS="$HOME/certificates/wayfair-certs.pem"
 
-# Python
-export PYENV_ROOT="$HOME/.pyenv"
-
-# Java
+# Java (legacy SDKMAN - consider migrating to mise)
 export SDKMAN_DIR="$HOME/.sdkman"
 export sdk_auto_env=true
 export JAVA_HOME="$HOME/.sdkman/candidates/java/current"

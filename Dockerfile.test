@@ -1,0 +1,29 @@
+# Docker test environment for dotfiles installation
+# Tests the install script in a clean Ubuntu environment
+
+FROM ubuntu:24.04
+
+# Install basic dependencies
+RUN apt-get update && apt-get install -y \
+    git \
+    curl \
+    sudo \
+    build-essential \
+    && rm -rf /var/lib/apt/lists/*
+
+# Create test user (mimics real environment)
+RUN useradd -m -s /bin/bash tester && \
+    echo "tester ALL=(ALL) NOPASSWD:ALL" >> /etc/sudoers
+
+# Switch to test user
+USER tester
+WORKDIR /home/tester
+
+# Copy dotfiles into container
+COPY --chown=tester:tester . /home/tester/dotfiles
+
+# Set working directory to dotfiles
+WORKDIR /home/tester/dotfiles
+
+# Default command: run shell
+CMD ["/bin/bash"]
