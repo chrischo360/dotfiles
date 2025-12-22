@@ -22,15 +22,16 @@ alias gacm="ga . && gc -m"
 alias gcam="git commit --amend"
 alias gcan="git commit --amend --no-edit"
 alias gp="git push"
-alias gpf="git push --force-with-lease"
+# alias gpf="git push --force-with-lease"
 alias gpr="git pull --rebase"
-alias gpom="git pull origin main --rebase"
+alias gpomr="git pull origin main --rebase"
+alias gpomm="git pull origin main --merge"
 alias gco="git checkout"
 alias gcb="git checkout -b"
-alias gl="git log --oneline --graph --decorate"
-alias glog="git log --graph --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr) %C(bold blue)<%an>%Creset' --abbrev-commit"
-alias glg="git log --graph --oneline --all --decorate"
-alias gls="git log --stat"
+alias gl="git log --graph --stat --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr) %C(bold blue)<%an>%Creset' --abbrev-commit"
+# alias gl="git log --oneline --graph --decorate"
+# alias glg="git log --graph --oneline --all --decorate"
+# alias gls="git log --stat"
 alias gd="git diff"
 
 # Git rebase
@@ -59,6 +60,40 @@ gb() {
   local branch=$(git branch --format='%(refname:short)' | fzf --height 40% --reverse --border --prompt="Checkout branch: ")
   if [ -n "$branch" ]; then
     git checkout "$branch"
+  fi
+}
+
+# Git diff with recent commits using fzf
+gdc() {
+  local commit=$(git log --oneline --color=always -50 | \
+    fzf --ansi \
+      --height 40% \
+      --reverse \
+      --border \
+      --prompt="Select commit to diff against: " \
+      --preview 'git show --color=always {1}' \
+      --preview-window='right:60%')
+
+  if [ -n "$commit" ]; then
+    local commit_hash=$(echo "$commit" | awk '{print $1}')
+    git --no-pager diff "$commit_hash"
+  fi
+}
+
+# Git diff between branches using fzf
+gdb() {
+  local branch=$(git branch --all --format='%(refname:short)' | \
+    sed 's|^origin/||' | \
+    sort -u | \
+    fzf --height 40% \
+      --reverse \
+      --border \
+      --prompt="Select branch to diff against: " \
+      --preview 'git log --oneline --graph --color=always {}...HEAD 2>/dev/null || git log --oneline --graph --color=always {} 2>/dev/null' \
+      --preview-window='right:60%')
+
+  if [ -n "$branch" ]; then
+    git --no-pager diff "$branch"
   fi
 }
 
