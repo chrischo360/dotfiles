@@ -80,20 +80,22 @@ gdc() {
   fi
 }
 
-# Git diff between branches using fzf
-gdb() {
-  local branch=$(git branch --all --format='%(refname:short)' | \
-    sed 's|^origin/||' | \
-    sort -u | \
-    fzf --height 40% \
+# Git delete branches using fzf (supports multi-select with Tab)
+gbd() {
+  local branches=$(git branch --format='%(refname:short)' | \
+    grep -v "^$(git branch --show-current)$" | \
+    fzf --multi \
+      --height 40% \
       --reverse \
       --border \
-      --prompt="Select branch to diff against: " \
-      --preview 'git log --oneline --graph --color=always {}...HEAD 2>/dev/null || git log --oneline --graph --color=always {} 2>/dev/null' \
+      --prompt="Select branches to delete (Tab for multi-select): " \
+      --preview 'git log --oneline --graph --color=always {}' \
       --preview-window='right:60%')
 
-  if [ -n "$branch" ]; then
-    git --no-pager diff "$branch"
+  if [ -n "$branches" ]; then
+    echo "$branches" | while read -r branch; do
+      git branch -d "$branch" || git branch -D "$branch"
+    done
   fi
 }
 
