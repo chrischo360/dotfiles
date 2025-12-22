@@ -18,8 +18,15 @@ return {
       importance.setup()
     end
 
-    -- Setup bufferin with default config
-    bufferin.setup()
+    -- Setup bufferin with custom display config
+    bufferin.setup({
+      display = {
+        show_numbers = false,  -- Remove buffer number prefix (20:, 22:, etc.)
+        show_path = false,     -- Remove directory path suffix
+        show_icons = true,     -- Keep file type icons
+        show_modified = true,  -- Keep modified indicator (●)
+      }
+    })
 
     -- Cache for top 5 buffers and from_main markers (rebuilt when Bufferin opens)
     local top_5_cache = {}
@@ -73,14 +80,27 @@ return {
       local is_top_5 = top_5_cache[name]
       local from_main = from_main_cache[name]
 
+      -- Build display: filename, icon (if pinned), then pin status
+      local display = base_name
+
+      -- Add file type icon after filename for pinned buffers
+      if is_top_5 or from_main then
+        local icons_module = require("bufferin.icons")
+        local icon, icon_hl = icons_module.get_icon(name)
+        if icon and icon ~= '' then
+          display = display .. " " .. icon
+        end
+      end
+
+      -- Add pin indicator at the end
       if is_top_5 and from_main then
-        return "📌 " .. base_name .. " (main)"
+        return display .. " 📌 (main)"
       elseif is_top_5 then
-        return "📌 " .. base_name
+        return display .. " 📌"
       elseif from_main then
-        return base_name .. " (main)"
+        return display .. " (main)"
       else
-        return base_name
+        return display
       end
     end
   end,

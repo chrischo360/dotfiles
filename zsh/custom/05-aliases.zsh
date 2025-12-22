@@ -18,9 +18,73 @@ alias less="bat"
 alias gs="git status -sb"
 alias ga="git add"
 alias gc="git commit"
+alias gcam="git commit --amend"
+alias gcan="git commit --amend --no-edit"
 alias gp="git push"
+alias gpf="git push --force-with-lease"
+alias gpr="git pull --rebase"
+alias gpom="git pull origin main --rebase"
+alias gco="git checkout"
+alias gcb="git checkout -b"
 alias gl="git log --oneline --graph --decorate"
+alias glog="git log --graph --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr) %C(bold blue)<%an>%Creset' --abbrev-commit"
+alias glg="git log --graph --oneline --all --decorate"
+alias gls="git log --stat"
 alias gd="git diff"
+
+# Git rebase
+alias grb="git rebase"
+alias grbi="git rebase -i"
+alias grbc="git rebase --continue"
+alias grba="git rebase --abort"
+
+# Git branch management
+alias gbd="git branch -d"
+alias gbD="git branch -D"
+alias gba="git branch -a"
+
+# Git cleanup
+alias gclean="git clean -fd"
+alias gprune="git remote prune origin"
+
+# Git help - show available shortcuts
+alias g='echo "Git Shortcuts:
+  gs       git status -sb
+  ga       git add
+  gc       git commit
+  gcam     git commit --amend
+  gcan     git commit --amend --no-edit
+  gp       git push
+  gpf      git push --force-with-lease
+  gpr      git pull --rebase
+  gpom     git pull origin main --rebase
+  gco      git checkout
+  gcb      git checkout -b
+  gb       checkout branch (fzf)
+
+Log:
+  gl       git log --oneline --graph
+  glog     git log (pretty format)
+  glg      git log --graph --all
+  gls      git log --stat
+
+Diff:
+  gd       git diff
+
+Rebase:
+  grb      git rebase
+  grbi     git rebase -i
+  grbc     git rebase --continue
+  grba     git rebase --abort
+
+Branch:
+  gbd      git branch -d
+  gbD      git branch -D
+  gba      git branch -a
+
+Cleanup:
+  gclean   git clean -fd
+  gprune   git remote prune origin"'
 
 # Grep Shortcuts
 alias grep="grep --color=auto"

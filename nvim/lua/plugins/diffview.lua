@@ -56,6 +56,37 @@ return {
   config = function()
     local actions = require("diffview.actions")
 
+    -- Custom action: Go to file at cursor position, return to previous window, and close diffview
+    local function goto_file_and_close()
+      local lib = require("diffview.lib")
+      local view = lib.get_current_view()
+      if not view then return end
+
+      -- Get the file path and cursor position
+      local file = view:infer_cur_file()
+      if not file then return end
+
+      local cursor = vim.api.nvim_win_get_cursor(0)
+      local filepath = file.absolute_path or file.path
+
+      -- Find the previous non-diffview tabpage
+      local target_tab = lib.get_prev_non_view_tabpage()
+
+      -- Close diffview first
+      vim.cmd("DiffviewClose")
+
+      -- Go to the previous tabpage if it exists
+      if target_tab then
+        vim.api.nvim_set_current_tabpage(target_tab)
+      end
+
+      -- Open the file in the current window
+      vim.cmd("edit " .. vim.fn.fnameescape(filepath))
+
+      -- Set cursor to the line we were viewing in the diff
+      vim.api.nvim_win_set_cursor(0, cursor)
+    end
+
     require("diffview").setup({
       diff_binaries = false,
       enhanced_diff_hl = false, -- Disabled: Treesitter already provides syntax highlighting
@@ -150,6 +181,7 @@ return {
           { "n", "<tab>", actions.select_next_entry, { desc = "Next file" } },
           { "n", "<s-tab>", actions.select_prev_entry, { desc = "Previous file" } },
           { "n", "gf", actions.goto_file, { desc = "Open file in buffer" } },
+          { "n", "<CR>", goto_file_and_close, { desc = "Go to file at line and close" } },
           { "n", "<leader>b", actions.toggle_files, { desc = "Toggle file panel" } },
           { "n", "g<C-x>", actions.cycle_layout, { desc = "Cycle layout" } },
           { "n", "g?", actions.help({ "view" }), { desc = "Help" } },
@@ -177,7 +209,7 @@ return {
           { "n", "<up>", actions.prev_entry, { desc = "Previous file" } },
           { "n", "<tab>", actions.select_next_entry, { desc = "Next file (open)" } },
           { "n", "<s-tab>", actions.select_prev_entry, { desc = "Previous file (open)" } },
-          { "n", "<cr>", actions.select_entry, { desc = "Open diff" } },
+          { "n", "<cr>", goto_file_and_close, { desc = "Go to file at line and close" } },
           { "n", "<2-LeftMouse>", actions.select_entry, { desc = "Open diff" } },
 
           -- File operations
@@ -199,7 +231,7 @@ return {
           { "n", "<up>", actions.prev_entry, { desc = "Previous commit" } },
           { "n", "<tab>", actions.select_next_entry, { desc = "Next commit (open)" } },
           { "n", "<s-tab>", actions.select_prev_entry, { desc = "Previous commit (open)" } },
-          { "n", "<cr>", actions.select_entry, { desc = "Open diff" } },
+          { "n", "<cr>", goto_file_and_close, { desc = "Go to file at line and close" } },
           { "n", "<2-LeftMouse>", actions.select_entry, { desc = "Open diff" } },
 
           -- File operations
