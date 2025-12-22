@@ -31,6 +31,115 @@ local function detect_project_root()
   return vim.fn.getcwd()
 end
 
+-- Track current branch
+local current_branch = nil
+
+-- Detect git branch (returns nil if not a git repo)
+local function detect_git_branch()
+  local git_dir = vim.fn.systemlist("git -C " .. vim.fn.shellescape(vim.fn.getcwd()) .. " rev-parse --git-dir")[1]
+  if vim.v.shell_error ~= 0 then
+    return nil
+  end
+
+  -- Try symbolic ref first (normal branches)
+  local branch = vim.fn.systemlist("git -C " .. vim.fn.shellescape(vim.fn.getcwd()) .. " symbolic-ref --short HEAD")[1]
+  if vim.v.shell_error == 0 and branch and branch ~= "" then
+    return branch
+  end
+
+  -- Detached HEAD - use short SHA
+  local sha = vim.fn.systemlist("git -C " .. vim.fn.shellescape(vim.fn.getcwd()) .. " rev-parse --short HEAD")[1]
+  if vim.v.shell_error == 0 and sha and sha ~= "" then
+    return "detached-" .. sha
+  end
+
+  return nil
+end
+
+-- Detect main branch for a project
+local function detect_main_branch(project_root)
+  -- Try git config
+  local default = vim.fn.systemlist("git -C " .. vim.fn.shellescape(project_root) .. " config --get init.defaultBranch")[1]
+  if vim.v.shell_error == 0 and default and default ~= "" then
+    return default
+  end
+
+  -- Try remote HEAD
+  local remote_head = vim.fn.systemlist("git -C " .. vim.fn.shellescape(project_root) .. " symbolic-ref refs/remotes/origin/HEAD")[1]
+  if vim.v.shell_error == 0 and remote_head and remote_head ~= "" then
+    return remote_head:gsub("^refs/remotes/origin/", "")
+  end
+
+  -- Check if main or master exists
+  local has_main = vim.fn.systemlist("git -C " .. vim.fn.shellescape(project_root) .. " show-ref --verify refs/heads/main")[1]
+  if vim.v.shell_error == 0 then
+    return "main"
+  end
+
+  local has_master = vim.fn.systemlist("git -C " .. vim.fn.shellescape(project_root) .. " show-ref --verify refs/heads/master")[1]
+  if vim.v.shell_error == 0 then
+    return "master"
+  end
+
+  return "main" -- fallback
+end
+
+-- Update manifest with enhanced metadata
+local function update_manifest(tracking_dir, project_hash, project_root, branch, main_branch)
+  local manifest_file = tracking_dir .. "/manifest.json"
+  local manifest = {}
+
+  -- Load existing manifest
+  local f = io.open(manifest_file, "r")
+  if f then
+    local content = f:read("*a")
+    f:close()
+    local ok, data = pcall(vim.json.decode, content)
+    if ok and type(data) == "table" then
+      -- Handle old format (string values) - migrate to new format
+      for hash, value in pairs(data) do
+        if type(value) == "string" then
+          manifest[hash] = {
+            project_root = value,
+            main_branch = "main",
+            branches = {},
+            last_accessed = os.date("!%Y-%m-%dT%H:%M:%SZ")
+          }
+        else
+          manifest[hash] = value
+        end
+      end
+    end
+  end
+
+  -- Update manifest entry
+  if not manifest[project_hash] then
+    manifest[project_hash] = {
+      project_root = project_root,
+      main_branch = main_branch,
+      branches = {},
+      last_accessed = os.date("!%Y-%m-%dT%H:%M:%SZ")
+    }
+  else
+    manifest[project_hash].last_accessed = os.date("!%Y-%m-%dT%H:%M:%SZ")
+  end
+
+  -- Add branch to list if not present
+  if branch and not vim.tbl_contains(manifest[project_hash].branches, branch) then
+    table.insert(manifest[project_hash].branches, branch)
+  end
+
+  -- Save manifest
+  local ok, json = pcall(vim.json.encode, manifest)
+  if ok then
+    f = io.open(manifest_file, "w")
+    if f then
+      f:write(json)
+      f:close()
+    end
+  end
+end
+
 -- Simple hash function to create unique filename from path
 local function hash_path(path)
   local hash = 0
@@ -40,8 +149,8 @@ local function hash_path(path)
   return string.format("project-%06d", hash)
 end
 
--- Get data file path for current project
-local function get_data_file()
+-- Get project directory and branch-specific file path
+local function get_project_dir_and_file()
   local project_root = detect_project_root()
 
   -- If project changed, set up new data file
@@ -52,43 +161,40 @@ local function get_data_file()
     local tracking_dir = vim.fn.stdpath("data") .. "/buffer_tracking"
     vim.fn.mkdir(tracking_dir, "p")
 
-    -- Generate project-specific filename
+    -- Generate project-specific directory
     local project_hash = hash_path(project_root)
-    data_file = tracking_dir .. "/" .. project_hash .. ".json"
+    local project_dir = tracking_dir .. "/" .. project_hash
+    vim.fn.mkdir(project_dir, "p")
 
-    -- Update manifest for debugging
-    local manifest_file = tracking_dir .. "/manifest.json"
-    local manifest = {}
+    -- Detect git branch (nil if not a git repo)
+    local branch = detect_git_branch()
+    local main_branch = detect_main_branch(project_root)
 
-    -- Load existing manifest
-    local f = io.open(manifest_file, "r")
-    if f then
-      local content = f:read("*a")
-      f:close()
-      local ok, data = pcall(vim.json.decode, content)
-      if ok and type(data) == "table" then
-        manifest = data
-      end
+    -- Migration: Move old project-XXXXXX.json → project-XXXXXX/main.json
+    local old_file = tracking_dir .. "/" .. project_hash .. ".json"
+    local main_file = project_dir .. "/" .. main_branch .. ".json"
+    if vim.fn.filereadable(old_file) == 1 and vim.fn.filereadable(main_file) == 0 then
+      vim.fn.rename(old_file, main_file)
+      vim.notify("Migrated tracking data to new branch-aware structure", vim.log.levels.INFO)
     end
 
-    -- Update manifest with current project
-    manifest[project_hash] = project_root
-
-    -- Save manifest
-    local ok, json = pcall(vim.json.encode, manifest)
-    if ok then
-      f = io.open(manifest_file, "w")
-      if f then
-        f:write(json)
-        f:close()
-      end
+    -- Set data file based on branch (or main if not git)
+    if branch then
+      data_file = project_dir .. "/" .. branch .. ".json"
+      current_branch = branch
+    else
+      data_file = project_dir .. "/" .. main_branch .. ".json"
+      current_branch = main_branch
     end
+
+    -- Update manifest
+    update_manifest(tracking_dir, project_hash, project_root, branch, main_branch)
 
     -- Clear buffer_data (caller will reload)
     buffer_data = {}
   end
 
-  return data_file
+  return vim.fn.fnamemodify(data_file, ":h"), current_branch
 end
 
 -- Helper to ensure buffer exists in tracking
@@ -98,10 +204,13 @@ local function ensure_buffer(filepath)
   end
 end
 
--- Load data from JSON file
+-- Load data from JSON file (with inheritance from main branch)
 local function load_from_json()
-  local file_path = get_data_file()
-  local file = io.open(file_path, "r")
+  local project_dir, branch = get_project_dir_and_file()
+  local branch_file = data_file
+
+  -- Try loading branch file
+  local file = io.open(branch_file, "r")
   if file then
     local content = file:read("*a")
     file:close()
@@ -112,18 +221,40 @@ local function load_from_json()
       return true
     end
   end
+
+  -- Branch file doesn't exist - try inheriting from main
+  if current_project_root then
+    local main_branch = detect_main_branch(current_project_root)
+    if branch ~= main_branch then
+      local main_file = project_dir .. "/" .. main_branch .. ".json"
+      file = io.open(main_file, "r")
+      if file then
+        local content = file:read("*a")
+        file:close()
+
+        local ok, data = pcall(vim.json.decode, content)
+        if ok and type(data) == "table" then
+          buffer_data = data
+          local count = 0
+          for _ in pairs(data) do count = count + 1 end
+          vim.notify("Inherited " .. count .. " buffers from " .. main_branch, vim.log.levels.INFO)
+          return true
+        end
+      end
+    end
+  end
+
   return false
 end
 
 -- Save data to JSON file
 local function save_to_json()
-  local file_path = get_data_file()
   local ok, json = pcall(vim.json.encode, buffer_data)
   if not ok then
     return false
   end
 
-  local file = io.open(file_path, "w")
+  local file = io.open(data_file, "w")
   if file then
     file:write(json)
     file:close()
@@ -203,11 +334,44 @@ function M.setup()
       -- Check if we've switched projects
       local new_project = detect_project_root()
       if new_project ~= current_project_root then
-        -- get_data_file() will set up the new project's data file
-        get_data_file()
+        -- get_project_dir_and_file() will set up the new project's data file
+        get_project_dir_and_file()
         -- Reload the new project's data
         load_from_json()
         vim.notify("Switched to project: " .. vim.fn.fnamemodify(new_project, ":t"), vim.log.levels.INFO)
+      end
+    end
+  })
+
+  -- Detect branch changes (when user switches branches outside nvim)
+  vim.api.nvim_create_autocmd("FocusGained", {
+    group = augroup,
+    callback = function()
+      -- Check if branch changed
+      local new_branch = detect_git_branch()
+      if new_branch and new_branch ~= current_branch then
+        -- Save current branch data
+        if save_timer then
+          vim.fn.timer_stop(save_timer)
+          save_timer = nil
+        end
+        save_to_json()
+
+        -- Switch to new branch
+        local project_dir = vim.fn.fnamemodify(data_file, ":h")
+        data_file = project_dir .. "/" .. new_branch .. ".json"
+        current_branch = new_branch
+
+        -- Update manifest
+        local tracking_dir = vim.fn.stdpath("data") .. "/buffer_tracking"
+        local project_hash = hash_path(current_project_root)
+        local main_branch = detect_main_branch(current_project_root)
+        update_manifest(tracking_dir, project_hash, current_project_root, new_branch, main_branch)
+
+        -- Reload data (with inheritance if needed)
+        buffer_data = {}
+        load_from_json()
+        vim.notify("Switched to branch: " .. new_branch, vim.log.levels.INFO)
       end
     end
   })
