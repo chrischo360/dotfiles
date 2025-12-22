@@ -180,8 +180,8 @@ return {
         view = {
           { "n", "<tab>", actions.select_next_entry, { desc = "Next file" } },
           { "n", "<s-tab>", actions.select_prev_entry, { desc = "Previous file" } },
-          { "n", "gf", actions.goto_file, { desc = "Open file in buffer" } },
-          { "n", "<CR>", goto_file_and_close, { desc = "Go to file at line and close" } },
+          { "n", "gf", goto_file_and_close, { desc = "Go to file and close diffview" } },
+          { "n", "<CR>", actions.select_entry, { desc = "Select entry" } },
           { "n", "<leader>b", actions.toggle_files, { desc = "Toggle file panel" } },
           { "n", "g<C-x>", actions.cycle_layout, { desc = "Cycle layout" } },
           { "n", "g?", actions.help({ "view" }), { desc = "Help" } },
@@ -209,11 +209,11 @@ return {
           { "n", "<up>", actions.prev_entry, { desc = "Previous file" } },
           { "n", "<tab>", actions.select_next_entry, { desc = "Next file (open)" } },
           { "n", "<s-tab>", actions.select_prev_entry, { desc = "Previous file (open)" } },
-          { "n", "<cr>", goto_file_and_close, { desc = "Go to file at line and close" } },
+          { "n", "<cr>", actions.select_entry, { desc = "Open diff" } },
           { "n", "<2-LeftMouse>", actions.select_entry, { desc = "Open diff" } },
 
           -- File operations
-          { "n", "gf", actions.goto_file, { desc = "Open file in buffer" } },
+          { "n", "gf", goto_file_and_close, { desc = "Go to file and close diffview" } },
 
           -- View controls
           { "n", "i", actions.listing_style, { desc = "Toggle list/tree" } },
@@ -231,11 +231,11 @@ return {
           { "n", "<up>", actions.prev_entry, { desc = "Previous commit" } },
           { "n", "<tab>", actions.select_next_entry, { desc = "Next commit (open)" } },
           { "n", "<s-tab>", actions.select_prev_entry, { desc = "Previous commit (open)" } },
-          { "n", "<cr>", goto_file_and_close, { desc = "Go to file at line and close" } },
+          { "n", "<cr>", actions.select_entry, { desc = "Open diff" } },
           { "n", "<2-LeftMouse>", actions.select_entry, { desc = "Open diff" } },
 
           -- File operations
-          { "n", "gf", actions.goto_file, { desc = "Open file in buffer" } },
+          { "n", "gf", goto_file_and_close, { desc = "Go to file and close diffview" } },
 
           -- Git operations
           { "n", "y", actions.copy_hash, { desc = "Copy commit hash" } },
