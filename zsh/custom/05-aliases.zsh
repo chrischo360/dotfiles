@@ -41,8 +41,6 @@ alias grbc="git rebase --continue"
 alias grba="git rebase --abort"
 
 # Git branch management
-alias gbd="git branch -d"
-alias gbD="git branch -D"
 alias gba="git branch -a"
 
 # Git cleanup
@@ -94,7 +92,7 @@ gbd() {
 
   if [ -n "$branches" ]; then
     echo "$branches" | while read -r branch; do
-      git branch -d "$branch" || git branch -D "$branch"
+      git branch -d "$branch"
     done
   fi
 }
