@@ -31,7 +31,7 @@ case "$tool_name" in
   AskUserQuestion)
     # Special case: waiting state instead of active
     echo "[$(date '+%H:%M:%S')] AskUserQuestion about to fire - setting state to waiting" >> ~/.claude/hook-debug.log
-    $DOTFILES_DIR/claude/scripts/update-session-state.sh waiting
+    $DOTFILES_DIR/claude/scripts/state/update-session-state.sh waiting
     exit 0
     ;;
   WebFetch|WebSearch)
@@ -46,5 +46,5 @@ esac
 # Update session state with tool-specific action
 if [[ -n "$action" ]]; then
   echo "[$(date '+%H:%M:%S')] Setting action to: $action" >> ~/.claude/hook-debug.log
-  ~/dotfiles/claude/scripts/update-session-state.sh active "$action"
+  $DOTFILES_DIR/claude/scripts/state/update-session-state.sh active "$action"
 fi

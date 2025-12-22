@@ -99,17 +99,17 @@ UserPromptSubmit → Set ACTIVE 🔄
 ### SessionStart
 - **When:** New session or resume
 - **Action:** Set ACTIVE 🔄 (generic thinking)
-- **File:** `claude/hooks/session-start.sh`
+- **File:** `claude/hooks/session/session-start.sh`
 
 ### UserPromptSubmit
 - **When:** User submits any input
 - **Action:** Set ACTIVE 🔄 (generic thinking)
-- **File:** `claude/hooks/user-input.sh`
+- **File:** `claude/hooks/session/user-input.sh`
 
 ### PreToolUse
 - **When:** Before ANY tool executes
 - **Action:** Set ACTIVE with tool-specific action icon
-- **File:** `claude/hooks/pre-tool-use.sh`
+- **File:** `claude/hooks/tools/pre-tool-use.sh`
 - **Mapping:**
   - Read, Glob → 📖 reading
   - Grep → 🔍 searching
@@ -124,13 +124,13 @@ UserPromptSubmit → Set ACTIVE 🔄
 ### PostToolUse
 - **When:** After ANY tool executes successfully
 - **Action:** Clear tool-specific action, back to ACTIVE 🔄 (thinking)
-- **File:** `claude/hooks/post-tool-use.sh`
+- **File:** `claude/hooks/tools/post-tool-use.sh`
 - **Note:** AskUserQuestion skips this (already in waiting state)
 
 ### Stop
 - **When:** Claude finishes responding (after all PostToolUse hooks)
 - **Action:** Set IDLE ✅ (unless already WAITING ❓)
-- **File:** `claude/hooks/claude-stop.sh`
+- **File:** `claude/hooks/session/claude-stop.sh`
 - **Logic:**
   ```bash
   if current_status == "waiting_for_input"; then
@@ -143,7 +143,7 @@ UserPromptSubmit → Set ACTIVE 🔄
 ### SessionEnd
 - **When:** Session ends (cleanup)
 - **Action:** Remove from state file
-- **File:** `claude/hooks/session-end.sh`
+- **File:** `claude/hooks/session/session-end.sh`
 
 ## Edge Cases & Limitations
 
@@ -230,7 +230,7 @@ Location: `~/.claude/session-state.json`
 
 ### View current state
 ```bash
-~/dotfiles/claude/scripts/debug-status.sh
+~/dotfiles/claude/scripts/state/debug-status.sh
 ```
 
 ### Monitor hook execution
@@ -240,7 +240,7 @@ tail -f ~/.claude/hook-debug.log
 
 ### Manual state updates (testing)
 ```bash
-~/dotfiles/claude/scripts/update-session-state.sh <action> [tool]
+~/dotfiles/claude/scripts/state/update-session-state.sh <action> [tool]
 # Actions: start, active, idle, waiting, stop
 # Tool: reading, searching, editing, running, delegating, fetching, asking
 # Examples:

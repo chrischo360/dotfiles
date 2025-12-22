@@ -71,7 +71,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "{{dotfiles}}/claude/hooks/session-start.sh"
+            "command": "{{dotfiles}}/claude/hooks/session/session-start.sh"
           }
         ]
       }
@@ -81,7 +81,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "{{dotfiles}}/claude/hooks/session-end.sh"
+            "command": "{{dotfiles}}/claude/hooks/session/session-end.sh"
           }
         ]
       }
@@ -91,7 +91,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "{{dotfiles}}/claude/scripts/notify.sh"
+            "command": "{{dotfiles}}/claude/scripts/utils/notify.sh"
           }
         ]
       }
@@ -101,11 +101,11 @@
         "hooks": [
           {
             "type": "command",
-            "command": "{{dotfiles}}/claude/scripts/notify.sh"
+            "command": "{{dotfiles}}/claude/scripts/utils/notify.sh"
           },
           {
             "type": "command",
-            "command": "{{dotfiles}}/claude/hooks/claude-stop.sh"
+            "command": "{{dotfiles}}/claude/hooks/session/claude-stop.sh"
           }
         ]
       }
@@ -115,7 +115,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "{{dotfiles}}/claude/scripts/track-agent.sh"
+            "command": "{{dotfiles}}/claude/hooks/tracking/track-agent.sh"
           }
         ]
       }
@@ -125,7 +125,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "{{dotfiles}}/claude/hooks/user-input.sh"
+            "command": "{{dotfiles}}/claude/hooks/session/user-input.sh"
           }
         ]
       }
@@ -135,7 +135,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "{{dotfiles}}/claude/hooks/pre-tool-use.sh"
+            "command": "{{dotfiles}}/claude/hooks/tools/pre-tool-use.sh"
           }
         ]
       }
@@ -145,7 +145,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "{{dotfiles}}/claude/hooks/post-tool-use.sh"
+            "command": "{{dotfiles}}/claude/hooks/tools/post-tool-use.sh"
           }
         ]
       }

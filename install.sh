@@ -162,7 +162,6 @@ create_symlink "$DOTFILES_DIR/claude/ccstatusline" "$HOME/.config/ccstatusline"
 # Claude Code
 mkdir -p "$HOME/.claude"
 substitute_json_template "$DOTFILES_DIR/claude/settings.json.template" "$HOME/.claude/settings.json"
-create_symlink "$DOTFILES_DIR/claude/scripts/statusline.sh" "$HOME/.claude/statusline.sh"
 create_symlink "$DOTFILES_DIR/claude/agents" "$HOME/.claude/agents"
 create_symlink "$DOTFILES_DIR/claude/commands" "$HOME/.claude/commands"
 create_symlink "$DOTFILES_DIR/claude/CLAUDE.md" "$HOME/.claude/CLAUDE.md"
@@ -188,7 +187,8 @@ echo ""
 echo -e "${BLUE}[5/5] Making scripts executable...${NC}"
 
 # Make all shell scripts executable
-find "$DOTFILES_DIR/claude/scripts" -name "*.sh" -exec chmod +x {} \;
+find "$DOTFILES_DIR/claude/scripts" -type f -name "*.sh" -exec chmod +x {} \;
+find "$DOTFILES_DIR/claude/hooks" -type f -name "*.sh" -exec chmod +x {} \;
 find "$DOTFILES_DIR/alacritty/scripts" -name "*.sh" -exec chmod +x {} \;
 find "$DOTFILES_DIR/raycast" -name "*.sh" -exec chmod +x {} \;
 find "$DOTFILES_DIR/tmux/scripts" -name "*.sh" -exec chmod +x {} \;

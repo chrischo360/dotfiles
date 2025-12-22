@@ -32,9 +32,9 @@ get_context() {
   echo "$dir|$repo|$branch|$tmux_session_name|$tmux_pane"
 }
 
-# Initialize state file if it doesn't exist
+# Initialize state file if it doesn't exist or is empty/invalid
 init_state_file() {
-  if [[ ! -f "$STATE_FILE" ]]; then
+  if [[ ! -f "$STATE_FILE" ]] || [[ ! -s "$STATE_FILE" ]] || ! jq empty "$STATE_FILE" 2>/dev/null; then
     mkdir -p "$(dirname "$STATE_FILE")"
     echo '{"sessions":{}}' > "$STATE_FILE"
   fi

@@ -10,8 +10,15 @@ Personal configuration files for macOS development environment.
 ├── claude/             # Claude Code configuration and tools
 │   ├── agents/         # Custom Claude Code agents
 │   ├── ccstatusline/   # ccstatusline configuration
-│   ├── hooks/          # Session hooks (token tracking, cost logging)
-│   ├── scripts/        # Utilities (notifications, monitoring)
+│   ├── hooks/          # Session hooks
+│   │   ├── session/    # Session lifecycle (start, end, stop, user-input)
+│   │   ├── tools/      # Tool tracking (pre/post tool use)
+│   │   └── tracking/   # Metrics (tokens, costs, agents, buffers)
+│   ├── scripts/        # Utilities
+│   │   ├── state/      # Session state management
+│   │   ├── cost/       # Cost tracking and analysis
+│   │   ├── monitoring/ # CI/CD build monitoring
+│   │   └── utils/      # Notifications, buffers, aliases
 │   └── settings.json   # Claude Code settings
 ├── git/                # Git configuration
 │   ├── gitconfig       # Global git config
@@ -221,16 +228,14 @@ The `~/dotfiles/claude/` directory contains Claude Code configuration and utilit
 - **PAL_CONFIG.md** - PAL MCP Server configuration guide
 - **agents/** - Custom agent definitions for specialized workflows
 - **hooks/** - Session event handlers:
-  - `session-start.sh` - Initialize session state tracking
-  - `session-end.sh` - Cleanup session state
-  - `claude-stop.sh` - Mark session as idle/waiting
-  - `user-input.sh` - Mark session as active (placeholder)
+  - `session/` - Session lifecycle (session-start, session-end, claude-stop, user-input)
+  - `tools/` - Tool tracking (pre-tool-use, post-tool-use)
+  - `tracking/` - Metrics (track-tokens, log-session-cost, track-agent, inject-buffers)
 - **scripts/** - Utility scripts:
-  - `update-session-state.sh` - Core state management (start, active, idle, waiting, stop)
-  - `notify.sh` - macOS notification integration
-  - `token-tracker.sh` - Cost calculation utilities
-  - `monitor-buildkite.sh` - CI/CD build monitoring
-  - `display-status.sh` - Token/cost status display
+  - `state/` - Session state management (update-session-state, debug-status)
+  - `cost/` - Cost tracking and analysis (token-tracker, display-status, analyze-costs)
+  - `monitoring/` - CI/CD build monitoring (monitor-buildkite, monitor-all-builds, etc.)
+  - `utils/` - Notifications, buffers, aliases (notify, get-buffers, agent-stats)
 
 See `claude/README.md` for detailed Claude Code documentation.
 

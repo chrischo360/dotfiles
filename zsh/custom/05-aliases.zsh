@@ -69,7 +69,7 @@ claude-mcp() {
 }
 
 # Claude Code - Get costs
-alias claude-costs='$DOTFILES_DIR/claude/scripts/analyze-costs.py'
+alias claude-costs='$DOTFILES_DIR/claude/scripts/cost/analyze-costs.py'
 
 # sf-ui-web - Build/clean utility
 alias sfb='$DOTFILES_DIR/scripts/codebase/sf-ui-web/sfb.sh'

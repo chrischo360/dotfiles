@@ -104,7 +104,7 @@ Fetch Neovim buffer tracking data for current project. Returns JSON with all tra
 
 **Usage:**
 ```bash
-~/dotfiles/claude/scripts/get-buffers.sh
+~/dotfiles/claude/scripts/utils/get-buffers.sh
 ```
 
 **Output:** JSON with project name and buffer list (path, access count, save count, importance score)
@@ -112,7 +112,7 @@ Fetch Neovim buffer tracking data for current project. Returns JSON with all tra
 **Example:**
 ```bash
 cd ~/dotfiles
-~/dotfiles/claude/scripts/get-buffers.sh | jq
+~/dotfiles/claude/scripts/utils/get-buffers.sh | jq
 ```
 
 ## ⚙️ Settings
