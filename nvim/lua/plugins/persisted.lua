@@ -63,7 +63,10 @@ return {
         vim.notify("Session loaded!", vim.log.levels.INFO)
       end,
 
-      allowed_dirs = { "~/codebase", "~/dotfiles" }, -- Table of dirs that the plugin will start and autoload from
+      allowed_dirs = {
+        vim.fn.expand("~/codebase"),
+        vim.fn.expand("~/dotfiles"),
+      }, -- Table of dirs that the plugin will start and autoload from
       ignored_dirs = {}, -- Table of dirs that are ignored for starting and autoloading
 
       telescope = {

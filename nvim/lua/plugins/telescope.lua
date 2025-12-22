@@ -169,9 +169,9 @@ return {
           },
           disable_devicons = false,
           workspaces = {
-            ["conf"] = "/Users/cc446g/dotfiles",
-            ["codebase"] = "/Users/cc446g/codebase",
-            ["repos"] = "/Users/cc446g/devbox_repos",
+            ["conf"] = vim.fn.expand("~/dotfiles"),
+            ["codebase"] = vim.fn.expand("~/codebase"),
+            ["repos"] = vim.fn.expand("~/devbox_repos"),
           },
           -- Enhanced frecency settings
           max_timestamps = 10, -- Keep more history

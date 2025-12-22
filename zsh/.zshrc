@@ -32,5 +32,8 @@ for config ($DOTFILES_DIR/zsh/custom/*.zsh); do
   source $config
 done
 
+# Deduplicate PATH (handles tmux environment inheritance)
+typeset -U path
+
 # Show profiling report if enabled
 [[ -n "$ZSH_PROFILE" ]] && zprof

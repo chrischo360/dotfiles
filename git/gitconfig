@@ -1,28 +1,2 @@
 [user]
-	email = ${GIT_AUTHOR_EMAIL}
-	name = ${GIT_AUTHOR_NAME}
-[color]
-	ui = true
-[push]
-	default = current
-[fetch]
-	prune = true
-[core]
-	autocrlf = false
-	preloadindex = true
-	symlinks = true
-	longpaths = true
-	pager = less -FRX
-	hooksPath = /dev/null
-[log]
-	decorate = short
-[http]
-	sslVerify = false
-[pack]
-	useSparse = true
-[pull]
-	rebase = true
-[credential]
-	helper = osxkeychain
-[pager]
-	branch = false
+	email = ccho@wayfair.com

@@ -48,6 +48,32 @@ create_symlink() {
     echo -e "${GREEN}  ✓ Linked: $target -> $source${NC}"
 }
 
+# Function to process JSON templates with path substitution
+substitute_json_template() {
+    local template=$1
+    local output=$2
+
+    # Paths for substitution
+    local home="$HOME"
+    local dotfiles="$DOTFILES_DIR"
+    local codebase="${HOME}/codebase"
+    local local_bin="${HOME}/.local/bin"
+    local pal_server="${HOME}/pal-mcp-server/pal-mcp-server"
+
+    # Create parent directory if needed
+    mkdir -p "$(dirname "$output")"
+
+    # Substitute placeholders
+    sed -e "s|{{home}}|$home|g" \
+        -e "s|{{dotfiles}}|$dotfiles|g" \
+        -e "s|{{codebase}}|$codebase|g" \
+        -e "s|{{local_bin}}|$local_bin|g" \
+        -e "s|{{pal_server}}|$pal_server|g" \
+        "$template" > "$output"
+
+    echo -e "${GREEN}  ✓ Generated: $output${NC}"
+}
+
 # Main installation steps
 echo -e "${BLUE}[1/5] Installing Homebrew packages...${NC}"
 
@@ -55,7 +81,7 @@ if command -v brew &> /dev/null; then
     echo -e "${GREEN}  ✓ Homebrew detected${NC}"
     if [ -f "$DOTFILES_DIR/Brewfile" ]; then
         echo -e "${YELLOW}  Installing packages from Brewfile...${NC}"
-        brew bundle --file="$DOTFILES_DIR/Brewfile" --no-lock
+        brew bundle --file="$DOTFILES_DIR/Brewfile"
         echo -e "${GREEN}  ✓ Homebrew packages installed${NC}"
     else
         echo -e "${YELLOW}  ⚠ Brewfile not found, skipping package installation${NC}"
@@ -135,7 +161,7 @@ create_symlink "$DOTFILES_DIR/claude/ccstatusline" "$HOME/.config/ccstatusline"
 
 # Claude Code
 mkdir -p "$HOME/.claude"
-create_symlink "$DOTFILES_DIR/claude/settings.json" "$HOME/.claude/settings.json"
+substitute_json_template "$DOTFILES_DIR/claude/settings.json.template" "$HOME/.claude/settings.json"
 create_symlink "$DOTFILES_DIR/claude/scripts/statusline.sh" "$HOME/.claude/statusline.sh"
 create_symlink "$DOTFILES_DIR/claude/agents" "$HOME/.claude/agents"
 create_symlink "$DOTFILES_DIR/claude/commands" "$HOME/.claude/commands"
@@ -143,7 +169,7 @@ create_symlink "$DOTFILES_DIR/claude/CLAUDE.md" "$HOME/.claude/CLAUDE.md"
 
 # Gemini CLI
 mkdir -p "$HOME/.gemini"
-create_symlink "$DOTFILES_DIR/gemini/settings.json" "$HOME/.gemini/settings.json"
+substitute_json_template "$DOTFILES_DIR/gemini/settings.json.template" "$HOME/.gemini/settings.json"
 
 # Create stable binary symlink
 if command -v npm &> /dev/null; then
@@ -196,6 +222,9 @@ echo -e "${GREEN}  ✓ Scripts made executable${NC}"
 echo ""
 echo -e "${BLUE}[6/6] Verifying package installation...${NC}"
 
+# Detect operating system
+OS="$(uname -s)"
+
 check_command() {
     if command -v "$1" &> /dev/null; then
         echo -e "${GREEN}  ✓ $1${NC}"
@@ -221,47 +250,62 @@ else
     echo -e "${YELLOW}    Run: cd $DOTFILES_DIR/scripts/browser && npm install && npx playwright install chromium${NC}"
 fi
 
-# Check if Alacritty is installed
-if [ -d "/Applications/Alacritty.app" ]; then
-    echo -e "${GREEN}  ✓ Alacritty${NC}"
-else
-    echo -e "${RED}  ✗ Alacritty (not installed)${NC}"
-    echo -e "${YELLOW}    Run: brew bundle --file=$DOTFILES_DIR/Brewfile${NC}"
-fi
+# Platform-specific application checks
+if [[ "$OS" == "Darwin" ]]; then
+    # macOS-specific checks
+    if [ -d "/Applications/Alacritty.app" ]; then
+        echo -e "${GREEN}  ✓ Alacritty${NC}"
+    else
+        echo -e "${RED}  ✗ Alacritty (not installed)${NC}"
+        echo -e "${YELLOW}    Run: brew bundle --file=$DOTFILES_DIR/Brewfile${NC}"
+    fi
 
-# Check if AeroSpace is installed
-if [ -d "/Applications/AeroSpace.app" ]; then
-    echo -e "${GREEN}  ✓ AeroSpace${NC}"
-else
-    echo -e "${RED}  ✗ AeroSpace (not installed)${NC}"
-    echo -e "${YELLOW}    Run: brew bundle --file=$DOTFILES_DIR/Brewfile${NC}"
-fi
+    if [ -d "/Applications/AeroSpace.app" ]; then
+        echo -e "${GREEN}  ✓ AeroSpace${NC}"
+    else
+        echo -e "${RED}  ✗ AeroSpace (not installed)${NC}"
+        echo -e "${YELLOW}    Run: brew bundle --file=$DOTFILES_DIR/Brewfile${NC}"
+    fi
 
-# Check if Hammerspoon is installed
-if [ -d "/Applications/Hammerspoon.app" ]; then
-    echo -e "${GREEN}  ✓ Hammerspoon${NC}"
-else
-    echo -e "${RED}  ✗ Hammerspoon (not installed)${NC}"
-    echo -e "${YELLOW}    Run: brew bundle --file=$DOTFILES_DIR/Brewfile${NC}"
-fi
+    if [ -d "/Applications/Hammerspoon.app" ]; then
+        echo -e "${GREEN}  ✓ Hammerspoon${NC}"
+    else
+        echo -e "${RED}  ✗ Hammerspoon (not installed)${NC}"
+        echo -e "${YELLOW}    Run: brew bundle --file=$DOTFILES_DIR/Brewfile${NC}"
+    fi
 
-# Check if Raycast is installed
-if [ -d "/Applications/Raycast.app" ]; then
-    echo -e "${GREEN}  ✓ Raycast${NC}"
-    echo -e "${YELLOW}    Note: Raycast is optional and not in Brewfile${NC}"
-else
-    echo -e "${YELLOW}  ⚠ Raycast (optional - not installed)${NC}"
-    echo -e "${YELLOW}    Install manually: brew install --cask raycast${NC}"
-fi
+    if [ -d "/Applications/Raycast.app" ]; then
+        echo -e "${GREEN}  ✓ Raycast${NC}"
+        echo -e "${YELLOW}    Note: Raycast is optional and not in Brewfile${NC}"
+    else
+        echo -e "${YELLOW}  ⚠ Raycast (optional - not installed)${NC}"
+        echo -e "${YELLOW}    Install manually: brew install --cask raycast${NC}"
+    fi
 
-# Check JetBrainsMono Nerd Font
-if fc-list 2>/dev/null | grep -i "JetBrainsMono Nerd Font" > /dev/null || \
-   ls ~/Library/Fonts/ 2>/dev/null | grep -i "JetBrainsMono" > /dev/null || \
-   ls /Library/Fonts/ 2>/dev/null | grep -i "JetBrainsMono" > /dev/null; then
-    echo -e "${GREEN}  ✓ JetBrainsMono Nerd Font${NC}"
+    # Check JetBrainsMono Nerd Font (macOS paths)
+    if fc-list 2>/dev/null | grep -i "JetBrainsMono Nerd Font" > /dev/null || \
+       ls ~/Library/Fonts/ 2>/dev/null | grep -i "JetBrainsMono" > /dev/null || \
+       ls /Library/Fonts/ 2>/dev/null | grep -i "JetBrainsMono" > /dev/null; then
+        echo -e "${GREEN}  ✓ JetBrainsMono Nerd Font${NC}"
+    else
+        echo -e "${RED}  ✗ JetBrainsMono Nerd Font (not installed)${NC}"
+        echo -e "${YELLOW}    Run: brew bundle --file=$DOTFILES_DIR/Brewfile${NC}"
+    fi
+elif [[ "$OS" == "Linux" ]]; then
+    # Linux-specific checks
+    check_command "alacritty" || echo -e "${YELLOW}    Install via package manager${NC}"
+
+    # Check JetBrainsMono Nerd Font (Linux paths)
+    if fc-list 2>/dev/null | grep -i "JetBrainsMono Nerd Font" > /dev/null || \
+       ls ~/.local/share/fonts/ 2>/dev/null | grep -i "JetBrainsMono" > /dev/null || \
+       ls /usr/share/fonts/ 2>/dev/null | grep -i "JetBrainsMono" > /dev/null; then
+        echo -e "${GREEN}  ✓ JetBrainsMono Nerd Font${NC}"
+    else
+        echo -e "${RED}  ✗ JetBrainsMono Nerd Font (not installed)${NC}"
+        echo -e "${YELLOW}    Download from: https://www.nerdfonts.com/${NC}"
+    fi
 else
-    echo -e "${RED}  ✗ JetBrainsMono Nerd Font (not installed)${NC}"
-    echo -e "${YELLOW}    Run: brew bundle --file=$DOTFILES_DIR/Brewfile${NC}"
+    echo -e "${YELLOW}  ⚠ Unknown OS: $OS - skipping app-specific checks${NC}"
 fi
 
 echo ""

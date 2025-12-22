@@ -20,9 +20,12 @@ export PYENV_ROOT="$HOME/.pyenv"
 # Java
 export SDKMAN_DIR="$HOME/.sdkman"
 export sdk_auto_env=true
+export JAVA_HOME="$HOME/.sdkman/candidates/java/current"
+export PATH="$JAVA_HOME/bin:$PATH"
 
 # Scala/Coursier
 export PATH="$PATH:$HOME/Library/Application Support/Coursier/bin"
+export PATH="$PATH:$HOME/Library/Caches/ScalaCli/local-repo/bin/scala-cli"
 
 # Claude Code on Vertex AI
 export CLAUDE_CODE_USE_VERTEX=1

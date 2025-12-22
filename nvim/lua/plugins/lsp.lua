@@ -198,11 +198,11 @@ return {
               runtimes = {
                 {
                   name = "JavaSE-11",
-                  path = "~/.sdkman/candidates/java/11.0.12-open",
+                  path = vim.fn.expand("~/.sdkman/candidates/java/11.0.12-open"),
                 },
                 {
                   name = "JavaSE-17",
-                  path = "~/.sdkman/candidates/java/17.0.5-tem",
+                  path = vim.fn.expand("~/.sdkman/candidates/java/17.0.5-tem"),
                 },
               },
             },

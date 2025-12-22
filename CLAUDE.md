@@ -407,16 +407,40 @@ brew bundle check --file=~/dotfiles/Brewfile
 ## Portability
 
 ### Path Configuration
-All shell scripts use `$DOTFILES_DIR` environment variable:
+
+**Centralized Paths:** All paths are managed through `config/paths.json`:
+- `home` - User home directory
+- `dotfiles` - Dotfiles repository location
+- `codebase` - Development projects directory
+- `local_bin` - Local binaries
+- `pal_server` - PAL MCP server path
+
+**Shell Scripts:** Use `$DOTFILES_DIR` environment variable
 - Set automatically in `.zshrc` - no manual configuration needed
 - Works regardless of where dotfiles repository is cloned
 - Dynamically detected on shell startup
 
-### JSON Configuration Files
-JSON files cannot use environment variables directly. If you move the dotfiles directory, manually update paths in:
-- `claude/settings.json` - Hook script paths
-- `gemini/settings.json` - Script and config paths
-- Any other JSON configs with absolute paths
+**JSON Configuration Files:** Generated from templates during install
+- `claude/settings.json.template` → `~/.claude/settings.json`
+- `gemini/settings.json.template` → `~/.gemini/settings.json`
+- Templates use placeholders like `{{dotfiles}}`, `{{home}}`
+- Generated files have absolute paths substituted during `install.sh`
+- **Important:** Re-run `install.sh` if you move the dotfiles directory
+
+**Neovim Lua Files:** Use `vim.fn.expand("~/")`
+- Automatically expands tilde paths at runtime
+- No manual configuration needed
+
+### Cross-Platform Support
+
+**OS Detection:** `install.sh` detects macOS vs Linux
+- macOS: Checks `/Applications/*.app` for GUI apps
+- Linux: Uses command-line tool checks
+- Font paths adapted per platform
+
+**Supported Platforms:**
+- macOS (primary)
+- Linux (basic support)
 
 ### API Keys and Secrets
 All sensitive credentials are stored in `.env` (gitignored):

@@ -25,8 +25,8 @@ if command -v fnm &> /dev/null; then
   fi
 fi
 
-# Python
-export PATH="$PYENV_ROOT/shims:$PATH"
+# Python (binary for lazy-load to work)
+export PATH="$PYENV_ROOT/bin:$PATH"
 
 # Yarn
 export PATH="$HOME/.yarn/bin:$HOME/.config/yarn/global/node_modules/.bin:$PATH"

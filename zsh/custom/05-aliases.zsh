@@ -37,26 +37,26 @@ gb() {
 }
 
 # Search file contents with ripgrep and open in neovim (interactive)
-nvim() {
-  # If arguments provided, use actual nvim
-  if [ $# -gt 0 ]; then
-    command nvim "$@"
-    return
-  fi
-
-  # No arguments: use fzf search
-  local result=$(fzf --height 40% --reverse --border \
-    --prompt="Search: " \
-    --header="Type to search, then select file to open in nvim" \
-    --disabled \
-    --bind "change:reload:rg --files-with-matches --no-messages {q} . || true" \
-    --preview "rg --color=always --context=3 {q} {}" \
-    --preview-window='up:60%')
-
-  if [ -n "$result" ]; then
-    command nvim "$result"
-  fi
-}
+# nvim() {
+#   # If arguments provided, use actual nvim
+#   if [ $# -gt 0 ]; then
+#     command nvim "$@"
+#     return
+#   fi
+#
+#   # No arguments: use fzf search
+#   local result=$(fzf --height 40% --reverse --border \
+#     --prompt="Search: " \
+#     --header="Type to search, then select file to open in nvim" \
+#     --disabled \
+#     --bind "change:reload:rg --files-with-matches --no-messages {q} . || true" \
+#     --preview "rg --color=always --context=3 {q} {}" \
+#     --preview-window='up:60%')
+#
+#   if [ -n "$result" ]; then
+#     command nvim "$result"
+#   fi
+# }
 
 
 ############################# SCRIPTS ############################# 
