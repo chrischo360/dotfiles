@@ -2,14 +2,6 @@
 
 This directory contains Raycast Script Commands that provide quick access to your terminal aliases and commands.
 
-## Available Commands
-
-- **CF Next Problem** (`cfnext.sh`) - Find the next unsolved CodeForces problem
-- **CF Next Problem (800)** (`cfnext800.sh`) - Find next problem at difficulty 800
-- **CF Next Problem (1200)** (`cfnext1200.sh`) - Find next problem at difficulty 1200
-- **CF Add Progress** (`cfadd.sh`) - Add progress to training tracker
-- **CF Show Progress** (`cfshow.sh`) - Display training progress
-
 ## Setup
 
 ### Option 1: Import Scripts to Raycast (Recommended)
