@@ -15,7 +15,7 @@ alias cat="bat --style=plain --paging=never"
 alias less="bat"
 
 # Git shortcuts
-alias gs="git status"
+alias gs="git status -sb"
 alias ga="git add"
 alias gc="git commit"
 alias gp="git push"
