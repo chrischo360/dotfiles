@@ -53,13 +53,13 @@ vim ~/dotfiles/.env
 - `BUILDKITE_TOKEN` - Buildkite API token (CI monitoring)
 - `GLEAN_API_TOKEN` - Glean API token (Wayfair knowledge base)
 - `GLEAN_INSTANCE` - Glean instance name (default: wayfair)
-- `GIT_AUTHOR_EMAIL` - Git user email (substituted into gitconfig)
-- `GIT_AUTHOR_NAME` - Git user name (substituted into gitconfig)
+- `GIT_AUTHOR_EMAIL` - Git user email (for reference, actual value in gitconfig)
+- `GIT_AUTHOR_NAME` - Git user name (for reference, actual value in gitconfig)
 - `RAYCAST_AUTHOR` - Raycast script author metadata
 
 See `.env.example` for full list.
 
-**Important:** The install script substitutes environment variables into `~/.gitconfig` from your `.env` file. Update `.env` with your git credentials before running the install script.
+**Important:** The gitconfig file contains your actual git credentials (name and email). The install script creates a symlink from `~/.gitconfig` to `~/dotfiles/git/gitconfig`.
 
 ## Symlink Map
 
@@ -69,7 +69,7 @@ The install script creates these symlinks:
 ~/.zshrc                       -> ~/dotfiles/zsh/.zshrc
 ~/.tmux.conf                   -> ~/dotfiles/tmux/tmux.conf
 ~/.config/tmux/scripts/        -> ~/dotfiles/tmux/scripts/
-~/.gitconfig                   -> ~/dotfiles/git/gitconfig (with env vars substituted)
+~/.gitconfig                   -> ~/dotfiles/git/gitconfig
 ~/.aerospace.toml              -> ~/dotfiles/aerospace/aerospace.toml
 ~/.hammerspoon/                -> ~/dotfiles/hammerspoon/
 ~/.config/alacritty/           -> ~/dotfiles/alacritty/

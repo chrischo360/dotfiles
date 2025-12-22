@@ -195,18 +195,8 @@ create_symlink "$DOTFILES_DIR/zsh/.zshrc" "$HOME/.zshrc"
 create_symlink "$DOTFILES_DIR/tmux/tmux.conf" "$HOME/.tmux.conf"
 create_symlink "$DOTFILES_DIR/tmux/scripts" "$HOME/.config/tmux/scripts"
 
-# Git (substitute environment variables into gitconfig)
-if [ -f "$DOTFILES_DIR/.env" ]; then
-    # Load .env and substitute variables in gitconfig
-    set -a
-    source "$DOTFILES_DIR/.env"
-    set +a
-    envsubst < "$DOTFILES_DIR/git/gitconfig" > "$HOME/.gitconfig"
-    echo -e "${GREEN}  ✓ Created: $HOME/.gitconfig (with env vars substituted)${NC}"
-else
-    echo -e "${YELLOW}  ⚠ .env not found, using gitconfig template as-is${NC}"
-    create_symlink "$DOTFILES_DIR/git/gitconfig" "$HOME/.gitconfig"
-fi
+# Git
+create_symlink "$DOTFILES_DIR/git/gitconfig" "$HOME/.gitconfig"
 
 # AeroSpace
 create_symlink "$DOTFILES_DIR/aerospace/aerospace.toml" "$HOME/.aerospace.toml"
