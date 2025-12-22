@@ -14,7 +14,7 @@ enable-normalization-opposite-orientation-for-nested-containers = true
 
 # See: https://nikitabobko.github.io/AeroSpace/guide#layouts
 # The 'accordion-padding' specifies the size of accordion padding
-accordion-padding = 20
+accordion-padding = 40
 
 # Possible values: tiles|accordion
 default-root-container-layout = 'tiles'
@@ -34,7 +34,7 @@ on-focused-monitor-changed = ['move-mouse monitor-lazy-center']
 automatically-unhide-macos-hidden-apps = true
 
 # You can configure a custom shortcut to take a screenshot. screencapture is a built-in macOS command.
-# alt-shift-s = 'exec-and-forget screencapture -i -c'
+
 
 # Possible values: (qwerty|dvorak)
 [key-mapping]
@@ -60,7 +60,8 @@ automatically-unhide-macos-hidden-apps = true
 # See: https://nikitabobko.github.io/AeroSpace/guide#binding-modes
 # 'main' binding mode must be always presented
 # Fallback value (if you omit the key): mode.main.binding = {}
-[mode.main.binding]
+# [mode.main.binding]
+#     alt-shift-s = 'exec-and-forget screencapture -i -c'
 
     # All possible keys:
     # - Letters.        a, b, c, ..., z
