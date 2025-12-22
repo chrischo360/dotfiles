@@ -66,20 +66,21 @@ See `.env.example` for full list.
 The install script creates these symlinks:
 
 ```
-~/.zshrc                  -> ~/dotfiles/zsh/.zshrc
-~/.tmux.conf              -> ~/dotfiles/tmux/tmux.conf
-~/.config/tmux/scripts/   -> ~/dotfiles/tmux/scripts/
-~/.gitconfig              -> ~/dotfiles/git/gitconfig
-~/.aerospace.toml         -> ~/dotfiles/aerospace/aerospace.toml
-~/.hammerspoon/           -> ~/dotfiles/hammerspoon/
-~/.config/alacritty/      -> ~/dotfiles/alacritty/
-~/.config/nvim/           -> ~/dotfiles/nvim/
-~/.config/ccstatusline/   -> ~/dotfiles/claude/ccstatusline/
-~/.claude/settings.json   -> ~/dotfiles/claude/settings.json
-~/.claude/agents/         -> ~/dotfiles/claude/agents/
-~/.claude/CLAUDE.md       -> ~/dotfiles/claude/CLAUDE.md
-~/.gemini/settings.json   -> ~/dotfiles/gemini/settings.json
-~/.local/bin/gemini       -> $(npm bin -g)/gemini
+~/.zshrc                       -> ~/dotfiles/zsh/.zshrc
+~/.tmux.conf                   -> ~/dotfiles/tmux/tmux.conf
+~/.config/tmux/scripts/        -> ~/dotfiles/tmux/scripts/
+~/.gitconfig                   -> ~/dotfiles/git/gitconfig (with env vars substituted)
+~/.aerospace.toml              -> ~/dotfiles/aerospace/aerospace.toml
+~/.hammerspoon/                -> ~/dotfiles/hammerspoon/
+~/.config/alacritty/           -> ~/dotfiles/alacritty/
+~/.config/nvim/                -> ~/dotfiles/nvim/
+~/.config/ccstatusline/        -> ~/dotfiles/claude/ccstatusline/
+~/.config/mise/config.toml     -> ~/dotfiles/.mise.toml (global mise config)
+~/.claude/settings.json        -> ~/dotfiles/claude/settings.json (generated from template)
+~/.claude/agents/              -> ~/dotfiles/claude/agents/
+~/.claude/CLAUDE.md            -> ~/dotfiles/claude/CLAUDE.md
+~/.gemini/settings.json        -> ~/dotfiles/gemini/settings.json (generated from template)
+~/.local/bin/gemini            -> $(npm bin -g)/gemini
 ```
 
 ## Package Management

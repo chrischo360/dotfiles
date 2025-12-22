@@ -14,13 +14,11 @@ setopt HIST_REDUCE_BLANKS        # Remove superfluous blanks
 # Node.js
 export NODE_EXTRA_CA_CERTS="$HOME/certificates/wayfair-certs.pem"
 
-# Java (legacy SDKMAN - consider migrating to mise)
-export SDKMAN_DIR="$HOME/.sdkman"
-export sdk_auto_env=true
-export JAVA_HOME="$HOME/.sdkman/candidates/java/current"
-export PATH="$JAVA_HOME/bin:$PATH"
+# Java - Now managed by mise
+# JAVA_HOME is automatically set by mise when using Java
+# No manual PATH configuration needed
 
-# Scala/Coursier
+# Scala/Coursier (optional - consider mise for scala too)
 export PATH="$PATH:$HOME/Library/Application Support/Coursier/bin"
 export PATH="$PATH:$HOME/Library/Caches/ScalaCli/local-repo/bin/scala-cli"
 

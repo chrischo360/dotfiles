@@ -3,12 +3,23 @@
 
 FROM ubuntu:24.04
 
-# Install basic dependencies
+# Install basic dependencies + build tools for language runtimes
 RUN apt-get update && apt-get install -y \
     git \
     curl \
     sudo \
     build-essential \
+    zlib1g-dev \
+    libssl-dev \
+    libreadline-dev \
+    libyaml-dev \
+    libffi-dev \
+    libncurses5-dev \
+    libgdbm-dev \
+    libbz2-dev \
+    liblzma-dev \
+    libsqlite3-dev \
+    tk-dev \
     && rm -rf /var/lib/apt/lists/*
 
 # Create test user (mimics real environment)

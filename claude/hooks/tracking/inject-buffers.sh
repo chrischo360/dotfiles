@@ -16,8 +16,8 @@
   fi
 
   # Extract branch info
-  local branch=$(echo "$BUFFER_DATA" | jq -r '.branch // "unknown"')
-  local main_branch=$(echo "$BUFFER_DATA" | jq -r '.main_branch // "main"')
+  branch=$(echo "$BUFFER_DATA" | jq -r '.branch // "unknown"')
+  main_branch=$(echo "$BUFFER_DATA" | jq -r '.main_branch // "main"')
 
   echo "Branch: $branch"
   if [[ "$branch" != "$main_branch" ]]; then

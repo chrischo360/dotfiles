@@ -103,7 +103,17 @@ if command -v mise &> /dev/null && [ -f "$DOTFILES_DIR/.mise.toml" ]; then
 
     # Change to dotfiles directory so mise picks up .mise.toml
     cd "$DOTFILES_DIR"
-    mise install
+
+    # Install Java first (required by Scala)
+    echo -e "${YELLOW}  Installing Java first (required by Scala)...${NC}"
+    mise install java || echo -e "${YELLOW}  ⚠ Java installation had issues, continuing...${NC}"
+
+    # Activate mise environment to make Java available in PATH for Scala
+    eval "$(mise activate bash)"
+
+    # Install remaining tools
+    echo -e "${YELLOW}  Installing remaining tools...${NC}"
+    mise install || echo -e "${YELLOW}  ⚠ Some tools failed to install, check output above${NC}"
 
     echo -e "${GREEN}  ✓ mise tools installed${NC}"
 else
@@ -203,6 +213,10 @@ create_symlink "$DOTFILES_DIR/nvim" "$HOME/.config/nvim"
 
 # ccstatusline
 create_symlink "$DOTFILES_DIR/claude/ccstatusline" "$HOME/.config/ccstatusline"
+
+# mise global config (makes tools available everywhere)
+mkdir -p "$HOME/.config/mise"
+create_symlink "$DOTFILES_DIR/.mise.toml" "$HOME/.config/mise/config.toml"
 
 # Claude Code
 mkdir -p "$HOME/.claude"
