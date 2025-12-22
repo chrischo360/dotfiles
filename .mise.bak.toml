@@ -1,8 +1,6 @@
-# Dotfiles mise configuration - Cross-platform base config
-# Platform-specific tools are in .mise.macos.toml and .mise.linux.toml
-
+# Dotfiles mise configuration
 # ============================================
-# Language Runtimes (Cross-Platform)
+# Language Runtimes
 # ============================================
 # These enable per-project version switching
 
@@ -16,7 +14,7 @@ bun = "latest"                  # Fast JavaScript runtime
 deno = "latest"                 # Secure TypeScript runtime
 
 # ============================================
-# Build Tools & Package Managers (Cross-Platform)
+# Build Tools & Package Managers
 # ============================================
 # Tools that benefit from version management
 
@@ -28,40 +26,10 @@ maven = "latest"                # Java build tool
 sbt = "latest"                  # Scala build tool
 scala = "latest"                # Scala language (depends on Java)
 
-# ============================================
-# CLI Tools (Shell Enhancements)
-# ============================================
-# Note: aqua backend works with AQUA_GITHUB_TOKEN set in ~/dotfiles/.env
-zoxide = "latest"               # Smarter cd command
-eza = "latest"                  # Modern ls replacement
-bat = "latest"                  # Cat with syntax highlighting
-fd = "latest"                   # Modern find
-ripgrep = "latest"              # Fast text search (rg)
-fzf = "latest"                  # Fuzzy finder
+# NOTE: gradle and pipx → Brewfile.macos (GitHub API rate limits in mise)
 
-# ============================================
-# Terminal & Editors
-# ============================================
-tmux = "latest"                 # Terminal multiplexer
-# neovim → Brewfile.macos (not in mise registry)
-
-# ============================================
-# Version Control
-# ============================================
-# git, gh, delta → Brewfile.macos (not in mise registry, better via Homebrew)
-
-# ============================================
-# Development Tools
-# ============================================
-jq = "latest"                   # JSON processor
-"vfox:mise-plugins/vfox-gradle" = "latest"  # Gradle (vfox backend avoids GitHub API)
-"asdf:mise-plugins/mise-pipx" = "latest"    # pipx (asdf backend avoids GitHub API)
-mkcert = "latest"               # Local SSL certificates
-direnv = "latest"               # Environment variable manager
-just = "latest"                 # Modern make alternative
-
-# NOTE: macOS-specific CLI tools (terminal-notifier, rsync, curl, swiftlint) → Brewfile.macos
-# NOTE: GUI apps and fonts → Brewfile.macos
+# NOTE: All CLI tools (jq, fzf, ripgrep, eza, bat, etc.) → Brewfile.macos
+# NOTE: GUI apps, fonts, macOS-specific tools → Brewfile.macos
 
 # ============================================
 # Environment Configuration

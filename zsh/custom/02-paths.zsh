@@ -8,6 +8,10 @@ export PATH="$HOME/.local/bin:$PATH"
 # Use ~/.local/bin (tilde expands properly in zsh)
 eval "$(~/.local/bin/mise activate zsh)"
 
+# mise shims - Add explicitly to ensure tools are found before Homebrew
+# This ensures mise-managed tools take priority over Homebrew
+export PATH="$HOME/.local/share/mise/shims:$PATH"
+
 # Yarn (for legacy yarn installations)
 export PATH="$HOME/.yarn/bin:$HOME/.config/yarn/global/node_modules/.bin:$PATH"
 

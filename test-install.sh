@@ -38,13 +38,29 @@ echo -e "${BLUE}[2/3] Running installation test...${NC}"
 echo -e "${YELLOW}This will test the install.sh script in a clean Ubuntu environment${NC}"
 echo ""
 
-docker run --rm -it dotfiles-test bash -c '
+# Pass GITHUB_TOKEN if available to avoid rate limits
+DOCKER_ENV_ARGS=""
+if [ -n "$GITHUB_TOKEN" ]; then
+    echo -e "${GREEN}✓ Using GITHUB_TOKEN for mise downloads${NC}"
+    DOCKER_ENV_ARGS="-e GITHUB_TOKEN=$GITHUB_TOKEN"
+else
+    echo -e "${YELLOW}⚠ No GITHUB_TOKEN - may hit GitHub API rate limits${NC}"
+    echo -e "${YELLOW}  Set GITHUB_TOKEN env var to increase rate limit${NC}"
+fi
+echo ""
+
+docker run --rm -it $DOCKER_ENV_ARGS dotfiles-test bash -c '
 set -e
 
 echo "========================================="
 echo "Testing: dotfiles installation"
 echo "========================================="
 echo ""
+
+# Initialize git repository so submodules can be initialized
+git init
+git add .
+git -c user.name="Test" -c user.email="test@example.com" commit -m "Initial commit"
 
 # Create minimal .env for testing
 cp .env.example .env

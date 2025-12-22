@@ -1,0 +1,71 @@
+# macOS-only Brewfile
+# CLI tools, GUI apps, fonts (mise handles language runtimes only)
+# Install: brew bundle --file=~/dotfiles/Brewfile.macos
+
+# ============================================
+# Shell Enhancements
+# ============================================
+brew "zoxide"              # Smarter cd command
+brew "eza"                 # Modern ls replacement
+brew "bat"                 # Cat with syntax highlighting
+brew "fd"                  # Modern find
+brew "ripgrep"             # Fast text search (rg)
+brew "fzf"                 # Fuzzy finder
+
+# ============================================
+# Terminal & Editors
+# ============================================
+brew "tmux"                # Terminal multiplexer
+brew "neovim"              # Modern Vim
+
+# ============================================
+# Version Control
+# ============================================
+brew "git"                 # Distributed version control
+brew "gh"                  # GitHub CLI
+brew "delta"               # Better git diff viewer
+
+# ============================================
+# Development Tools
+# ============================================
+brew "jq"                  # JSON processor
+brew "gradle"              # Gradle build tool
+brew "pipx"                # Python CLI tool isolation
+brew "mkcert"              # Local SSL certificates
+brew "direnv"              # Environment variable manager
+brew "just"                # Modern make alternative
+
+# ============================================
+# macOS-Specific CLI Tools
+# ============================================
+brew "terminal-notifier"   # macOS notifications (macOS-only API)
+brew "rsync"               # File sync (better version than macOS default)
+brew "curl"                # HTTP client (better version than macOS default)
+
+# ============================================
+# Code Quality (macOS-specific)
+# ============================================
+brew "swiftlint"           # Swift linter (macOS/iOS development)
+
+# ============================================
+# Fonts
+# ============================================
+# Note: homebrew/cask-fonts tap is deprecated but fonts still work
+cask "font-jetbrains-mono-nerd-font"
+
+# ============================================
+# GUI Applications
+# ============================================
+cask "aerospace"           # Tiling window manager
+cask "docker-desktop"      # Container runtime with GUI
+cask "claude-code"         # Claude AI CLI (GUI installer)
+cask "chromium"            # Open-source browser
+cask "homerow"             # Keyboard navigation
+
+# ============================================
+# Optional Applications
+# ============================================
+# Uncomment if you want to install these
+
+# cask "raycast"           # Launcher (requires manual setup)
+# cask "alacritty"         # GPU-accelerated terminal

@@ -101,6 +101,18 @@ if command -v mise &> /dev/null && [ -f "$DOTFILES_DIR/.mise.toml" ]; then
     echo -e "${YELLOW}  Installing development tools from .mise.toml...${NC}"
     echo -e "${YELLOW}  (This may take several minutes on first run)${NC}"
 
+    # Load environment variables from .env (includes GITHUB_TOKEN for aqua backend)
+    if [ -f "$DOTFILES_DIR/.env" ]; then
+        echo -e "${YELLOW}  Loading environment variables from .env...${NC}"
+        set -a
+        source "$DOTFILES_DIR/.env"
+        set +a
+        # Export AQUA_GITHUB_TOKEN for mise's aqua backend
+        export AQUA_GITHUB_TOKEN="${GITHUB_TOKEN}"
+    else
+        echo -e "${YELLOW}  ⚠ .env not found, aqua backend may hit GitHub API rate limits${NC}"
+    fi
+
     # Change to dotfiles directory so mise picks up .mise.toml
     cd "$DOTFILES_DIR"
 
@@ -295,9 +307,11 @@ check_command() {
 
 # Check essential commands
 check_command "mise" || echo -e "${YELLOW}    Install: curl https://mise.run | sh${NC}"
-check_command "git" || echo -e "${YELLOW}    Run: mise install${NC}"
-check_command "tmux" || echo -e "${YELLOW}    Run: mise install${NC}"
-check_command "nvim" || echo -e "${YELLOW}    Run: mise install${NC}"
+check_command "git" || echo -e "${YELLOW}    Run: cd $DOTFILES_DIR && mise install${NC}"
+check_command "tmux" || echo -e "${YELLOW}    Run: cd $DOTFILES_DIR && mise install${NC}"
+check_command "nvim" || echo -e "${YELLOW}    Run: cd $DOTFILES_DIR && mise install${NC}"
+check_command "fzf" || echo -e "${YELLOW}    Run: cd $DOTFILES_DIR && mise install${NC}"
+check_command "rg" || echo -e "${YELLOW}    Run: cd $DOTFILES_DIR && mise install${NC}"
 
 if [[ "$OS" == "Darwin" ]]; then
     check_command "brew" || echo -e "${YELLOW}    Install: /bin/bash -c \"\$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)\"${NC}"

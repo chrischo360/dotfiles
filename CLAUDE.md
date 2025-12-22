@@ -85,40 +85,48 @@ The install script creates these symlinks:
 
 ## Package Management
 
-Uses **mise** for cross-platform dev tools + **Homebrew** (macOS only) for GUI apps.
+Uses **mise** for dev tools + **Homebrew** (macOS only) for GUI apps and problematic tools.
 
 **Why mise?**
 - Cross-platform (macOS, Linux, Docker)
 - Unified runtime management (replaces fnm, pyenv, rbenv)
+- Platform-specific configs (.mise.macos.toml, .mise.linux.toml)
 - Fast, single binary
 - Works in containers
 
+**Configuration structure:**
+- `.mise.toml` - All CLI tools and language runtimes (works on macOS and Linux)
+- `Brewfile.macos` - macOS-only: GUI apps, fonts, and macOS-specific CLI tools
+
+**Note on aqua backend:**
+- Set `AQUA_GITHUB_TOKEN` in `~/dotfiles/.env` to avoid GitHub API rate limits
+- Most tools use aqua backend (downloads pre-built binaries from GitHub releases)
+- gradle uses `vfox` backend (downloads from gradle.org)
+- pipx uses `asdf` backend (avoids GitHub API issues)
+
 See `MISE_MIGRATION.md` for migration details and limitations.
 
-### Core Tools (from .mise.toml)
+### All Tools (from .mise.toml)
 
-**Development Runtimes:**
-- node (lts), python, ruby, java, php
+**Language Runtimes:**
+- node (lts), python, ruby, java
 - bun, deno, scala
 
-**Terminal & Shell:**
-- tmux, neovim, fzf
-- zoxide, eza, bat, fd, ripgrep, bottom
+**Build Tools & Package Managers:**
+- yarn, maven, sbt, kubectl
+- gradle (vfox backend), pipx (asdf backend)
+
+**Shell Enhancements:**
+- zoxide, eza, bat, fd, ripgrep, fzf
+
+**Terminal & Editors:**
+- tmux, neovim
 
 **Version Control:**
-- git, gh (GitHub CLI), delta
+- git, gh, delta
 
 **Development Tools:**
-- yarn, maven, gradle, sbt
-- kubectl, jq, terraform, awscli
-
-**Code Quality & Formatters:**
-- biome, stylua, taplo, actionlint, shellcheck
-
-**Utilities:**
-- sd, tokei, du-dust, procs, tealdeer
-- mkcert, direnv, watchexec, just
-- pipx, cargo-binstall
+- jq, mkcert, direnv, just
 
 **npm Global Packages:**
 - ccstatusline - Claude Code statusline
@@ -130,8 +138,11 @@ See `MISE_MIGRATION.md` for migration details and limitations.
 
 ### macOS-Only Packages (from Brewfile.macos)
 
-**CLI Tools:**
-- terminal-notifier, rsync, curl, swiftlint
+**macOS-Specific CLI Tools:**
+- terminal-notifier (macOS notifications API)
+- rsync (better than macOS default)
+- curl (better than macOS default)
+- swiftlint (Swift/iOS development)
 
 **Applications:**
 - aerospace, docker-desktop, claude-code, chromium, homerow
@@ -153,7 +164,7 @@ cd ~/dotfiles
 
 The install script will:
 1. Install mise (dev tools manager)
-2. Install tools from .mise.toml
+2. Install tools from .mise.toml (all CLI tools and runtimes)
 3. Install macOS-specific packages from Brewfile.macos (if on macOS)
 4. Initialize git submodules (zsh plugins)
 5. Backup existing config files
@@ -209,6 +220,10 @@ The install script will:
    ln -sf ~/dotfiles/alacritty ~/.config/alacritty
    ln -sf ~/dotfiles/nvim ~/.config/nvim
    ln -sf ~/dotfiles/ccstatusline ~/.config/ccstatusline
+
+   # mise config
+   mkdir -p ~/.config/mise
+   ln -sf ~/dotfiles/.mise.toml ~/.config/mise/config.toml
 
    # Claude Code configs
    mkdir -p ~/.claude
@@ -409,21 +424,19 @@ The install script automatically installs:
 # Add to .mise.toml manually, then:
 cd ~/dotfiles
 mise install
-
-# Or install globally:
-mise use -g <tool>@<version>
 ```
 
 **Update tools:**
 ```bash
 # Update all tools
+cd ~/dotfiles
 mise upgrade
 
 # Update specific tool
 mise upgrade node
 ```
 
-**macOS packages (Homebrew):**
+**macOS-only packages (GUI apps, fonts, macOS-specific tools):**
 ```bash
 # Add to Brewfile.macos, then:
 brew bundle --file=~/dotfiles/Brewfile.macos
@@ -436,6 +449,9 @@ mise registry <tool-name>
 
 # List installed tools
 mise list
+
+# Show which config file provides each tool
+mise ls --current
 ```
 
 ### Testing Installation (Docker)

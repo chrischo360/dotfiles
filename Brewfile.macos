@@ -1,50 +1,22 @@
 # macOS-only Brewfile
-# CLI tools, GUI apps, fonts (mise handles language runtimes only)
+# macOS-specific CLI tools, GUI apps, fonts
+# All other CLI tools are managed by mise (.mise.toml)
 # Install: brew bundle --file=~/dotfiles/Brewfile.macos
 
 # ============================================
-# Shell Enhancements
+# CLI Tools (Not in mise registry or better via Homebrew)
 # ============================================
-brew "zoxide"              # Smarter cd command
-brew "eza"                 # Modern ls replacement
-brew "bat"                 # Cat with syntax highlighting
-brew "fd"                  # Modern find
-brew "ripgrep"             # Fast text search (rg)
-brew "fzf"                 # Fuzzy finder
-
-# ============================================
-# Terminal & Editors
-# ============================================
-brew "tmux"                # Terminal multiplexer
-brew "neovim"              # Modern Vim
-
-# ============================================
-# Version Control
-# ============================================
-brew "git"                 # Distributed version control
-brew "gh"                  # GitHub CLI
-brew "delta"               # Better git diff viewer
-
-# ============================================
-# Development Tools
-# ============================================
-brew "jq"                  # JSON processor
-brew "gradle"              # Gradle build tool
-brew "pipx"                # Python CLI tool isolation
-brew "mkcert"              # Local SSL certificates
-brew "direnv"              # Environment variable manager
-brew "just"                # Modern make alternative
+brew "git"                 # Version control (not in mise)
+brew "gh"                  # GitHub CLI (not in mise)
+brew "git-delta"           # Better git diff (not in mise)
+brew "neovim"              # Modern Vim (not in mise)
 
 # ============================================
 # macOS-Specific CLI Tools
 # ============================================
 brew "terminal-notifier"   # macOS notifications (macOS-only API)
-brew "rsync"               # File sync (better version than macOS default)
-brew "curl"                # HTTP client (better version than macOS default)
-
-# ============================================
-# Code Quality (macOS-specific)
-# ============================================
+brew "rsync"               # File sync (better than macOS default)
+brew "curl"                # HTTP client (better than macOS default)
 brew "swiftlint"           # Swift linter (macOS/iOS development)
 
 # ============================================
