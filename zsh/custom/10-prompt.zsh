@@ -8,10 +8,51 @@ precmd() { vcs_info }
 zstyle ':vcs_info:git:*' formats '%F{yellow}%b%f'
 zstyle ':vcs_info:*' enable git
 
+# Custom function to colorize path segments
+colorize_path() {
+  local path_str="${PWD/#$HOME/~}"
+
+  # If we're at root or home, just show it
+  if [[ "$path_str" == "~" ]] || [[ "$path_str" == "/" ]]; then
+    echo "%F{242}${path_str}%f"
+    return
+  fi
+
+  # Try to find git root
+  local git_root=""
+  if git rev-parse --is-inside-work-tree &>/dev/null; then
+    git_root=$(git rev-parse --show-toplevel 2>/dev/null)
+    git_root="${git_root/#$HOME/~}"
+  fi
+
+  # If we found a git root, colorize it differently
+  if [[ -n "$git_root" ]]; then
+    local git_root_name="${git_root##*/}"
+    local before_git="${path_str%$git_root_name*}"
+    local after_git="${path_str#*$git_root_name}"
+
+    # Build colored path: before (gray) + git-root (green) + after-parent (gray) + current-dir (red)
+    if [[ -n "$after_git" ]]; then
+      # We're inside subdirectories of git root
+      local current_dir="${path_str##*/}"
+      local after_git_parent="${after_git%/*}"
+      echo "%F{242}${before_git}%F{green}${git_root_name}%F{242}${after_git_parent}/%F{red}${current_dir}%f"
+    else
+      # We're at git root
+      echo "%F{242}${before_git}%F{green}${git_root_name}%f"
+    fi
+  else
+    # Not in git repo, just colorize parent/current
+    local parent_path="${path_str%/*}"
+    local current_dir="${path_str##*/}"
+    echo "%F{242}${parent_path}/%F{red}${current_dir}%f"
+  fi
+}
+
 # Define prompt
 # %F{color} = set foreground color
 # %~ = current directory (with ~ for home)
 # %(?...) = conditional: show if last command failed
 # ${vcs_info_msg_0_} = git branch from vcs_info
-PROMPT='%F{blue}%~%f ${vcs_info_msg_0_}
+PROMPT='$(colorize_path) ${vcs_info_msg_0_}
 %F{%(?.green.red)}❯%f '
