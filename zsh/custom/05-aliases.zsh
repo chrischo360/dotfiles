@@ -16,7 +16,6 @@ alias less="bat"
 
 # Git shortcuts
 alias gs="git status -sb"
-alias ga="git add"
 alias gc="git commit"
 alias gacm="ga . && gc -m"
 alias gcam="git commit --amend"
@@ -53,6 +52,71 @@ alias df="df -h"
 alias du="du -h"
 
 ##########################################Functions##########################################
+# Git add files interactively with fzf (supports multi-select with Tab)
+ga() {
+  # If arguments provided, use regular git add
+  if [ $# -gt 0 ]; then
+    git add "$@"
+    return
+  fi
+
+  # No arguments: use fzf to select files
+  local files=$(git status --short | \
+    fzf --multi \
+      --height 40% \
+      --reverse \
+      --border \
+      --prompt="Select files to stage (Tab for multi-select): " \
+      --preview 'git diff --color=always {2}' \
+      --preview-window='right:60%' | \
+    awk '{print $2}')
+
+  if [ -n "$files" ]; then
+    echo "$files" | while read -r file; do
+      git add "$file"
+      echo "Staged: $file"
+    done
+  fi
+}
+
+# Git toggle staging with fzf - stage unstaged files, unstage staged files
+grs() {
+  # If arguments provided, use regular git restore --staged
+  if [ $# -gt 0 ]; then
+    git restore --staged "$@"
+    return
+  fi
+
+  # No arguments: use fzf to select files and toggle their staging status
+  local selections=$(git status --short | \
+    fzf --multi \
+      --height 40% \
+      --reverse \
+      --border \
+      --prompt="Select files to toggle staging (Tab for multi-select): " \
+      --preview 'git diff --color=always {2} 2>/dev/null || git diff --cached --color=always {2}' \
+      --preview-window='right:60%')
+
+  if [ -n "$selections" ]; then
+    echo "$selections" | while read -r line; do
+      local file_status=$(echo "$line" | awk '{print $1}')
+      local file=$(echo "$line" | awk '{print $2}')
+
+      # First character indicates staging area status
+      local staged_char="${file_status:0:1}"
+
+      # Check if file is staged (first char is M, A, D, R, C, not space or ?)
+      if [[ "$staged_char" != " " && "$staged_char" != "?" ]]; then
+        git restore --staged "$file"
+        echo "Unstaged: $file"
+      else
+        git add "$file"
+        echo "Staged: $file"
+      fi
+    done
+  fi
+}
+
 # Checkout local branch with fzf
 gb() {
   local branch=$(git branch --format='%(refname:short)' | fzf --height 40% --reverse --border --prompt="Checkout branch: ")
