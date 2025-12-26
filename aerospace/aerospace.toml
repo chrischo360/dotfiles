@@ -60,7 +60,7 @@ automatically-unhide-macos-hidden-apps = true
 # See: https://nikitabobko.github.io/AeroSpace/guide#binding-modes
 # 'main' binding mode must be always presented
 # Fallback value (if you omit the key): mode.main.binding = {}
-# [mode.main.binding]
+[mode.main.binding]
 #     alt-shift-s = 'exec-and-forget screencapture -i -c'
 
     # All possible keys:
