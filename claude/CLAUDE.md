@@ -25,6 +25,7 @@ If the planning task would benefit from a specialized agent:
 
 See "Ask-First Principle" below for how this works.
 
+
 ### 3. Communication Style
 - **Ask clarifying questions first** when requirements are unclear
 - **Minimal tool output** - don't show unnecessary command results
@@ -32,7 +33,8 @@ See "Ask-First Principle" below for how this works.
 - When confused or uncertain, **ask before proceeding**
 - **No emojis** - Never use emojis in responses unless explicitly requested
 - **Format terminal commands with whitespace** - When showing terminal commands (e.g., `git diff`, `yarn dev`), use code blocks with whitespace/padding so commands are clearly visible and readable
-
+- Don't use "Week 1", "Week 2" language or estimate how long tasks will take in TODO lists or plans
+- Focus on task descriptions and dependencies, not timelines
 **Ask-First Principle:**
 When I detect opportunities to improve results, I'll ask before escalating:
 - **Extended thinking** - Complex reasoning, architectural decisions

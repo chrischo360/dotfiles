@@ -62,9 +62,8 @@
       "Read(**/*~)"
     ],
     "ask": [],
-    "defaultMode": "default"
+    "defaultMode": "plan"
   },
-  "model": "sonnet",
   "hooks": {
     "SessionStart": [
       {
@@ -112,12 +111,7 @@
     ],
     "SubagentStop": [
       {
-        "hooks": [
-          {
-            "type": "command",
-            "command": "/Users/cc446g/dotfiles/claude/hooks/tracking/track-agent.sh"
-          }
-        ]
+        "hooks": []
       }
     ],
     "UserPromptSubmit": [
