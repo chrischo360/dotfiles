@@ -25,10 +25,11 @@
     colorMoved = default
 
 [pull]
-    rebase = false
+    rebase = true
 
 [push]
-    default = simple
+    default = current
+    autoSetupRemote = true
 
 [alias]
     st = status
