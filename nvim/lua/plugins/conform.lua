@@ -36,6 +36,7 @@ return {
       yaml = { "prettier" },
       -- markdown = { "prettier" }, -- DISABLED: No auto-formatting for markdown
       graphqls = { "prettier" },
+      svelte = { "prettier" },
       sh = { "shfmt" },
       bash = { "shfmt" },
       go = { "gofmt" },

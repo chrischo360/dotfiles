@@ -90,7 +90,7 @@ return {
         },
       })
       require("mason-lspconfig").setup({
-        ensure_installed = { "pyright", "lua_ls", "ts_ls", "jdtls", "intelephense", "rust_analyzer" },
+        ensure_installed = { "pyright", "lua_ls", "ts_ls", "jdtls", "intelephense", "rust_analyzer", "svelte" },
         automatic_installation = true,
       })
 
@@ -394,6 +394,23 @@ return {
         },
       })
 
+      -- Svelte
+      vim.lsp.config('svelte', {
+        capabilities = capabilities,
+        filetypes = { "svelte" },
+        settings = {
+          svelte = {
+            plugin = {
+              svelte = {
+                compilerWarnings = {
+                  ["a11y-missing-attribute"] = "ignore",
+                },
+              },
+            },
+          },
+        },
+      })
+
       -- Completion Setup
       local cmp = require("cmp")
       local luasnip = require("luasnip")
@@ -454,7 +471,7 @@ return {
       })
 
       -- Enable all configured LSP servers once
-      vim.lsp.enable({ 'ts_ls', 'lua_ls', 'pyright', 'jdtls', 'intelephense', 'rust_analyzer', 'sourcekit', 'metals' })
+      vim.lsp.enable({ 'ts_ls', 'lua_ls', 'pyright', 'jdtls', 'intelephense', 'rust_analyzer', 'sourcekit', 'metals', 'svelte' })
     end,
   },
 }

@@ -66,6 +66,8 @@ just = "latest"                 # Modern make alternative
 "npm:@google/gemini-cli" = "latest"    # Gemini AI CLI (settings: ~/dotfiles/gemini/)
 "npm:@biomejs/biome" = "latest"        # JavaScript/TypeScript formatter and linter
 "npm:ccstatusline" = "latest"          # Claude Code statusline
+"npm:prettier" = "latest"              # Code formatter
+"npm:prettier-plugin-svelte" = "latest"  # Svelte support for prettier
 
 # NOTE: macOS-specific CLI tools (terminal-notifier, rsync, curl, swiftlint) → Brewfile.macos
 # NOTE: GUI apps and fonts → Brewfile.macos

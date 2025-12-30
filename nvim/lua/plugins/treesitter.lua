@@ -30,6 +30,7 @@ return {
         "java",
         "rust",
         "bash",
+        "svelte",
       },
     })
   end,

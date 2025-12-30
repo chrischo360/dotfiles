@@ -131,6 +131,8 @@ See `MISE_MIGRATION.md` for migration details and limitations.
 **npm Global Packages:**
 - ccstatusline - Claude Code statusline
 - @google/gemini-cli - Gemini AI CLI (settings: ~/dotfiles/gemini/)
+- prettier - Code formatter (for Svelte and other formats)
+- prettier-plugin-svelte - Svelte support for prettier
 
 **Zsh Plugins (git submodules):**
 - zsh-autosuggestions - Command suggestions
