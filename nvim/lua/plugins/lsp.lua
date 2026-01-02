@@ -376,13 +376,11 @@ return {
         end,
       })
 
-      -- Scala
-      vim.lsp.config('metals', {
+      -- Scala (using legacy lspconfig.setup - vim.lsp.config doesn't work for metals)
+      require('lspconfig').metals.setup({
         cmd = { "/Users/cc446g/.local/bin/metals" },
-        filetypes = { "scala" },
         capabilities = capabilities,
         root_dir = function(fname)
-          -- Ensure URI has no authority component
           return vim.fs.root(fname, { "build.sbt", "build.sc", "build.gradle", "pom.xml", ".git" })
         end,
         settings = {
@@ -473,7 +471,8 @@ return {
       })
 
       -- Enable all configured LSP servers once
-      vim.lsp.enable({ 'ts_ls', 'lua_ls', 'pyright', 'jdtls', 'intelephense', 'rust_analyzer', 'sourcekit', 'metals', 'svelte' })
+      -- Note: metals uses lspconfig.setup() instead of vim.lsp.config(), so it's not in this list
+      vim.lsp.enable({ 'ts_ls', 'lua_ls', 'pyright', 'jdtls', 'intelephense', 'rust_analyzer', 'sourcekit', 'svelte' })
     end,
   },
 }
