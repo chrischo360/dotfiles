@@ -185,6 +185,11 @@ return {
           { "n", "<leader>b", actions.toggle_files, { desc = "Toggle file panel" } },
           { "n", "g<C-x>", actions.cycle_layout, { desc = "Cycle layout" } },
           { "n", "g?", actions.help({ "view" }), { desc = "Help" } },
+          -- Window navigation (consistent with Oil and NeoTree)
+          { "n", "<C-h>", "<C-w>h", { desc = "Navigate to left window" } },
+          { "n", "<C-j>", "<C-w>j", { desc = "Navigate to bottom window" } },
+          { "n", "<C-k>", "<C-w>k", { desc = "Navigate to top window" } },
+          { "n", "<C-l>", "<C-w>l", { desc = "Navigate to right window" } },
         },
         diff1 = {
           { "n", "g?", actions.help({ "view", "diff1" }), { desc = "Help" } },
@@ -222,6 +227,11 @@ return {
           { "n", "<leader>b", actions.toggle_files, { desc = "Toggle panel" } },
           { "n", "g<C-x>", actions.cycle_layout, { desc = "Cycle layout" } },
           { "n", "g?", actions.help("file_panel"), { desc = "Help" } },
+          -- Window navigation (consistent with Oil and NeoTree)
+          { "n", "<C-h>", "<C-w>h", { desc = "Navigate to left window" } },
+          { "n", "<C-j>", "<C-w>j", { desc = "Navigate to bottom window" } },
+          { "n", "<C-k>", "<C-w>k", { desc = "Navigate to top window" } },
+          { "n", "<C-l>", "<C-w>l", { desc = "Navigate to right window" } },
         },
         file_history_panel = {
           -- Navigation
@@ -250,6 +260,11 @@ return {
           { "n", "<leader>b", actions.toggle_files, { desc = "Toggle panel" } },
           { "n", "g<C-x>", actions.cycle_layout, { desc = "Cycle layout" } },
           { "n", "g?", actions.help("file_history_panel"), { desc = "Help" } },
+          -- Window navigation (consistent with Oil and NeoTree)
+          { "n", "<C-h>", "<C-w>h", { desc = "Navigate to left window" } },
+          { "n", "<C-j>", "<C-w>j", { desc = "Navigate to bottom window" } },
+          { "n", "<C-k>", "<C-w>k", { desc = "Navigate to top window" } },
+          { "n", "<C-l>", "<C-w>l", { desc = "Navigate to right window" } },
         },
         option_panel = {
           { "n", "<tab>", actions.select_entry, { desc = "Change option" } },

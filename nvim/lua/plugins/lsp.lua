@@ -378,7 +378,8 @@ return {
 
       -- Scala
       vim.lsp.config('metals', {
-        cmd = { vim.fn.expand("~/.local/bin/metals") },
+        cmd = { "/Users/cc446g/.local/bin/metals" },
+        filetypes = { "scala" },
         capabilities = capabilities,
         root_dir = function(fname)
           -- Ensure URI has no authority component
