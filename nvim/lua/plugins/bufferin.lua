@@ -74,7 +74,17 @@ return {
     -- Override get_display_name to add pins for top 5 and markers for main files
     local original_get_display_name = utils.get_display_name
     utils.get_display_name = function(name)
-      local base_name = original_get_display_name(name)
+      -- Extract parent directory + filename (e.g., plugins/bufferin.lua)
+      local parent_dir = vim.fn.fnamemodify(name, ":h:t")
+      local filename = vim.fn.fnamemodify(name, ":t")
+
+      -- Handle edge case: files in root or no parent directory
+      local base_name
+      if parent_dir == "" or parent_dir == "." then
+        base_name = filename
+      else
+        base_name = parent_dir .. "/" .. filename
+      end
 
       -- O(1) lookups
       local is_top_5 = top_5_cache[name]

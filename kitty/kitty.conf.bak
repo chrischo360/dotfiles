@@ -99,6 +99,6 @@ map cmd+shift+] next_tab
 
 
 # BEGIN_KITTY_THEME
-# Catppuccin-Latte
+# Adapta Nokto Maia
 include current-theme.conf
 # END_KITTY_THEME
