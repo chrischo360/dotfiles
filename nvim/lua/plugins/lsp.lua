@@ -378,6 +378,7 @@ return {
 
       -- Scala
       vim.lsp.config('metals', {
+        cmd = { vim.fn.expand("~/.local/bin/metals") },
         capabilities = capabilities,
         root_dir = function(fname)
           -- Ensure URI has no authority component

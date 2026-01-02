@@ -95,6 +95,11 @@ return {
     wk.add({
       { "<leader>-", desc = "🗂️  Open Oil (file explorer)" },
     })
+
+    -- Register NeoTree keybindings
+    wk.add({
+      { "<leader>e", desc = "🌲 Toggle NeoTree" },
+    })
   end,
   keys = {
     {

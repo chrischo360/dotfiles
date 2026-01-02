@@ -27,6 +27,7 @@ kubectl = "latest"              # Kubernetes CLI
 maven = "latest"                # Java build tool
 sbt = "latest"                  # Scala build tool
 scala = "latest"                # Scala language (depends on Java)
+coursier = "latest"             # Scala dependency manager and tool installer
 
 # ============================================
 # CLI Tools (Shell Enhancements)
