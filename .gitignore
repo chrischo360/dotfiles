@@ -9,3 +9,6 @@
 .gemini/installation_id
 .gemini/state.json
 .gemini/tmp/
+
+# Theme
+nvim/last-theme.txt
