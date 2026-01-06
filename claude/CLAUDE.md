@@ -25,6 +25,13 @@ If the planning task would benefit from a specialized agent:
 
 See "Ask-First Principle" below for how this works.
 
+**Plan File Review:**
+After planning is complete, plans are saved to `~/.claude/plans/<plan-name>.md` with:
+- Clear context and rationale
+- Step-by-step implementation instructions
+- Code examples ready to copy/paste
+- File locations and line numbers
+- Testing approaches
 
 ### 3. Communication Style
 - **Ask clarifying questions first** when requirements are unclear
@@ -59,7 +66,7 @@ I will ask: "This involves [reason]. Would you like me to use [approach/model/ag
 
 **Auto-Escalation (No Asking Required):**
 For these tools, I will automatically use them when appropriate without asking:
-- **mcp__pal__clink** - PREFERRED for codebase exploration and investigation (uses Gemini). Always use this instead of Explore agent for:
+- **mcp__pal__clink** - PREFERRED for codebase exploration and investigation (uses Cursor by default). Always use this instead of Explore agent for:
   - Finding files and searching code
   - Understanding codebase structure
   - Exploring existing implementations
@@ -67,6 +74,7 @@ For these tools, I will automatically use them when appropriate without asking:
   - Any exploratory investigation tasks
 
   **Usage guidelines:**
+  - **Do NOT specify cli_name** - Let it use the default (cursor). Only specify cli_name if explicitly requested by the user
   - **One-shot queries only** - Send task, get results, done. No back-and-forth conversation between models
   - **Data gathering focus** - Use for collecting information, not for iterative discussions
   - **Parallel execution** - When exploring multiple areas, spawn multiple clink agents in parallel (single message, multiple tool calls)

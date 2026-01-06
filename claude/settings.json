@@ -64,7 +64,6 @@
     "ask": [],
     "defaultMode": "plan"
   },
-  "model": "opus",
   "hooks": {
     "SessionStart": [
       {

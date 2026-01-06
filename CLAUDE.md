@@ -20,6 +20,11 @@ Personal configuration files for macOS development environment.
 │   │   ├── monitoring/ # CI/CD build monitoring
 │   │   └── utils/      # Notifications, buffers, aliases
 │   └── settings.json   # Claude Code settings
+├── cursor/             # Cursor AI editor configuration
+│   ├── User/           # User settings
+│   │   └── settings.json
+│   ├── mcp.json        # MCP server configuration
+│   └── cli-config.json # Cursor agent CLI configuration
 ├── git/                # Git configuration
 │   ├── gitconfig       # Global git config
 │   └── hooks/          # Git hooks
@@ -81,6 +86,9 @@ The install script creates these symlinks:
 ~/.claude/CLAUDE.md            -> ~/dotfiles/claude/CLAUDE.md
 ~/.gemini/settings.json        -> ~/dotfiles/gemini/settings.json (generated from template)
 ~/.local/bin/gemini            -> $(npm bin -g)/gemini
+~/.cursor/User/settings.json   -> ~/dotfiles/cursor/User/settings.json
+~/.cursor/mcp.json             -> ~/dotfiles/cursor/mcp.json
+~/.cursor/cli-config.json      -> ~/dotfiles/cursor/cli-config.json
 ```
 
 ## Package Management
