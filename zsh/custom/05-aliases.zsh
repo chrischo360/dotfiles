@@ -212,4 +212,14 @@ alias claude-costs='$DOTFILES_DIR/claude/scripts/cost/analyze-costs.py'
 # sf-ui-web - Build/clean utility
 alias sfb='$DOTFILES_DIR/scripts/codebase/sf-ui-web/sfb.sh'
 
- alias cfbuild='(cd ~/codebase/cp-toolkit && cargo install --path cp --force && cargo install --path interview --force && cargo install --path interview-tui --force)'
+alias cfbuild='(cd ~/codebase/cp-toolkit && cargo install --path cp --force && cargo install --path interview --force && cargo install --path interview-tui --force)'
+
+# Cursor Agent
+alias cursor-gemini='cursor agent --model gemini-3-pro'
+alias cursor-flash='cursor agent --model gemini-3-flash'
+
+alias cursor-opus='cursor agent --model opus-4.5'
+alias cursor-sonnet='cursor agent --model sonnet-4.5'
+
+alias cursor-opus-thinking='cursor agent --model opus-4.5-thinking'
+alias cursor-sonnet-thinking='cursor agent --model sonnet-4.5-thinking'

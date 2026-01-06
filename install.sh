@@ -244,6 +244,14 @@ else
     echo -e "${YELLOW}  ⚠ npm not found. Ensure mise tools are installed${NC}"
 fi
 
+# Cursor AI
+echo -e "${YELLOW}  Setting up Cursor AI configuration...${NC}"
+mkdir -p "$HOME/.cursor/User"
+create_symlink "$DOTFILES_DIR/cursor/User/settings.json" "$HOME/.cursor/User/settings.json"
+create_symlink "$DOTFILES_DIR/cursor/mcp.json" "$HOME/.cursor/mcp.json"
+create_symlink "$DOTFILES_DIR/cursor/cli-config.json" "$HOME/.cursor/cli-config.json"
+echo -e "${GREEN}  ✓ Cursor AI configuration linked${NC}"
+
 echo ""
 echo -e "${BLUE}[6/6] Making scripts executable...${NC}"
 
