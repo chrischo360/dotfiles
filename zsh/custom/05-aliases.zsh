@@ -212,6 +212,9 @@ alias claude-costs='$DOTFILES_DIR/claude/scripts/cost/analyze-costs.py'
 # sf-ui-web - Build/clean utility
 alias sfb='$DOTFILES_DIR/scripts/codebase/sf-ui-web/sfb.sh'
 
+# sf-ui-checkout - Development environment setup
+alias setup-sf-checkout='$DOTFILES_DIR/scripts/codebase/sf-ui-checkout/setup-dev-env.sh'
+
 alias cfbuild='(cd ~/codebase/cp-toolkit && cargo install --path cp --force && cargo install --path interview --force && cargo install --path interview-tui --force)'
 
 # Cursor Agent
@@ -223,3 +226,50 @@ alias cursor-sonnet='cursor agent --model sonnet-4.5'
 
 alias cursor-opus-thinking='cursor agent --model opus-4.5-thinking'
 alias cursor-sonnet-thinking='cursor agent --model sonnet-4.5-thinking'
+
+# PHP Code Quality Tools
+# Requires being in a PHP project root with includes/sdk/composer-packages/bin/
+
+# PHP sniff - checks changed files if no args given, otherwise checks specified files
+php-sniff() {
+  if [ $# -eq 0 ]; then
+    # No arguments: check all changed PHP files
+    local php_files=$(git diff --name-only --diff-filter=ACMR | grep '\.php$')
+
+    if [ -z "$php_files" ]; then
+      echo "No changed PHP files found in working directory"
+      return 0
+    fi
+
+    echo "Checking changed PHP files:"
+    echo "$php_files" | sed 's/^/  - /'
+    echo ""
+
+    echo "$php_files" | xargs /opt/homebrew/opt/php@8.1/bin/php includes/sdk/composer-packages/bin/phpcs --standard=CSNStores --warning-severity=0
+  else
+    # Arguments provided: check specified files
+    /opt/homebrew/opt/php@8.1/bin/php includes/sdk/composer-packages/bin/phpcs --standard=CSNStores --warning-severity=0 "$@"
+  fi
+}
+
+# PHP fix - fixes changed files if no args given, otherwise fixes specified files
+php-fix() {
+  if [ $# -eq 0 ]; then
+    # No arguments: fix all changed PHP files
+    local php_files=$(git diff --name-only --diff-filter=ACMR | grep '\.php$')
+
+    if [ -z "$php_files" ]; then
+      echo "No changed PHP files found in working directory"
+      return 0
+    fi
+
+    echo "Fixing changed PHP files:"
+    echo "$php_files" | sed 's/^/  - /'
+    echo ""
+
+    echo "$php_files" | xargs /opt/homebrew/opt/php@8.1/bin/php includes/sdk/composer-packages/bin/phpcbf --standard=CSNStores
+  else
+    # Arguments provided: fix specified files
+    /opt/homebrew/opt/php@8.1/bin/php includes/sdk/composer-packages/bin/phpcbf --standard=CSNStores "$@"
+  fi
+}

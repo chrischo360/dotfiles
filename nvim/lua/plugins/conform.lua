@@ -8,7 +8,7 @@ return {
       -- Customize or remove this keymap to your liking
       "<leader>f",
       function()
-        require("conform").format({ async = true })
+        require("conform").format({ async = false, timeout_ms = 60000 })
       end,
       mode = "",
       desc = "Format buffer",
@@ -45,7 +45,7 @@ return {
       c = { "clang-format" },
       swift = { "swift_format" },
       scala = { "scalafmt" },
-      -- php = { "company_php_fixer" }, -- DISABLED
+      php = { "company_php_fixer" }, -- DISABLED
     },
     -- Set default options
     default_format_opts = {
@@ -60,7 +60,7 @@ return {
 
       -- DISABLE PHP formatting entirely
       if vim.bo[bufnr].filetype == "php" then
-        return false -- Skip PHP formatting
+        return false -- Skip PHP formatting on save
       end
 
       -- DISABLE Swift formatting entirely
@@ -72,6 +72,11 @@ return {
       if vim.bo[bufnr].filetype == "markdown" then
         return false -- Skip Markdown formatting
       end
+
+      -- PHP needs extra time for comprehensive formatting (DISABLED - using manual <leader>f only)
+      -- if vim.bo[bufnr].filetype == "php" then
+      --   return { timeout_ms = 60000 }
+      -- end
 
       -- Standard timeout for other languages
       return { timeout_ms = 2000 }
@@ -135,12 +140,12 @@ return {
         end,
         args = function(self, ctx)
           local ok, result = pcall(function()
-            -- Prioritize the comprehensive fix.php script
-            local fix_script = vim.fn.findfile("vendor-bin/cs/fix.php", ".;")
-            if fix_script ~= "" then
-              return { fix_script, "$FILENAME" }
-            end
-            -- Fallback to project phpcbf
+            -- DISABLED: Skip the comprehensive fix.php script (too slow)
+            -- local fix_script = vim.fn.findfile("vendor-bin/cs/fix.php", ".;")
+            -- if fix_script ~= "" then
+            --   return { fix_script, "$FILENAME" }
+            -- end
+            -- Use project phpcbf instead
             local project_phpcbf = vim.fn.findfile("includes/sdk/composer-packages/bin/phpcbf", ".;")
             if project_phpcbf ~= "" then
               return { project_phpcbf, "--standard=CSNStores", "$FILENAME" }
@@ -151,7 +156,7 @@ return {
           return ok and result or { "--standard=PSR12", "$FILENAME" }
         end,
         stdin = false,
-        timeout_ms = 20000, -- Extra timeout for comprehensive formatting
+        timeout_ms = 60000, -- Extra timeout for comprehensive formatting (60 seconds)
       },
       phpcbf = {
         command = function()
