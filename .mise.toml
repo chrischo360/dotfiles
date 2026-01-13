@@ -20,7 +20,7 @@ deno = "latest"                 # Secure TypeScript runtime
 # ============================================
 # Tools that benefit from version management
 
-# Package managers (yarn/npm/pnpm) are managed by corepack (see hooks below)
+yarn = "latest"                 # Yarn package manager
 kubectl = "latest"              # Kubernetes CLI
 
 # Java ecosystem (requires Java to be installed first)
@@ -112,6 +112,4 @@ jobs = 4
 # Enable experimental features (required for hooks)
 experimental = true
 
-[hooks]
-# Enable corepack to manage package managers (yarn/npm/pnpm) from package.json packageManager field
-postinstall = "npx corepack enable"
+# No hooks needed for standard mise usage

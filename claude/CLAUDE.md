@@ -80,8 +80,11 @@ For these tools, I will automatically use them when appropriate without asking:
   - **Parallel execution** - When exploring multiple areas, spawn multiple clink agents in parallel (single message, multiple tool calls)
   - Example: Instead of one clink exploring everything sequentially, spawn 2-3 clink calls in parallel for different search focuses
 
-- **PAL tools** - External model consultation (only clink is enabled)
-  - `clink` - Quick external model consultation, codebase exploration (ENABLED)
+- **PAL tools** - Multi-model orchestration
+  - `consensus` (Gemini 3 Pro + Cursor) - Multi-perspective decisions
+  - `debug` (Cursor) - Systematic debugging
+  - `apilookup` (Gemini Flash) - API documentation lookup
+  - `clink` (Cursor) - Codebase exploration (defaults to Cursor)
 
 ### 4. Multi-File Changes
 - **Group changes by feature/component** - not file-by-file

@@ -8,7 +8,31 @@ return {
       -- Customize or remove this keymap to your liking
       "<leader>f",
       function()
-        require("conform").format({ async = false, timeout_ms = 60000 })
+        local conform = require("conform")
+        local bufnr = vim.api.nvim_get_current_buf()
+        local filepath = vim.api.nvim_buf_get_name(bufnr)
+        local filename = vim.fn.fnamemodify(filepath, ":t")
+
+        -- Get formatters for current buffer (only available ones)
+        local formatters = conform.list_formatters(bufnr)
+        local available_formatters = {}
+        for _, f in ipairs(formatters) do
+          if f.available then
+            table.insert(available_formatters, f.name)
+          end
+        end
+
+        local success = conform.format({ async = false, timeout_ms = 60000 })
+
+        if success then
+          if #available_formatters > 0 then
+            print("✓ Formatted " .. filename .. " with: " .. table.concat(available_formatters, ", "))
+          else
+            print("✓ Formatted " .. filename)
+          end
+        else
+          print("✗ Formatting failed for " .. filename)
+        end
       end,
       mode = "",
       desc = "Format buffer",
@@ -78,8 +102,24 @@ return {
       --   return { timeout_ms = 60000 }
       -- end
 
-      -- Standard timeout for other languages
-      return { timeout_ms = 2000 }
+      -- Standard timeout for other languages with callback to show formatter used
+      return {
+        timeout_ms = 2000,
+        lsp_format = "fallback",
+        callback = function()
+          local conform = require("conform")
+          local formatters = conform.list_formatters(bufnr)
+          local available_formatters = {}
+          for _, f in ipairs(formatters) do
+            if f.available then
+              table.insert(available_formatters, f.name)
+            end
+          end
+          if #available_formatters > 0 then
+            vim.notify("Formatted with: " .. table.concat(available_formatters, ", "), vim.log.levels.INFO)
+          end
+        end,
+      }
     end,
     -- Customize formatters
     formatters = {
@@ -87,18 +127,14 @@ return {
         -- Biome uses biome.json for configuration, but you can pass args here
         -- By default it will look for biome.json in your project root
         prepend_args = {},
+        -- Only run if biome.json exists in project
+        condition = function(self, ctx)
+          return vim.fn.findfile("biome.json", ".;") ~= ""
+        end,
       },
       prettier = {
-        prepend_args = {
-          "--tab-width",
-          "2",
-          "--use-tabs",
-          "false",
-          "--single-quote",
-          "true",
-          "--trailing-comma",
-          "none",
-        },
+        -- Respect project's prettier config (prettier.config.js, .prettierrc, etc.)
+        prepend_args = {},
       },
       stylua = {
         prepend_args = {

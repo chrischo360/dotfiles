@@ -11,7 +11,10 @@
       "WebFetch",
       "WebSearch",
       "EnterPlanMode",
-      "mcp__pal__clink"
+      "mcp__pal__clink",
+      "mcp__pal__consensus",
+      "mcp__pal__debug",
+      "mcp__pal__apilookup"
     ],
     "deny": [
       "Read(./.env)",

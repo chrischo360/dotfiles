@@ -1,89 +1,56 @@
 # PAL MCP Server Configuration
 
-Guide for configuring PAL MCP Server with limited tools and default models.
+Multi-model orchestration for Claude Code.
+
+## Model Orchestration Strategy
+
+### Two-Model System
+
+**1. Gemini (Flash/Pro)** - API lookups and supporting perspectives
+- Tools: `apilookup`, `consensus` (for stance)
+- Use when: API research, documentation, supporting arguments
+- Example: "Use apilookup to find React hooks documentation"
+
+**2. Cursor Opus 4.5 Thinking** - Implementation and debugging
+- Tools: `clink`, `debug`, `consensus` (against/neutral stances)
+- Use when: File exploration, debugging, counterarguments
+- Example: "Use debug to trace race condition in login flow"
+
+## Tool → Model Mapping
+
+| Tool | Model | Purpose |
+|------|-------|---------|
+| `consensus` | Gemini 3 Pro (for) + Cursor (against/neutral) | Multi-perspective decisions |
+| `debug` | Cursor | Systematic debugging |
+| `apilookup` | Gemini 2.5 Flash | API documentation |
+| `clink` | Cursor (Opus 4.5) | File exploration, implementation |
 
 ## Configuration Location
 
-Edit `~/dotfiles/pal-mcp-server/.env`
+Edit `~/pal-mcp-server/.env`
 
-## Limit Available Tools
-
-Add this to your `.env` file:
+## Current Configuration
 
 ```bash
-# Limit available tools (comma-separated)
-ENABLED_TOOLS=clink,thinkdeep,planner,consensus,debug,apilookup,listmodels
-```
-
-## Default Models by Tool Type
-
-Add these environment variables to set default models:
-
-```bash
-# Default model for clink (auto-selects based on complexity)
-DEFAULT_MODEL_CLINK=auto
-
-# Default model for thinkdeep (deep reasoning)
-DEFAULT_MODEL_THINKDEEP=gemini-3-pro-preview
-
-# Default model for planner (architectural thinking)
-DEFAULT_MODEL_PLANNER=gemini-3-pro-preview
-
-# Default model for consensus (mixed models for different stances)
-DEFAULT_MODEL_CONSENSUS_FOR=gemini-3-pro-preview
-DEFAULT_MODEL_CONSENSUS_AGAINST=gemini-2.5-flash
-DEFAULT_MODEL_CONSENSUS_NEUTRAL=gemini-2.5-flash
-
-# Default model for debug (varies by complexity)
-DEFAULT_MODEL_DEBUG_COMPLEX=gemini-3-pro-preview
-DEFAULT_MODEL_DEBUG_SIMPLE=gemini-2.5-flash
-
-# Default model for apilookup (fast lookup)
+# Models
 DEFAULT_MODEL_APILOOKUP=gemini-2.5-flash
-```
+DEFAULT_MODEL_DEBUG_COMPLEX=cursor
+DEFAULT_MODEL_DEBUG_SIMPLE=cursor
 
-## Tool Selection Logic
+# Consensus
+CONSENSUS_FOR_MODEL=gemini-3-pro-preview
+CONSENSUS_AGAINST_MODEL=cursor
+CONSENSUS_NEUTRAL_MODEL=cursor
 
-**Auto-use without asking:**
-
-- `apilookup` - When looking up API docs, versions, breaking changes
-- `clink` - Quick second opinions, alternative perspectives
-- `thinkdeep` - Complex investigations requiring deep reasoning
-- `planner` - Planning multi-file features, migrations, system design
-- `consensus` - Important architectural/tech stack decisions
-- `debug` - Mysterious bugs, race conditions, hard-to-reproduce issues
-
-## Model Selection Strategy
-
-**Use Gemini Flash (2.5-flash) for:**
-- Quick code reviews
-- Simple implementations
-- Syntax/style validation
-- Fast lookups (apilookup)
-- Supporting perspectives in consensus (against/neutral stances)
-
-**Use Gemini Pro (3-pro-preview) for:**
-- Architectural decisions
-- Complex debugging (debug tool)
-- Large feature planning (planner tool)
-- Deep analysis (thinkdeep tool)
-- Primary perspective in consensus (for stance)
-
-## Apply Configuration
-
-After editing `.env`:
-
-```bash
-# Restart Claude Code to reload MCP server
-# The server will pick up new environment variables
+# Tools (thinkdeep, planner, listmodels disabled)
+ENABLED_TOOLS=clink,consensus,debug,apilookup
 ```
 
 ## Verify Configuration
 
-```bash
-# In Claude Code, run:
-mcp__pal__listmodels
+After restarting Claude Code:
 
-# Check that only enabled tools are available
-# Verify default models match your configuration
+```bash
+# Test available tools
+# Should see: consensus, debug, apilookup, clink
 ```

@@ -1,5 +1,11 @@
 require("config.lazy")
 
+-- Indentation settings (2 spaces, no tabs)
+vim.opt.tabstop = 2        -- Width of tab character
+vim.opt.shiftwidth = 2     -- Indentation width for << and >>
+vim.opt.softtabstop = 2    -- Number of spaces per Tab key press
+vim.opt.expandtab = true   -- Use spaces instead of tabs
+
 -- Mode-specific cursor shapes for better visual feedback
 vim.opt.guicursor = {
   "n-v-c:block",           -- Normal, Visual, Command: block cursor
