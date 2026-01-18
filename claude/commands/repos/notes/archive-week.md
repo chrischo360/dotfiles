@@ -2,16 +2,26 @@ Archive the current weekly plan and create a new one.
 
 Steps:
 
-1. Read ~/notes/plans/week.md to extract the current week number and all uncompleted tasks (lines with `- [ ]`). Read through the entire file for all tasks.
-2. Archive the current week.md by moving it to /Users/cc446g/notes/plans/archive/2025-week-{current_week}.md
-3. Create a new week.md for the next week with:
-   - Updated week number and date range (next Monday - Friday)
-   - Template structure from the archived file
-   - All uncompleted tasks migrated to appropriate sections:
-     - Daily tasks → Move to Monday or appropriate new day
-     - Blocked items → Keep in Blocked section
-     - Active Tickets → Keep in Active Tickets section
-     - Backlog items → Keep in Backlog section
-4. Do not commit any changes
+1. Read ~/notes/plans/week.md to extract:
+   - Current week number
+   - All uncompleted tasks (lines with `- [ ]`)
+   - Section context for each task
 
-Format the new week following the existing template structure with all standard sections.
+2. Read ~/notes/plans/template/week.md to get:
+   - Clean template structure
+   - Standard section headers
+
+3. Archive current week.md:
+   - Move to ~/notes/plans/archive/2025-week-{current_week}_{date}.md
+   - Format: 2025-week-04_2026-jan-18.md
+
+4. Create new week.md:
+   - Start from template/week.md structure
+   - Update header: Week {next_week}: {MM/DD/YYYY} - {MM/DD/YYYY}
+   - Migrate uncompleted tasks:
+     * Daily tasks (Sunday-Friday) → Place in Monday section
+     * Blocked tasks → Keep in Blocked section
+     * Work/Backlog tasks → Keep in appropriate backlog sections
+     * Other tasks → Preserve in matching sections or append
+
+5. Do not commit changes
