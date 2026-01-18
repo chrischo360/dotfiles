@@ -102,6 +102,3 @@ require("lazy").setup({
   -- automatically check for plugin updates
   checker = { enabled = false },
 })
-
--- Setup local plugins after lazy.nvim
-require("config.local-plugins")

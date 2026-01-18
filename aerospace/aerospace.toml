@@ -1,4 +1,4 @@
-# Available commands: https://nikitabobko.github.io/AeroSpace/commands
+# Available commands: https://nikitabobko.github.io/AeroSpace/commands or `aerospace --help`
 after-login-command = []
 
 # You can use it to add commands that run after AeroSpace startup.

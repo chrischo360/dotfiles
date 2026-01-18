@@ -77,49 +77,9 @@ return {
     },
     -- Set up format-on-save
     format_on_save = function(bufnr)
-      -- Skip formatting for certain filetypes or large files
-      if vim.bo[bufnr].filetype == "" then
-        return false
-      end
-
-      -- DISABLE PHP formatting entirely
-      if vim.bo[bufnr].filetype == "php" then
-        return false -- Skip PHP formatting on save
-      end
-
-      -- DISABLE Swift formatting entirely
-      if vim.bo[bufnr].filetype == "swift" then
-        return false -- Skip Swift formatting
-      end
-
-      -- DISABLE Markdown formatting entirely
-      if vim.bo[bufnr].filetype == "markdown" then
-        return false -- Skip Markdown formatting
-      end
-
-      -- PHP needs extra time for comprehensive formatting (DISABLED - using manual <leader>f only)
-      -- if vim.bo[bufnr].filetype == "php" then
-      --   return { timeout_ms = 60000 }
-      -- end
-
-      -- Standard timeout for other languages with callback to show formatter used
-      return {
-        timeout_ms = 2000,
-        lsp_format = "fallback",
-        callback = function()
-          local conform = require("conform")
-          local formatters = conform.list_formatters(bufnr)
-          local available_formatters = {}
-          for _, f in ipairs(formatters) do
-            if f.available then
-              table.insert(available_formatters, f.name)
-            end
-          end
-          if #available_formatters > 0 then
-            vim.notify("Formatted with: " .. table.concat(available_formatters, ", "), vim.log.levels.INFO)
-          end
-        end,
-      }
+      -- DISABLED: Format on save disabled globally
+      -- Use <leader>f to format manually
+      return false
     end,
     -- Customize formatters
     formatters = {
@@ -127,9 +87,9 @@ return {
         -- Biome uses biome.json for configuration, but you can pass args here
         -- By default it will look for biome.json in your project root
         prepend_args = {},
-        -- Only run if biome.json exists in project
+        -- Only run if biome.json or biome.jsonc exists in project
         condition = function(self, ctx)
-          return vim.fn.findfile("biome.json", ".;") ~= ""
+          return vim.fn.findfile("biome.json", ".;") ~= "" or vim.fn.findfile("biome.jsonc", ".;") ~= ""
         end,
       },
       prettier = {

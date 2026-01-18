@@ -23,10 +23,29 @@ return {
       -- Enable/disable the plugin
       enabled = true,
 
-      -- Headings: Just icons, simple
+      -- Headings: Icons with controlled backgrounds
       heading = {
         enabled = true,
         icons = { "󰼏 ", "󰼐 ", "󰼑 ", "󰼒 ", "󰼓 ", "󰼔 " },
+
+        -- Background configuration
+        -- Set to {} to disable all backgrounds
+        -- Or list specific levels: { 'RenderMarkdownH1Bg', 'RenderMarkdownH2Bg' }
+        backgrounds = {
+          'RenderMarkdownH1Bg',
+          'RenderMarkdownH2Bg',
+          'RenderMarkdownH3Bg',
+          'RenderMarkdownH4Bg',
+          'RenderMarkdownH5Bg',
+          'RenderMarkdownH6Bg',
+        },
+
+        -- Width: 'full' = entire window, 'block' = only heading text width
+        width = 'full',
+
+        -- Padding (only applies when width = 'block')
+        left_pad = 0,
+        right_pad = 0,
       },
 
       -- Code blocks: Syntax highlighting
