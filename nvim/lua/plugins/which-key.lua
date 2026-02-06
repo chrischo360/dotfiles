@@ -65,9 +65,21 @@ return {
       { "<leader>dfa", desc = "File History (all files)" },
       { "<leader>dm", desc = "Compare with main/master" },
       { "<leader>db", desc = "Compare current with branch" },
-      { "<leader>d2", desc = "Compare two branches" },
+      { "<leader>d2b", desc = "Compare two branches" },
       { "<leader>dq", desc = "Quick Diff Menu" },
       { "<leader>ds", desc = "Document symbols" },
+    })
+
+    -- Register GitHub keybindings
+    wk.add({
+      { "<leader>g", group = "🐙 Git/GitHub" },
+      { "<leader>gs", desc = "Git Status (fugitive)" },
+      { "<leader>gb", desc = "Git Blame (fugitive)" },
+      { "<leader>gv", desc = "Git Log (GV)" },
+      { "<leader>gV", desc = "Git Log (current file)" },
+      { "<leader>gy", desc = "Copy GitHub permalink" },
+      { "<leader>go", desc = "Open file on GitHub" },
+      { "<leader>gp", desc = "Open GitHub PR in diffview" },
     })
 
     -- Register Harpoon keybindings with organized groups

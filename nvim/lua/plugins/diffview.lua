@@ -89,7 +89,7 @@ return {
 
     require("diffview").setup({
       diff_binaries = false,
-      enhanced_diff_hl = false, -- Disabled: Treesitter already provides syntax highlighting
+      enhanced_diff_hl = true, -- Enable character-level diff highlighting (shows exactly what changed)
       git_cmd = { "git" },
       use_icons = true,
       show_help_hints = true,

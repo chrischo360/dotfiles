@@ -12,7 +12,8 @@
       "WebSearch",
       "EnterPlanMode",
       "mcp__pal__clink",
-      "mcp__pal__consensus",
+      "mcp__pal__analyze",
+      "mcp__pal__codereview",
       "mcp__pal__debug",
       "mcp__pal__apilookup"
     ],
@@ -243,6 +244,12 @@
     },
     {
       "tool": "mcp__pal__clink"
+    },
+    {
+      "tool": "mcp__pal__analyze"
+    },
+    {
+      "tool": "mcp__pal__codereview"
     }
   ],
   "allowedDirectories": [

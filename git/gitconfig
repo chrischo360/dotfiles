@@ -6,6 +6,7 @@
     editor = nvim
     autocrlf = input
     pager = delta
+    excludesFile = ~/dotfiles/git/gitignore_global
 
 [init]
     defaultBranch = main
@@ -17,6 +18,16 @@
     navigate = true
     light = false
     side-by-side = true
+    line-numbers = true
+    syntax-theme = Dracula
+    plus-style = "syntax #2d4a3e"
+    plus-emph-style = "syntax #3d6a4e"
+    minus-style = "syntax #4a2d2d"
+    minus-emph-style = "syntax #6a3d3d"
+    line-numbers-plus-style = "#50fa7b"
+    line-numbers-minus-style = "#ff5555"
+    hunk-header-style = "file line-number syntax"
+    hunk-header-decoration-style = "blue box"
 
 [merge]
     conflictstyle = diff3

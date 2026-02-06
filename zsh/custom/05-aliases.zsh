@@ -14,6 +14,14 @@ alias tree="eza --tree --icons"
 alias cat="bat --style=plain --paging=never"
 alias less="bat"
 
+# Dev CLI - Context-aware development commands
+alias dev='$DOTFILES_DIR/scripts/dev/dev.sh'
+alias d='dev'
+
+# AI CLI Agent - easily switch between cursor/claude/etc
+# Change this to switch AI providers: "claude", "cursor agent", "gemini", etc.
+alias cli-agent='cursor agent'
+
 # Git shortcuts
 alias gs="git status -sb"
 alias gc="git commit"
@@ -26,7 +34,7 @@ alias gpomr="git pull origin main --rebase"
 alias gpomm="git pull origin main --merge"
 alias gco="git checkout"
 alias gcb="git checkout -b"
-alias gl="git log --graph --stat --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr) %C(bold blue)<%an>%Creset' --abbrev-commit"
+alias gl="git log --graph --stat --pretty=format:'%Cred%h%Creset%C(yellow)%d%Creset %Cgreen(%cr)%Creset %C(bold blue)<%an>%Creset%n%n    %s%n' --abbrev-commit"
 alias gd="git diff"
 
 # Git rebase
@@ -209,13 +217,29 @@ claude-mcp() {
 # Claude Code - Get costs
 alias claude-costs='$DOTFILES_DIR/claude/scripts/cost/analyze-costs.py'
 
-# sf-ui-web - Build/clean utility
-alias sfb='$DOTFILES_DIR/scripts/codebase/sf-ui-web/sfb.sh'
+# sf-ui-web - Build/clean utility (DEPRECATED: use `dev` instead)
+# Mapping: sfb -> dev rebuild, sfb -d -> dev clean:dist, sfb -a -> dev clean:all, etc.
+sfb() {
+    echo -e "\033[1;33m⚠️  sfb is deprecated. Use 'dev' instead:\033[0m"
+    echo -e "\033[2m   sfb      -> dev rebuild"
+    echo -e "   sfb -d   -> dev clean:dist"
+    echo -e "   sfb -t   -> dev clean:turbo"
+    echo -e "   sfb -g   -> dev clean:generated"
+    echo -e "   sfb -a   -> dev clean:all"
+    echo -e "   sfb -f   -> dev :run fullreset\033[0m"
+    echo ""
+    # Still run the old script for now
+    "$DOTFILES_DIR/scripts/codebase/sf-ui-web/sfb.sh" "$@"
+}
 
 # sf-ui-checkout - Development environment setup
-alias setup-sf-checkout='$DOTFILES_DIR/scripts/codebase/sf-ui-checkout/setup-dev-env.sh'
+alias sf-ui-checkout-dev='$DOTFILES_DIR/scripts/codebase/sf-ui-checkout/setup-dev-env.sh'
 
-alias cfbuild='(cd ~/codebase/cp-toolkit && cargo install --path cp --force && cargo install --path interview --force && cargo install --path interview-tui --force)'
+# sf-ui-cart-and-checkout - Development environment setup
+alias sf-ui-cart-and-checkout-dev='$DOTFILES_DIR/scripts/codebase/sf-ui-cart-and-checkout/setup-dev-env.sh'
+
+# alias cfbuild='(cd ~/codebase/cp-toolkit && cargo install --path cp --force && cargo install --path interview --force && cargo install --path interview-tui --force)'
+alias cf-dev="cargo run -p coachforces-cli --release --"
 
 # Cursor Agent
 alias cursor-gemini='cursor agent --model gemini-3-pro'
@@ -273,3 +297,6 @@ php-fix() {
     /opt/homebrew/opt/php@8.1/bin/php includes/sdk/composer-packages/bin/phpcbf --standard=CSNStores "$@"
   fi
 }
+
+# Sync server from remote Windows machine
+alias sync-server='rsync -avz --progress --rsync-path="wsl rsync" --exclude-from="$HOME/.rsyncignore" homeserver-remote:/mnt/c/Users/chris/codebase/server/ ~/server/'

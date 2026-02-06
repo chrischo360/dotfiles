@@ -311,6 +311,59 @@ Configure the statusline interactively:
 ccstatusline
 ```
 
+### Memory Usage Analysis
+
+Diagnose slow system performance with the `memory` command. Tracks nvim, LSP servers, and node processes.
+
+**Basic usage:**
+```bash
+memory                    # Default: nvim/LSP/node processes
+memory --summary          # Summary only, skip details
+memory --chrome           # Chrome/Chromium processes
+memory --docker           # Docker-related processes
+memory --node             # All Node.js processes
+memory --all              # Top 20 processes by memory
+```
+
+**What to look for when system is slow:**
+
+1. **TypeScript LS eating memory** - Check if TS language servers are bloated
+   - Normal: 5-50 MB per project
+   - Bloated: 100+ MB (check tsconfig.json includes)
+   
+2. **Orphaned LSP servers** - Look for `👻 ORPHANED` marker
+   - Kill with: `pkill -f typescript-language-server`
+   
+3. **Cursor agent processes** - Can grow large over time
+   - Listed under "OTHER NODE PROCESSES"
+   - Restart Cursor if excessive
+
+4. **Too many nvim instances** - Each instance spawns LSP servers
+   - Close unused nvim sessions
+   - Kill all: `pkill nvim`
+
+**Quick cleanup commands:**
+```bash
+# Kill specific process
+kill <PID>
+
+# Kill all nvim instances
+pkill nvim
+
+# Kill orphaned LSP servers
+pkill -f typescript-language-server
+pkill -f rust-analyzer
+
+# Kill all node (⚠️ careful!)
+pkill node
+```
+
+**Typical healthy totals:**
+- 5-8 nvim instances: ~200-300 MB
+- LSP servers: ~100-200 MB
+- Other node: ~200-400 MB
+- Grand total: <1 GB
+
 ### Claude Session State Tracking
 
 Multi-session awareness in tmux statusline. Tracks Claude Code sessions across panes.

@@ -1,5 +1,8 @@
 require("config.lazy")
 
+-- Clear search highlighting with Escape
+vim.keymap.set("n", "<Esc>", "<cmd>nohlsearch<CR>", { desc = "Clear search highlighting" })
+
 -- Indentation settings (2 spaces, no tabs)
 vim.opt.tabstop = 2        -- Width of tab character
 vim.opt.shiftwidth = 2     -- Indentation width for << and >>

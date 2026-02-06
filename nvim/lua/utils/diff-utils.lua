@@ -3,6 +3,168 @@
 
 local M = {}
 
+-- Get current git remote URL (GitHub)
+local function get_github_url()
+  local handle = io.popen("git remote get-url origin 2>/dev/null")
+  if not handle then return nil end
+  local url = handle:read("*a"):gsub("%s+$", "")
+  handle:close()
+  
+  if url == "" then return nil end
+  
+  -- Convert SSH to HTTPS format
+  url = url:gsub("git@github%.com:", "https://github.com/")
+  url = url:gsub("%.git$", "")
+  return url
+end
+
+-- Get current branch
+local function get_current_branch()
+  local handle = io.popen("git rev-parse --abbrev-ref HEAD 2>/dev/null")
+  if not handle then return nil end
+  local branch = handle:read("*a"):gsub("%s+$", "")
+  handle:close()
+  return branch ~= "" and branch or nil
+end
+
+-- Get current commit SHA
+local function get_current_sha()
+  local handle = io.popen("git rev-parse HEAD 2>/dev/null")
+  if not handle then return nil end
+  local sha = handle:read("*a"):gsub("%s+$", "")
+  handle:close()
+  return sha ~= "" and sha or nil
+end
+
+-- Copy GitHub permalink to clipboard
+function M.copy_github_permalink()
+  local github_url = get_github_url()
+  if not github_url then
+    vim.notify("Not a GitHub repository", vim.log.levels.WARN)
+    return
+  end
+  
+  local sha = get_current_sha()
+  if not sha then
+    vim.notify("Could not get commit SHA", vim.log.levels.WARN)
+    return
+  end
+  
+  local file = vim.fn.expand("%:.")
+  if file == "" then
+    vim.notify("No file is currently open", vim.log.levels.WARN)
+    return
+  end
+  
+  local line = vim.fn.line(".")
+  local permalink = string.format("%s/blob/%s/%s#L%d", github_url, sha, file, line)
+  
+  vim.fn.setreg("+", permalink)
+  vim.notify("Copied: " .. permalink, vim.log.levels.INFO)
+end
+
+-- Copy GitHub permalink for visual selection (line range)
+function M.copy_github_permalink_range()
+  local github_url = get_github_url()
+  if not github_url then
+    vim.notify("Not a GitHub repository", vim.log.levels.WARN)
+    return
+  end
+  
+  local sha = get_current_sha()
+  if not sha then
+    vim.notify("Could not get commit SHA", vim.log.levels.WARN)
+    return
+  end
+  
+  local file = vim.fn.expand("%:.")
+  if file == "" then
+    vim.notify("No file is currently open", vim.log.levels.WARN)
+    return
+  end
+  
+  local start_line = vim.fn.line("'<")
+  local end_line = vim.fn.line("'>")
+  
+  local permalink
+  if start_line == end_line then
+    permalink = string.format("%s/blob/%s/%s#L%d", github_url, sha, file, start_line)
+  else
+    permalink = string.format("%s/blob/%s/%s#L%d-L%d", github_url, sha, file, start_line, end_line)
+  end
+  
+  vim.fn.setreg("+", permalink)
+  vim.notify("Copied: " .. permalink, vim.log.levels.INFO)
+end
+
+-- Open current file on GitHub in browser
+function M.open_on_github()
+  local github_url = get_github_url()
+  if not github_url then
+    vim.notify("Not a GitHub repository", vim.log.levels.WARN)
+    return
+  end
+  
+  local branch = get_current_branch()
+  if not branch then
+    vim.notify("Could not get current branch", vim.log.levels.WARN)
+    return
+  end
+  
+  local file = vim.fn.expand("%:.")
+  if file == "" then
+    vim.notify("No file is currently open", vim.log.levels.WARN)
+    return
+  end
+  
+  local line = vim.fn.line(".")
+  local url = string.format("%s/blob/%s/%s#L%d", github_url, branch, file, line)
+  
+  -- Open in browser (macOS)
+  vim.fn.system({"open", url})
+  vim.notify("Opened in browser", vim.log.levels.INFO)
+end
+
+-- Open a GitHub PR in diffview (parse URL and open locally)
+function M.open_pr_diff()
+  -- Get URL from clipboard or prompt
+  vim.ui.input({
+    prompt = "GitHub PR URL: ",
+    default = vim.fn.getreg("+"),
+  }, function(url)
+    if not url or url == "" then return end
+    
+    -- Parse PR URL: https://github.com/owner/repo/pull/123
+    local owner, repo, pr_num = url:match("github%.com/([^/]+)/([^/]+)/pull/(%d+)")
+    if not owner or not repo or not pr_num then
+      vim.notify("Invalid GitHub PR URL", vim.log.levels.ERROR)
+      return
+    end
+    
+    -- Fetch PR info using gh CLI
+    local cmd = string.format("gh pr view %s --repo %s/%s --json baseRefName,headRefName 2>/dev/null", pr_num, owner, repo)
+    local handle = io.popen(cmd)
+    if not handle then
+      vim.notify("Failed to fetch PR info (is gh CLI installed?)", vim.log.levels.ERROR)
+      return
+    end
+    
+    local result = handle:read("*a")
+    handle:close()
+    
+    local ok, data = pcall(vim.json.decode, result)
+    if not ok or not data then
+      vim.notify("Failed to parse PR info", vim.log.levels.ERROR)
+      return
+    end
+    
+    -- Open diffview comparing base..head
+    local diff_cmd = string.format("DiffviewOpen %s..%s", data.baseRefName, data.headRefName)
+    vim.cmd(diff_cmd)
+    vim.notify(string.format("Opened PR #%s: %s → %s", pr_num, data.headRefName, data.baseRefName), vim.log.levels.INFO)
+  end)
+end
+
 -- Get list of git branches
 local function get_git_branches()
   local handle = io.popen('git branch --format="%(refname:short)"')
@@ -294,6 +456,35 @@ function M.setup_keymaps()
     "<leader>d2b",
     M.compare_branches_interactive,
     vim.tbl_extend("force", opts, { desc = "Compare two branches" })
+  )
+
+  -- GitHub link utilities
+  vim.keymap.set(
+    "n",
+    "<leader>gy",
+    M.copy_github_permalink,
+    vim.tbl_extend("force", opts, { desc = "Copy GitHub permalink" })
+  )
+
+  vim.keymap.set(
+    "v",
+    "<leader>gy",
+    M.copy_github_permalink_range,
+    vim.tbl_extend("force", opts, { desc = "Copy GitHub permalink (selection)" })
+  )
+
+  vim.keymap.set(
+    "n",
+    "<leader>go",
+    M.open_on_github,
+    vim.tbl_extend("force", opts, { desc = "Open file on GitHub" })
+  )
+
+  vim.keymap.set(
+    "n",
+    "<leader>gp",
+    M.open_pr_diff,
+    vim.tbl_extend("force", opts, { desc = "Open GitHub PR in diffview" })
   )
 end
 
