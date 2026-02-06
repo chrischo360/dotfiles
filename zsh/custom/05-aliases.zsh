@@ -44,7 +44,11 @@ alias grbc="git rebase --continue"
 alias grba="git rebase --abort"
 
 # Git branch management
-alias gba="git branch -a"
+alias gba="git branch"
+
+# Git reset
+alias grsoft="git reset --soft"
+alias grhard="git reset --hard"
 
 # Git cleanup
 alias gclean="git clean -fd"
