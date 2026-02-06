@@ -18,6 +18,7 @@ brew "terminal-notifier"   # macOS notifications (macOS-only API)
 brew "rsync"               # File sync (better than macOS default)
 brew "curl"                # HTTP client (better than macOS default)
 brew "swiftlint"           # Swift linter (macOS/iOS development)
+brew "fancy-cat"           # Terminal PDF viewer using Kitty image protocol
 
 # ============================================
 # Fonts

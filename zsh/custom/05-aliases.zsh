@@ -1,7 +1,8 @@
 # Aliases
 
-# Kitty - image viewer
+# Kitty - image viewer and PDF viewer
 alias icat="kitty +kitten icat"
+alias pdf="fcat"
 
 # Tmux - Reload zsh config in idle panes only (skips vim, ssh, etc.)
 alias tmux-reload="$DOTFILES_DIR/tmux/scripts/reload-zsh-safe.sh"
