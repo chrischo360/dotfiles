@@ -122,6 +122,11 @@ return {
           vim.keymap.set("n", "gl", vim.diagnostic.open_float, opts)
           vim.keymap.set("n", "<leader>xl", vim.diagnostic.setloclist, opts)
           vim.keymap.set("n", "<leader>xq", vim.diagnostic.setqflist, opts)
+
+          -- Toggle inlay hints
+          vim.keymap.set("n", "<leader>th", function()
+            vim.lsp.inlay_hint.enable(not vim.lsp.inlay_hint.is_enabled())
+          end, vim.tbl_extend("force", opts, { desc = "Toggle inlay hints" }))
         end,
       })
 
@@ -159,6 +164,24 @@ return {
       -- TypeScript
       vim.lsp.config('ts_ls', {
         capabilities = capabilities,
+        settings = {
+          typescript = {
+            inlayHints = {
+              includeInlayParameterNameHints = "literals", -- Only show on literal values, not variables
+              includeInlayFunctionParameterTypeHints = true,
+              includeInlayVariableTypeHints = false, -- Disabled: too verbose, shows huge types
+              includeInlayFunctionLikeReturnTypeHints = true,
+            },
+          },
+          javascript = {
+            inlayHints = {
+              includeInlayParameterNameHints = "literals", -- Only show on literal values, not variables
+              includeInlayFunctionParameterTypeHints = true,
+              includeInlayVariableTypeHints = false, -- Disabled: too verbose, shows huge types
+              includeInlayFunctionLikeReturnTypeHints = true,
+            },
+          },
+        },
       })
 
       -- Java
@@ -471,8 +494,9 @@ return {
         },
       })
 
-      -- Enable all configured LSP servers once
-      vim.lsp.enable({ 'ts_ls', 'lua_ls', 'pyright', 'jdtls', 'intelephense', 'rust_analyzer', 'sourcekit', 'svelte', 'metals' })
+      -- Mason-managed servers are auto-started by mason-lspconfig's default handler
+      -- But manually-installed servers (Metals, sourcekit) need explicit enable
+      vim.lsp.enable({ 'sourcekit', 'metals' })
     end,
   },
 }
