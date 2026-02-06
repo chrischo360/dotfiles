@@ -10,12 +10,7 @@
       "BashOutput",
       "WebFetch",
       "WebSearch",
-      "EnterPlanMode",
-      "mcp__pal__clink",
-      "mcp__pal__analyze",
-      "mcp__pal__codereview",
-      "mcp__pal__debug",
-      "mcp__pal__apilookup"
+      "EnterPlanMode"
     ],
     "deny": [
       "Read(./.env)",
@@ -241,15 +236,6 @@
     {
       "tool": "WebFetch",
       "urlPattern": "https://**"
-    },
-    {
-      "tool": "mcp__pal__clink"
-    },
-    {
-      "tool": "mcp__pal__analyze"
-    },
-    {
-      "tool": "mcp__pal__codereview"
     }
   ],
   "allowedDirectories": [

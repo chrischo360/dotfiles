@@ -214,8 +214,61 @@ nvim-grep() {
 # Nvim Memory Monitoring & Cleanup
 alias memory='$DOTFILES_DIR/scripts/nvim/memory.sh'
 
+# Claude Code with interactive MCP server selection
+# Usage: claude-mcp
+# Opens fzf to select which MCP servers to enable (all enabled by default)
 claude-mcp() {
-  command claude --strict-mcp-config --mcp-config $DOTFILES_DIR/claude/mcp-servers.json -- "$@"
+  # Read available servers from mcp-servers.json
+  local available_servers=$(jq -r '.mcpServers | keys[]' "$DOTFILES_DIR/claude/mcp-servers.json")
+
+  # Use fzf to select which servers to enable (all enabled by default, Tab to toggle)
+  # Note: Press Ctrl-A to select all if they don't auto-select
+  local selected_servers=$(printf "%s\n" "${(@f)available_servers}" | \
+    fzf --multi \
+      --height 40% \
+      --reverse \
+      --border \
+      --bind 'start:select-all' \
+      --bind 'ctrl-a:select-all' \
+      --bind 'ctrl-d:deselect-all' \
+      --bind 'tab:toggle' \
+      --prompt="MCP servers (Tab toggle, Ctrl-A all, Enter confirm): " \
+      --header="All selected by default • Tab toggle • Ctrl-A select all • Ctrl-D deselect all" \
+      --preview "jq '.mcpServers.{}' $DOTFILES_DIR/claude/mcp-servers.json" \
+      --preview-window='right:60%')
+
+  if [[ -z "$selected_servers" ]]; then
+    echo "No servers selected. Running Claude without MCP servers."
+    command claude "$@"
+    return
+  fi
+
+  # Create temporary mcp-servers.json with only selected servers
+  local temp_mcp_config="/tmp/claude-mcp-$$.json"
+
+  # Build JSON with selected servers
+  local servers_json="{"
+  local first=true
+  while IFS= read -r server; do
+    if [[ "$first" == true ]]; then
+      first=false
+    else
+      servers_json+=","
+    fi
+    local server_config=$(jq ".mcpServers.\"$server\"" "$DOTFILES_DIR/claude/mcp-servers.json")
+    servers_json+="\"$server\":$server_config"
+  done <<< "$selected_servers"
+  servers_json+="}"
+
+  echo "{\"mcpServers\":$servers_json}" > "$temp_mcp_config"
+
+  echo "Enabled MCP servers: $(echo "$selected_servers" | tr '\n' ', ' | sed 's/,$//')"
+
+  # Run Claude with the temporary config
+  command claude --strict-mcp-config --mcp-config "$temp_mcp_config" -- "$@"
+
+  # Clean up temp file
+  rm -f "$temp_mcp_config"
 }
 
 # Claude Code - Get costs
