@@ -56,6 +56,9 @@ return {
   config = function()
     local actions = require("diffview.actions")
 
+    -- Store keymaps configuration for help panel
+    local keymaps_config = {}
+
     -- Custom action: Go to file at cursor position, return to previous window, and close diffview
     local function goto_file_and_close()
       local lib = require("diffview.lib")
@@ -89,7 +92,7 @@ return {
 
     require("diffview").setup({
       diff_binaries = false,
-      enhanced_diff_hl = true, -- Enable character-level diff highlighting (shows exactly what changed)
+      enhanced_diff_hl = false, -- Disable character-level diff highlighting (too noisy with numbers)
       git_cmd = { "git" },
       use_icons = true,
       show_help_hints = true,
@@ -123,7 +126,7 @@ return {
       },
 
       file_panel = {
-        listing_style = "tree",
+        listing_style = "list",
         tree_options = {
           flatten_dirs = true,
           folder_statuses = "only_folded",
@@ -167,11 +170,29 @@ return {
       },
 
       hooks = {
-        diff_buf_read = function()
+        diff_buf_read = function(bufnr)
           -- Change local options in diff buffers
           vim.opt_local.wrap = false
           vim.opt_local.list = false
           vim.opt_local.colorcolumn = { 80 }
+
+          -- Disable inlay hints in diff buffers (too noisy)
+          vim.lsp.inlay_hint.enable(false, { bufnr = bufnr })
+        end,
+
+        diff_buf_win_enter = function(bufnr, winid, ctx)
+          -- Make right pane (working tree) wider than left pane (old version)
+          if ctx.layout_name == "diff2_horizontal" then
+            local total_width = vim.o.columns - 35 -- Subtract file panel width
+
+            if ctx.symbol == "a" then
+              -- Left pane (old version): 40% of diff area
+              vim.api.nvim_win_set_width(winid, math.floor(total_width * 0.4))
+            elseif ctx.symbol == "b" then
+              -- Right pane (new/working tree): 60% of diff area
+              vim.api.nvim_win_set_width(winid, math.floor(total_width * 0.6))
+            end
+          end
         end,
       },
 
@@ -219,6 +240,35 @@ return {
 
           -- File operations
           { "n", "gf", goto_file_and_close, { desc = "Go to file and close diffview" } },
+
+          -- Git staging operations
+          {
+            "n",
+            "a",
+            function()
+              local ok, err = pcall(actions.toggle_stage_entry)
+              if not ok then
+                -- Log detailed error to file
+                local log_file = vim.fn.stdpath("cache") .. "/diffview-errors.log"
+                local timestamp = os.date("%Y-%m-%d %H:%M:%S")
+                local log_entry = string.format("[%s] %s\n", timestamp, tostring(err))
+
+                local f = io.open(log_file, "a")
+                if f then
+                  f:write(log_entry)
+                  f:close()
+                end
+
+                -- Show clean error message with log location
+                vim.notify(
+                  string.format("Error staging file. See %s for details.", log_file),
+                  vim.log.levels.ERROR
+                )
+              end
+            end,
+            { desc = "Stage/unstage file" },
+          },
+          { "n", "U", actions.unstage_all, { desc = "Unstage all changes" } },
 
           -- View controls
           { "n", "i", actions.listing_style, { desc = "Toggle list/tree" } },
