@@ -74,7 +74,7 @@ return {
     wk.add({
       { "<leader>g", group = "🐙 Git/GitHub" },
       { "<leader>gs", desc = "Git Status (fugitive)" },
-      { "<leader>gb", desc = "Git Blame (fugitive)" },
+      { "<leader>gb", desc = "Git Blame" },
       { "<leader>gv", desc = "Git Log (GV)" },
       { "<leader>gV", desc = "Git Log (current file)" },
       { "<leader>gy", desc = "Copy GitHub permalink" },

@@ -4,13 +4,63 @@
 -- Keybindings: ]c (next hunk), [c (prev hunk), <leader>hb (blame line)
 
 return {
-  -- Enhanced git integration
+  -- Git blame with custom formatting
+  {
+    "FabijanZulj/blame.nvim",
+    cmd = { "BlameToggle" },
+    keys = {
+      { "<leader>gb", "<cmd>BlameToggle<cr>", desc = "Git Blame" },
+    },
+    opts = {
+      date_format = "%Y-%m-%d",
+      virtual_style = "float",
+      merge_consecutive = false,
+      max_summary_width = 30,
+      commit_detail_view = "vsplit",
+      mappings = {
+        commit_info = "i",
+        stack_push = "<TAB>",
+        stack_pop = "<BS>",
+        show_commit = "<CR>",
+        close = { "<esc>", "q" },
+      },
+      format = function(line_porcelain, config, idx)
+        local author = line_porcelain.author
+        local date = line_porcelain.author_time
+        local summary = line_porcelain.summary
+
+        -- Convert timestamp to relative format
+        local now = os.time()
+        local diff = now - tonumber(date)
+        local relative_date
+
+        if diff < 60 then
+          relative_date = "now"
+        elseif diff < 3600 then
+          relative_date = math.floor(diff / 60) .. "m ago"
+        elseif diff < 86400 then
+          relative_date = math.floor(diff / 3600) .. "h ago"
+        elseif diff < 604800 then
+          relative_date = math.floor(diff / 86400) .. "d ago"
+        elseif diff < 2592000 then
+          relative_date = math.floor(diff / 604800) .. "w ago"
+        elseif diff < 31536000 then
+          relative_date = math.floor(diff / 2592000) .. "mo ago"
+        else
+          relative_date = math.floor(diff / 31536000) .. "y ago"
+        end
+
+        return string.format("%s • %s • %s", summary, relative_date, author)
+      end,
+    },
+  },
+
+  -- Git commands (status, etc.)
   {
     "tpope/vim-fugitive",
-    cmd = { "Git", "Gstatus", "Gblame", "Gpush", "Gpull", "Gdiff" },
+    cmd = { "Git", "Gstatus", "Gpush", "Gpull", "Gdiff" },
     keys = {
       { "<leader>gs", "<cmd>Git<cr>", desc = "Git Status" },
-      { "<leader>gb", "<cmd>Git blame<cr>", desc = "Git Blame" },
     },
   },
 

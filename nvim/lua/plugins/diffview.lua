@@ -40,6 +40,12 @@ return {
       "<cmd>DiffviewFileHistory<cr>",
       desc = "File History (all files)",
     },
+    {
+      "<leader>gl",
+      ":'<,'>DiffviewFileHistory<CR>",
+      desc = "Git Line History (selected lines)",
+      mode = "v",
+    },
     -- Quick HEAD~n comparisons
     { "<leader>d1", "<cmd>DiffviewOpen HEAD~1<cr>", desc = "Diff with HEAD~1" },
     { "<leader>d2", "<cmd>DiffviewOpen HEAD~2<cr>", desc = "Diff with HEAD~2" },
