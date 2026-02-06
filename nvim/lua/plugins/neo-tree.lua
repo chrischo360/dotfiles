@@ -22,6 +22,39 @@ return {
   },
   config = function()
     require("neo-tree").setup({
+      -- Compact display settings
+      default_component_configs = {
+        indent = {
+          indent_size = 1,
+          padding = 0,
+        },
+        icon = {
+          folder_closed = "",
+          folder_open = "",
+          folder_empty = "",
+          default = "",
+        },
+        name = {
+          trailing_slash = false,
+          use_git_status_colors = true,
+          highlight = "NeoTreeFileName",
+        },
+      },
+
+      -- Custom renderers to show icon on the right
+      renderers = {
+        directory = {
+          { "indent" },
+          { "name", highlight = "NeoTreeDirectoryName" },
+          { "icon" },
+        },
+        file = {
+          { "indent" },
+          { "name", use_git_status_colors = true },
+          { "icon" },
+        },
+      },
+
       -- Auto-reveal configuration
       filesystem = {
         filtered_items = {
@@ -65,5 +98,9 @@ return {
     vim.api.nvim_create_user_command("NT", function()
       require("neo-tree.command").execute({ toggle = true })
     end, { desc = "Toggle NeoTree" })
+
+    -- Custom highlight colors for directories vs files
+    vim.api.nvim_set_hl(0, "NeoTreeDirectoryName", { fg = "#7aa2f7", bold = true }) -- Blue for directories
+    vim.api.nvim_set_hl(0, "NeoTreeFileName", { fg = "#a9b1d6" })                   -- Normal text color for files
   end,
 }
