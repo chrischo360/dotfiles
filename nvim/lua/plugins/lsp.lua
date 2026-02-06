@@ -402,7 +402,13 @@ return {
       -- Scala
       vim.lsp.config('metals', {
         cmd = { "/Users/cc446g/.local/bin/metals" },
-        capabilities = capabilities,
+        capabilities = vim.tbl_deep_extend('force', capabilities, {
+          workspace = {
+            semanticTokens = {
+              refreshSupport = false -- Disable refresh (not supported by Neovim)
+            }
+          }
+        }),
         filetypes = { "scala", "sbt" },
         root_dir = function(fname)
           return vim.fs.root(fname, { "build.sbt", "build.sc", "build.gradle", "pom.xml", ".git" })
