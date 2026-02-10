@@ -101,4 +101,9 @@ require("lazy").setup({
   -- install = { colorscheme = { "habamax" } },
   -- automatically check for plugin updates
   checker = { enabled = false },
+  -- Enable hererocks to handle Lua version compatibility for luarocks
+  rocks = {
+    enabled = true,
+    hererocks = true, -- Automatically install correct Lua version for luarocks
+  },
 })
