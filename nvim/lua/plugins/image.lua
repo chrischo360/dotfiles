@@ -84,15 +84,16 @@ vim.keymap.set("n", "<leader>io", open_image_external, { desc = "Open image exte
 vim.keymap.set("n", "<leader>ic", copy_image_path, { desc = "Copy image path" })
 
 -- =============================================================================
--- INLINE IMAGE SUPPORT (Kitty Terminal)
+-- INLINE IMAGE SUPPORT (Requires Kitty Terminal)
 -- =============================================================================
+-- Uncomment this section if you switch to Kitty terminal for inline image support
+--[[
 return {
   "3rd/image.nvim",
   dependencies = {
-    "leafo/magick", -- ImageMagick Lua bindings (brew install imagemagick + luarocks)
+    "leafo/magick", -- ImageMagick Lua bindings (brew install imagemagick already done)
   },
-  -- Load for markdown files AND when opening image files directly
-  ft = { "markdown", "norg", "md" },
+  ft = { "markdown", "norg", "md" }, -- Lazy load on these filetypes
   opts = {
     backend = "kitty", -- Use kitty graphics protocol
     integrations = {
@@ -122,7 +123,7 @@ return {
     -- Editor behavior
     editor_only_render_when_focused = true,
     tmux_show_only_in_active_window = true,
-    -- Hijack file patterns to automatically render when opening image files
+    -- Hijack file patterns to preview
     hijack_file_patterns = {
       "*.png",
       "*.jpg",
@@ -136,3 +137,7 @@ return {
     { "<leader>it", "<cmd>lua require('image').toggle()<cr>", desc = "Toggle image rendering" },
   },
 }
+--]]
+
+-- Return empty table since we're using keybindings only
+return {}
