@@ -1,0 +1,93 @@
+{
+  "mcpServers": {
+    "MCP_DOCKER": {
+      "command": "docker",
+      "args": ["mcp", "gateway", "run"]
+    },
+    "glean_default": {
+      "type": "http",
+      "url": "https://wayfair-be.glean.com/mcp/default"
+    },
+    "playwright": {
+      "type": "stdio",
+      "command": "npx",
+      "args": ["@playwright/mcp@latest", "--extension"],
+      "env": {}
+    },
+    "github": {
+      "type": "stdio",
+      "command": "docker",
+      "args": [
+        "run",
+        "-i",
+        "--rm",
+        "-e",
+        "GITHUB_PERSONAL_ACCESS_TOKEN",
+        "ghcr.io/github/github-mcp-server"
+      ],
+      "env": {
+        "GITHUB_PERSONAL_ACCESS_TOKEN": "{{github_token}}"
+      }
+    },
+    "github_wayfair": {
+      "type": "stdio",
+      "command": "docker",
+      "args": [
+        "run",
+        "--pull=always",
+        "-i",
+        "--rm",
+        "-e",
+        "GITHUB_PERSONAL_ACCESS_TOKEN",
+        "artifactorydocker.service.csnzoo.com/wayfair/github-mcp-server:latest",
+        "stdio"
+      ],
+      "env": {
+        "GITHUB_PERSONAL_ACCESS_TOKEN": "{{github_token}}"
+      }
+    },
+    "buildkite": {
+      "type": "stdio",
+      "command": "docker",
+      "args": [
+        "run",
+        "-i",
+        "--rm",
+        "-e",
+        "BUILDKITE_API_TOKEN",
+        "artifactorydocker.service.csnzoo.com/wayfair/buildkite-mcp-server:0.5.0-wf1",
+        "stdio"
+      ],
+      "env": {
+        "BUILDKITE_API_TOKEN": "{{buildkite_token}}"
+      }
+    },
+    "sourcegraph": {
+      "type": "http",
+      "url": "https://wayfair.sourcegraphcloud.com/.api/mcp/v1",
+      "headers": {
+        "Authorization": "token {{sourcegraph_token}}"
+      }
+    },
+    "pal": {
+      "type": "stdio",
+      "command": "{{pal_server}}",
+      "args": [],
+      "env": {
+        "PATH": "{{home}}/.nvm/versions/node/v22.18.0/bin:/usr/local/bin:/usr/bin:/bin:/opt/homebrew/bin:{{home}}/.local/bin",
+        "GOOGLE_GENAI_USE_VERTEXAI": "true",
+        "GOOGLE_CLOUD_PROJECT": "wf-gcp-us-sf-genai-pilot-sbx",
+        "GOOGLE_CLOUD_LOCATION": "us-east5",
+        "DEFAULT_MODEL": "auto"
+      }
+    },
+    "datadog_remote": {
+      "type": "http",
+      "url": "https://mcp.datadoghq.com/api/unstable/mcp-server/mcp"
+    },
+    "figma": {
+      "type": "http",
+      "url": "https://mcp.figma.com/mcp"
+    }
+  }
+}
