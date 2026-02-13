@@ -10,5 +10,9 @@
 .gemini/state.json
 .gemini/tmp/
 
+# MCP server configs (contain API keys)
+claude/mcp-servers.json
+cursor/mcp.json
+
 # Theme
 nvim/last-theme.txt
