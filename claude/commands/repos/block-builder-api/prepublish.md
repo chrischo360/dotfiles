@@ -110,7 +110,94 @@ Parse JSON response:
 
 ### 7. Check Buildkite Build Status
 
-Poll GitHub checks for build status:
+**Before starting: Check MCP availability**
+
+Detect if running in an MCP-enabled session:
+- Check Claude's available tools for `mcp__buildkite__*` or `mcp__github__*`
+- If not available, you're running in a non-MCP session (`claude` command)
+- If available, you're running with MCP (`claude-mcp` command or specific config)
+
+**If MCP tools NOT available:**
+
+Display informational message with copy-pastable instructions:
+```
+ℹ️  MCP servers not detected in current session.
+
+For best results, this skill works best with MCP servers enabled.
+MCP provides more reliable build and schema monitoring via:
+  • buildkite       (Build status and job logs)
+  • github_wayfair  (PR and check monitoring)
+
+Continuing with CLI fallbacks (Scout → gh CLI).
+
+────────────────────────────────────────────────────────────────
+To use MCP servers next time, exit this session and run:
+
+  claude-mcp --servers "buildkite,github_wayfair" /prepublish
+
+This starts Claude with MCP and runs the prepublish skill immediately.
+────────────────────────────────────────────────────────────────
+```
+
+**Do NOT attempt to run `claude-mcp` from within Claude:**
+- `claude-mcp` is a shell function, not available inside Claude sessions
+- User must exit and restart with `claude-mcp --servers` manually
+
+**Automatic fallback:**
+- If MCP not available, continue automatically with CLI strategies
+- No user prompt needed - inform and proceed
+- Scout CLI and gh CLI are reliable fallbacks
+
+**MCP server configuration:**
+Your MCP servers are defined in `~/dotfiles/claude/mcp-servers.json`:
+- `buildkite` - Buildkite API access (BEST for build monitoring)
+- `github_wayfair` - Wayfair GitHub instance (BEST for PR monitoring)
+- `github` - Public GitHub (alternative)
+
+**Strategy Priority (Sequential - Try in Order):**
+
+**1. Buildkite MCP** (BEST - Direct build access)
+
+Check if `mcp__buildkite__*` tools available in Claude's tool list:
+- If available:
+  * Get build for branch: `mcp__buildkite__get_build`
+  * List build jobs: `mcp__buildkite__list_jobs`
+  * Monitor job status in real-time
+  * Check for GraphQL validation completion
+  * **If build status found:** Use it and proceed
+- If not available: Skip to strategy 2
+
+**Pros:** Most reliable, direct access, detailed job info
+
+**2. GitHub MCP** (BEST for PR checks)
+
+Check if `mcp__github__*` tools available in Claude's tool list:
+- If available:
+  * Get PR checks: `mcp__github__get_pr_checks`
+  * Monitor check status: `mcp__github__get_check_run`
+  * **If check status found:** Use it and proceed
+- If not available: Skip to strategy 3
+
+**Pros:** Real-time, reliable, no rate limits
+
+**3. Scout CLI** (Good if installed)
+
+Check if scout is installed:
+```bash
+command -v scout >/dev/null 2>&1
+```
+
+If available:
+```bash
+scout check <pr-url> --once --format json
+```
+
+Parse JSON output for build status
+**If status found:** Use it and proceed
+
+**Pros:** Rich metadata, unified view
+
+**4. GitHub Status Checks API via gh CLI** (Fallback)
 
 ```bash
 cd ~/codebase/block-builder-api
@@ -125,10 +212,33 @@ Parse JSON result:
 - Empty/no result → No build triggered
 - Extract `targetUrl` for Buildkite build URL
 
-Display Buildkite build information:
+**Pros:** Widely available
+
+**Display build information:**
 ```
 PR: <pr-url>
-Buildkite: <targetUrl>
+Buildkite: <build-url>
+Status: <state>
+```
+
+**Implementation Flow:**
+
+```
+Try Strategy 1 (Buildkite MCP)
+  → Status found? YES: Use it, continue to step 8
+  → Available? NO: Try Strategy 2
+
+Try Strategy 2 (GitHub MCP)
+  → Status found? YES: Use it, continue to step 8
+  → Available? NO: Try Strategy 3
+
+Try Strategy 3 (Scout CLI)
+  → Available? NO: Try Strategy 4
+  → Available? YES: Run it, use status, continue to step 8
+
+Try Strategy 4 (gh CLI)
+  → Get build status and URL
+  → Continue to step 8
 ```
 
 **Handle build status with polling:**
@@ -136,6 +246,12 @@ Buildkite: <targetUrl>
 **Polling configuration:**
 - Poll interval: 1 minute
 - Max wait: 35 minutes (35 attempts)
+- On each poll, try strategies sequentially in priority order:
+  1. Buildkite MCP (if available)
+  2. GitHub MCP (if available)
+  3. Scout CLI (if installed)
+  4. gh CLI (fallback)
+- Stop immediately when build status changes
 - Progress indicator: "Waiting for Buildkite... (attempt X/35)"
 
 **Notification strategy:**
@@ -149,7 +265,7 @@ Buildkite: <targetUrl>
 
 **If PENDING:**
 - Display: "Buildkite build in progress. Waiting for GraphQL validation..."
-- Poll every 1 minute (re-run check)
+- Continue polling
 - When status changes to SUCCESS or FAILURE, proceed
 
 **If SUCCESS:**
@@ -420,23 +536,38 @@ Or use: /prepublish --reset
 ## Implementation Notes
 
 **Core tools:**
-- Use `gh` CLI for all GitHub operations
+- Use `gh` CLI for GitHub operations (fallback)
 - Use `yarn wgql` for GraphQL introspection and codegen
 - Use `scout` CLI if available for enhanced build monitoring
-- Poll Buildkite via GitHub status checks API (not Buildkite API directly)
 
-**GitHub MCP integration (if available):**
-- Check if `mcp__github` tools are available in Claude's tool list
-- If available, use MCP tools for:
-  * Getting PR status and checks
-  * Getting build status
-  * Monitoring CI progress
-- Fallback to `gh` CLI if MCP not available
+**MCP integration (PRIMARY method):**
+- Skill detects if running in MCP-enabled session
+- Informs user about MCP benefits and provides copy-pastable command
+- Uses existing MCP server config from `~/dotfiles/claude/mcp-servers.json`
+- **Buildkite MCP (BEST):**
+  * Get build for branch
+  * List jobs and check logs
+  * Monitor GraphQL validation job status
+  * Most reliable source for build information
+- **GitHub MCP (BEST for status):**
+  * Get PR checks in real-time via `github_wayfair` server
+  * Monitor check run status
+  * No rate limits, faster than gh CLI
+- Fallback to CLI methods if user chooses to continue without MCP
 
-**Buildkite MCP integration (if available):**
-- Check if `mcp__buildkite` tools are available
-- If available, use for direct build status queries
-- Fallback to GitHub status checks API
+**Non-interactive MCP usage:**
+```bash
+# Start Claude with specific servers (no fzf)
+claude-mcp --servers "buildkite,github_wayfair"
+
+# Start with servers and run skill immediately
+claude-mcp --servers "buildkite,github_wayfair" /prepublish
+```
+
+**Strategy execution (SEQUENTIAL - not parallel):**
+- Try each strategy in priority order
+- Stop at first successful result
+- MCP tools preferred over CLI tools
 
 **Polling strategy:**
 - Initial poll interval: 1 minute (feature variant can take time to propagate)

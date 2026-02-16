@@ -219,24 +219,52 @@ alias memory='$DOTFILES_DIR/scripts/nvim/memory.sh'
 # Usage: claude-mcp
 # Opens fzf to select which MCP servers to enable (all enabled by default)
 claude-mcp() {
+  # Parse --servers flag for non-interactive mode
+  local server_arg_mode=false
+  local requested_servers=""
+
+  if [[ "$1" == "--servers" ]]; then
+    server_arg_mode=true
+    requested_servers="$2"
+    shift 2
+  fi
+
   # Read available servers from mcp-servers.json
   local available_servers=$(jq -r '.mcpServers | keys[]' "$DOTFILES_DIR/claude/mcp-servers.json")
 
-  # Use fzf to select which servers to enable (all enabled by default, Tab to toggle)
-  # Note: Press Ctrl-A to select all if they don't auto-select
-  local selected_servers=$(printf "%s\n" "${(@f)available_servers}" | \
-    fzf --multi \
-      --height 40% \
-      --reverse \
-      --border \
-      --bind 'start:select-all' \
-      --bind 'ctrl-a:select-all' \
-      --bind 'ctrl-d:deselect-all' \
-      --bind 'tab:toggle' \
-      --prompt="MCP servers (Tab toggle, Ctrl-A all, Enter confirm): " \
-      --header="All selected by default • Tab toggle • Ctrl-A select all • Ctrl-D deselect all" \
-      --preview "jq '.mcpServers.{}' $DOTFILES_DIR/claude/mcp-servers.json" \
-      --preview-window='right:60%')
+  # Determine selected servers
+  local selected_servers=""
+
+  if [[ "$server_arg_mode" == true ]]; then
+    # Non-interactive mode: parse comma-separated list
+    selected_servers=$(echo "$requested_servers" | tr ',' '\n')
+
+    # Validate each requested server exists
+    while IFS= read -r server; do
+      if ! echo "$available_servers" | grep -q "^${server}$"; then
+        echo "Error: MCP server '$server' not found in mcp-servers.json"
+        echo "Available servers: $(echo "$available_servers" | tr '\n' ', ' | sed 's/,$//')"
+        return 1
+      fi
+    done <<< "$selected_servers"
+
+    echo "Non-interactive mode: Using servers: $(echo "$selected_servers" | tr '\n' ', ' | sed 's/,$//')"
+  else
+    # Interactive mode: use fzf (existing behavior)
+    selected_servers=$(printf "%s\n" "${(@f)available_servers}" | \
+      fzf --multi \
+        --height 40% \
+        --reverse \
+        --border \
+        --bind 'start:select-all' \
+        --bind 'ctrl-a:select-all' \
+        --bind 'ctrl-d:deselect-all' \
+        --bind 'tab:toggle' \
+        --prompt="MCP servers (Tab toggle, Ctrl-A all, Enter confirm): " \
+        --header="All selected by default • Tab toggle • Ctrl-A select all • Ctrl-D deselect all" \
+        --preview "jq '.mcpServers.{}' $DOTFILES_DIR/claude/mcp-servers.json" \
+        --preview-window='right:60%')
+  fi
 
   if [[ -z "$selected_servers" ]]; then
     echo "No servers selected. Running Claude without MCP servers."
@@ -270,6 +298,22 @@ claude-mcp() {
 
   # Clean up temp file
   rm -f "$temp_mcp_config"
+}
+
+# Spawn Claude with MCP in tmux split
+# Usage: claude-mcp-split "buildkite,github_wayfair"
+claude-mcp-split() {
+  local servers="${1:-buildkite,github_wayfair}"
+
+  if [[ -z "$TMUX" ]]; then
+    echo "Error: Not in a tmux session. Use 'claude-mcp --servers \"$servers\"' instead."
+    return 1
+  fi
+
+  tmux split-window -h "claude-mcp --servers '$servers'"
+  echo "New Claude session with MCP started in right pane."
+  echo "Servers: $servers"
+  echo "Switch to it with: Ctrl-b o"
 }
 
 # Claude Code - Get costs

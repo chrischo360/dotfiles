@@ -14,7 +14,8 @@
         { "shell": "echo ''" },
         { "shell": "echo 'Last 30 lines of error:' && tail -30 \"$LOG_FILE\"" },
         { "shell": "echo ''" },
-        { "shell": "echo 'Starting AI diagnosis...' && cli-agent \"Diagnose and fix this build failure. Project: $PROJECT_NAME. Script: $SCRIPT_NAME. Failed step: $FAILED_STEP. Read the log file at $LOG_FILE for full output.\"" }
+        { "shell": "echo 'Starting AI diagnosis...' && cli-agent \"Analyze this build failure and propose a fix (do not apply changes). Project: $PROJECT_NAME. Script: $SCRIPT_NAME. Failed step: $FAILED_STEP. Read the log file at $LOG_FILE for full output. After analyzing, show the proposed fix and suggest running /pr-check to test locally.\"" },
+        { "shell": "terminal-notifier -title 'Diagnosis Complete' -message 'Check Claude session for proposed fix' -sound default" }
       ],
       "notify": false
     }
@@ -78,20 +79,15 @@
         "pr:watch": [
           { "shell": "PR_URL=$(gh pr view --json url -q '.url' 2>/dev/null) && [ -n \"$PR_URL\" ] && scout watch-builds \"$PR_URL\" || echo '❌ No PR found for current branch. Create a PR first with: gh pr create'" }
         ],
-        "pr:autofix": {
-          "description": "Watch PR, auto-diagnose and fix on failure, merge on success",
+        "pr:diagnose": {
+          "description": "Watch PR and diagnose failures with proposed fixes",
           "steps": [
-            { "shell": "echo '🔄 Starting PR watch loop...'" },
+            { "shell": "echo '🔍 Watching PR checks...'" },
             { "shell": "PR_URL=$(gh pr view --json url -q '.url' 2>/dev/null); [ -z \"$PR_URL\" ] && echo '❌ No PR found. Create one first.' && exit 1; scout watch-builds \"$PR_URL\"" }
           ],
           "on_success": { "shell": "echo '✅ All checks passed!' && terminal-notifier -title 'PR Ready' -message 'All checks passed! Ready to merge.' -sound default" },
           "on_failure": { "script": "diagnose" },
-          "loop": {
-            "enabled": true,
-            "max_retries": 3,
-            "retry_delay": 10,
-            "retry_on": "failure"
-          }
+          "notify": true
         },
         "pr:automerge": {
           "description": "Watch PR checks, auto-merge when passing",
