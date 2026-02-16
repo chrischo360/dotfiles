@@ -154,26 +154,34 @@ get_repo_status() {
 format_dashboard() {
   local cache_data=$1
   local timestamp=$(date "+%H:%M:%S")
+  local repo_count=$(echo "$cache_data" | jq '.repos | length')
 
   echo "┌─ Buildkite Monitor ──────────────────────── Updated: $timestamp ─┐"
   echo "│                                                                  │"
 
-  echo "$cache_data" | jq -r '.repos[] |
-    if .status == "NO_PR" then
-      "│ \(.name)\n│   No active PR\n│"
-    elif .status == "NO_BUILDKITE" then
-      "│ \(.name)\n│   PR #\(.pr_number) (\(.branch))\n│   No Buildkite check found\n│"
-    elif .status == "NOT_FOUND" then
-      "│ \(.name)\n│   Repository not found\n│"
-    else
-      "│ \(.name)\n│   PR #\(.pr_number) (\(.branch))\n│   " +
-      (if .status == "SUCCESS" then "✓"
-       elif .status == "RUNNING" then "⏳"
-       elif .status == "FAILURE" then "✗"
-       else "?" end) +
-      " \(.status) - Build #\(.build_number) (\(.elapsed_time))\n│   \(.build_url)\n│"
-    end
-  '
+  if [[ "$repo_count" -eq 0 ]]; then
+    echo "│ No active PRs found in monitored repositories                   │"
+    echo "│                                                                  │"
+    echo "│ Monitored repos: $REPOS"
+    echo "│                                                                  │"
+  else
+    echo "$cache_data" | jq -r '.repos[] |
+      if .status == "NO_PR" then
+        "│ \(.name)\n│   No active PR\n│"
+      elif .status == "NO_BUILDKITE" then
+        "│ \(.name)\n│   PR #\(.pr_number) (\(.branch))\n│   No Buildkite check found\n│"
+      elif .status == "NOT_FOUND" then
+        "│ \(.name)\n│   Repository not found\n│"
+      else
+        "│ \(.name)\n│   PR #\(.pr_number) (\(.branch))\n│   " +
+        (if .status == "SUCCESS" then "✓"
+         elif .status == "RUNNING" then "⏳"
+         elif .status == "FAILURE" then "✗"
+         else "?" end) +
+        " \(.status) - Build #\(.build_number) (\(.elapsed_time))\n│   \(.build_url)\n│"
+      end
+    '
+  fi
 
   echo "└──────────────────────────────────────────────────────────────────┘"
 }
