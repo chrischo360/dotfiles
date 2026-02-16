@@ -29,22 +29,6 @@ Visualization of all Claude commands and their relationships.
 
 ---
 
-### buffers
-**Skill:** `global:buffers`
-**Purpose:** Intelligently fetch relevant files from Neovim's tracked buffers
-
-**Uses:**
-- Neovim RPC
-- Shell scripts in `~/dotfiles/claude/scripts/utils/`
-
-**Used by:**
-- User invoked when working with Neovim
-
-**Related:**
-- None (standalone utility)
-
----
-
 ### create-command
 **Skill:** `global:create-command`
 **Purpose:** Generate a new Claude command from a natural language description
@@ -58,21 +42,6 @@ Visualization of all Claude commands and their relationships.
 
 **Related:**
 - Creates new entries in this map
-
----
-
-### cherry-pick-merge
-**Skill:** `global:cherry-pick-merge`
-**Purpose:** Cherry-pick commits from multiple branches into a new branch with automatic conflict resolution
-
-**Uses:**
-- git (cherry-pick, merge, conflict resolution)
-
-**Used by:**
-- User invoked for complex git workflows
-
-**Related:**
-- None (standalone git utility)
 
 ---
 
@@ -135,7 +104,6 @@ Visualization of all Claude commands and their relationships.
 - scout CLI (`scout check`) ← **wraps this tool**
 
 **Used by:**
-- [[#pr-submit]] ← **uses internally**
 - [[#pr-diagnose]] ← **uses internally**
 - [[#pr-automerge]] ← **uses internally**
 - [[#pr-create]] (suggested next step)
@@ -258,38 +226,10 @@ Visualization of all Claude commands and their relationships.
 
 **Used by:**
 - [[#pr-create]] ← **optionally invoked**
-- [[#pr-submit]] (includes validation)
 - User invoked manually
 
 **Related:**
 - Validation component used by other commands
-
----
-
-### pr-submit
-**Skill:** `repos:sf-ui-web:pr-submit`
-**Purpose:** Run full validation suite then watch PR CI checks
-
-**Uses:**
-- dev CLI (`dev :run pr:submit`) ← **wraps this script**
-  - Runs [[#pr-check]] validation steps
-  - Uses scout watch-builds (same as [[#pr-watch]])
-
-**Used by:**
-- User invoked for validation + monitoring
-
-**Workflow:**
-```
-1. Run validation suite (format, lint, typecheck, build, test)
-2. Watch PR checks with scout
-3. Desktop notifications on completion
-```
-
-**Related:**
-- [[#pr-check]] (validation portion)
-- [[#pr-watch]] (monitoring portion)
-- [[#pr-diagnose]] (adds failure diagnosis)
-- [[#pr-automerge]] (adds auto-merge)
 
 ---
 
@@ -318,7 +258,7 @@ Visualization of all Claude commands and their relationships.
 **Related:**
 - [[#pr-watch]] (monitoring component)
 - [[#pr-check]] (to test proposed fix)
-- [[#pr-submit]] (watch without diagnosis)
+- Replaces pr-submit with added AI diagnosis
 
 ---
 
@@ -345,7 +285,7 @@ Visualization of all Claude commands and their relationships.
 
 **Related:**
 - [[#pr-watch]] (monitoring component)
-- [[#pr-submit]] (watch without auto-merge)
+- [[#pr-diagnose]] (watch with AI diagnosis)
 
 ---
 
@@ -403,22 +343,6 @@ Visualization of all Claude commands and their relationships.
 
 ---
 
-### dev
-**Skill:** `repos:dev`
-**Purpose:** Show available dev commands for current repository
-
-**Uses:**
-- dev CLI (`dev :docs`)
-- git (repo detection)
-
-**Used by:**
-- User invoked for discovery
-
-**Related:**
-- [[#commands]] (similar discovery tool)
-
----
-
 ### archive-week
 **Skill:** `repos:notes:archive-week`
 **Purpose:** Archive the current weekly plan and create a new one
@@ -445,7 +369,6 @@ These are the underlying CLIs that commands wrap or delegate to.
 
 **Used by:**
 - [[#pr-check]] → `dev :run pr:check`
-- [[#pr-submit]] → `dev :run pr:submit`
 - [[#pr-diagnose]] → `dev :run pr:diagnose`
 - [[#pr-automerge]] → `dev :run pr:automerge`
 - [[#quick-rebuild]] → `dev :run quick`
@@ -515,9 +438,6 @@ These are the underlying CLIs that commands wrap or delegate to.
 3. Monitoring (choose one)
    ├─ pr-watch
    │   └─ monitor only
-   ├─ pr-submit
-   │   ├─ validate first
-   │   └─ then monitor
    ├─ pr-diagnose
    │   ├─ monitor
    │   └─ propose fixes on failure
@@ -552,8 +472,7 @@ These are the underlying CLIs that commands wrap or delegate to.
 
 ## Command Reuse Patterns
 
-### pr-watch (used by 3 commands)
-- [[#pr-submit]]
+### pr-watch (used by 2 commands)
 - [[#pr-diagnose]]
 - [[#pr-automerge]]
 
@@ -567,7 +486,6 @@ These are the underlying CLIs that commands wrap or delegate to.
 
 ### pr-check (used by 1 command + manual)
 - [[#pr-create]] (optional)
-- [[#pr-submit]] (included in dev script)
 - Manual invocation
 
 ---
@@ -586,8 +504,7 @@ These are the underlying CLIs that commands wrap or delegate to.
 
 **Monitoring PR:**
 - [[#pr-watch]] - basic monitoring
-- [[#pr-submit]] - validate + monitor
-- [[#pr-diagnose]] - monitor + auto-diagnose
+- [[#pr-diagnose]] - monitor + auto-diagnose (recommended)
 - [[#pr-automerge]] - monitor + auto-merge
 
 **Testing cross-repo changes:**
@@ -596,13 +513,10 @@ These are the underlying CLIs that commands wrap or delegate to.
 
 **Discovery:**
 - [[#commands]] - show available commands
-- [[#dev]] - show dev CLI commands
 
 **Utilities:**
-- [[#buffers]] - fetch Neovim buffers
 - [[#pr-template]] - generate PR description
 - [[#pr-dashboard]] - view all PRs
-- [[#cherry-pick-merge]] - git workflow
 - [[#create-command]] - create new command
 
 ---

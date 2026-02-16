@@ -2,19 +2,33 @@
 # Buildkite Dashboard - Display PR build status for monitored repositories
 # Used by buildkite_monitor_loop.sh for continuous monitoring
 
-set -euo pipefail
+set -eo pipefail
 
 # Configuration
 CACHE_FILE="${BUILDKITE_MONITOR_CACHE:-$HOME/.claude/buildkite-dashboard-cache.json}"
-REPOS="${BUILDKITE_MONITOR_REPOS:-block-builder-api sf-js-libraries sf-ui-web sf-ui-cart-and-checkout}"
+CODEBASE_DIR="${BUILDKITE_MONITOR_CODEBASE:-$HOME/codebase}"
 
-# Repo paths mapping
-declare -A REPO_PATHS=(
-  ["block-builder-api"]="$HOME/codebase/block-builder-api"
-  ["sf-js-libraries"]="$HOME/codebase/sf-js-libraries"
-  ["sf-ui-web"]="$HOME/codebase/sf-ui-web"
-  ["sf-ui-cart-and-checkout"]="$HOME/codebase/sf-ui-cart-and-checkout"
-)
+# Auto-detect repos or use explicit list
+if [[ -n "${BUILDKITE_MONITOR_REPOS:-}" ]]; then
+  # User provided explicit list
+  REPOS="$BUILDKITE_MONITOR_REPOS"
+else
+  # Auto-detect: scan codebase directory for repos with PRs
+  REPOS=$(find "$CODEBASE_DIR" -maxdepth 1 -type d -name ".git" -prune -o -type d -exec test -d "{}/.git" \; -print 2>/dev/null | \
+    xargs -I {} basename {} 2>/dev/null | \
+    grep -E "^(block-builder-api|sf-js-libraries|sf-ui-web|sf-ui-cart-and-checkout)$" || echo "")
+
+  # Fallback if auto-detect finds nothing
+  if [[ -z "$REPOS" ]]; then
+    REPOS="block-builder-api sf-js-libraries sf-ui-web sf-ui-cart-and-checkout"
+  fi
+fi
+
+# Get repo path by name
+get_repo_path() {
+  local repo_name=$1
+  echo "$CODEBASE_DIR/$repo_name"
+}
 
 # Time calculation function (from buildkite-monitor-pr.sh)
 calculate_elapsed_time() {
@@ -35,7 +49,7 @@ calculate_elapsed_time() {
 # Get PR status for a repository
 get_repo_status() {
   local repo_name=$1
-  local repo_path=${REPO_PATHS[$repo_name]:-}
+  local repo_path=$(get_repo_path "$repo_name")
 
   if [[ -z "$repo_path" ]] || [[ ! -d "$repo_path/.git" ]]; then
     echo "NOT_FOUND"
@@ -59,22 +73,33 @@ get_repo_status() {
     return 0
   fi
 
-  # Find Buildkite check
-  local buildkite_check=$(echo "$pr_data" | jq -r '
-    .statusCheckRollup[]? |
-    select(.name | test("buildkite|Build")) |
-    select(.conclusion != null or .status == "IN_PROGRESS" or .status == "PENDING")
-  ' | head -n1)
+  # Find Buildkite check (handle both CheckRun and StatusContext)
+  local buildkite_check=$(echo "$pr_data" | jq '
+    [.statusCheckRollup[]? |
+    select(
+      (.__typename == "CheckRun" and (.name | test("buildkite|Build"))) or
+      (.__typename == "StatusContext" and (.context | test("buildkite")))
+    )] | first
+  ')
 
-  if [[ -z "$buildkite_check" ]]; then
+  if [[ -z "$buildkite_check" ]] || [[ "$buildkite_check" == "null" ]]; then
     echo "NO_BUILDKITE"
     return 0
   fi
 
-  local status=$(echo "$buildkite_check" | jq -r '.conclusion // .status')
-  local check_name=$(echo "$buildkite_check" | jq -r '.name')
-  local target_url=$(echo "$buildkite_check" | jq -r '.detailsUrl // empty')
-  local updated_at=$(echo "$buildkite_check" | jq -r '.completedAt // .startedAt // empty')
+  # Handle both CheckRun and StatusContext types
+  local typename=$(echo "$buildkite_check" | jq -r '.__typename')
+  if [[ "$typename" == "StatusContext" ]]; then
+    local status=$(echo "$buildkite_check" | jq -r '.state')
+    local check_name=$(echo "$buildkite_check" | jq -r '.context')
+    local target_url=$(echo "$buildkite_check" | jq -r '.targetUrl // empty')
+    local updated_at=$(echo "$buildkite_check" | jq -r '.startedAt // empty')
+  else
+    local status=$(echo "$buildkite_check" | jq -r '.conclusion // .status')
+    local check_name=$(echo "$buildkite_check" | jq -r '.name')
+    local target_url=$(echo "$buildkite_check" | jq -r '.detailsUrl // empty')
+    local updated_at=$(echo "$buildkite_check" | jq -r '.completedAt // .startedAt // empty')
+  fi
 
   # Extract build number from URL
   local build_number=""
@@ -92,11 +117,14 @@ get_repo_status() {
   fi
 
   # Map GitHub status to readable format
+  # StatusContext states: SUCCESS, PENDING, FAILURE, ERROR
+  # CheckRun conclusions: SUCCESS, FAILURE, NEUTRAL, CANCELLED, TIMED_OUT, ACTION_REQUIRED, STALE
+  # CheckRun statuses: QUEUED, IN_PROGRESS, COMPLETED
   case "$status" in
     SUCCESS|COMPLETED) status="SUCCESS" ;;
     IN_PROGRESS|PENDING|QUEUED) status="RUNNING" ;;
     FAILURE|FAILED) status="FAILURE" ;;
-    ERROR|CANCELLED) status="ERROR" ;;
+    ERROR|CANCELLED|TIMED_OUT) status="ERROR" ;;
     *) status="UNKNOWN" ;;
   esac
 
@@ -159,12 +187,14 @@ main() {
   for repo in $REPOS; do
     local status_output=$(get_repo_status "$repo" 2>/dev/null || echo "")
 
+    # Skip repos without PRs to save API calls
     if [[ "$status_output" == "NO_PR" ]]; then
-      repo_statuses+=($(jq -n --arg name "$repo" '{name: $name, status: "NO_PR"}'))
+      continue
     elif [[ "$status_output" == "NO_BUILDKITE" ]]; then
       repo_statuses+=($(jq -n --arg name "$repo" '{name: $name, status: "NO_BUILDKITE"}'))
     elif [[ "$status_output" == "NOT_FOUND" ]]; then
-      repo_statuses+=($(jq -n --arg name "$repo" '{name: $name, status: "NOT_FOUND"}'))
+      # Skip repos that don't exist
+      continue
     elif [[ -n "$status_output" ]]; then
       repo_statuses+=("$status_output")
     fi

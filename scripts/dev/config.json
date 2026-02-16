@@ -28,17 +28,15 @@
         { "path_contains": "sf-ui-web" }
       ],
       "scripts": {
-        "setup": [
-          "install",
-          "codegen",
+        "build": [
           "build",
-          { "context": "apps/core-funnel", "run": "start" }
+          "codegen"
         ],
-        "fullreset": [
+        "fullrebuild": [
           "clean -a",
           "install",
-          "codegen",
-          "build"
+          "build",
+          "codegen"
         ],
         "dev:web": [
           { "context": "apps/core-funnel", "run": "start" }
@@ -62,6 +60,7 @@
             "lint",
             "typecheck",
             "build",
+            "codegen",
             "test"
           ],
           "notify": true,
@@ -111,7 +110,7 @@
           "typecheck": "yarn type-check",
           "translate": "yarn translate",
           "install": "yarn install",
-          "rebuild": "yarn gql:codegen && yarn lib:build",
+          "rebuild": "yarn lib:build && yarn gql:codegen",
           "clean": "find . -name dist -type d -not -path '*/node_modules/*' -exec rm -rf {} + 2>/dev/null; find . -name .next -type d -not -path '*/node_modules/*' -exec rm -rf {} + 2>/dev/null",
           "clean:dist": "find . -name dist -type d -not -path '*/node_modules/*' -exec rm -rf {} + 2>/dev/null; find . -name .next -type d -not -path '*/node_modules/*' -exec rm -rf {} + 2>/dev/null",
           "clean:turbo": "rm -rf .turbo",
@@ -122,7 +121,7 @@
           "clean -g": "find . -name '*.generated.ts' -not -path '*/node_modules/*' -delete",
           "clean -n": "rm -rf node_modules && yarn install",
           "clean -a": "find . -name dist -type d -not -path '*/node_modules/*' -exec rm -rf {} + 2>/dev/null; find . -name .next -type d -not -path '*/node_modules/*' -exec rm -rf {} + 2>/dev/null; rm -rf .turbo; find . -name '*.generated.ts' -not -path '*/node_modules/*' -delete",
-          "reset": "yarn install && yarn gql:codegen && yarn lib:build"
+          "reset": "yarn install && yarn lib:build && yarn gql:codegen"
         },
         "apps/core-funnel": {
           "start": "yarn dev",

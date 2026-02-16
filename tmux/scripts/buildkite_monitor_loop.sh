@@ -5,7 +5,7 @@
 set -euo pipefail
 
 # Configuration
-INTERVAL="${BUILDKITE_MONITOR_INTERVAL:-30}"
+INTERVAL="${BUILDKITE_MONITOR_INTERVAL:-60}"
 LOG_FILE="${BUILDKITE_MONITOR_LOG:-$HOME/.claude/logs/buildkite-monitor.log}"
 DASHBOARD_SCRIPT="$(dirname "$0")/buildkite_dashboard.sh"
 

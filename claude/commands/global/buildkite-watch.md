@@ -19,6 +19,9 @@ Intelligent Buildkite monitoring that auto-detects PR context, monitors build pr
 
 # Different context
 /buildkite-watch --pr 1234 --context "buildkite/sf-js-libraries"
+
+# Force foreground monitor (skip dashboard)
+/buildkite-watch --foreground
 ```
 
 ## Parameters
@@ -31,6 +34,7 @@ All parameters are optional with intelligent defaults:
 - `--timeout <minutes>` - Max wait time (default: 35)
 - `--notify <minutes>` - Notification interval (default: 5)
 - `--once` - Single check, no polling
+- `--foreground` - Force foreground monitor (skip dashboard check)
 
 ## Steps
 
@@ -106,7 +110,53 @@ To use MCP servers next time, exit and run:
 
 **Continue automatically** - MCP is optional, gh CLI fallback is reliable.
 
-### 3. Execute Monitoring
+### 3. Check for Dashboard Session
+
+Before executing foreground monitor, check if dashboard session is running.
+
+**Skip if `--foreground` flag provided.**
+
+**Check for monitoring session:**
+```bash
+tmux has-session -t buildkite-monitor 2>/dev/null
+```
+
+**If session exists:**
+
+Show current status from cache and offer to view:
+```
+✓ Buildkite dashboard already monitoring this repo.
+
+Current status for block-builder-api:
+  PR #5428 (ccho_hfc_ui_gem_content_ph_PGL-947)
+  ⏳ RUNNING - Build #46436 (2m 15s ago)
+  https://buildkite.com/wayfair/block-builder-api/builds/46436
+
+View dashboard: tmux attach -t buildkite-monitor
+Or use: Prefix + s to switch sessions
+```
+
+Exit cleanly (no need for foreground monitor).
+
+**If session does NOT exist:**
+
+Offer to start dashboard:
+```
+No dashboard running. Would you like to:
+  1. Start persistent dashboard (monitors all repos, non-blocking)
+  2. Run foreground monitor (blocks terminal, this repo only)
+
+Choice (1/2):
+```
+
+- If `1`: Start dashboard session and exit
+  ```bash
+  ~/dotfiles/scripts/tmux/buildkite_monitor_session.sh start
+  ```
+
+- If `2`: Continue to foreground monitor (next step)
+
+### 4. Execute Monitoring
 
 Delegate to utility script for actual polling and progress visualization.
 
@@ -149,7 +199,7 @@ The script runs in foreground, displaying:
 - Desktop notifications every N minutes
 - Build URL on completion
 
-### 4. Handle Exit Codes
+### 5. Handle Exit Codes
 
 The monitoring script returns specific exit codes for different outcomes.
 

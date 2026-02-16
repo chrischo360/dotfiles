@@ -11,16 +11,13 @@ Custom commands for Claude Code organized by scope (global vs repo-specific).
 │   ├── pr-create.md           # Create PR with automated workflow
 │   ├── pr-watch.md            # Monitor GitHub PR CI checks
 │   ├── pr-dashboard.md        # View all PRs for a repository
-│   ├── create-command.md      # Meta-command to generate new commands
-│   ├── cherry-pick-merge.md   # Cherry-pick workflow
-│   └── buffers.md             # Fetch Neovim buffers
+│   └── create-command.md      # Meta-command to generate new commands
 │
 └── repos/                      # Repo-specific orchestration
     ├── sf-ui-web/
     │   ├── pr-cleanup.md      # PR preparation workflow
     │   ├── quick-rebuild.md   # Fast codegen + build
     │   ├── pr-check.md        # Full validation suite
-    │   ├── pr-submit.md       # Validation + watch
     │   ├── pr-diagnose.md     # Watch + diagnose failures (propose fixes)
     │   └── pr-automerge.md    # Watch + auto-merge
     │
@@ -30,10 +27,8 @@ Custom commands for Claude Code organized by scope (global vs repo-specific).
     ├── sf-js-libraries/
     │   └── prepublish.md      # Test library changes in consuming repos
     │
-    ├── notes/
-    │   └── archive-week.md    # Archive weekly plan
-    │
-    └── dev.md                  # Show available dev commands
+    └── notes/
+        └── archive-week.md    # Archive weekly plan
 ```
 
 ## Command Types
