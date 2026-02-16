@@ -86,6 +86,17 @@ For these tools, I will automatically use them when appropriate without asking:
   - `apilookup` (Gemini Flash) - API documentation lookup
   - `clink` (Cursor) - Codebase exploration (defaults to Cursor)
 
+- **/commands skill** - Auto-show available commands and suggest next steps (but don't run without approval):
+  - When starting work in a new PR/branch
+  - After completing a task/implementation/workflow
+  - When user asks "what can I do?" or "what's next?"
+
+  **Behavior:**
+  - Run `/commands` to show available commands for current context
+  - Present relevant commands as suggestions based on the situation
+  - Wait for user approval before running any suggested commands
+  - Example: "Available commands: Would you like me to run `/pr-check` to validate your changes?"
+
 ### 4. Multi-File Changes
 - **Group changes by feature/component** - not file-by-file
 - Example: Complete all auth-related changes together, then all UI changes

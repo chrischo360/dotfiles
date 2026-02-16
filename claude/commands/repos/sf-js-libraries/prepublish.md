@@ -129,145 +129,117 @@ If PR exists:
 
 ### 5. Monitor Buildkite for Pre-Release Publish
 
-**Execution Strategy: Sequential with Early Exit**
+**Two-Phase Approach:**
+- **Phase 1:** Monitor build completion (delegate to buildkite-watch)
+- **Phase 2:** Extract pre-release version from build (library-specific logic)
 
-Try strategies in priority order. Stop at first successful result.
+---
 
-**Before starting: Check MCP availability**
+#### Phase 1: Build Status Monitoring
 
-Detect if running in an MCP-enabled session:
-- Check Claude's available tools for `mcp__buildkite__*` or `mcp__github__*`
-- If not available, you're running in a non-MCP session (`claude` command)
-- If available, you're running with MCP (`claude-mcp` command or specific config)
+**Delegate to buildkite-watch command.**
 
-**If MCP tools NOT available:**
+Use the Skill tool to invoke the global buildkite-watch command:
 
-Display informational message with copy-pastable instructions:
 ```
-ℹ️  MCP servers not detected in current session.
-
-For best results, this skill works best with MCP servers enabled.
-MCP provides more reliable pre-release version detection via:
-  • buildkite       (Build status and job logs)
-  • github_wayfair  (PR and check monitoring)
-
-Continuing with CLI fallbacks (Scout → gh CLI).
-
-────────────────────────────────────────────────────────────────
-To use MCP servers next time, exit this session and run:
-
-  claude-mcp --servers "buildkite,github_wayfair" /prepublish
-
-This starts Claude with MCP and runs the prepublish skill immediately.
-────────────────────────────────────────────────────────────────
+Skill tool invocation:
+- skill: "buildkite-watch"
+- args: "--timeout 15" (libraries build faster than backend services)
 ```
 
-**Do NOT attempt to run `claude-mcp` from within Claude:**
-- `claude-mcp` is a shell function, not available inside Claude sessions
-- User must exit and restart with `claude-mcp --servers` manually
+**What buildkite-watch does:**
+- Auto-detects PR number from current branch
+- Auto-detects context as "buildkite/sf-js-libraries"
+- Monitors build with live progress bar (15 minute timeout)
+- Sends desktop notifications every 5 minutes
+- Handles MCP detection and strategy selection automatically
 
-**Automatic fallback:**
-- If MCP not available, continue automatically with CLI strategies
-- No user prompt needed - inform and proceed
-- Scout CLI and gh CLI are reliable fallbacks
+**Handle build completion:**
 
-**MCP server configuration:**
-Your MCP servers are defined in `~/dotfiles/claude/mcp-servers.json`:
-- `buildkite` - Buildkite API access (BEST for version extraction)
-- `github_wayfair` - Wayfair GitHub instance (BEST for PR monitoring)
-- `github` - Public GitHub (alternative)
+**Exit 0 (SUCCESS):**
+```
+✓ Build completed successfully
+```
+→ Proceed to Phase 2 (version extraction)
+
+**Exit 1 (FAILURE):**
+```
+✗ Build failed
+```
+Ask user to continue:
+```
+Build failed. Pre-release publish job may have succeeded even if other jobs failed.
+Continue to version extraction? (y/n)
+```
+- If `y`: Proceed to Phase 2 (publish job might have completed)
+- If `n`: Exit with build URL for manual inspection
+
+**Exit 2 (TIMEOUT):**
+```
+⏱️  Build exceeded 15 minutes
+```
+Proceed to Phase 2 anyway - pre-release publish typically completes in 5-10 minutes, so version may already be available.
+
+**Exit 3 (NO BUILD):**
+```
+⚠️  No Buildkite build found
+```
+Warn user:
+```
+No build triggered. This may mean:
+- No package.json changes
+- PR not created yet
+
+Continue to version extraction anyway? (y/n)
+```
+- If `y`: Proceed to Phase 2 (will likely fail)
+- If `n`: Exit
+
+---
+
+#### Phase 2: Extract Pre-Release Version
+
+**Version extraction is library-specific and requires checking build job logs.**
+
+Try multiple strategies to extract the published pre-release version.
 
 **Strategy Priority (Sequential - Try in Order):**
 
-**1. Buildkite MCP** (BEST - Direct access to build metadata)
+**1. Buildkite MCP** (BEST - Direct access to job logs)
 
-Check if `mcp__buildkite__*` tools available in Claude's tool list:
-- If available:
-  * Get build for branch: `mcp__buildkite__get_build`
-  * List build jobs: `mcp__buildkite__list_jobs`
-  * Find "Publish Pre-Release" job
-  * Check job logs for published version
-  * **If version found:** Use it immediately and proceed to step 6
-  * **If build pending:** Note status and continue to next strategy for monitoring
-- If not available: Skip to strategy 2
+Check if `mcp__buildkite__*` tools available:
+- Get build for branch: `mcp__buildkite__get_build`
+- List build jobs: `mcp__buildkite__list_jobs`
+- Find "Publish Pre-Release" job
+- Check job logs for published version pattern: `\d+\.\d+\.\d+-[a-f0-9]+`
+- **If version found:** Use it immediately and proceed to step 6
 
-**Pros:** Most reliable, direct access, includes version in logs
-**Cons:** Requires Buildkite MCP server configured
+**2. GitHub MCP** (For build metadata)
 
-**2. GitHub MCP** (BEST for PR/check status)
+Check if `mcp__github__*` tools available:
+- Get PR checks: `mcp__github__get_pr_checks`
+- May not include version directly but can confirm build completion
 
-Check if `mcp__github__*` tools available in Claude's tool list:
-- If available:
-  * Get PR checks: `mcp__github__get_pr_checks`
-  * Get check run details: `mcp__github__get_check_run`
-  * Monitor status in real-time
-  * **If build complete but no version:** Continue to strategy 3
-  * **If build pending:** Note status and continue to next strategy
-- If not available: Skip to strategy 3
+**3. Scout CLI** (If installed)
 
-**Pros:** Real-time, reliable, no API rate limits
-**Cons:** May not include pre-release version directly
-
-**3. Scout CLI** (Good if installed)
-
-Check if scout is installed:
-```bash
-command -v scout >/dev/null 2>&1
-```
-
-If available:
 ```bash
 scout check <pr-url> --once --format json
 ```
+- Parse for version information in build metadata
+- **If version found:** Use it and proceed to step 6
 
-Parse JSON output:
-- Look for build status and version information
-- **If version found:** Use it immediately and proceed to step 6
-- **If build pending:** Note status and continue to strategy 4
-
-**Pros:** Rich metadata, unified view, includes build status
-**Cons:** Requires scout installed, may not include version in output
-
-**4. GitHub Status Checks API via gh CLI** (Fallback)
+**4. gh CLI + Buildkite URL** (Manual extraction fallback)
 
 ```bash
 gh pr view <branch> --json statusCheckRollup \
-  --jq '.statusCheckRollup[] | select(.context == "buildkite/sf-js-libraries") | {state: .state, targetUrl: .targetUrl}'
+  --jq '.statusCheckRollup[] | select(.context == "buildkite/sf-js-libraries") | .targetUrl'
 ```
+- Display Buildkite URL to user
+- Ask user to check build logs manually and provide version
 
-Parse result:
-- Extract build state and Buildkite URL
-- **If build complete:** Note status, continue to polling loop
-- **If build pending:** Note status, continue to polling loop
+**Initial attempt:**
 
-**Pros:** Widely available, includes Buildkite URL
-**Cons:** Doesn't include pre-release version, rate limited
-
-**Implementation Flow:**
-
-```
-Try Strategy 1 (Buildkite MCP)
-  → Version found? YES: Use it, goto step 6
-  → Version found? NO: Try Strategy 2
-
-Try Strategy 2 (GitHub MCP)
-  → Build status found? YES: Note it
-  → Try Strategy 3
-
-Try Strategy 3 (Scout CLI)
-  → Available? NO: Try Strategy 4
-  → Available? YES: Run it
-    → Version found? YES: Use it, goto step 6
-    → Version found? NO: Try Strategy 4
-
-Try Strategy 4 (gh CLI)
-  → Get build status and URL
-  → Proceed to Polling Loop
-
-Polling Loop:
-  → Retry all strategies in order every 1 minute
-  → Stop when version found or timeout
-```
+Try all strategies once. If version found, proceed to step 6.
 
 **Polling Loop (If Version Not Found)**
 

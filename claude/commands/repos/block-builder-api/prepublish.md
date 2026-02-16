@@ -19,6 +19,7 @@ You are automating the block-builder-api schema testing workflow:
 3. **Verify branch** - Ensure not running from main/master
 4. **Validate repos** - Check block-builder-api and sf-ui-web exist
 5. **Determine branch** - Get branch name from args, git, or user input
+5a. **Match or create sf-ui-web branch** - Find matching PGL ticket branch or create from main
 6. **Verify PR** - Ensure PR exists in block-builder-api
 7. **Check Buildkite** - Monitor build status via GitHub checks
 8. **Verify feature variant** - Ensure schema variant is available
@@ -93,6 +94,61 @@ c. **If in sf-ui-web or other directory:** Ask user for block-builder-api branch
 
 d. **Store branch name** for all subsequent steps
 
+### 5a. Match or Create sf-ui-web Branch
+
+After determining the block-builder-api branch name, ensure sf-ui-web has a matching branch:
+
+1. **Extract PGL ticket from branch name:**
+```bash
+# Example: ccho_hfc_ui_gem_content_ph_PGL-947 → PGL-947
+ticket=$(echo "<branch-name>" | grep -o 'PGL-[0-9]\+')
+```
+
+2. **Check if matching branch exists in sf-ui-web:**
+```bash
+cd ~/codebase/sf-ui-web
+git fetch origin
+git branch -r | grep "origin/.*${ticket}" || echo "No matching branch"
+```
+
+3. **Handle uncommitted changes:**
+   - Check for uncommitted changes: `git status --short`
+   - If changes exist:
+     ```bash
+     git stash push -m "Prepublish: temp stash for branch switch to ${ticket}"
+     ```
+   - **Store stash info** (stash message, files, timestamp) for display in final summary
+
+4. **If matching branch found:**
+   - Display: "Found matching branch in sf-ui-web: <branch-name>"
+   - Checkout the branch:
+     ```bash
+     cd ~/codebase/sf-ui-web
+     git checkout <matching-branch>
+     git pull origin <matching-branch>
+     ```
+
+5. **If NO matching branch found:**
+   - Display: "No matching branch found in sf-ui-web with ticket ${ticket}"
+   - Display: "Creating new branch from main..."
+   - Create branch from latest main:
+     ```bash
+     cd ~/codebase/sf-ui-web
+     git checkout main
+     git pull origin main
+     git checkout -b <branch-name>
+     ```
+   - Display: "✓ Created branch '<branch-name>' in sf-ui-web"
+
+6. **Verify working directory:**
+   - Ensure you're on the correct branch before running codegen
+   - Display current branch: `git branch --show-current`
+
+**Error Handling:**
+- If git fetch fails: Check VPN connection, retry once
+- If multiple matching branches found: Display list and ask user to select
+- If branch creation fails: Display error and exit
+
 ### 6. Verify PR Exists
 
 Check PR exists in block-builder-api:
@@ -110,185 +166,94 @@ Parse JSON response:
 
 ### 7. Check Buildkite Build Status
 
-**Before starting: Check MCP availability**
+**Delegate to buildkite-watch command for monitoring.**
 
-Detect if running in an MCP-enabled session:
-- Check Claude's available tools for `mcp__buildkite__*` or `mcp__github__*`
-- If not available, you're running in a non-MCP session (`claude` command)
-- If available, you're running with MCP (`claude-mcp` command or specific config)
+Use the Skill tool to invoke the global buildkite-watch command:
 
-**If MCP tools NOT available:**
-
-Display informational message with copy-pastable instructions:
 ```
-ℹ️  MCP servers not detected in current session.
-
-For best results, this skill works best with MCP servers enabled.
-MCP provides more reliable build and schema monitoring via:
-  • buildkite       (Build status and job logs)
-  • github_wayfair  (PR and check monitoring)
-
-Continuing with CLI fallbacks (Scout → gh CLI).
-
-────────────────────────────────────────────────────────────────
-To use MCP servers next time, exit this session and run:
-
-  claude-mcp --servers "buildkite,github_wayfair" /prepublish
-
-This starts Claude with MCP and runs the prepublish skill immediately.
-────────────────────────────────────────────────────────────────
+Skill tool invocation:
+- skill: "buildkite-watch"
+- args: "" (auto-detect PR and context)
 ```
 
-**Do NOT attempt to run `claude-mcp` from within Claude:**
-- `claude-mcp` is a shell function, not available inside Claude sessions
-- User must exit and restart with `claude-mcp --servers` manually
+**What buildkite-watch does:**
+- Auto-detects PR number from current branch
+- Auto-detects context as "buildkite/block-builder-api"
+- Monitors build with live progress bar (35 minute timeout)
+- Sends desktop notifications every 5 minutes
+- Displays timestamps and build URL on completion
+- Handles MCP detection and strategy selection automatically
 
-**Automatic fallback:**
-- If MCP not available, continue automatically with CLI strategies
-- No user prompt needed - inform and proceed
-- Scout CLI and gh CLI are reliable fallbacks
+**Handle build results based on exit codes:**
 
-**MCP server configuration:**
-Your MCP servers are defined in `~/dotfiles/claude/mcp-servers.json`:
-- `buildkite` - Buildkite API access (BEST for build monitoring)
-- `github_wayfair` - Wayfair GitHub instance (BEST for PR monitoring)
-- `github` - Public GitHub (alternative)
-
-**Strategy Priority (Sequential - Try in Order):**
-
-**1. Buildkite MCP** (BEST - Direct build access)
-
-Check if `mcp__buildkite__*` tools available in Claude's tool list:
-- If available:
-  * Get build for branch: `mcp__buildkite__get_build`
-  * List build jobs: `mcp__buildkite__list_jobs`
-  * Monitor job status in real-time
-  * Check for GraphQL validation completion
-  * **If build status found:** Use it and proceed
-- If not available: Skip to strategy 2
-
-**Pros:** Most reliable, direct access, detailed job info
-
-**2. GitHub MCP** (BEST for PR checks)
-
-Check if `mcp__github__*` tools available in Claude's tool list:
-- If available:
-  * Get PR checks: `mcp__github__get_pr_checks`
-  * Monitor check status: `mcp__github__get_check_run`
-  * **If check status found:** Use it and proceed
-- If not available: Skip to strategy 3
-
-**Pros:** Real-time, reliable, no rate limits
-
-**3. Scout CLI** (Good if installed)
-
-Check if scout is installed:
-```bash
-command -v scout >/dev/null 2>&1
+**Exit 0 (SUCCESS):**
 ```
-
-If available:
-```bash
-scout check <pr-url> --once --format json
+✓ Build completed successfully
 ```
+→ Proceed to step 8 (feature variant verification)
 
-Parse JSON output for build status
-**If status found:** Use it and proceed
+**Exit 1 (FAILURE):**
+```
+✗ Build failed
+```
+Ask user to continue or exit:
+```
+Build failed. GraphQL validation may have completed anyway.
+Continue to feature variant check? (y/n)
+```
+- If `y`: Proceed to step 8 (validation job may have succeeded even if other jobs failed)
+- If `n`: Exit with build URL for manual inspection
 
-**Pros:** Rich metadata, unified view
+**Exit 2 (TIMEOUT):**
+```
+⏱️  Build exceeded 35 minutes
+```
+Ask user what to do:
+```
+Build exceeded timeout. Options:
+1. wait   - Continue waiting (extend timeout by 20 minutes)
+2. skip   - Proceed to variant check (may fail if not ready)
+3. exit   - Stop and inspect manually
 
-**4. GitHub Status Checks API via gh CLI** (Fallback)
+Choice (wait/skip/exit):
+```
+- If `wait`: Re-invoke buildkite-watch with extended timeout: `--timeout 55`
+- If `skip`: Proceed to step 8 (may fail if feature variant not ready)
+- If `exit`: Exit cleanly with build URL
+
+**Exit 3 (NO BUILD):**
+```
+⚠️  No Buildkite build found
+```
+This usually means no GraphQL schema files changed. Ask:
+```
+No Buildkite build detected. This may mean:
+- No schema/code changes that trigger builds
+- PR created before build started
+
+Continue anyway? Feature variant may not exist. (y/n)
+```
+- If `y`: Proceed to step 8 (will likely fail at variant check)
+- If `n`: Exit
+
+**Fallback (if buildkite-watch unavailable):**
+
+If Skill tool fails or buildkite-watch doesn't exist, use direct gh CLI:
 
 ```bash
 cd ~/codebase/block-builder-api
-gh pr view <branch-name> --json statusCheckRollup \
+gh pr view --json statusCheckRollup \
   --jq '.statusCheckRollup[] | select(.context == "buildkite/block-builder-api") | {state: .state, targetUrl: .targetUrl}'
 ```
 
-Parse JSON result:
-- `state: "PENDING"` → Build in progress
-- `state: "SUCCESS"` → Build complete
-- `state: "FAILURE"` → Build failed
-- Empty/no result → No build triggered
-- Extract `targetUrl` for Buildkite build URL
+Parse result and handle states manually (PENDING/SUCCESS/FAILURE).
 
-**Pros:** Widely available
-
-**Display build information:**
-```
-PR: <pr-url>
-Buildkite: <build-url>
-Status: <state>
-```
-
-**Implementation Flow:**
-
-```
-Try Strategy 1 (Buildkite MCP)
-  → Status found? YES: Use it, continue to step 8
-  → Available? NO: Try Strategy 2
-
-Try Strategy 2 (GitHub MCP)
-  → Status found? YES: Use it, continue to step 8
-  → Available? NO: Try Strategy 3
-
-Try Strategy 3 (Scout CLI)
-  → Available? NO: Try Strategy 4
-  → Available? YES: Run it, use status, continue to step 8
-
-Try Strategy 4 (gh CLI)
-  → Get build status and URL
-  → Continue to step 8
-```
-
-**Handle build status with polling:**
-
-**Polling configuration:**
-- Poll interval: 1 minute
-- Max wait: 35 minutes (35 attempts)
-- On each poll, try strategies sequentially in priority order:
-  1. Buildkite MCP (if available)
-  2. GitHub MCP (if available)
-  3. Scout CLI (if installed)
-  4. gh CLI (fallback)
-- Stop immediately when build status changes
-- Progress indicator: "Waiting for Buildkite... (attempt X/35)"
-
-**Notification strategy:**
-- Every 5 minutes: Send notification "Still waiting for Buildkite..."
-- Use terminal-notifier on macOS:
-  ```bash
-  terminal-notifier -title "block-builder-api prepublish" \
-    -message "Still waiting for Buildkite build (X/35)" \
-    -sound default
-  ```
-
-**If PENDING:**
-- Display: "Buildkite build in progress. Waiting for GraphQL validation..."
-- Continue polling
-- When status changes to SUCCESS or FAILURE, proceed
-
-**If SUCCESS:**
-- Display: "✓ Buildkite build completed successfully"
-- Proceed to feature variant verification
-
-**If FAILURE:**
-- Display: "✗ Buildkite build failed"
-- Show build URL
-- Ask: "Build failed but GraphQL validation may have completed. Continue? (y/n)"
-- If no: Exit with build URL
-- If yes: Proceed to feature variant verification
-
-**If NO BUILD:**
-- Display: "⚠️  No Buildkite build found. This usually means no GraphQL schema files changed."
-- Ask: "Continue anyway? Feature variant may not exist. (y/n)"
-- If no: Exit
-- If yes: Proceed (will likely fail)
-
-**Timeout (35 minutes):**
-- Ask: "Build exceeded 35 minutes. Continue waiting or skip? (continue/skip)"
-- If continue: Reset polling for another 20 minutes
-- If skip: Proceed to feature variant check (may fail)
+**Why delegation approach:**
+- Eliminates ~130 lines of duplicate monitoring logic
+- Consistent UX across all Buildkite monitoring (progress bars, notifications, timestamps)
+- Single source of truth for monitoring improvements
+- buildkite-watch handles MCP detection and strategy selection automatically
+- Prepublish focuses on workflow orchestration, not polling mechanics
 
 ### 8. Verify Feature Variant Exists
 
@@ -443,12 +408,26 @@ Show enhanced completion message:
 ```
 ✓ Schema codegen complete
 
-Branch: <branch-name>
+Branch (block-builder-api): <branch-name>
+Branch (sf-ui-web): <sf-ui-web-branch-name>
 PR: <pr-url>
 Build: <buildkite-url>
 
 Changed files:
 <git status output>
+
+[If stash was created:]
+⚠️  Stashed changes from previous branch:
+
+    Stash: <stash-message>
+    Files: <list of stashed files>
+
+    To recover these changes:
+    cd ~/codebase/sf-ui-web
+    git stash list    # View all stashes
+    git stash pop     # Apply and remove latest stash
+    # or
+    git stash apply   # Apply without removing stash
 
 Next steps:
 - Start dev server: dev start (or yarn dev in apps/core-funnel)
@@ -463,6 +442,11 @@ Next steps:
 This resets to production schema. Feature variant schemas CANNOT be merged to main.
 
 Or use: /prepublish --reset
+
+────────────────────────────────────────────────────────────────
+
+Note: /prepublish does NOT automatically create PRs.
+      Use /pr-create when ready to create PR in sf-ui-web.
 ```
 
 ## Error Handling

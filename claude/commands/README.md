@@ -8,6 +8,7 @@ Custom commands for Claude Code organized by scope (global vs repo-specific).
 ~/dotfiles/claude/commands/
 ├── global/                     # Cross-repo commands
 │   ├── pr-template.md         # Generate PR description from git diff
+│   ├── pr-create.md           # Create PR with automated workflow
 │   ├── pr-watch.md            # Monitor GitHub PR CI checks
 │   ├── pr-dashboard.md        # View all PRs for a repository
 │   ├── create-command.md      # Meta-command to generate new commands
