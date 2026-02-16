@@ -1,8 +1,8 @@
 -- Plugin: markdown-togglecheck
 -- Description: Simple and fast checkbox toggling for markdown files
 -- Keybindings:
---   <leader>tt - Toggle checkbox [ ] <-> [x]
---   <leader>tT - Insert new checkbox "- [ ] "
+--   <leader>tt - Toggle checkbox [ ] <-> [x] (supports dot-repeat with '.')
+--   <leader>tT - Toggle checkbox (always creates [ ] if missing, supports dot-repeat)
 
 return {
   "nfrid/markdown-togglecheck",
@@ -18,15 +18,21 @@ return {
     {
       "<leader>tt",
       function()
-        require("markdown-togglecheck").toggle()
+        vim.go.operatorfunc = "v:lua.require'markdown-togglecheck'.toggle"
+        return "g@l"
       end,
+      expr = true,
       desc = "Toggle markdown checkbox",
       ft = "markdown",
     },
     {
       "<leader>tT",
-      "i- [ ] <Esc>",
-      desc = "Insert new checkbox",
+      function()
+        vim.go.operatorfunc = "v:lua.require'markdown-togglecheck'.toggle_box"
+        return "g@l"
+      end,
+      expr = true,
+      desc = "Toggle checkbox (always creates [ ])",
       ft = "markdown",
     },
   },

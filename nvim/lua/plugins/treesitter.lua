@@ -1,6 +1,8 @@
 -- Plugin: nvim-treesitter
 -- Description: Better syntax highlighting and code understanding using tree-sitter parsers.
 --              Makes code more readable with accurate, context-aware highlighting.
+-- Note: Using master branch (stable API) - main branch is a complete incompatible rewrite
+--       that requires manual autocmd setup for highlighting/indentation
 
 return {
   "nvim-treesitter/nvim-treesitter",
@@ -11,6 +13,7 @@ return {
     treesitter.setup({
       highlight = {
         enable = true,
+        additional_vim_regex_highlighting = false,
       },
       indent = { enable = true },
       ensure_installed = {
