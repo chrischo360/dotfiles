@@ -18,11 +18,12 @@ You are automating the sf-js-libraries pre-release testing workflow:
 2. **Detect library** - Determine which library changed using git diff
 3. **Validate state** - Check formatting, version bump, changelog
 4. **Create/verify PR** - Ensure PR exists for Buildkite to run
+4a. **Match or create consuming repo branches** - Find matching PGL ticket branches or create from main
 5. **Monitor Buildkite** - Wait for pre-release publish step
 6. **Prompt for test location** - Ask where to test (sf-ui-web, sf-ui-checkout, etc.)
 7. **Update consuming repo** - Install pre-release version
 8. **Run build commands** - Build consuming repo with new version
-9. **Display summary** - Show next steps
+9. **Display summary** - Show next steps and stash info
 
 ## Step-by-Step Implementation
 
@@ -126,6 +127,91 @@ If no PR exists:
 If PR exists:
 - Extract PR number and URL
 - Display: "Using existing PR #<number>"
+
+### 4a. Match or Create Consuming Repo Branches
+
+After verifying PR exists, ensure consuming repos have matching branches.
+
+**This step runs BEFORE prompting for test location** to prepare all potential test repos.
+
+1. **Extract PGL ticket from current branch name:**
+```bash
+# Example: ccho_sf_pricing_updates_ph_PGL-947 → PGL-947
+ticket=$(git branch --show-current | grep -o 'PGL-[0-9]\+')
+```
+
+2. **For each consuming repo (sf-ui-web, sf-ui-checkout, sf-ui-cart-and-checkout):**
+
+   a. **Check if repo exists:**
+   ```bash
+   test -d ~/codebase/<repo-name>
+   ```
+
+   b. **Fetch latest branches:**
+   ```bash
+   cd ~/codebase/<repo-name>
+   git fetch origin
+   ```
+
+   c. **Search for matching branch:**
+   ```bash
+   git branch -r | grep "origin/.*${ticket}"
+   ```
+
+   d. **Handle uncommitted changes:**
+   - Check for uncommitted changes: `git status --short`
+   - If changes exist:
+     ```bash
+     git stash push -m "Prepublish: temp stash for branch switch to ${ticket}"
+     ```
+   - **Store stash info** (repo name, stash message, files, timestamp) for display in final summary
+
+   e. **If matching branch found:**
+   - Display: "Found matching branch in <repo-name>: <branch-name>"
+   - Checkout the branch:
+     ```bash
+     git checkout <matching-branch>
+     git pull origin <matching-branch>
+     ```
+   - Store: repo has matching branch
+
+   f. **If NO matching branch found:**
+   - Display: "No matching branch in <repo-name> with ticket ${ticket}"
+   - Display: "Creating new branch from main..."
+   - Create branch from latest main:
+     ```bash
+     git checkout main
+     git pull origin main
+     git checkout -b <sf-js-libraries-branch-name>
+     ```
+   - Display: "✓ Created branch '<branch-name>' in <repo-name>"
+   - Store: repo has new branch created
+
+   g. **Store branch info for each repo:**
+   - Repo name
+   - Branch name (matched or created)
+   - Whether it was matched or created
+   - Current git status
+
+3. **Display summary of prepared repos:**
+```
+Prepared consuming repos:
+✓ sf-ui-web: ccho_sf_pricing_updates_ph_PGL-947 (matched)
+✓ sf-ui-checkout: ccho_sf_pricing_updates_ph_PGL-947 (created from main)
+✓ sf-ui-cart-and-checkout: ccho_checkout_ui_ph_PGL-947 (matched)
+```
+
+**Error Handling:**
+- If git fetch fails: Check VPN connection, retry once
+- If multiple matching branches found: Display list and ask user to select
+- If branch creation fails: Display error but continue (repo won't be available for testing)
+- If repo doesn't exist: Skip silently (won't appear in test location prompt)
+
+**Why prepare all repos upfront:**
+- User can test in multiple repos simultaneously
+- Avoids branch switching delays during yarn upgrade step
+- Clear overview of which repos are ready
+- All repos on correct branch before Buildkite monitoring
 
 ### 5. Monitor Buildkite for Pre-Release Publish
 
@@ -311,16 +397,20 @@ If automated strategies haven't found the version after 15 minutes:
 
 ### 6. Prompt for Test Location
 
-Always prompt user to select where to test:
+Prompt user to select where to test, showing branch status for each prepared repo:
 
 ```
 Where would you like to test @wayfair/sf-pricing@10.2.0-abc1234?
 
-[ ] sf-ui-web
-[ ] sf-ui-checkout
-[ ] sf-ui-cart-and-checkout
+[ ] sf-ui-web (ccho_sf_pricing_updates_ph_PGL-947 - matched)
+[ ] sf-ui-checkout (ccho_sf_pricing_updates_ph_PGL-947 - created from main)
+[ ] sf-ui-cart-and-checkout (ccho_checkout_ui_ph_PGL-947 - matched)
 [ ] Other (specify path)
 ```
+
+**Only show repos that:**
+- Exist in ~/codebase/
+- Successfully switched/created branch in step 4a
 
 Allow multiple selections.
 
@@ -388,12 +478,33 @@ Show completion message:
 ✓ Pre-release testing ready
 
 Library: <library-name>@<pre-release-version>
+Branch (sf-js-libraries): <branch-name>
 PR: <pr-url>
 Build: <buildkite-url>
 
 Updated in:
-- ~/codebase/<repo-name-1>
-- ~/codebase/<repo-name-2>
+- ~/codebase/sf-ui-web (branch: <branch-name>)
+- ~/codebase/sf-ui-checkout (branch: <branch-name>)
+
+[If stash was created in any repo:]
+⚠️  Stashed changes from previous branches:
+
+  sf-ui-web:
+    Stash: Prepublish: temp stash for branch switch to PGL-947
+    Files: package.json, yarn.lock
+
+    To recover:
+    cd ~/codebase/sf-ui-web
+    git stash list
+    git stash pop
+
+  sf-ui-checkout:
+    Stash: Prepublish: temp stash for branch switch to PGL-947
+    Files: package.json, yarn.lock
+
+    To recover:
+    cd ~/codebase/sf-ui-checkout
+    git stash pop
 
 Next steps:
 - Test functionality in dev environment
@@ -401,6 +512,11 @@ Next steps:
 - After stable publish: Update consuming repos to stable version
 
 ⚠️  REMINDER: This is a pre-release version. Do not merge to main in consuming repos.
+
+────────────────────────────────────────────────────────────────
+
+Note: /prepublish does NOT automatically create PRs in consuming repos.
+      Use /pr-create when ready to create PR in sf-ui-web/sf-ui-checkout/etc.
 ```
 
 ## Error Handling

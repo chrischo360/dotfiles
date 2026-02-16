@@ -18,8 +18,9 @@ You are automating the block-builder-api schema testing workflow:
 2. **Handle reset mode** - Clean up feature variant if requested
 3. **Verify branch** - Ensure not running from main/master
 4. **Validate repos** - Check block-builder-api and sf-ui-web exist
-5. **Determine branch** - Get branch name from args, git, or user input
-5a. **Match or create sf-ui-web branch** - Find matching PGL ticket branch or create from main
+5. **Validate code state** - Check formatting, build, tests
+5a. **Determine branch** - Get branch name from args, git, or user input
+5b. **Match or create sf-ui-web branch** - Find matching PGL ticket branch or create from main
 6. **Verify PR** - Ensure PR exists in block-builder-api
 7. **Check Buildkite** - Monitor build status via GitHub checks
 8. **Verify feature variant** - Ensure schema variant is available
@@ -78,7 +79,64 @@ If either missing:
 - Show expected paths
 - Exit
 
-### 5. Determine Branch Name
+### 5. Validate Code State
+
+Ensure code is properly formatted and builds successfully before proceeding.
+
+**Check formatting (Maven checkstyle):**
+```bash
+cd ~/codebase/block-builder-api
+./mvnw checkstyle:check
+```
+
+If formatting issues detected:
+- Run formatting fix automatically:
+  ```bash
+  ./mvnw spotless:apply
+  ```
+- Notify user: "Auto-formatting code with Spotless..."
+- Re-run checkstyle to verify: `./mvnw checkstyle:check`
+
+**Check build:**
+```bash
+./mvnw clean compile -DskipTests
+```
+
+If build fails:
+- Display error output
+- Ask: "Build failed. Fix issues before continuing? (y/n)"
+- If yes: Exit with error message
+- If no: Continue (may fail at Buildkite step)
+
+**Check for schema changes:**
+```bash
+git diff main...HEAD -- '**/schema/*.graphql'
+```
+
+If no schema changes detected:
+- Warn: "⚠️  No GraphQL schema changes detected. Feature variant may not be created."
+- Ask: "Continue anyway? (y/n)"
+- If no: Exit
+- If yes: Proceed (will likely fail at feature variant step)
+
+**Quick unit test check (optional):**
+```bash
+./mvnw test -pl common,storefront,internal
+```
+
+If tests fail:
+- Display failures
+- Ask: "Tests failed. Continue anyway? (Buildkite will catch failures) (y/n)"
+- If no: Exit
+- If yes: Continue
+
+**Why this validation:**
+- Catches formatting issues early (faster than Buildkite)
+- Verifies code compiles before waiting for CI
+- Warns if schema changes missing (common mistake)
+- Optional test check saves time vs waiting for Buildkite
+
+### 5a. Determine Branch Name
 
 Priority order:
 
@@ -94,7 +152,7 @@ c. **If in sf-ui-web or other directory:** Ask user for block-builder-api branch
 
 d. **Store branch name** for all subsequent steps
 
-### 5a. Match or Create sf-ui-web Branch
+### 5b. Match or Create sf-ui-web Branch
 
 After determining the block-builder-api branch name, ensure sf-ui-web has a matching branch:
 

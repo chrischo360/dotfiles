@@ -210,10 +210,16 @@ nvim-grep() {
   fi
 }
 
-############################# SCRIPTS ############################# 
+############################# SCRIPTS #############################
 
 # Nvim Memory Monitoring & Cleanup
 alias memory='$DOTFILES_DIR/scripts/nvim/memory.sh'
+
+# Buildkite monitor session management
+alias bk-start='$DOTFILES_DIR/scripts/tmux/buildkite_monitor_session.sh start'
+alias bk-stop='$DOTFILES_DIR/scripts/tmux/buildkite_monitor_session.sh stop'
+alias bk-status='$DOTFILES_DIR/scripts/tmux/buildkite_monitor_session.sh status'
+alias bk-watch='tmux attach -t buildkite-monitor'
 
 # Claude Code with interactive MCP server selection
 # Usage: claude-mcp

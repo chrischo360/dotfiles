@@ -49,12 +49,15 @@
         "dev:layout": [
           { "context": "apps/sf-ui-layout", "run": "start" }
         ],
-        "quick": [
-          "codegen",
-          "build"
-        ],
         "pr:check": {
           "steps": [
+            { "shell": "echo '🔥 Warming Turborepo cache from main branch...'" },
+            { "shell": "FEATURE_BRANCH=$(git branch --show-current) && git stash push -m 'pr-check temp stash' --include-untracked" },
+            { "shell": "git checkout main && git pull origin main" },
+            { "shell": "yarn lib:build" },
+            { "shell": "FEATURE_BRANCH=$(git branch --show-current 2>/dev/null || git rev-parse --abbrev-ref HEAD@{1}) && git checkout $FEATURE_BRANCH" },
+            { "shell": "git stash pop || echo 'No stash to restore (working tree was clean)'" },
+            { "shell": "echo '✅ Cache warmed. Running validation on feature branch...'" },
             "format",
             "lint",
             "typecheck",
@@ -66,11 +69,7 @@
         },
         "pr:submit": {
           "steps": [
-            "format",
-            "lint", 
-            "typecheck",
-            "build",
-            "test",
+            { "script": "pr:check" },
             { "shell": "PR_URL=$(gh pr view --json url -q '.url' 2>/dev/null); [ -z \"$PR_URL\" ] && echo '⚠️ No PR found, skipping watch.' && exit 0; scout watch-builds \"$PR_URL\"" }
           ],
           "notify": true,
