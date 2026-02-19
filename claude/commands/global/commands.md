@@ -23,18 +23,18 @@ Steps:
    if [[ "$REPO_NAME" == "sf-ui-web" ]]; then
      if [[ -n "$HAS_UNSTAGED" ]]; then
        echo "✓ You have uncommitted changes"
-       echo "  → /pr-cleanup    - Commit + sync + rebuild + format (prepares branch for PR)"
+       echo "  → /pr-build      - Commit + sync + rebuild + format (prepares branch for PR)"
        echo "  → /pr-check      - Validate changes before committing"
        echo ""
      elif [[ -z "$HAS_PR" ]]; then
        echo "✓ Branch ready, no PR yet"
-       echo "  → /pr-cleanup    - Final cleanup before creating PR"
+       echo "  → /pr-build      - Final cleanup before creating PR"
        echo "  → gh pr create   - Create pull request"
        echo ""
      elif [[ -n "$HAS_PR" ]]; then
        echo "✓ PR exists: $HAS_PR"
        echo "  → /pr-watch      - Monitor CI checks"
-       echo "  → /pr-diagnose   - Watch + auto-diagnose failures"
+       echo "  → /pr-push       - Push + watch + auto-diagnose failures"
        echo "  → /pr-automerge  - Auto-merge when checks pass"
        echo ""
      fi
@@ -67,9 +67,9 @@ Steps:
      "sf-ui-web")
        echo "## sf-ui-web Commands"
        echo ""
-       echo "- /pr-cleanup      - Prepare branch for PR (commit + sync + rebuild + format)"
-       echo "- /pr-submit       - Run validation suite + watch PR checks"
-       echo "- /pr-diagnose     - Watch PR checks and diagnose failures with fixes"
+       echo "- /pr              - PR workflow menu (interactive)"
+       echo "- /pr-build        - Prepare branch for PR (commit + sync + rebuild + format)"
+       echo "- /pr-push         - Push changes + watch PR checks + diagnose failures with fixes"
        echo "- /pr-check        - Run full pre-PR validation (format + lint + typecheck + build + test)"
        echo "- /pr-automerge    - Watch PR checks and auto-merge when all pass"
        echo "- /quick-rebuild   - Fast rebuild (regenerate GraphQL types + build libraries)"

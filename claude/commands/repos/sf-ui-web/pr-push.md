@@ -1,6 +1,6 @@
-Watch PR checks and diagnose failures with proposed fixes.
+Push changes and auto-diagnose CI failures with proposed fixes.
 
-Wrapper for `dev :run pr:diagnose` in sf-ui-web.
+Wrapper for `dev :run pr:diagnose` in sf-ui-web (script name unchanged for compatibility).
 
 Steps:
 
@@ -9,7 +9,12 @@ Steps:
    git remote -v | grep -q 'sf-ui-web' || { echo "❌ Not in sf-ui-web repository"; exit 1; }
    ```
 
-2. Run the pr:diagnose script:
+2. Push current branch to remote:
+   ```bash
+   git push || { echo "❌ Failed to push branch"; exit 1; }
+   ```
+
+3. Run the pr:diagnose script to watch and diagnose:
    ```bash
    dev :run pr:diagnose
    ```
@@ -39,7 +44,7 @@ Error handling:
 - Desktop notification on success/failure
 
 Related commands:
-- `/pr-submit` - Watch without diagnosis
+- `/pr-watch` - Watch without diagnosis
 - `/pr-automerge` - Watch + auto-merge on success
 - `/pr-check` - Test proposed fix locally
 
@@ -55,8 +60,8 @@ Workflow example:
 # 1. Create PR
 gh pr create
 
-# 2. Watch and diagnose failures
-/pr-diagnose
+# 2. Push and diagnose failures automatically
+/pr-push
 
 # 3. Review proposed fix in Claude session
 # 4. Apply fix if acceptable
@@ -64,7 +69,7 @@ gh pr create
 /pr-check
 
 # 6. Push and watch again
-git push && /pr-watch
+/pr-push
 ```
 
 Anti-Patterns to Avoid:

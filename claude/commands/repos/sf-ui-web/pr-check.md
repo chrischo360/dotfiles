@@ -21,18 +21,20 @@ What this does:
 - **Build**: Runs `yarn lib:build` to build all libraries
 - **Test**: Runs `yarn test` to execute test suite
 
+The dev CLI provides step-by-step progress with logging. If any step fails, check the log file at `~/.dev/logs/sf-ui-web-pr:check-<timestamp>.log` for details.
+
 Error handling:
 - If not in sf-ui-web: Exits with error message
 - If any step fails: Shows which step failed and the error
 - Desktop notification on completion (success/failure)
 
 Related commands:
-- `/pr-cleanup` - Commit changes + sync with main before running checks
-- `/pr-submit` - Run checks + watch PR CI status
-- `/pr-diagnose` - Watch PR + diagnose failures with proposed fixes
+- `/pr-build` - Commit changes + sync with main before running checks
+- `/pr-push` - Push changes + watch PR CI status + diagnose failures
+- `/pr-create` - Create PR with automated workflow
 
 Notes:
 - This command runs the same validation suite that CI runs
 - Recommended to run before creating a PR
 - Faster than waiting for CI feedback
-- Logs saved to `~/.dev/logs/` for debugging
+- Logs saved to `~/.dev/logs/sf-ui-web-pr:check-<timestamp>.log` for debugging

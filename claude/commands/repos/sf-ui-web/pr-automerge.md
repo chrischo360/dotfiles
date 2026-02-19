@@ -30,8 +30,8 @@ Error handling:
 - Desktop notification on success/failure
 
 Related commands:
-- `/pr-submit` - Watch without auto-merge
-- `/pr-diagnose` - Watch + diagnose failures with proposed fixes
+- `/pr-watch` - Watch without auto-merge
+- `/pr-push` - Push + watch + diagnose failures with proposed fixes
 - `/pr-check` - Just validation (no watch)
 
 Notes:

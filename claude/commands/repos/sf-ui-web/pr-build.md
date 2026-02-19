@@ -1,4 +1,4 @@
-Prepare branch for PR by committing unstaged changes, syncing with main, rebuilding, and formatting.
+Build and prepare branch for PR by committing unstaged changes, syncing with main, rebuilding, and formatting.
 
 Steps:
 
@@ -53,4 +53,4 @@ Error handling:
 
 After cleanup:
 - If formatter made changes: `git add -A && git commit -m "chore: format and lint"`
-- Branch ready for `/pr-template`
+- Branch ready for `/pr` or `/pr-create`

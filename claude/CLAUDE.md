@@ -105,13 +105,27 @@ For these tools, I will automatically use them when appropriate without asking:
 ### 5. Version Control
 - **NEVER commit code** - I handle all commits manually
 - **NEVER run git commands** - Don't execute git add, commit, push, etc.
-- **After completing implementations**, provide an optional git commit suggestion:
+- **After completing implementations**, provide git commit in two ways:
+
+  **Option 1: Write to /tmp script (preferred for complex commands):**
   ```bash
-  # Optional commit command (you run this):
-  git add <files> && git commit -m "<descriptive message>"
+  # Creates /tmp/git-commit.sh with the full command
+  # Then provides: pbcopy < /tmp/git-commit.sh && echo "✓ Copied - paste to run"
   ```
+
+  **Option 2: Direct heredoc (for simple commits):**
+  ```bash
+  git add <files> && git commit -m "$(cat <<'EOF'
+  <commit title>
+
+  <commit body>
+  EOF
+  )"
+  ```
+
 - Keep commit messages concise and descriptive
 - Focus on what changed and why
+- Use pbcopy to put commands in clipboard for easy pasting
 - User decides whether to use the suggested command
 
 ### 6. Documentation & Comments

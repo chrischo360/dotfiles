@@ -25,7 +25,7 @@ Error handling:
 - Desktop notification on completion
 
 Related commands:
-- `/pr-cleanup` - Includes rebuild as part of PR prep
+- `/pr-build` - Includes rebuild as part of PR prep
 - `/pr-check` - Validation after rebuild
 
 Notes:

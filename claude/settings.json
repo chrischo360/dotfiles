@@ -236,6 +236,10 @@
     {
       "tool": "WebFetch",
       "urlPattern": "https://**"
+    },
+    {
+      "tool": "mcp__sourcegraph__*",
+      "pathPattern": "**"
     }
   ],
   "allowedDirectories": [

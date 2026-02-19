@@ -86,7 +86,7 @@ Notes (optional):
 - Use kebab-case (e.g., `create-command`, `pr-template`, `branch-cleanup`)
 - Be descriptive but concise (2-4 words ideal)
 - Avoid redundant prefixes like "run-" or "do-"
-- Good: `test-schema`, `cherry-pick-merge`, `pr-cleanup`
+- Good: `test-schema`, `cherry-pick-merge`, `pr-build`
 - Bad: `run-tests`, `do-merge`, `command-for-analyzing`
 
 **Content Guidelines:**
