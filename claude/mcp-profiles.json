@@ -1,0 +1,16 @@
+{
+  "profiles": {
+    "research": {
+      "description": "Research tools: GitHub, Sourcegraph, Docker, Glean",
+      "servers": ["github_wayfair", "sourcegraph", "MCP_DOCKER", "glean_default"]
+    },
+    "debug": {
+      "description": "Debugging tools: Buildkite, Playwright, Sourcegraph",
+      "servers": ["buildkite", "playwright", "sourcegraph"]
+    },
+    "code-review": {
+      "description": "Code review: GitHub + Sourcegraph",
+      "servers": ["github_wayfair", "sourcegraph"]
+    }
+  }
+}

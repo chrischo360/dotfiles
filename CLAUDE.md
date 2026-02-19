@@ -264,6 +264,7 @@ The install script will:
 The `~/dotfiles/claude/` directory contains Claude Code configuration and utilities:
 
 - **settings.json** - Main Claude Code configuration (permissions, model, hooks, statusline)
+- **mcp-profiles.json** - MCP server profile definitions (predefined server combinations)
 - **CLAUDE.md** - Global instructions and workflow rules
 - **PAL_CONFIG.md** - PAL MCP Server configuration guide
 - **agents/** - Custom agent definitions for specialized workflows
@@ -309,6 +310,51 @@ Configuration: See `claude/PAL_CONFIG.md` for setup details.
 Configure the statusline interactively:
 ```bash
 ccstatusline
+```
+
+### MCP Profiles
+
+Launch Claude with predefined MCP server combinations using profiles.
+
+**Available profiles** (defined in `claude/mcp-profiles.json`):
+- `research` - Research tools (GitHub, Sourcegraph, Docker, Glean)
+- `debug` - Debugging tools (Buildkite, Playwright, Sourcegraph)
+- `code-review` - Code review (GitHub + Sourcegraph)
+
+**Interactive mode:**
+```bash
+claude-mcp  # Opens FZF with profiles + individual servers
+```
+
+**Non-interactive mode (profile name):**
+```bash
+claude-mcp --servers research
+claude-mcp --servers debug
+claude-mcp --servers code-review
+```
+
+**Non-interactive mode (individual servers):**
+```bash
+claude-mcp --servers github_wayfair,sourcegraph  # Existing behavior
+```
+
+**Tmux split pane:**
+```bash
+claude-mcp-split research                 # Launch with profile
+claude-mcp-split buildkite,github_wayfair # Launch with individual servers
+```
+
+**Adding custom profiles:**
+Edit `~/dotfiles/claude/mcp-profiles.json` and add entries under `profiles`:
+```json
+{
+  "profiles": {
+    "my-profile": {
+      "description": "Description for FZF preview",
+      "servers": ["server1", "server2"]
+    }
+  }
+}
 ```
 
 ### Memory Usage Analysis
