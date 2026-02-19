@@ -24,21 +24,44 @@ Steps:
      echo "❌ No commits on this branch"
      exit 1
    }
+   ```
 
-   # Warn about uncommitted changes (non-blocking)
+1.5. Handle uncommitted changes:
+   ```bash
+   # Check for uncommitted changes
    if [[ -n $(git status --short) ]]; then
-     echo "⚠️  Warning: You have uncommitted changes."
-     echo "   Consider committing or stashing before creating PR."
+     # Show what would be committed
+     echo "⚠️  You have uncommitted changes:"
      git status --short | head -10
      echo ""
+
+     # Use AskUserQuestion:
+     # Question: "Commit these changes before creating PR?"
+     # Options:
+     #   - Yes - Commit all changes now
+     #   - No - Continue without committing (PR won't include these changes)
+     #   - Cancel - Exit without creating PR
+
+     # If Yes:
+     #   - Use AskUserQuestion again:
+     #     - Question: "Enter commit message (or leave blank for 'wip'):"
+     #     - Default: "wip"
+     #   - git add -A && git commit -m "<message>"
+
+     # If No:
+     #   - echo "⚠️  Continuing without uncommitted changes. PR will not include them."
+
+     # If Cancel:
+     #   - echo "❌ PR creation cancelled"
+     #   - exit 0
    fi
    ```
 
-2. Optional: Run repo-specific pr-check if available:
+2. Optional: Run adaptive validation:
    - Get repository name: `basename $(git rev-parse --show-toplevel)`
-   - Attempt to invoke skill: `repos:<repo-name>:pr-check`
-   - If skill not found: Continue silently
-   - If skill exists and fails: Ask "Pre-check failed. Continue with PR creation? (y/n)"
+   - Try repo-specific pr-check: `repos:<repo-name>:pr-check`
+   - If not found, try global pr-lint: `global:pr-lint` (quick format + lint)
+   - If validation fails: Ask "Validation failed. Continue with PR creation? (y/n)"
    - If `--skip-check` flag: Skip this step
 
 3. Generate PR title and body via pr-template:
@@ -101,7 +124,27 @@ Steps:
 5. Create PR with gh CLI:
    ```bash
    # Use title and body from pr-template (step 3)
-   PR_URL=$(gh pr create --title "$PR_TITLE" --body "$PR_BODY")
+   PR_URL=$(gh pr create --title "$PR_TITLE" --body "$PR_BODY" 2>&1)
+
+   # Check if creation succeeded
+   if [[ $? -ne 0 ]]; then
+     # Check if error is "PR already exists"
+     if gh pr view &>/dev/null; then
+       echo ""
+       echo "✅ PR already exists for this branch:"
+       gh pr view
+       echo ""
+       echo "Next steps:"
+       echo "  gh pr view --web    # View in browser"
+       echo "  /pr-push            # Push changes and diagnose"
+       echo ""
+       exit 0
+     else
+       echo "❌ Failed to create PR"
+       echo "$PR_URL"
+       exit 1
+     fi
+   fi
 
    echo ""
    echo "✅ PR created successfully!"
@@ -171,7 +214,7 @@ Related commands:
 - `/pr-template` - Generate PR description (used internally)
 - `/pr-check` - Run validation suite (called conditionally)
 - `/pr-watch` - Monitor PR CI checks (suggested next step)
-- `/pr-cleanup` - Prepare branch before PR (run before this command)
+- `/pr-build` - Prepare branch before PR (run before this command)
 - `/pr-automerge` - Auto-merge when checks pass
 - `/pr-dashboard` - View all PRs for repository
 

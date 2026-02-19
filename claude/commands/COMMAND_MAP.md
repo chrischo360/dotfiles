@@ -45,6 +45,75 @@ Visualization of all Claude commands and their relationships.
 
 ---
 
+### pr
+**Skill:** `global:pr`
+**Purpose:** Adaptive PR workflow menu with repository detection
+
+**Uses:**
+- git (repository detection)
+- AskUserQuestion (presents menu)
+- Delegates to other PR commands based on selection
+
+**Used by:**
+- User invoked for discovery/navigation
+
+**Options:**
+- Base (all repos): Create PR, Generate Description, Git Commit, Quick Lint, Watch, Dashboard
+- sf-ui-web additional: Build, Check, Push & Diagnose, Auto-merge
+- Other repos: Dynamically shows repo-specific commands
+
+**Related:**
+- Replaces repos:sf-ui-web:pr (now global)
+
+---
+
+### pr-lint
+**Skill:** `global:pr-lint`
+**Purpose:** Adaptive quick validation (format + lint)
+
+**Uses:**
+- git (repository detection)
+- package.json detection
+- Creates repo-specific commands via Task/Plan agent
+- Falls back to direct execution or graceful skip
+
+**Used by:**
+- [[#pr-create]] (optional validation)
+- User invoked manually
+
+**Adaptive strategy:**
+1. Check for repos/${REPO_NAME}/pr-lint.md
+2. Detect standard format/lint scripts
+3. Offer to create custom command
+4. Skip gracefully if not applicable
+
+**Related:**
+- Can create new repo-specific commands dynamically
+
+---
+
+### git-commit
+**Skill:** `global:git-commit`
+**Purpose:** Commit with branch validation (warns if no ticket reference)
+
+**Uses:**
+- git (status, branch, commit)
+- AskUserQuestion (commit message, warnings)
+
+**Used by:**
+- User invoked to commit changes
+- [[#pr]] menu option
+
+**Features:**
+- Validates branch name for ticket patterns (PGL-XXX, ph-XXX, ticket/XXX)
+- Non-blocking warnings (user can continue)
+- Suggests next steps after commit
+
+**Related:**
+- Preparation step before PR workflows
+
+---
+
 ### pr-template
 **Skill:** `global:pr-template`
 **Purpose:** Generate PR title and description from git changes matching your terse, technical style
@@ -57,7 +126,7 @@ Visualization of all Claude commands and their relationships.
 
 **Used by:**
 - [[#pr-create]] (invoked internally)
-- [[#pr-cleanup]] (suggested next step)
+- [[#pr-build]] (suggested next step)
 - User invoked manually
 
 **Related:**
@@ -72,11 +141,12 @@ Visualization of all Claude commands and their relationships.
 **Uses:**
 - [[#pr-template]] ← **invokes to generate title/body**
 - [[#pr-check]] ← **optionally invokes for validation** (if available)
+- [[#pr-lint]] ← **fallback validation if pr-check not available**
 - git (push, branch validation)
 - gh CLI (create PR)
 
 **Used by:**
-- [[#pr-cleanup]] (suggested next step)
+- [[#pr-build]] (suggested next step)
 - User invoked to create PR
 
 **Workflow:**
@@ -104,7 +174,7 @@ Visualization of all Claude commands and their relationships.
 - scout CLI (`scout check`) ← **wraps this tool**
 
 **Used by:**
-- [[#pr-diagnose]] ← **uses internally**
+- [[#pr-push]] ← **uses internally**
 - [[#pr-automerge]] ← **uses internally**
 - [[#pr-create]] (suggested next step)
 - User invoked manually
@@ -162,9 +232,33 @@ Visualization of all Claude commands and their relationships.
 
 ## sf-ui-web Commands
 
-### pr-cleanup
-**Skill:** `repos:sf-ui-web:pr-cleanup`
-**Purpose:** Prepare branch for PR by committing unstaged changes, syncing with main, rebuilding, and formatting
+### pr-lint
+**Skill:** `repos:sf-ui-web:pr-lint`
+**Purpose:** Run format and lint validation for sf-ui-web
+
+**Uses:**
+- yarn (format, biome lint, eslint)
+
+**Used by:**
+- [[#pr-lint (global)]] ← **delegates to this**
+- User invoked manually
+
+**Workflow:**
+```
+1. Verify repository
+2. Run yarn format
+3. Run yarn biome lint
+4. Run yarn lint
+```
+
+**Related:**
+- Faster than [[#pr-check]] (no typecheck, build, test)
+
+---
+
+### pr-build
+**Skill:** `repos:sf-ui-web:pr-build`
+**Purpose:** Build and prepare branch for PR by committing unstaged changes, syncing with main, rebuilding, and formatting
 
 **Uses:**
 - git (commit, fetch, merge, checkout)
@@ -204,7 +298,7 @@ Visualization of all Claude commands and their relationships.
   - yarn lib:build
 
 **Used by:**
-- [[#pr-cleanup]] (includes rebuild)
+- [[#pr-build]] (includes rebuild)
 - User invoked after schema changes
 
 **Related:**
@@ -233,26 +327,28 @@ Visualization of all Claude commands and their relationships.
 
 ---
 
-### pr-diagnose
-**Skill:** `repos:sf-ui-web:pr-diagnose`
-**Purpose:** Watch PR checks and diagnose failures with proposed fixes
+### pr-push
+**Skill:** `repos:sf-ui-web:pr-push`
+**Purpose:** Push changes and auto-diagnose CI failures with proposed fixes
 
 **Uses:**
+- git (push branch)
 - dev CLI (`dev :run pr:diagnose`) ← **wraps this script**
   - Uses scout watch-builds (same as [[#pr-watch]])
   - Spawns Claude agent on failure
 
 **Used by:**
-- User invoked for automated diagnosis
+- User invoked to push and monitor
 
 **Workflow:**
 ```
-1. Watch PR checks
-2. On failure: spawn Claude agent
-3. Agent reads logs and proposes fix
-4. Desktop notification with results
-5. User reviews proposed fix
-6. User applies fix and runs pr-check
+1. Push current branch to remote
+2. Watch PR checks
+3. On failure: spawn Claude agent
+4. Agent reads logs and proposes fix
+5. Desktop notification with results
+6. User reviews proposed fix
+7. User applies fix and runs pr-check
 ```
 
 **Related:**
@@ -285,7 +381,7 @@ Visualization of all Claude commands and their relationships.
 
 **Related:**
 - [[#pr-watch]] (monitoring component)
-- [[#pr-diagnose]] (watch with AI diagnosis)
+- [[#pr-push]] (watch with AI diagnosis)
 
 ---
 
@@ -369,7 +465,7 @@ These are the underlying CLIs that commands wrap or delegate to.
 
 **Used by:**
 - [[#pr-check]] → `dev :run pr:check`
-- [[#pr-diagnose]] → `dev :run pr:diagnose`
+- [[#pr-push]] → `dev :run pr:diagnose`
 - [[#pr-automerge]] → `dev :run pr:automerge`
 - [[#quick-rebuild]] → `dev :run quick`
 
@@ -422,7 +518,7 @@ These are the underlying CLIs that commands wrap or delegate to.
 ```
 1. Development
    ├─ Make changes
-   └─ pr-cleanup
+   └─ pr-build
        ├─ commits unstaged changes
        ├─ syncs with main
        ├─ rebuilds
@@ -430,6 +526,7 @@ These are the underlying CLIs that commands wrap or delegate to.
 
 2. PR Creation
    └─ pr-create
+       ├─ handles uncommitted changes
        ├─ runs pr-check (optional)
        ├─ invokes pr-template
        ├─ pushes branch
@@ -438,7 +535,8 @@ These are the underlying CLIs that commands wrap or delegate to.
 3. Monitoring (choose one)
    ├─ pr-watch
    │   └─ monitor only
-   ├─ pr-diagnose
+   ├─ pr-push
+   │   ├─ push changes
    │   ├─ monitor
    │   └─ propose fixes on failure
    └─ pr-automerge
@@ -473,7 +571,7 @@ These are the underlying CLIs that commands wrap or delegate to.
 ## Command Reuse Patterns
 
 ### pr-watch (used by 2 commands)
-- [[#pr-diagnose]]
+- [[#pr-push]]
 - [[#pr-automerge]]
 
 ### buildkite-watch (used by 2 commands)
@@ -482,7 +580,7 @@ These are the underlying CLIs that commands wrap or delegate to.
 
 ### pr-template (used by 1 command + manual)
 - [[#pr-create]]
-- Manual invocation after [[#pr-cleanup]]
+- Manual invocation after [[#pr-build]]
 
 ### pr-check (used by 1 command + manual)
 - [[#pr-create]] (optional)
@@ -495,7 +593,7 @@ These are the underlying CLIs that commands wrap or delegate to.
 ### By Use Case
 
 **Preparing a PR:**
-1. [[#pr-cleanup]] - prepare branch
+1. [[#pr-build]] - prepare branch
 2. [[#pr-create]] - create PR
 
 **Validating changes:**
@@ -504,15 +602,18 @@ These are the underlying CLIs that commands wrap or delegate to.
 
 **Monitoring PR:**
 - [[#pr-watch]] - basic monitoring
-- [[#pr-diagnose]] - monitor + auto-diagnose (recommended)
+- [[#pr-push]] - push + monitor + auto-diagnose (recommended)
 - [[#pr-automerge]] - monitor + auto-merge
+
+**Discovery:**
+- [[#pr]] - PR workflow menu (meta command)
 
 **Testing cross-repo changes:**
 - [[#prepublish (block-builder-api)]] - test schema changes
 - [[#prepublish (sf-js-libraries)]] - test library changes
 
-**Discovery:**
-- [[#commands]] - show available commands
+**Command discovery:**
+- [[#commands]] - show available commands for current context
 
 **Utilities:**
 - [[#pr-template]] - generate PR description

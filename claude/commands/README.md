@@ -7,18 +7,22 @@ Custom commands for Claude Code organized by scope (global vs repo-specific).
 ```
 ~/dotfiles/claude/commands/
 ├── global/                     # Cross-repo commands
+│   ├── pr.md                  # Adaptive PR workflow menu
 │   ├── pr-template.md         # Generate PR description from git diff
 │   ├── pr-create.md           # Create PR with automated workflow
+│   ├── pr-lint.md             # Adaptive quick validation (format + lint)
+│   ├── git-commit.md          # Commit with branch validation
 │   ├── pr-watch.md            # Monitor GitHub PR CI checks
 │   ├── pr-dashboard.md        # View all PRs for a repository
 │   └── create-command.md      # Meta-command to generate new commands
 │
 └── repos/                      # Repo-specific orchestration
     ├── sf-ui-web/
-    │   ├── pr-cleanup.md      # PR preparation workflow
+    │   ├── pr-build.md        # PR preparation workflow
+    │   ├── pr-lint.md         # Format and lint validation
     │   ├── quick-rebuild.md   # Fast codegen + build
     │   ├── pr-check.md        # Full validation suite
-    │   ├── pr-diagnose.md     # Watch + diagnose failures (propose fixes)
+    │   ├── pr-push.md         # Push + watch + diagnose failures (propose fixes)
     │   └── pr-automerge.md    # Watch + auto-merge
     │
     ├── block-builder-api/
@@ -33,23 +37,36 @@ Custom commands for Claude Code organized by scope (global vs repo-specific).
 
 ## Command Types
 
-### 1. Workflow Commands (repo-specific)
+### 1. Adaptive Commands (global)
+Commands that intelligently adapt to repository context. Can detect tooling, create repo-specific commands, or gracefully skip.
+
+**Examples:**
+- `pr` - Adaptive menu showing available commands per repo
+- `pr-lint` - Detects format/lint tools or creates custom command
+- `git-commit` - Validates branch naming with non-blocking warnings
+
+**How they work:**
+1. Check for repo-specific version first
+2. Try to detect standard patterns
+3. Offer to create custom command if needed
+4. Skip gracefully if not applicable
+
+### 2. Workflow Commands (repo-specific)
 Multi-step orchestrations for specific repositories.
 
 **Examples:**
-- `pr-cleanup` - Commit + sync + rebuild + format
-- `pr-diagnose` - Watch + diagnose failures + propose fixes
+- `pr-build` - Commit + sync + rebuild + format
+- `pr-push` - Push + watch + diagnose failures + propose fixes
 - Custom workflows unique to each repo
 
-### 2. Meta Commands (global)
+### 3. Meta Commands (global)
 Commands that work across all repositories.
 
 **Examples:**
 - `pr-template` - Analyzes git diff
 - `create-command` - Generates new commands
-- `cherry-pick-merge` - Git operations
 
-### 3. Wrapper Commands
+### 4. Wrapper Commands
 Delegates to existing tooling (`dev` CLI, `scout` CLI).
 
 **Examples:**
