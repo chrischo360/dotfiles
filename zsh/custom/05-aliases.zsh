@@ -19,6 +19,11 @@ alias less="bat"
 alias dev='$DOTFILES_DIR/scripts/dev/dev.sh'
 alias d='dev'
 
+# Scout CLI - GitHub/Buildkite automation (optional, requires ~/codebase/scout)
+if [ -d "$HOME/codebase/scout" ]; then
+    alias scout="node $HOME/codebase/scout/bin/scout.js"
+fi
+
 # AI CLI Agent - easily switch between cursor/claude/etc
 # Change this to switch AI providers: "claude", "cursor agent", "gemini", etc.
 alias cli-agent='cursor agent'
@@ -235,15 +240,26 @@ claude-mcp() {
     shift 2
   fi
 
-  # Read available servers from mcp-servers.json
-  local available_servers=$(jq -r '.mcpServers | keys[]' "$DOTFILES_DIR/claude/mcp-servers.json")
+  # Read available servers and profiles
+  local profiles_config="$DOTFILES_DIR/claude/mcp-profiles.json"
+  local servers_config="$DOTFILES_DIR/claude/mcp-servers.json"
+  local available_servers=$(jq -r '.mcpServers | keys[]' "$servers_config")
+  local available_profiles=$(jq -r '.profiles | keys[]' "$profiles_config" 2>/dev/null || echo "")
 
   # Determine selected servers
   local selected_servers=""
 
   if [[ "$server_arg_mode" == true ]]; then
-    # Non-interactive mode: parse comma-separated list
-    selected_servers=$(echo "$requested_servers" | tr ',' '\n')
+    # Non-interactive mode: check if it's a profile name first
+    if [[ -n "$available_profiles" ]] && echo "$available_profiles" | grep -q "^${requested_servers}$"; then
+      # It's a profile - expand to server list
+      local profile_servers=$(jq -r ".profiles.\"$requested_servers\".servers | join(\",\")" "$profiles_config")
+      selected_servers=$(echo "$profile_servers" | tr ',' '\n')
+      echo "Using profile '$requested_servers': $(echo "$selected_servers" | tr '\n' ', ' | sed 's/,$//')"
+    else
+      # Not a profile - treat as comma-separated server list
+      selected_servers=$(echo "$requested_servers" | tr ',' '\n')
+    fi
 
     # Validate each requested server exists
     while IFS= read -r server; do
@@ -254,26 +270,73 @@ claude-mcp() {
       fi
     done <<< "$selected_servers"
 
-    echo "Non-interactive mode: Using servers: $(echo "$selected_servers" | tr '\n' ', ' | sed 's/,$//')"
+    if [[ "$requested_servers" != *","* ]] && ! echo "$available_profiles" | grep -q "^${requested_servers}$"; then
+      echo "Non-interactive mode: Using servers: $(echo "$selected_servers" | tr '\n' ', ' | sed 's/,$//')"
+    fi
   else
-    # Interactive mode: use fzf (existing behavior)
-    selected_servers=$(printf "%s\n" "${(@f)available_servers}" | \
+    # Interactive mode: build selection list with profiles + individual servers
+    local selection_list=""
+
+    # Add profiles section
+    if [[ -n "$available_profiles" ]]; then
+      selection_list+="=== PROFILES ==="$'\n'
+      while IFS= read -r profile; do
+        local servers=$(jq -r ".profiles.\"$profile\".servers | join(\",\")" "$profiles_config")
+        selection_list+="📦 $profile → $servers"$'\n'
+      done <<< "$available_profiles"
+      selection_list+=$'\n'
+    fi
+
+    # Add individual servers section
+    selection_list+="=== INDIVIDUAL SERVERS ==="$'\n'
+    selection_list+="$available_servers"
+
+    # Launch FZF with enhanced preview
+    local fzf_selection=$(echo "$selection_list" | \
       fzf --multi \
-        --height 40% \
+        --height 50% \
         --reverse \
         --border \
-        --bind 'start:select-all' \
         --bind 'ctrl-a:select-all' \
         --bind 'ctrl-d:deselect-all' \
         --bind 'tab:toggle' \
-        --prompt="MCP servers (Tab toggle, Ctrl-A all, Enter confirm): " \
-        --header="All selected by default • Tab toggle • Ctrl-A select all • Ctrl-D deselect all" \
-        --preview "jq '.mcpServers.{}' $DOTFILES_DIR/claude/mcp-servers.json" \
+        --prompt="Select profile or servers (Tab toggle, Enter confirm): " \
+        --header="Choose a profile or select individual servers" \
+        --preview "if [[ {} == \"📦\"* ]]; then
+          profile=\$(echo {} | awk '{print \$2}');
+          jq \".profiles.\\\"\$profile\\\"\" $profiles_config;
+        elif [[ {} != \"===\"* ]] && [[ -n {} ]]; then
+          jq \".mcpServers.{}\" $servers_config;
+        fi" \
         --preview-window='right:60%')
+
+    if [[ -z "$fzf_selection" ]]; then
+      echo "No servers selected. Running Claude without MCP servers."
+      # Forward any remaining arguments to Claude
+      command claude "$@"
+      return
+    fi
+
+    # Parse FZF selection - expand profiles
+    while IFS= read -r line; do
+      if [[ "$line" == "📦"* ]]; then
+        # Profile selected - extract profile name and expand
+        local profile_name=$(echo "$line" | awk '{print $2}')
+        local profile_servers=$(jq -r ".profiles.\"$profile_name\".servers[]" "$profiles_config")
+        selected_servers+="$profile_servers"$'\n'
+      elif [[ "$line" != "==="* ]] && [[ -n "$line" ]]; then
+        # Individual server selected
+        selected_servers+="$line"$'\n'
+      fi
+    done <<< "$fzf_selection"
+
+    # Remove duplicates and trailing newline
+    selected_servers=$(echo "$selected_servers" | sort -u | grep -v '^$')
   fi
 
   if [[ -z "$selected_servers" ]]; then
     echo "No servers selected. Running Claude without MCP servers."
+    # Forward any remaining arguments to Claude
     command claude "$@"
     return
   fi
@@ -290,7 +353,7 @@ claude-mcp() {
     else
       servers_json+=","
     fi
-    local server_config=$(jq ".mcpServers.\"$server\"" "$DOTFILES_DIR/claude/mcp-servers.json")
+    local server_config=$(jq ".mcpServers.\"$server\"" "$servers_config")
     servers_json+="\"$server\":$server_config"
   done <<< "$selected_servers"
   servers_json+="}"
@@ -299,26 +362,27 @@ claude-mcp() {
 
   echo "Enabled MCP servers: $(echo "$selected_servers" | tr '\n' ', ' | sed 's/,$//')"
 
-  # Run Claude with the temporary config
-  command claude --strict-mcp-config --mcp-config "$temp_mcp_config" -- "$@"
+  # Run Claude with the temporary config (remaining args in $@ are forwarded)
+  command claude --strict-mcp-config --mcp-config "$temp_mcp_config" "$@"
 
   # Clean up temp file
   rm -f "$temp_mcp_config"
 }
 
 # Spawn Claude with MCP in tmux split
-# Usage: claude-mcp-split "buildkite,github_wayfair"
+# Usage: claude-mcp-split "code-review"              # Profile
+#        claude-mcp-split "buildkite,github_wayfair" # Individual servers
 claude-mcp-split() {
-  local servers="${1:-buildkite,github_wayfair}"
+  local profile_or_servers="${1:-code-review}"
 
   if [[ -z "$TMUX" ]]; then
-    echo "Error: Not in a tmux session. Use 'claude-mcp --servers \"$servers\"' instead."
+    echo "Error: Not in a tmux session. Use 'claude-mcp --servers \"$profile_or_servers\"' instead."
     return 1
   fi
 
-  tmux split-window -h "claude-mcp --servers '$servers'"
+  tmux split-window -h "claude-mcp --servers '$profile_or_servers'"
   echo "New Claude session with MCP started in right pane."
-  echo "Servers: $servers"
+  echo "Profile/Servers: $profile_or_servers"
   echo "Switch to it with: Ctrl-b o"
 }
 

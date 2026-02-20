@@ -88,6 +88,12 @@
     "figma": {
       "type": "http",
       "url": "https://mcp.figma.com/mcp"
+    },
+    "storybook": {
+      "type": "stdio",
+      "command": "npx",
+      "args": ["-y", "@storybook/mcp"],
+      "env": {}
     }
   }
 }

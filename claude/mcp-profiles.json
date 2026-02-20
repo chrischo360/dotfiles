@@ -5,8 +5,8 @@
       "servers": ["github_wayfair", "sourcegraph", "MCP_DOCKER", "glean_default"]
     },
     "debug": {
-      "description": "Debugging tools: Buildkite, Playwright, Sourcegraph",
-      "servers": ["buildkite", "playwright", "sourcegraph"]
+      "description": "Debugging tools: Buildkite, Playwright, Storybook, Sourcegraph",
+      "servers": ["buildkite", "playwright", "storybook", "sourcegraph"]
     },
     "code-review": {
       "description": "Code review: GitHub + Sourcegraph",

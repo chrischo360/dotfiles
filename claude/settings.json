@@ -240,6 +240,14 @@
     {
       "tool": "mcp__sourcegraph__*",
       "pathPattern": "**"
+    },
+    {
+      "tool": "mcp__playwright__*",
+      "pathPattern": "**"
+    },
+    {
+      "tool": "mcp__github_wayfair__*",
+      "pathPattern": "**"
     }
   ],
   "allowedDirectories": [

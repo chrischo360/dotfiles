@@ -89,6 +89,11 @@
       "headers": {
         "Authorization": "token {{sourcegraph_token}}"
       }
+    },
+    "storybook": {
+      "command": "npx",
+      "args": ["-y", "@storybook/mcp"],
+      "env": {}
     }
   }
 }

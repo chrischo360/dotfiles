@@ -105,30 +105,22 @@ calculate_cost() {
 parse_transcripts() {
     local cutoff="$1"
 
-    # Create temp jq filter that handles malformed JSON gracefully
-    local jq_filter=$(mktemp)
-    trap "rm -f $jq_filter" EXIT
-
-    cat > "$jq_filter" << 'JQEOF'
-# Read raw lines, try to parse as JSON
-select(type == "object") |
-select(.type == "assistant" and .message.usage != null) |
-select(.timestamp != null) |
-. as $msg |
-($msg.timestamp | sub("\\.\\d+Z$"; "Z") | fromdateiso8601) as $ts |
-select($ts >= $cutoff) |
-{
-    date: ($ts | strftime("%Y-%m-%d")),
-    model: $msg.message.model,
-    usage: $msg.message.usage
-}
-JQEOF
-
-    # Process files: use inputs to read all JSON objects, filtering out parse errors
     find ~/.claude/projects -name "*.jsonl" -type f 2>/dev/null | \
     xargs -P 10 -I {} sh -c '
-        jq -c --argjson cutoff "$1" -f "$2" "$3" 2>/dev/null || true
-    ' _ "$cutoff" "$jq_filter" {}
+        jq -c --argjson cutoff "$1" "
+            select(type == \"object\") |
+            select(.type == \"assistant\" and .message.usage != null) |
+            select(.timestamp != null) |
+            . as \$msg |
+            (\$msg.timestamp | sub(\"\\\\.\\\\d+Z\$\"; \"Z\") | fromdateiso8601) as \$ts |
+            select(\$ts >= \$cutoff) |
+            {
+                date: (\$ts | strftime(\"%Y-%m-%d\")),
+                model: \$msg.message.model,
+                usage: \$msg.message.usage
+            }
+        " "{}" 2>/dev/null || true
+    ' _ "$cutoff"
 }
 
 # Format number with commas
