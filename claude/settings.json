@@ -63,7 +63,6 @@
     "ask": [],
     "defaultMode": "default"
   },
-  "model": "claude-opus-4-6[1m]",
   "hooks": {
     "SessionStart": [
       {
@@ -247,6 +246,10 @@
     },
     {
       "tool": "mcp__github_wayfair__*",
+      "pathPattern": "**"
+    },
+    {
+      "tool": "mcp__glean_default__*",
       "pathPattern": "**"
     }
   ],

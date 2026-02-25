@@ -22,15 +22,15 @@ YELLOW='\033[1;33m'
 NC='\033[0m' # No Color
 
 ### DATA STRUCTURES
-declare -A daily_costs
-declare -A daily_messages
-declare -A daily_input
-declare -A daily_output
-declare -A daily_cache_read
-declare -A model_costs
-declare -A model_messages
-declare -A model_input
-declare -A model_output
+typeset -A daily_costs
+typeset -A daily_messages
+typeset -A daily_input
+typeset -A daily_output
+typeset -A daily_cache_read
+typeset -A model_costs
+typeset -A model_messages
+typeset -A model_input
+typeset -A model_output
 
 ### FUNCTIONS
 
@@ -105,22 +105,30 @@ calculate_cost() {
 parse_transcripts() {
     local cutoff="$1"
 
-    find ~/.claude/projects -name "*.jsonl" -type f 2>/dev/null | \
-    xargs -P 10 -I {} sh -c '
-        jq -c --argjson cutoff "$1" "
-            select(type == \"object\") |
-            select(.type == \"assistant\" and .message.usage != null) |
-            select(.timestamp != null) |
-            . as \$msg |
-            (\$msg.timestamp | sub(\"\\\\.\\\\d+Z\$\"; \"Z\") | fromdateiso8601) as \$ts |
-            select(\$ts >= \$cutoff) |
-            {
-                date: (\$ts | strftime(\"%Y-%m-%d\")),
-                model: \$msg.message.model,
-                usage: \$msg.message.usage
-            }
-        " "{}" 2>/dev/null || true
-    ' _ "$cutoff"
+    # Get list of files and count
+    local files=(~/.claude/projects/**/*.jsonl(N))
+    local total=${#files[@]}
+    local current=0
+
+    echo -e "${BLUE}Processing $total transcript files...${NC}" >&2
+
+    # Get the directory where this script actually lives
+    # Use $DOTFILES_DIR if available, otherwise derive from script location
+    local script_dir="${DOTFILES_DIR:-$HOME/dotfiles}/claude/scripts/cost"
+    local filter_path="$script_dir/parse-transcripts.jq"
+
+    # Process files with progress updates
+    for file in "${files[@]}"; do
+        ((current++))
+        if (( current % 10 == 0 )); then
+            echo -e "${BLUE}Progress: $current/$total files...${NC}" >&2
+        fi
+
+        # Use external jq filter file to avoid shell escaping issues
+        jq -c --argjson cutoff "$cutoff" -f "$filter_path" "$file" 2>/dev/null || true
+    done
+
+    echo -e "${BLUE}Processed $total files.${NC}" >&2
 }
 
 # Format number with commas
@@ -164,18 +172,18 @@ main() {
     while IFS= read -r json_line; do
         [ -z "$json_line" ] && continue
 
-        # Extract fields
-        date=$(echo "$json_line" | jq -r '.date // "unknown"')
-        model=$(echo "$json_line" | jq -r '.model // "unknown"')
+        # Extract fields with error handling
+        date=$(echo "$json_line" | jq -r '.date // "unknown"' 2>/dev/null || echo "unknown")
+        model=$(echo "$json_line" | jq -r '.model // "unknown"' 2>/dev/null || echo "unknown")
 
         # Skip if date is invalid
         [[ "$date" == "unknown" ]] && continue
 
-        # Extract token counts
-        input=$(echo "$json_line" | jq -r '.usage.input_tokens // 0')
-        cache_creation=$(echo "$json_line" | jq -r '.usage.cache_creation_input_tokens // 0')
-        cache_read=$(echo "$json_line" | jq -r '.usage.cache_read_input_tokens // 0')
-        output=$(echo "$json_line" | jq -r '.usage.output_tokens // 0')
+        # Extract token counts with error handling
+        input=$(echo "$json_line" | jq -r '.usage.input_tokens // 0' 2>/dev/null || echo "0")
+        cache_creation=$(echo "$json_line" | jq -r '.usage.cache_creation_input_tokens // 0' 2>/dev/null || echo "0")
+        cache_read=$(echo "$json_line" | jq -r '.usage.cache_read_input_tokens // 0' 2>/dev/null || echo "0")
+        output=$(echo "$json_line" | jq -r '.usage.output_tokens // 0' 2>/dev/null || echo "0")
 
         # Validate numeric values before bc operations
         [[ ! "$input" =~ ^[0-9]+$ ]] && input=0
@@ -185,17 +193,17 @@ main() {
 
         # Calculate cost for this message
         tier=$(map_model_to_tier "$model")
-        cost=$(calculate_cost "$input" "$cache_creation" "$output" "$tier")
+        cost=$(calculate_cost "$input" "$cache_creation" "$output" "$tier" 2>/dev/null || echo "0")
 
         # Accumulate by date
-        daily_costs["$date"]=$(echo "${daily_costs[$date]:-0} + $cost" | bc)
+        daily_costs["$date"]=$(echo "${daily_costs[$date]:-0} + $cost" | bc 2>/dev/null || echo "0")
         daily_messages["$date"]=$((${daily_messages[$date]:-0} + 1))
         daily_input["$date"]=$((${daily_input[$date]:-0} + input + cache_creation))
         daily_output["$date"]=$((${daily_output[$date]:-0} + output))
         daily_cache_read["$date"]=$((${daily_cache_read[$date]:-0} + cache_read))
 
         # Accumulate by model tier
-        model_costs["$tier"]=$(echo "${model_costs[$tier]:-0} + $cost" | bc)
+        model_costs["$tier"]=$(echo "${model_costs[$tier]:-0} + $cost" | bc 2>/dev/null || echo "0")
         model_messages["$tier"]=$((${model_messages[$tier]:-0} + 1))
         model_input["$tier"]=$((${model_input[$tier]:-0} + input + cache_creation))
         model_output["$tier"]=$((${model_output[$tier]:-0} + output))
@@ -205,7 +213,7 @@ main() {
         total_input=$((total_input + input + cache_creation))
         total_output=$((total_output + output))
         total_cache_read=$((total_cache_read + cache_read))
-        total_cost=$(echo "$total_cost + $cost" | bc)
+        total_cost=$(echo "$total_cost + $cost" | bc 2>/dev/null || echo "0")
 
     done < <(parse_transcripts "$CUTOFF_DATE")
 
@@ -221,10 +229,10 @@ main() {
     for date in $(echo "${!daily_costs[@]}" | tr ' ' '\n' | sort); do
         printf "%-12s %10d %15s %15s %12s\n" \
             "$date" \
-            "${daily_messages[$date]}" \
-            "$(format_number ${daily_input[$date]})" \
-            "$(format_number ${daily_output[$date]})" \
-            "$(format_currency ${daily_costs[$date]})"
+            "${daily_messages[$date]:-0}" \
+            "$(format_number "${daily_input[$date]:-0}")" \
+            "$(format_number "${daily_output[$date]:-0}")" \
+            "$(format_currency "${daily_costs[$date]:-0}")"
     done
 
     echo "─────────────────────────────────────────────────────────────────"
@@ -247,10 +255,10 @@ main() {
 
             printf "%-15s %10d %15s %15s %12s\n" \
                 "$model_name" \
-                "${model_messages[$tier]}" \
-                "$(format_large_number ${model_input[$tier]})" \
-                "$(format_large_number ${model_output[$tier]})" \
-                "$(format_currency ${model_costs[$tier]})"
+                "${model_messages[$tier]:-0}" \
+                "$(format_large_number "${model_input[$tier]:-0}")" \
+                "$(format_large_number "${model_output[$tier]:-0}")" \
+                "$(format_currency "${model_costs[$tier]:-0}")"
         fi
     done
 

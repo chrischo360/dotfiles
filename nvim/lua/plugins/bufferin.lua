@@ -68,7 +68,13 @@ return {
         return score_a > score_b
       end)
 
-      return buffers
+      -- Limit to top 15 most important buffers
+      local filtered_buffers = {}
+      for i = 1, math.min(15, #buffers) do
+        table.insert(filtered_buffers, buffers[i])
+      end
+
+      return filtered_buffers
     end
 
     -- Override get_display_name to add pins for top 5 and markers for main files
