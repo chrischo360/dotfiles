@@ -34,6 +34,7 @@ return {
         "rust",
         "bash",
         "svelte",
+        "graphql",
       },
     })
   end,

@@ -271,5 +271,6 @@
     "/Users/cc446g/codebase/sf-ui-web",
     "/Users/cc446g/codebase/terraform"
   ],
-  "mcpServers": {}
+  "mcpServers": {},
+  "effortLevel": "medium"
 }

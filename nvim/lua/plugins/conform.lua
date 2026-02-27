@@ -59,6 +59,7 @@ return {
       html = { "prettier" },
       yaml = { "prettier" },
       -- markdown = { "prettier" }, -- DISABLED: No auto-formatting for markdown
+      graphql = { "prettier" },
       graphqls = { "prettier" },
       svelte = { "prettier" },
       sh = { "shfmt" },

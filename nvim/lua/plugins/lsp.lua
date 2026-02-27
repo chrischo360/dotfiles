@@ -90,7 +90,7 @@ return {
         },
       })
       require("mason-lspconfig").setup({
-        ensure_installed = { "pyright", "lua_ls", "ts_ls", "jdtls", "intelephense", "rust_analyzer", "svelte" },
+        ensure_installed = { "pyright", "lua_ls", "ts_ls", "jdtls", "intelephense", "rust_analyzer", "svelte", "graphql-lsp" },
         automatic_installation = true,
       })
 
@@ -439,6 +439,15 @@ return {
             },
           },
         },
+      })
+
+      -- GraphQL
+      vim.lsp.config('graphql', {
+        capabilities = capabilities,
+        filetypes = { "graphql", "graphqls", "typescriptreact", "javascriptreact", "typescript", "javascript" },
+        root_dir = function(fname)
+          return vim.fs.root(fname, { "graphql.config.js", "graphql.config.ts", ".graphqlrc", ".graphqlrc.js", ".graphqlrc.json", ".graphqlrc.yml", ".git" })
+        end,
       })
 
       -- Completion Setup
