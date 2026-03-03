@@ -45,7 +45,7 @@ return {
       -- LSP Actions (leader-prefix)
       { "<leader>rn", desc = "LSP: Rename symbol" },
       { "<leader>ca", desc = "LSP: Code action" },
-      { "<leader>f", desc = "LSP: Format buffer" },
+      { "<leader>F", desc = "Format buffer" },
 
       -- Diagnostic Navigation
       { "[d", desc = "Previous diagnostic" },

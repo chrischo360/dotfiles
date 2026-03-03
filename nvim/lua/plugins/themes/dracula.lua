@@ -11,7 +11,8 @@ return {
     -- Override diff colors for better visibility
     overrides = function(colors)
       return {
-        CursorLine = { bg = "#6272a4" },               -- Current line: Dracula's comment blue-purple
+        CursorLine = { bg = "#1e3a2a" },                 -- Current line: dark green tint
+        CursorLineNr = { fg = "#50fa7b", bold = true }, -- Current line number: Dracula green
 
         -- Standard Vim diff highlights (used by :diffsplit, gitsigns inline diff)
         DiffAdd = { bg = "#2d4a3e", fg = "NONE" },      -- Added lines: green tint background

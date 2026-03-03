@@ -224,6 +224,103 @@ vim.api.nvim_create_user_command("PGL", function()
   vim.notify(string.format("Linked %d ticket(s)", count), vim.log.levels.INFO)
 end, { desc = "Convert bare PGL-XXX IDs to markdown links" })
 
+-- Auto-sort completed todo items to the top of their sibling group on save
+
+local function get_indent(line)
+  return #line:match("^%s*")
+end
+
+local function is_checkbox(line)
+  return line:match("^%s*[-*+]%s+%[[ x]%]") ~= nil
+end
+
+local function is_checked(line)
+  return line:match("^%s*[-*+]%s+%[x%]") ~= nil
+end
+
+local function sort_todos(lines)
+  local result = {}
+  local i = 1
+
+  while i <= #lines do
+    local line = lines[i]
+    if not is_checkbox(line) then
+      table.insert(result, line)
+      i = i + 1
+    else
+      local group_indent = get_indent(line)
+      local blocks = {}
+
+      while i <= #lines do
+        local cur = lines[i]
+        local cur_indent = get_indent(cur)
+
+        if cur_indent < group_indent then break end
+        if cur_indent == group_indent and not is_checkbox(cur) then break end
+        if cur_indent > group_indent then
+          blocks[#blocks].lines[#blocks[#blocks].lines + 1] = cur
+          i = i + 1
+        else
+          local block = { lines = { cur }, checked = is_checked(cur) }
+          table.insert(blocks, block)
+          i = i + 1
+        end
+      end
+
+      for _, block in ipairs(blocks) do
+        if #block.lines > 1 then
+          local parent = block.lines[1]
+          local children = {}
+          for j = 2, #block.lines do children[j - 1] = block.lines[j] end
+          local sorted_children = sort_todos(children)
+          block.lines = { parent }
+          for _, cl in ipairs(sorted_children) do
+            table.insert(block.lines, cl)
+          end
+        end
+      end
+
+      table.sort(blocks, function(a, b)
+        local av = a.checked and 0 or 1
+        local bv = b.checked and 0 or 1
+        return av < bv
+      end)
+
+      for _, block in ipairs(blocks) do
+        for _, bl in ipairs(block.lines) do
+          table.insert(result, bl)
+        end
+      end
+    end
+  end
+
+  return result
+end
+
+local notes_dir = vim.fn.expand("~/notes")
+
+vim.api.nvim_create_autocmd("BufWritePre", {
+  pattern = "*.md",
+  callback = function()
+    local filepath = vim.api.nvim_buf_get_name(0)
+    if not filepath:find(notes_dir, 1, true) then return end
+
+    local lines = vim.api.nvim_buf_get_lines(0, 0, -1, false)
+    local sorted = sort_todos(lines)
+
+    local changed = false
+    for idx, l in ipairs(sorted) do
+      if l ~= lines[idx] then
+        changed = true
+        break
+      end
+    end
+    if changed then
+      vim.api.nvim_buf_set_lines(0, 0, -1, false, sorted)
+    end
+  end,
+})
+
 -- Create quick scratch note
 vim.api.nvim_create_user_command("QuickNote", function()
   local date = os.date("%Y-%m-%d")

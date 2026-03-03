@@ -6,7 +6,7 @@ return {
   keys = {
     {
       -- Customize or remove this keymap to your liking
-      "<leader>f",
+      "<leader>F",
       function()
         local conform = require("conform")
         local bufnr = vim.api.nvim_get_current_buf()
@@ -79,7 +79,7 @@ return {
     -- Set up format-on-save
     format_on_save = function(bufnr)
       -- DISABLED: Format on save disabled globally
-      -- Use <leader>f to format manually
+      -- Use <leader>F to format manually
       return false
     end,
     -- Customize formatters
