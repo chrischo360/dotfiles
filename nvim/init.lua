@@ -1,7 +1,11 @@
 require("config.lazy")
+require("config.notes")
 
 -- Clear search highlighting with Escape
 vim.keymap.set("n", "<Esc>", "<cmd>nohlsearch<CR>", { desc = "Clear search highlighting" })
+
+-- Highlight the current line
+vim.opt.cursorline = true
 
 -- Indentation settings (2 spaces, no tabs)
 vim.opt.tabstop = 2        -- Width of tab character

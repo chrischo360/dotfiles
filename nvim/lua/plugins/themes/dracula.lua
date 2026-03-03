@@ -11,6 +11,8 @@ return {
     -- Override diff colors for better visibility
     overrides = function(colors)
       return {
+        CursorLine = { bg = "#6272a4" },               -- Current line: Dracula's comment blue-purple
+
         -- Standard Vim diff highlights (used by :diffsplit, gitsigns inline diff)
         DiffAdd = { bg = "#2d4a3e", fg = "NONE" },      -- Added lines: green tint background
         DiffChange = { bg = "#3d3d1e", fg = "NONE" },  -- Changed lines: yellow tint background
@@ -48,6 +50,10 @@ return {
     vim.api.nvim_set_hl(0, "RenderMarkdownH4Bg", { bg = "#fb923c", fg = "#1a1a1a", bold = true })  -- Orange
     vim.api.nvim_set_hl(0, "RenderMarkdownH5Bg", { bg = "#2dd4bf", fg = "#1a1a1a", bold = true })  -- Teal
     vim.api.nvim_set_hl(0, "RenderMarkdownH6Bg", { bg = "#c084fc", fg = "#1a1a1a", bold = true })  -- Purple
+
+    -- Markdown checkbox state colors
+    vim.api.nvim_set_hl(0, "RenderMarkdownTodoUnchecked", { fg = "#8be9fd" })
+    vim.api.nvim_set_hl(0, "RenderMarkdownTodoChecked",   { fg = "#50fa7b", strikethrough = true })
 
     -- Additional diff highlights that may not be in overrides
     -- These ensure consistent colors across all diff views

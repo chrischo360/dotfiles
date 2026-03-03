@@ -4,6 +4,7 @@
 
 return {
   "wasabeef/bufferin.nvim",
+  enabled = false,
   keys = {
     { "<leader>b", "<cmd>Bufferin<cr>", desc = "Toggle Bufferin" },
   },

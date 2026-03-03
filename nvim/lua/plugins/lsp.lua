@@ -90,7 +90,7 @@ return {
         },
       })
       require("mason-lspconfig").setup({
-        ensure_installed = { "pyright", "lua_ls", "ts_ls", "jdtls", "intelephense", "rust_analyzer", "svelte", "graphql-lsp" },
+        ensure_installed = { "pyright", "lua_ls", "ts_ls", "jdtls", "intelephense", "rust_analyzer", "svelte", "graphql" },
         automatic_installation = true,
       })
 
@@ -454,6 +454,9 @@ return {
       local cmp = require("cmp")
       local luasnip = require("luasnip")
       require("luasnip.loaders.from_vscode").lazy_load()
+      require("luasnip.loaders.from_lua").load({
+        paths = { vim.fn.stdpath("config") .. "/lua/snippets" },
+      })
 
       cmp.setup({
         snippet = {

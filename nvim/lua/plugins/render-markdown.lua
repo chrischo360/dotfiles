@@ -4,7 +4,7 @@
 --
 -- What this does:
 --   - Headings: Shows icons (󰼏 through 󰼔) for H1-H6
---   - Checkboxes: Strikethrough for [x] checked items
+--   - Checkboxes: Green for [ ] unchecked, red strikethrough for [x] checked
 --   - Code blocks: Syntax highlighting with language labels
 --   - Links: Shows  icon for links
 --   - Bullets: Shows ●○◆◇ for different nesting levels
@@ -59,10 +59,11 @@ return {
         enabled = true,
         unchecked = {
           icon = "☐ ",
+          scope_highlight = "RenderMarkdownTodoUnchecked",
         },
         checked = {
           icon = "✓ ",
-          scope_highlight = "@markup.strikethrough", -- THIS DOES THE STRIKETHROUGH
+          scope_highlight = "RenderMarkdownTodoChecked",
         },
       },
 
