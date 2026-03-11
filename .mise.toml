@@ -11,7 +11,7 @@
 node = "lts"                    # Node.js (replaces fnm)
 python = "latest"               # Python (replaces pyenv)
 ruby = "latest"                 # Ruby (replaces rbenv)
-java = "21"                     # Java LTS (must install before Scala)
+# java → managed by sdkman instead (better for macOS development)
 bun = "latest"                  # Fast JavaScript runtime
 deno = "latest"                 # Secure TypeScript runtime
 
@@ -23,10 +23,10 @@ deno = "latest"                 # Secure TypeScript runtime
 yarn = "latest"                 # Yarn package manager
 kubectl = "latest"              # Kubernetes CLI
 
-# Java ecosystem (requires Java to be installed first)
+# Java ecosystem (Java now via sdkman, but keep maven/sbt/scala in mise)
 maven = "latest"                # Java build tool
 sbt = "latest"                  # Scala build tool
-scala = "latest"                # Scala language (depends on Java)
+scala = "latest"                # Scala language (uses Java from sdkman)
 coursier = "latest"             # Scala dependency manager and tool installer
 
 # ============================================
@@ -101,7 +101,10 @@ legacy_version_file = true
 auto_install = true
 
 # Enable idiomatic version files (.nvmrc, .python-version, .ruby-version, etc.)
-idiomatic_version_file_enable_tools = ["node", "python", "ruby", "java"]
+idiomatic_version_file_enable_tools = ["node", "python", "ruby"]
+
+# Disable Java management - handled by sdkman
+disable_tools = ["java"]
 
 # Shorter plugin names
 shorthands_file = "~/.config/mise/shorthands.toml"

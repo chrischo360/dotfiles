@@ -8,6 +8,10 @@ export PATH="$HOME/.local/bin:$PATH"
 # Use ~/.local/bin (tilde expands properly in zsh)
 eval "$(~/.local/bin/mise activate zsh)"
 
+# Override: mise unsets JAVA_HOME since Java is managed by sdkman, not mise
+# Set JAVA_HOME immediately after mise activation
+export JAVA_HOME="$HOME/.sdkman/candidates/java/current"
+
 # mise shims - Add explicitly to ensure tools are found before Homebrew
 # This ensures mise-managed tools take priority over Homebrew
 export PATH="$HOME/.local/share/mise/shims:$PATH"

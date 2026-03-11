@@ -2,86 +2,50 @@ Create GitHub PR with automated workflow (checks, template, push, create).
 
 Automates PR creation: optional pre-checks, template generation, branch push, GitHub PR creation.
 
+**Optimization goals:** Minimize round-trips. Consolidate checks. Don't ask unnecessary questions.
+
 Steps:
 
-1. Pre-flight validation (parallel execution):
-   - Run these checks in parallel using multiple Bash tool calls in a single message:
+1. Pre-flight validation (SINGLE bash call):
+   - Run ALL checks in ONE compound bash command, not parallel separate calls:
 
-   **Check 1: Branch validation**
    ```bash
+   # All preflight in one command
    CURRENT_BRANCH=$(git branch --show-current)
-   if [[ "$CURRENT_BRANCH" =~ ^(main|master)$ ]]; then
-     echo "ERROR: Cannot create PR from main/master branch"
-     exit 1
-   fi
-   echo "✓ Branch: $CURRENT_BRANCH"
-   ```
+   [[ "$CURRENT_BRANCH" =~ ^(main|master)$ ]] && { echo "ERROR: Cannot create PR from main/master branch"; exit 1; }
+   echo "Branch: $CURRENT_BRANCH"
 
-   **Check 2: GitHub authentication**
-   ```bash
-   gh auth status 2>&1 | grep -q "Logged in" || {
-     echo "ERROR: Not authenticated with GitHub. Run: gh auth login"
-     exit 1
-   }
-   echo "✓ GitHub authenticated"
-   ```
+   gh auth status &>/dev/null || { echo "ERROR: Not authenticated with GitHub. Run: gh auth login"; exit 1; }
+   echo "GitHub: authenticated"
 
-   **Check 3: Branch has commits**
-   ```bash
    COMMIT_COUNT=$(git rev-list --count HEAD ^main 2>/dev/null)
-   if [[ "$COMMIT_COUNT" -eq 0 ]]; then
-     echo "ERROR: No commits on this branch"
-     exit 1
-   fi
-   echo "✓ Branch has $COMMIT_COUNT commit(s)"
-   ```
+   [[ "$COMMIT_COUNT" -eq 0 ]] && { echo "ERROR: No commits on this branch"; exit 1; }
+   echo "Commits: $COMMIT_COUNT"
 
-   **Check 4: Cache remote info (for Step 4)**
-   ```bash
-   # Store remote branch info to avoid redundant checks later
+   # Cache remote tracking info for push step
    REMOTE_BRANCH=$(git rev-parse --abbrev-ref --symbolic-full-name @{u} 2>/dev/null || echo "")
    if [[ -n "$REMOTE_BRANCH" ]]; then
-     LOCAL_COMMIT=$(git rev-parse HEAD)
-     REMOTE_COMMIT=$(git rev-parse @{u} 2>/dev/null || echo "")
-     echo "REMOTE_INFO:has_tracking=true:local=$LOCAL_COMMIT:remote=$REMOTE_COMMIT"
+     echo "REMOTE_INFO:has_tracking=true:local=$(git rev-parse HEAD):remote=$(git rev-parse @{u} 2>/dev/null)"
    else
      echo "REMOTE_INFO:has_tracking=false"
    fi
-   ```
 
-   - If any check outputs "ERROR:", stop execution and show the error message
-   - Parse and store the REMOTE_INFO output for use in Step 4
-
-1.5. Handle uncommitted changes:
-   ```bash
    # Check for uncommitted changes
-   if [[ -n $(git status --short) ]]; then
-     # Show what would be committed
-     echo "⚠️  You have uncommitted changes:"
-     git status --short | head -10
-     echo ""
-
-     # Use AskUserQuestion:
-     # Question: "Commit these changes before creating PR?"
-     # Options:
-     #   - Yes - Commit all changes now
-     #   - No - Continue without committing (PR won't include these changes)
-     #   - Cancel - Exit without creating PR
-
-     # If Yes:
-     #   - Use AskUserQuestion again:
-     #     - Question: "Enter commit message (or leave blank for 'wip'):"
-     #     - Default: "wip"
-     #   - git add -A && git commit -m "<message>"
-
-     # If No:
-     #   - echo "⚠️  Continuing without uncommitted changes. PR will not include them."
-
-     # If Cancel:
-     #   - echo "❌ PR creation cancelled"
-     #   - exit 0
+   UNCOMMITTED=$(git status --short)
+   if [[ -n "$UNCOMMITTED" ]]; then
+     echo "UNCOMMITTED_CHANGES:true"
+     echo "$UNCOMMITTED" | head -10
+   else
+     echo "UNCOMMITTED_CHANGES:false"
    fi
    ```
+
+   - If output contains "ERROR:", stop and show the error
+   - Parse REMOTE_INFO for use in push step
+   - If UNCOMMITTED_CHANGES:true, use AskUserQuestion:
+     - Question: "Commit these changes before creating PR?"
+     - Options: Yes (commit all), No (continue without), Cancel (exit)
+     - If Yes: ask for commit message (default "wip"), then `git add -A && git commit -m "<message>"`
 
 2. Optional: Run adaptive validation (configurable):
    - **Default behavior: Skip validation** (faster PR creation)
@@ -94,154 +58,83 @@ Steps:
    - If not found, try global pr-lint: `global:pr-lint`
    - If validation fails: Ask "Validation failed. Continue with PR creation?"
 
-   **Validation details:**
-   For sf-ui-web, `repos:sf-ui-web:pr-check` runs:
-   - `dev :run pr:check` which executes:
-     - yarn format
-     - yarn lint
-     - yarn type-check
-     - yarn lib:build
-     - yarn test
-
-   **Recommended workflow:**
-   - Use `/pr-build` before `/pr-create` (handles formatting, linting, syncing)
-   - Skip pr-check during PR creation for speed
-   - CI will catch issues automatically
-
-3. Generate PR template and pre-fetch remote (parallel execution):
-   - Run these operations in parallel using multiple tool calls in a single message:
+3. Generate PR template + fetch remote (parallel, 2 calls):
+   - Run these two operations in parallel using multiple tool calls in a single message:
 
    **Operation 1: Generate PR template**
-   - Invoke `/pr-template` skill
-   - Parse output format:
-     ```
-     **Title:**
-     ```
-     [PGL-XXX] Description
-     ```
+   - Invoke `global:pr-template` skill (MUST use fully qualified name)
+   - Parse output to extract `$PR_TITLE` and `$PR_BODY`
 
-     **Body:**
-     ```markdown
-     ...
-     ```
-     ```
-   - Extract title from code block after `**Title:**`
-   - Extract body from code block after `**Body:**`
-   - Store in `$PR_TITLE` and `$PR_BODY` variables
-
-   **Operation 2: Pre-fetch remote state (background)**
+   **Operation 2: Fetch remote + push in one command**
    ```bash
-   git fetch origin 2>&1 | grep -q "error" && echo "FETCH_FAILED" || echo "FETCH_OK"
-   ```
+   git fetch origin 2>/dev/null
 
-   **If pr-check is running (--with-check flag):**
-   - Wait for pr-check to complete
-   - Check result and ask to continue if it failed
+   # Reuse REMOTE_INFO from step 1
+   # If no tracking: push with -u
+   # If tracking and local != remote: check divergence, push if ahead
+   # If tracking and local == remote: skip push
 
-   **Note:** pr-template analyzes git diff and may use MCP servers (Glean/Confluence/Jira) if available to fetch ticket context.
-
-4. Push branch to remote (optimized - reuses cached data):
-   - If `--skip-push` flag: Skip this step
-
-   **Use cached REMOTE_INFO from Step 1:**
-   ```bash
-   # Parse cached remote info from Step 1 (no redundant git commands)
-   # REMOTE_INFO format: "has_tracking=true:local=<sha>:remote=<sha>"
-
-   if [[ "$HAS_TRACKING" == "false" ]]; then
-     # No remote tracking - push with -u
-     echo "Pushing branch to origin..."
-     git push -u origin HEAD || {
-       echo "❌ Failed to push branch"
-       exit 1
-     }
+   REMOTE_BRANCH=$(git rev-parse --abbrev-ref --symbolic-full-name @{u} 2>/dev/null || echo "")
+   if [[ -z "$REMOTE_BRANCH" ]]; then
+     git push -u origin HEAD || { echo "PUSH_FAILED"; exit 1; }
    else
-     # Check if local is ahead of cached remote
-     # Note: Step 3 already ran git fetch, so remote refs are fresh
      CURRENT_LOCAL=$(git rev-parse HEAD)
      CURRENT_REMOTE=$(git rev-parse @{u} 2>/dev/null)
-
      if [[ "$CURRENT_LOCAL" != "$CURRENT_REMOTE" ]]; then
-       # Check if diverged
-       git merge-base --is-ancestor "$CURRENT_REMOTE" "$CURRENT_LOCAL" 2>/dev/null
-       if [[ $? -ne 0 ]]; then
-         echo "❌ Branch has diverged from remote."
-         echo "   Run: git pull --rebase or git push --force-with-lease"
-         exit 1
-       fi
-
-       # Local ahead - push updates
-       echo "Pushing new commits to origin..."
-       git push || {
-         echo "❌ Failed to push branch"
+       git merge-base --is-ancestor "$CURRENT_REMOTE" "$CURRENT_LOCAL" 2>/dev/null || {
+         echo "DIVERGED: Branch has diverged from remote. Run: git pull --rebase or git push --force-with-lease"
          exit 1
        }
+       git push || { echo "PUSH_FAILED"; exit 1; }
      else
-       echo "✓ Branch already up to date on origin"
+       echo "Branch already up to date on origin"
      fi
    fi
    ```
 
-5. Create PR with gh CLI:
+   - If `--skip-push` flag: replace Operation 2 with just `git fetch origin 2>/dev/null`
+   - If push fails or diverged: stop and show error
+
+   **Note:** By combining fetch+push into one call and running it parallel with pr-template, we eliminate a separate push step entirely.
+
+4. Create PR with gh CLI:
    ```bash
-   # Use title and body from pr-template (step 3)
    PR_URL=$(gh pr create --title "$PR_TITLE" --body "$PR_BODY" 2>&1)
 
-   # Check if creation succeeded
    if [[ $? -ne 0 ]]; then
-     # Check if error is "PR already exists"
      if gh pr view &>/dev/null; then
-       echo ""
-       echo "✅ PR already exists for this branch:"
-       gh pr view
-       echo ""
-       echo "Next steps:"
-       echo "  gh pr view --web    # View in browser"
-       echo "  /pr-push            # Push changes and diagnose"
-       echo ""
+       echo "PR already exists for this branch:"
+       gh pr view --json url -q '.url'
        exit 0
      else
-       echo "❌ Failed to create PR"
-       echo "$PR_URL"
+       echo "Failed to create PR: $PR_URL"
        exit 1
      fi
    fi
 
-   echo ""
-   echo "✅ PR created successfully!"
-   echo "   $PR_URL"
-   echo ""
+   echo "$PR_URL"
    ```
 
-6. Display next steps and exit:
-   ```bash
-   echo "Next steps (copy and run as needed):"
-   echo ""
-   echo "  # Review PR in browser"
-   echo "  gh pr view --web"
-   echo ""
-   echo "  # Watch CI checks in real-time"
-   echo "  /pr-watch"
-   echo ""
-   echo "  # View PR dashboard for this repo"
-   echo "  /pr-dashboard"
-   echo ""
-   echo "  # Auto-merge when checks pass (requires approval)"
-   echo "  /pr-automerge"
-   echo ""
-   ```
+5. Display next steps and exit:
+   - Show PR URL
+   - Suggest: `gh pr view --web`, `/pr-watch`, `/pr-dashboard`, `/pr-automerge`
 
-What this does:
-- **Pre-flight**: Validates prerequisites (not on main, gh auth, has commits)
-- **pr-check**: Runs repo-specific validation if available
-- **pr-template**: Generates title and description from git changes
-- **Push**: Ensures branch is on remote
-- **Create**: Creates GitHub PR with generated content
-- **Exit**: Shows suggested next steps, user decides
+**Ticket ID handling:**
+- Extract from branch name: `git branch --show-current | grep -oE '[A-Z]+-[0-9]+'`
+- Matches PGL-XXX, APR-XXX, or any JIRA-style ticket
+- If no ticket found: proceed silently without asking the user
+- pr-template will handle including/omitting the ticket ID in the output
+
+**Round-trip budget (target: 3 tool calls for happy path):**
+1. Single bash: all preflight checks + uncommitted status + remote info
+2. Parallel: `global:pr-template` skill + fetch/push bash
+3. Single bash: `gh pr create`
+
+If uncommitted changes exist, add 1 AskUserQuestion call (+ 1 bash for commit if yes).
 
 Flags:
-- `--with-check` - Run pr-check validation (slower, ~5-15s additional time)
-- `--skip-check` - Explicitly skip validation (default behavior, kept for backward compatibility)
+- `--with-check` - Run pr-check validation before PR creation
+- `--skip-check` - Explicitly skip validation (default behavior)
 - `--skip-push` - Skip git push step (branch already pushed)
 - `--dry-run` - Show what would happen without creating PR
 
@@ -249,35 +142,10 @@ Default: Validation is skipped unless `--with-check` is provided
 
 Examples:
 ```bash
-# Fast mode (default - no validation, ~7-10s)
 /pr-create
-
-# With validation (~14-25s)
 /pr-create --with-check
-
-# Skip validation explicitly (backward compat)
-/pr-create --skip-check
-
-# Skip push (branch already pushed)
 /pr-create --skip-push
-
-# Dry run
 /pr-create --dry-run
-
-# Combine flags
-/pr-create --with-check --skip-push
-```
-
-Recommended workflow:
-```bash
-# Before PR creation: build, format, lint, sync with main
-/pr-build
-
-# Create PR quickly (validation already done)
-/pr-create
-
-# Watch CI status after creation
-/pr-watch
 ```
 
 Error handling:
@@ -286,26 +154,20 @@ Error handling:
 - No commits: Exit with error
 - pr-check fails: Ask user to continue or exit
 - Branch diverged: Exit with resolution commands
-- PR already exists: Exit with view instructions
+- PR already exists: Show existing PR URL
 - Push fails: Exit with error
 
 Related commands:
-- `/pr-template` - Generate PR description (used internally)
+- `global:pr-template` - Generate PR description (used internally, always use fully qualified name)
 - `/pr-check` - Run validation suite (called conditionally)
 - `/pr-watch` - Monitor PR CI checks (suggested next step)
 - `/pr-build` - Prepare branch before PR (run before this command)
 - `/pr-automerge` - Auto-merge when checks pass
-- `/pr-dashboard` - View all PRs for repository
-
-Notes:
-- Works across all repositories
-- Intelligently adapts to repo-specific features (pr-check)
-- Non-interactive after pr-check failure prompt
-- User controls next steps via suggested commands
-- Requires gh CLI authentication
-- Assumes git remote "origin" exists
 
 Anti-Patterns to Avoid:
 - Don't use on main/master - create feature branch first
 - Don't retry on "PR exists" error - use `gh pr view` instead
-- Don't commit changes during PR creation - commit first
+- Don't ask the user about missing ticket IDs - just proceed
+- Don't use `gh auth status | grep` - use exit code instead
+- Don't split preflight into multiple parallel bash calls - one compound command is faster
+- Don't invoke `/pr-template` - use `global:pr-template` (fully qualified name)

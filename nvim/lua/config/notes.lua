@@ -1,5 +1,7 @@
 -- Custom commands for note-taking workflow
 
+local notes_dir = vim.fn.expand("~/notes")
+
 -- Archive weekly plan with automatic naming
 vim.api.nvim_create_user_command("ArchivePlan", function()
   local week = os.date("%V")
@@ -197,6 +199,42 @@ vim.api.nvim_create_user_command("NewMeeting", function(opts)
   vim.cmd("edit " .. target_file)
 end, { nargs = 1, desc = "Create new meeting note with date" })
 
+-- Auto-create meeting files referenced in markdown links on save
+vim.api.nvim_create_autocmd("BufWritePre", {
+  pattern = "*.md",
+  callback = function()
+    local filepath = vim.api.nvim_buf_get_name(0)
+    if not filepath:find(notes_dir, 1, true) then return end
+
+    local lines = vim.api.nvim_buf_get_lines(0, 0, -1, false)
+    local meetings_dir = vim.fn.fnamemodify("~/notes/meetings", ":p")
+
+    for _, line in ipairs(lines) do
+      for filename in line:gmatch("%(%.%./meetings/(.-%.[mM][dD])%)") do
+        local target = meetings_dir .. filename
+        if vim.fn.filereadable(target) == 0 then
+          vim.fn.mkdir(meetings_dir, "p")
+          vim.fn.writefile({}, target)
+          vim.notify("Created: " .. filename)
+        end
+      end
+    end
+
+    local scratch_dir = vim.fn.fnamemodify("~/notes/scratch/", ":p")
+
+    for _, line in ipairs(lines) do
+      for filename in line:gmatch("%(%.%./scratch/(.-%.[mM][dD])%)") do
+        local target = scratch_dir .. filename
+        if vim.fn.filereadable(target) == 0 then
+          vim.fn.mkdir(scratch_dir, "p")
+          vim.fn.writefile({ "Date: " .. os.date("%Y-%m-%d"), "" }, target)
+          vim.notify("Created: " .. filename)
+        end
+      end
+    end
+  end,
+})
+
 -- Convert bare PGL-XXX ticket IDs to markdown links in the current buffer
 vim.api.nvim_create_user_command("PGL", function()
   local base_url = "https://projecthub.service.csnzoo.com/browse/"
@@ -296,8 +334,6 @@ local function sort_todos(lines)
 
   return result
 end
-
-local notes_dir = vim.fn.expand("~/notes")
 
 vim.api.nvim_create_autocmd("BufWritePre", {
   pattern = "*.md",

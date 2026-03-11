@@ -23,6 +23,18 @@ vim.opt.guicursor = {
   "sm:block-blinkwait175-blinkoff150-blinkon175",  -- Showmatch: fast blinking block
 }
 
+-- Override gx to resolve relative paths from current buffer's directory
+vim.keymap.set("n", "gx", function()
+  local word = vim.fn.expand("<cfile>")
+  if word:match("^https?://") then
+    vim.ui.open(word)
+  else
+    local buf_dir = vim.fn.expand("%:p:h")
+    local abs = vim.fn.resolve(buf_dir .. "/" .. word)
+    vim.cmd("edit " .. vim.fn.fnameescape(abs))
+  end
+end, { desc = "Open file/URL under cursor" })
+
 -- Git performance profiling command
 vim.api.nvim_create_user_command("ProfileGit", function()
   require("utils.profile-git").show_profile()

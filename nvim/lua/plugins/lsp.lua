@@ -453,7 +453,9 @@ return {
       -- Completion Setup
       local cmp = require("cmp")
       local luasnip = require("luasnip")
-      require("luasnip.loaders.from_vscode").lazy_load()
+      require("luasnip.loaders.from_vscode").lazy_load({
+        exclude = { "markdown" },
+      })
       require("luasnip.loaders.from_lua").load({
         paths = { vim.fn.stdpath("config") .. "/lua/snippets" },
       })
@@ -513,8 +515,8 @@ return {
       })
 
       -- Mason-managed servers are auto-started by mason-lspconfig's default handler
-      -- But manually-installed servers (Metals, sourcekit) need explicit enable
-      vim.lsp.enable({ 'sourcekit', 'metals' })
+      -- But servers with custom root_dir functions or manually-installed ones need explicit enable
+      vim.lsp.enable({ 'sourcekit', 'metals', 'graphql' })
     end,
   },
 }

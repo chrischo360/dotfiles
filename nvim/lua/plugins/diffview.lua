@@ -57,7 +57,11 @@ return {
     { "<leader>d8", "<cmd>DiffviewOpen HEAD~8<cr>", desc = "Diff with HEAD~8" },
     { "<leader>d9", "<cmd>DiffviewOpen HEAD~9<cr>", desc = "Diff with HEAD~9" },
     { "<leader>d0", "<cmd>DiffviewOpen HEAD~10<cr>", desc = "Diff with HEAD~10" },
-    -- Note: <leader>dm, <leader>db, <leader>d2b, <leader>dq are provided by diff-utils.lua
+    -- diff-utils.lua keymaps — listed here so lazy.nvim loads diffview on keypress
+    { "<leader>dm", function() require("utils.diff-utils").compare_with_main() end, desc = "Compare with main/master" },
+    { "<leader>db", function() require("utils.diff-utils").compare_with_branch_interactive() end, desc = "Compare current with branch" },
+    { "<leader>d2b", function() require("utils.diff-utils").compare_branches_interactive() end, desc = "Compare two branches" },
+    { "<leader>dq", function() require("utils.diff-utils").quick_diff_menu() end, desc = "Quick Diff Menu" },
   },
   config = function()
     local actions = require("diffview.actions")
@@ -132,7 +136,7 @@ return {
       },
 
       file_panel = {
-        listing_style = "list",
+        listing_style = "tree",
         tree_options = {
           flatten_dirs = true,
           folder_statuses = "only_folded",

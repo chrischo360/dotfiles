@@ -43,6 +43,9 @@ alias gcb="git checkout -b"
 alias gl="git log --graph --stat --pretty=format:'%Cred%h%Creset%C(yellow)%d%Creset %Cgreen(%cr)%Creset %C(bold blue)<%an>%Creset%n%n    %s%n' --abbrev-commit"
 alias gd="git diff"
 
+# GitHub PR shortcuts
+alias ghpr="gh pr view --web"
+
 # Git rebase
 alias grb="git rebase"
 alias grbi="git rebase -i"

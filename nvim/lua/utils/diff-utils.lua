@@ -357,7 +357,7 @@ function M.compare_with_main()
     local result = handle:read("*a")
     handle:close()
     if result and result ~= "" then
-      vim.cmd("DiffviewOpen main")
+      vim.cmd("DiffviewOpen main...HEAD")
       return
     end
   end
@@ -368,7 +368,7 @@ function M.compare_with_main()
     local result = handle:read("*a")
     handle:close()
     if result and result ~= "" then
-      vim.cmd("DiffviewOpen master")
+      vim.cmd("DiffviewOpen master...HEAD")
       return
     end
   end
@@ -432,31 +432,6 @@ end
 -- Setup keymaps for these utilities
 function M.setup_keymaps()
   local opts = { noremap = true, silent = true }
-
-  -- Quick shortcuts
-  vim.keymap.set(
-    "n",
-    "<leader>dm",
-    M.compare_with_main,
-    vim.tbl_extend("force", opts, { desc = "Compare with main/master" })
-  )
-
-  vim.keymap.set("n", "<leader>dq", M.quick_diff_menu, vim.tbl_extend("force", opts, { desc = "Quick Diff Menu" }))
-
-  -- Interactive selectors
-  vim.keymap.set(
-    "n",
-    "<leader>db",
-    M.compare_with_branch_interactive,
-    vim.tbl_extend("force", opts, { desc = "Compare current with branch" })
-  )
-
-  vim.keymap.set(
-    "n",
-    "<leader>d2b",
-    M.compare_branches_interactive,
-    vim.tbl_extend("force", opts, { desc = "Compare two branches" })
-  )
 
   -- GitHub link utilities
   vim.keymap.set(

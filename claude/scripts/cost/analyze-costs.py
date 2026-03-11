@@ -24,14 +24,28 @@ PRICING = {
     'haiku': {'input': 0.40, 'output': 2.00}
 }
 
+SWITCH_DATE = '2026-02-25'
+
 def map_model_to_tier(model_name):
     """Map model name to pricing tier"""
     if 'opus-4' in model_name:
         return 'opus'
     elif 'haiku-4' in model_name:
         return 'haiku'
-    else:  # sonnet-4-5 or default
+    else:
         return 'sonnet'
+
+def model_display_name(model_name):
+    """Get display name for a model"""
+    if 'sonnet-4-6' in model_name:
+        return 'Sonnet 4.6'
+    elif 'sonnet-4-5' in model_name:
+        return 'Sonnet 4.5'
+    elif 'opus-4-6' in model_name or 'opus-4@' not in model_name and 'opus-4' in model_name:
+        return 'Opus 4.6' if '4-6' in model_name else 'Opus 4'
+    elif 'haiku-4' in model_name:
+        return 'Haiku 4'
+    return model_name
 
 def calculate_cost(input_tokens, cache_creation, output_tokens, tier):
     """Calculate cost for a message"""
@@ -79,6 +93,9 @@ def main():
     model_messages = defaultdict(int)
     model_input = defaultdict(int)
     model_output = defaultdict(int)
+
+    period_costs = {'before': defaultdict(float), 'after': defaultdict(float)}
+    period_messages = {'before': defaultdict(int), 'after': defaultdict(int)}
 
     total_messages = 0
     total_input = 0
@@ -138,11 +155,17 @@ def main():
                         daily_output[date_str] += output_tokens
                         daily_cache_read[date_str] += cache_read
 
-                        # Accumulate by model
-                        model_costs[tier] += cost
-                        model_messages[tier] += 1
-                        model_input[tier] += input_tokens + cache_creation
-                        model_output[tier] += output_tokens
+                        # Accumulate by model (using actual model name)
+                        display = model_display_name(model)
+                        model_costs[display] += cost
+                        model_messages[display] += 1
+                        model_input[display] += input_tokens + cache_creation
+                        model_output[display] += output_tokens
+
+                        # Accumulate by period (before/after switch date)
+                        period = 'after' if date_str >= SWITCH_DATE else 'before'
+                        period_costs[period][date_str] += cost
+                        period_messages[period][date_str] += 1
 
                         # Accumulate totals
                         total_messages += 1
@@ -181,14 +204,45 @@ def main():
     print(f"{'Model':<15} {'Messages':>10} {'Input':>15} {'Output':>15} {'Cost':>12}")
     print("─────────────────────────────────────────────────────────────────")
 
-    model_names = {'sonnet': 'Sonnet 4.5', 'opus': 'Opus 4', 'haiku': 'Haiku 4'}
-    for tier in ['sonnet', 'opus', 'haiku']:
-        if model_messages[tier] > 0:
-            print(f"{model_names[tier]:<15} {model_messages[tier]:>10} "
-                  f"{format_large_number(model_input[tier]):>15} "
-                  f"{format_large_number(model_output[tier]):>15} "
-                  f"{format_currency(model_costs[tier]):>12}")
+    for display in sorted(model_messages.keys()):
+        if model_messages[display] > 0:
+            print(f"{display:<15} {model_messages[display]:>10} "
+                  f"{format_large_number(model_input[display]):>15} "
+                  f"{format_large_number(model_output[display]):>15} "
+                  f"{format_currency(model_costs[display]):>12}")
 
+    print("─────────────────────────────────────────────────────────────────")
+    print()
+
+    # Before/After Feb 25 Comparison
+    print(f"{BLUE}Before vs After {SWITCH_DATE} (Sonnet 4.6 switch):{NC}")
+    print("─────────────────────────────────────────────────────────────────")
+    print(f"{'Date':<12} {'Period':<10} {'Messages':>10} {'Cost':>12} {'$/msg':>10}")
+    print("─────────────────────────────────────────────────────────────────")
+
+    before_total_cost = sum(period_costs['before'].values())
+    before_total_msgs = sum(period_messages['before'].values())
+    after_total_cost = sum(period_costs['after'].values())
+    after_total_msgs = sum(period_messages['after'].values())
+
+    for date in sorted(period_costs['before'].keys()):
+        c = period_costs['before'][date]
+        m = period_messages['before'][date]
+        cpp = c / m if m else 0
+        print(f"{date:<12} {'before':<10} {m:>10} {format_currency(c):>12} {format_currency(cpp):>10}")
+
+    print(f"{'TOTAL':<12} {'before':<10} {before_total_msgs:>10} {format_currency(before_total_cost):>12} "
+          f"{format_currency(before_total_cost/before_total_msgs if before_total_msgs else 0):>10}")
+    print()
+
+    for date in sorted(period_costs['after'].keys()):
+        c = period_costs['after'][date]
+        m = period_messages['after'][date]
+        cpp = c / m if m else 0
+        print(f"{date:<12} {'after':<10} {m:>10} {format_currency(c):>12} {format_currency(cpp):>10}")
+
+    print(f"{'TOTAL':<12} {'after':<10} {after_total_msgs:>10} {format_currency(after_total_cost):>12} "
+          f"{format_currency(after_total_cost/after_total_msgs if after_total_msgs else 0):>10}")
     print("─────────────────────────────────────────────────────────────────")
     print()
 
