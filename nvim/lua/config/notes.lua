@@ -179,6 +179,7 @@ vim.api.nvim_create_user_command("NewMeeting", function(opts)
   local date = os.date("%Y-%m-%d")
   local filename = string.format("%s_%s.md", date, meeting_name)
   local meetings_dir = vim.fn.fnamemodify("~/notes/meetings", ":p")
+  local template_path = vim.fn.fnamemodify("~/notes/meetings/template/default.md", ":p")
   local target_file = meetings_dir .. filename
 
   -- Create meetings directory if it doesn't exist
@@ -190,10 +191,22 @@ vim.api.nvim_create_user_command("NewMeeting", function(opts)
     return
   end
 
-  -- Create empty file
-  vim.fn.writefile({}, target_file)
-
-  vim.notify("✓ Created meeting note: " .. filename, vim.log.levels.INFO)
+  -- Check if template exists
+  if vim.fn.filereadable(template_path) == 1 then
+    -- Read template and substitute variables
+    local template_lines = vim.fn.readfile(template_path)
+    local expanded_lines = {}
+    for _, line in ipairs(template_lines) do
+      local expanded = line:gsub("MEETING_NAME", meeting_name):gsub("DATE", date)
+      table.insert(expanded_lines, expanded)
+    end
+    vim.fn.writefile(expanded_lines, target_file)
+    vim.notify("✓ Created meeting note: " .. filename, vim.log.levels.INFO)
+  else
+    -- Fallback to empty file if template missing
+    vim.fn.writefile({}, target_file)
+    vim.notify("✓ Created meeting note (no template found): " .. filename, vim.log.levels.WARN)
+  end
 
   -- Open the new file
   vim.cmd("edit " .. target_file)
@@ -208,14 +221,32 @@ vim.api.nvim_create_autocmd("BufWritePre", {
 
     local lines = vim.api.nvim_buf_get_lines(0, 0, -1, false)
     local meetings_dir = vim.fn.fnamemodify("~/notes/meetings", ":p")
+    local template_path = vim.fn.fnamemodify("~/notes/meetings/template/default.md", ":p")
 
     for _, line in ipairs(lines) do
       for filename in line:gmatch("%(%.%./meetings/(.-%.[mM][dD])%)") do
         local target = meetings_dir .. filename
         if vim.fn.filereadable(target) == 0 then
           vim.fn.mkdir(meetings_dir, "p")
-          vim.fn.writefile({}, target)
-          vim.notify("Created: " .. filename)
+
+          -- Try to extract date and meeting name from filename pattern: YYYY-MM-DD_name.md
+          local date_str, meeting_name = filename:match("(%d%d%d%d%-%d%d%-%d%d)_(.+)%.[mM][dD]$")
+
+          -- Use template if it exists and we extracted variables
+          if vim.fn.filereadable(template_path) == 1 and date_str and meeting_name then
+            local template_lines = vim.fn.readfile(template_path)
+            local expanded_lines = {}
+            for _, tline in ipairs(template_lines) do
+              local expanded = tline:gsub("MEETING_NAME", meeting_name):gsub("DATE", date_str)
+              table.insert(expanded_lines, expanded)
+            end
+            vim.fn.writefile(expanded_lines, target)
+            vim.notify("Created: " .. filename .. " (with template)")
+          else
+            -- Fallback to empty file
+            vim.fn.writefile({}, target)
+            vim.notify("Created: " .. filename)
+          end
         end
       end
     end

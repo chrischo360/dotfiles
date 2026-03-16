@@ -19,6 +19,13 @@ return {
   },
   ft = { "markdown" }, -- Only load for markdown files
   config = function()
+    -- Custom link highlight groups
+    vim.api.nvim_set_hl(0, "RenderMarkdownLinkGitHub", { fg = "#a371f7", bold = true })      -- Purple
+    vim.api.nvim_set_hl(0, "RenderMarkdownLinkProjectHub", { fg = "#58a6ff", bold = true })  -- Blue
+    vim.api.nvim_set_hl(0, "RenderMarkdownLinkBuildkite", { fg = "#ff9e64", bold = true })   -- Orange
+    vim.api.nvim_set_hl(0, "RenderMarkdownLinkLocal", { fg = "#9ece6a", bold = true })       -- Green
+    vim.api.nvim_set_hl(0, "RenderMarkdownLinkExternal", { fg = "#7aa2f7", bold = true })    -- Light blue
+
     require("render-markdown").setup({
       -- Enable/disable the plugin
       enabled = true,
@@ -67,10 +74,45 @@ return {
         },
       },
 
-      -- Links: Show icon
+      -- Links: Custom icons and colors per link type
       link = {
         enabled = true,
-        icon = " ",
+        hyperlink = "󰌷 ", -- Default fallback icon
+        custom = {
+          -- GitHub links (purple)
+          github = {
+            pattern = "github%.com",
+            icon = "󰊤 ",
+            highlight = "RenderMarkdownLinkGitHub",
+          },
+          -- ProjectHub links (blue)
+          projecthub = {
+            pattern = "projecthub%.service%.csnzoo%.com",
+            icon = "󱗖 ",
+            highlight = "RenderMarkdownLinkProjectHub",
+          },
+          -- Buildkite links (orange)
+          buildkite = {
+            pattern = "buildkite%.com",
+            icon = "󰱑 ",
+            highlight = "RenderMarkdownLinkBuildkite",
+          },
+          -- Relative/local file paths (green)
+          -- Matches: ./file, ../file, ~/file
+          relative = {
+            pattern = "^[%.~]",
+            icon = "📄 ",
+            highlight = "RenderMarkdownLinkLocal",
+            priority = 10, -- Higher priority than generic http pattern
+          },
+          -- External web links (light blue, lowest priority)
+          web = {
+            pattern = "^http",
+            icon = "🌐 ",
+            highlight = "RenderMarkdownLinkExternal",
+            priority = 1, -- Lowest priority (checked last)
+          },
+        },
       },
 
       -- Bullet points: Simple

@@ -63,7 +63,7 @@
     "ask": [],
     "defaultMode": "default"
   },
-  "model": "sonnet[1m]",
+  "model": "sonnet",
   "hooks": {
     "SessionStart": [
       {
