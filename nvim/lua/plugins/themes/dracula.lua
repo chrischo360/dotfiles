@@ -44,24 +44,6 @@ return {
 
     -- Set variant: "dracula" (default) or "dracula-soft"
     vim.cmd.colorscheme("dracula")  -- Change to "dracula-soft" for softer colors
-
-    -- Custom markdown heading colors for render-markdown.nvim
-    vim.api.nvim_set_hl(0, "RenderMarkdownH1Bg", { bg = "#a3e635", fg = "#1a1a1a", bold = true })  -- Green
-    vim.api.nvim_set_hl(0, "RenderMarkdownH2Bg", { bg = "#60a5fa", fg = "#1a1a1a", bold = true })  -- Blue
-    vim.api.nvim_set_hl(0, "RenderMarkdownH3Bg", { bg = "#f87171", fg = "#1a1a1a", bold = true })  -- Red
-    vim.api.nvim_set_hl(0, "RenderMarkdownH4Bg", { bg = "#fb923c", fg = "#1a1a1a", bold = true })  -- Orange
-    vim.api.nvim_set_hl(0, "RenderMarkdownH5Bg", { bg = "#2dd4bf", fg = "#1a1a1a", bold = true })  -- Teal
-    vim.api.nvim_set_hl(0, "RenderMarkdownH6Bg", { bg = "#c084fc", fg = "#1a1a1a", bold = true })  -- Purple
-
-    -- Markdown checkbox state colors
-    vim.api.nvim_set_hl(0, "RenderMarkdownTodoUnchecked", { fg = "#8be9fd" })
-    vim.api.nvim_set_hl(0, "RenderMarkdownTodoChecked",   { fg = "#50fa7b", strikethrough = true })
-
-    -- Additional diff highlights that may not be in overrides
-    -- These ensure consistent colors across all diff views
-    vim.api.nvim_set_hl(0, "DiffAdded", { fg = "#50fa7b", bg = "#2d4a3e" })
-    vim.api.nvim_set_hl(0, "DiffRemoved", { fg = "#ff5555", bg = "#4a2d2d" })
-    vim.api.nvim_set_hl(0, "DiffLine", { fg = "#8be9fd", bold = true })       -- @@ line numbers
-    vim.api.nvim_set_hl(0, "DiffFile", { fg = "#bd93f9", bold = true })       -- File headers
+    require("config.highlights").dark()  -- Apply shared dark theme highlights
   end,
 }
