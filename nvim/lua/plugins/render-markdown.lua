@@ -71,19 +71,47 @@ return {
         })
       end,
     })
-    -- Custom link highlight groups (for icons)
-    vim.api.nvim_set_hl(0, "RenderMarkdownLinkGitHub", { fg = "#ff79c6", bold = true })      -- Bright pink
-    vim.api.nvim_set_hl(0, "RenderMarkdownLinkProjectHub", { fg = "#89dceb", bold = true })  -- Bright cyan
-    vim.api.nvim_set_hl(0, "RenderMarkdownLinkBuildkite", { fg = "#ff9e64", bold = true })   -- Orange
-    vim.api.nvim_set_hl(0, "RenderMarkdownLinkLocal", { fg = "#9ece6a", bold = true })       -- Green
-    vim.api.nvim_set_hl(0, "RenderMarkdownLinkExternal", { fg = "#7aa2f7", bold = true })    -- Light blue
+    -- Custom link highlight groups (adapt to light/dark mode)
+    local function set_link_colors()
+      if vim.o.background == "light" then
+        -- Light mode: softer, less saturated colors
+        vim.api.nvim_set_hl(0, "RenderMarkdownLinkGitHub", { fg = "#a855f7", bold = true })      -- Softer purple
+        vim.api.nvim_set_hl(0, "RenderMarkdownLinkProjectHub", { fg = "#0891b2", bold = true })  -- Softer cyan
+        vim.api.nvim_set_hl(0, "RenderMarkdownLinkBuildkite", { fg = "#ea580c", bold = true })   -- Softer orange
+        vim.api.nvim_set_hl(0, "RenderMarkdownLinkLocal", { fg = "#16a34a", bold = true })       -- Softer green
+        vim.api.nvim_set_hl(0, "RenderMarkdownLinkExternal", { fg = "#2563eb", bold = true })    -- Softer blue
 
-    -- Treesitter-based link text highlighting
-    vim.api.nvim_set_hl(0, "MarkdownLinkTextGitHub", { fg = "#ff79c6" })      -- Bright pink
-    vim.api.nvim_set_hl(0, "MarkdownLinkTextProjectHub", { fg = "#89dceb" })  -- Bright cyan
-    vim.api.nvim_set_hl(0, "MarkdownLinkTextBuildkite", { fg = "#ff9e64" })   -- Orange
-    vim.api.nvim_set_hl(0, "MarkdownLinkTextLocal", { fg = "#9ece6a" })       -- Green
-    vim.api.nvim_set_hl(0, "MarkdownLinkTextExternal", { fg = "#7aa2f7" })    -- Light blue
+        -- Link text highlighting (no bold)
+        vim.api.nvim_set_hl(0, "MarkdownLinkTextGitHub", { fg = "#a855f7" })
+        vim.api.nvim_set_hl(0, "MarkdownLinkTextProjectHub", { fg = "#0891b2" })
+        vim.api.nvim_set_hl(0, "MarkdownLinkTextBuildkite", { fg = "#ea580c" })
+        vim.api.nvim_set_hl(0, "MarkdownLinkTextLocal", { fg = "#16a34a" })
+        vim.api.nvim_set_hl(0, "MarkdownLinkTextExternal", { fg = "#2563eb" })
+      else
+        -- Dark mode: bright, vibrant colors
+        vim.api.nvim_set_hl(0, "RenderMarkdownLinkGitHub", { fg = "#ff79c6", bold = true })      -- Bright pink
+        vim.api.nvim_set_hl(0, "RenderMarkdownLinkProjectHub", { fg = "#89dceb", bold = true })  -- Bright cyan
+        vim.api.nvim_set_hl(0, "RenderMarkdownLinkBuildkite", { fg = "#ff9e64", bold = true })   -- Orange
+        vim.api.nvim_set_hl(0, "RenderMarkdownLinkLocal", { fg = "#9ece6a", bold = true })       -- Green
+        vim.api.nvim_set_hl(0, "RenderMarkdownLinkExternal", { fg = "#7aa2f7", bold = true })    -- Light blue
+
+        -- Link text highlighting (no bold)
+        vim.api.nvim_set_hl(0, "MarkdownLinkTextGitHub", { fg = "#ff79c6" })
+        vim.api.nvim_set_hl(0, "MarkdownLinkTextProjectHub", { fg = "#89dceb" })
+        vim.api.nvim_set_hl(0, "MarkdownLinkTextBuildkite", { fg = "#ff9e64" })
+        vim.api.nvim_set_hl(0, "MarkdownLinkTextLocal", { fg = "#9ece6a" })
+        vim.api.nvim_set_hl(0, "MarkdownLinkTextExternal", { fg = "#7aa2f7" })
+      end
+    end
+
+    -- Set colors initially
+    set_link_colors()
+
+    -- Update colors when background changes
+    vim.api.nvim_create_autocmd("OptionSet", {
+      pattern = "background",
+      callback = set_link_colors,
+    })
 
     require("render-markdown").setup({
       -- Enable/disable the plugin
