@@ -178,6 +178,53 @@ gbd() {
   fi
 }
 
+# Query current buffer from all active nvim sessions
+nvim-current-buffer() {
+  # Find all nvim socket paths (both standalone and embedded)
+  local sockets=$(
+    # Standalone nvim sockets in /tmp
+    find /tmp -name "nvim.*" -type d 2>/dev/null | while read -r dir; do
+      ls -1 "$dir"/0 2>/dev/null
+    done
+    # Embedded nvim sockets (Cursor, etc.) in /var/folders/.../T/
+    find /var/folders -type d -name "nvim.${USER}" 2>/dev/null | while read -r nvim_dir; do
+      find "$nvim_dir" -name "nvim.*.0" 2>/dev/null
+    done
+  )
+
+  if [ -z "$sockets" ]; then
+    echo "No active Neovim sessions found"
+    return 1
+  fi
+
+  # Detect if nvr is available
+  local use_nvr=false
+  if command -v nvr &> /dev/null; then
+    use_nvr=true
+  fi
+
+  # Query each socket
+  echo "$sockets" | while read -r socket; do
+    local buffer=""
+    local bufnr=""
+    local pid=$(basename "$socket" | sed 's/nvim\.\([0-9]*\)\.0/\1/')
+
+    if [[ "$use_nvr" == true ]]; then
+      # Use nvr (more reliable)
+      buffer=$(nvr --servername "$socket" --remote-expr "expand('%:p')" 2>/dev/null)
+      bufnr=$(nvr --servername "$socket" --remote-expr "bufnr('%')" 2>/dev/null)
+    else
+      # Fallback to nvim --remote
+      buffer=$(nvim --server "$socket" --remote-expr "expand('%:p')" 2>/dev/null)
+      bufnr=$(nvim --server "$socket" --remote-expr "bufnr('%')" 2>/dev/null)
+    fi
+
+    if [ -n "$buffer" ]; then
+      echo "PID $pid | Buffer #$bufnr: $buffer"
+    fi
+  done
+}
+
 # Search file contents with ripgrep and open in neovim (interactive)
 nvim-fzf() {
   # If arguments provided, use actual nvim
@@ -228,6 +275,9 @@ alias bk-start='$DOTFILES_DIR/scripts/tmux/buildkite_monitor_session.sh start'
 alias bk-stop='$DOTFILES_DIR/scripts/tmux/buildkite_monitor_session.sh stop'
 alias bk-status='$DOTFILES_DIR/scripts/tmux/buildkite_monitor_session.sh status'
 alias bk-watch='tmux attach -t buildkite-monitor'
+
+# Buildkite local checks generator
+alias bk-local='node $DOTFILES_DIR/scripts/codebase/buildkite-local-checks.mjs'
 
 # Claude Code with interactive MCP server selection
 # Usage: claude-mcp

@@ -63,7 +63,7 @@
     "ask": [],
     "defaultMode": "default"
   },
-  "model": "sonnet",
+  "model": "haiku",
   "hooks": {
     "SessionStart": [
       {
@@ -257,6 +257,7 @@
   "allowedDirectories": [
     "/Users/cc446g/dotfiles",
     "/Users/cc446g/codebase",
+    "/Users/cc446g/notes",
     "/Users/cc446g/codebase/basket-service",
     "/Users/cc446g/codebase/block-builder-api",
     "/Users/cc446g/codebase/block-builder-app",

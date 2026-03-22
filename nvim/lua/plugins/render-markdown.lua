@@ -19,12 +19,71 @@ return {
   },
   ft = { "markdown" }, -- Only load for markdown files
   config = function()
-    -- Custom link highlight groups
-    vim.api.nvim_set_hl(0, "RenderMarkdownLinkGitHub", { fg = "#a371f7", bold = true })      -- Purple
-    vim.api.nvim_set_hl(0, "RenderMarkdownLinkProjectHub", { fg = "#58a6ff", bold = true })  -- Blue
+    -- Disable line wrapping for markdown files to prevent long links from wrapping
+    vim.api.nvim_create_autocmd("FileType", {
+      pattern = "markdown",
+      callback = function()
+        vim.opt_local.wrap = true
+
+        -- Color link text based on destination URL
+        local ns = vim.api.nvim_create_namespace("markdown_link_text_colors")
+
+        local function highlight_link_text()
+          local bufnr = vim.api.nvim_get_current_buf()
+          vim.api.nvim_buf_clear_namespace(bufnr, ns, 0, -1)
+
+          local lines = vim.api.nvim_buf_get_lines(bufnr, 0, -1, false)
+          for lnum, line in ipairs(lines) do
+            -- Match [text](url) pattern
+            local pos = 1
+            while pos <= #line do
+              local text_start, text_end, text_content, url = line:find("%[([^%]]+)%]%(([^%)]+)%)", pos)
+              if not text_start then break end
+
+              local hl_group = nil
+              if url:match("github%.com") then
+                hl_group = "MarkdownLinkTextGitHub"
+              elseif url:match("projecthub%.service%.csnzoo%.com") then
+                hl_group = "MarkdownLinkTextProjectHub"
+              elseif url:match("buildkite%.com") then
+                hl_group = "MarkdownLinkTextBuildkite"
+              elseif url:match("^[%.~/]") then
+                hl_group = "MarkdownLinkTextLocal"
+              elseif url:match("^https?://") then
+                hl_group = "MarkdownLinkTextExternal"
+              end
+
+              if hl_group then
+                -- Highlight only the text portion (inside the brackets)
+                vim.api.nvim_buf_add_highlight(bufnr, ns, hl_group, lnum - 1, text_start, text_start + #text_content)
+              end
+
+              pos = text_end + 1
+            end
+          end
+        end
+
+        -- Apply highlighting on buffer load and changes
+        highlight_link_text()
+        vim.api.nvim_create_autocmd({ "TextChanged", "TextChangedI", "BufEnter" }, {
+          buffer = 0,
+          callback = highlight_link_text,
+        })
+      end,
+    })
+    -- Custom link highlight groups (for icons)
+    vim.api.nvim_set_hl(0, "RenderMarkdownLinkGitHub", { fg = "#ff79c6", bold = true })      -- Bright pink
+    vim.api.nvim_set_hl(0, "RenderMarkdownLinkProjectHub", { fg = "#89dceb", bold = true })  -- Bright cyan
     vim.api.nvim_set_hl(0, "RenderMarkdownLinkBuildkite", { fg = "#ff9e64", bold = true })   -- Orange
     vim.api.nvim_set_hl(0, "RenderMarkdownLinkLocal", { fg = "#9ece6a", bold = true })       -- Green
     vim.api.nvim_set_hl(0, "RenderMarkdownLinkExternal", { fg = "#7aa2f7", bold = true })    -- Light blue
+
+    -- Treesitter-based link text highlighting
+    vim.api.nvim_set_hl(0, "MarkdownLinkTextGitHub", { fg = "#ff79c6" })      -- Bright pink
+    vim.api.nvim_set_hl(0, "MarkdownLinkTextProjectHub", { fg = "#89dceb" })  -- Bright cyan
+    vim.api.nvim_set_hl(0, "MarkdownLinkTextBuildkite", { fg = "#ff9e64" })   -- Orange
+    vim.api.nvim_set_hl(0, "MarkdownLinkTextLocal", { fg = "#9ece6a" })       -- Green
+    vim.api.nvim_set_hl(0, "MarkdownLinkTextExternal", { fg = "#7aa2f7" })    -- Light blue
 
     require("render-markdown").setup({
       -- Enable/disable the plugin
@@ -66,7 +125,7 @@ return {
         enabled = true,
         unchecked = {
           icon = "☐ ",
-          scope_highlight = "RenderMarkdownTodoUnchecked",
+          -- No scope_highlight: lets links show their proper colors
         },
         checked = {
           icon = "✓ ",
@@ -77,7 +136,7 @@ return {
       -- Links: Custom icons and colors per link type
       link = {
         enabled = true,
-        hyperlink = "󰌷 ", -- Default fallback icon
+        hyperlink = "🔗 ", -- Default fallback icon
         custom = {
           -- GitHub links (purple)
           github = {
@@ -88,7 +147,7 @@ return {
           -- ProjectHub links (blue)
           projecthub = {
             pattern = "projecthub%.service%.csnzoo%.com",
-            icon = "󱗖 ",
+            icon = "󰃀 ",
             highlight = "RenderMarkdownLinkProjectHub",
           },
           -- Buildkite links (orange)

@@ -293,6 +293,42 @@ vim.api.nvim_create_user_command("PGL", function()
   vim.notify(string.format("Linked %d ticket(s)", count), vim.log.levels.INFO)
 end, { desc = "Convert bare PGL-XXX IDs to markdown links" })
 
+-- Convert GitHub PR URL to markdown link with repo/branch name
+vim.api.nvim_create_user_command("PRLink", function(opts)
+  local url = opts.args
+  if url == "" then
+    vim.notify("Usage: :PRLink <github-pr-url>", vim.log.levels.ERROR)
+    return
+  end
+
+  -- Fetch repo name and branch using gh CLI
+  local cmd = string.format(
+    "gh pr view %s --json headRefName,headRepository -q '[.headRepository.name, .headRefName] | join(\"/\")'",
+    vim.fn.shellescape(url)
+  )
+  local result = vim.fn.system(cmd)
+
+  if vim.v.shell_error ~= 0 then
+    vim.notify("Failed to fetch PR info: " .. result, vim.log.levels.ERROR)
+    return
+  end
+
+  -- Trim whitespace
+  local label = result:gsub("^%s*(.-)%s*$", "%1")
+  local markdown = string.format("[%s](%s)", label, url)
+
+  -- Insert at cursor position
+  local row, col = unpack(vim.api.nvim_win_get_cursor(0))
+  local line = vim.api.nvim_get_current_line()
+  local new_line = line:sub(1, col) .. markdown .. line:sub(col + 1)
+  vim.api.nvim_set_current_line(new_line)
+
+  -- Move cursor to end of inserted text
+  vim.api.nvim_win_set_cursor(0, { row, col + #markdown })
+
+  vim.notify("Inserted: " .. markdown, vim.log.levels.INFO)
+end, { nargs = 1, desc = "Convert GitHub PR URL to markdown link with repo/branch name" })
+
 -- Auto-sort completed todo items to the top of their sibling group on save
 
 local function get_indent(line)
@@ -336,7 +372,9 @@ local function sort_todos(lines)
         end
       end
 
-      for _, block in ipairs(blocks) do
+      -- Add index to blocks for stable sort
+      for idx, block in ipairs(blocks) do
+        block.original_index = idx
         if #block.lines > 1 then
           local parent = block.lines[1]
           local children = {}
@@ -349,9 +387,13 @@ local function sort_todos(lines)
         end
       end
 
+      -- Stable sort: completed items first, preserve original order for ties
       table.sort(blocks, function(a, b)
         local av = a.checked and 0 or 1
         local bv = b.checked and 0 or 1
+        if av == bv then
+          return a.original_index < b.original_index
+        end
         return av < bv
       end)
 

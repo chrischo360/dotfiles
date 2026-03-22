@@ -12,8 +12,16 @@ Thumbs.db
 
 # AI assistant configs
 .claude/
+.cursor/
 
 # Debug logs
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
+
+# ESLint reports
+eslint.report.json
+
+# Local buildkite checks
+.buildkite/local-checks.json
+.buildkite/local-checks.sh

@@ -34,4 +34,28 @@ ls.add_snippets("markdown", {
     f(function(args) return slugify(args[1][1]) end, { 1 }),
     t(".md)"),
   }),
+
+  s({ trig = "pr", desc = "Create GitHub PR link with repo/branch" }, {
+    t("["),
+    f(function(args)
+      local url = args[1][1]
+      if url == "" or url == "https://github.com/org/repo/pull/123" then
+        return "repo/branch"
+      end
+      local cmd = string.format(
+        "gh pr view %s --json headRefName,headRepository -q '[.headRepository.name, .headRefName] | join(\"/\")' 2>/dev/null",
+        vim.fn.shellescape(url)
+      )
+      local result = vim.fn.system(cmd)
+      if vim.v.shell_error == 0 then
+        return result:gsub("^%s*(.-)%s*$", "%1")
+      else
+        return "repo/branch"
+      end
+    end, { 1 }),
+    t("]("),
+    i(1, "https://github.com/org/repo/pull/123"),
+    t(")"),
+    i(0),
+  }),
 })

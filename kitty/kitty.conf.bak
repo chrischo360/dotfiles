@@ -98,6 +98,6 @@ map cmd+shift+] next_tab
 
 
 # BEGIN_KITTY_THEME
-# Github
+# Gruvbox Material Light Hard
 include current-theme.conf
 # END_KITTY_THEME
