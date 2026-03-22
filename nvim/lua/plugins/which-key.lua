@@ -112,6 +112,25 @@ return {
     wk.add({
       { "<leader>e", desc = "🌲 Toggle NeoTree" },
     })
+
+    -- Register LeetCode keybindings
+    wk.add({
+      { "<leader>l", group = "💻 LeetCode" },
+      { "<leader>lq", desc = "Open menu" },
+      { "<leader>lr", desc = "Run code" },
+      { "<leader>ls", desc = "Submit solution" },
+      { "<leader>lt", desc = "Run test" },
+      { "<leader>ll", desc = "Problem list" },
+      { "<leader>ld", desc = "Daily challenge" },
+      { "<leader>lR", desc = "Random problem" },
+      { "<leader>lo", desc = "Open in browser" },
+      { "<leader>lc", desc = "Change language" },
+      { "<leader>li", desc = "Show info" },
+      { "<leader>lD", desc = "Toggle description" },
+      { "<leader>ly", desc = "Yank solution" },
+      { "<leader>lx", desc = "Reset code" },
+      { "<leader>lC", desc = "Open console" },
+    })
   end,
   keys = {
     {

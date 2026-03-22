@@ -16,3 +16,6 @@ cursor/mcp.json
 
 # Theme
 nvim/last-theme.txt
+
+# LeetCode solutions (stored in ~/leetcode, not in dotfiles)
+leetcode/
