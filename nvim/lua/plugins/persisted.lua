@@ -67,7 +67,9 @@ return {
         vim.fn.expand("~/codebase"),
         vim.fn.expand("~/dotfiles"),
       }, -- Table of dirs that the plugin will start and autoload from
-      ignored_dirs = {}, -- Table of dirs that are ignored for starting and autoloading
+      ignored_dirs = {
+        vim.fn.expand("~/leetcode"),
+      }, -- Table of dirs that are ignored for starting and autoloading
 
       telescope = {
         mappings = { -- Mappings for managing sessions in Telescope

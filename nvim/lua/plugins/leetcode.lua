@@ -12,9 +12,9 @@ return {
     "nvim-treesitter/nvim-treesitter",
     "nvim-tree/nvim-web-devicons",
   },
+  cmd = "Leet",
   opts = {
-    arg = "leetcode.nvim",
-    lang = "typescript", -- Default language (can be changed with :Leet lang)
+    lang = "python3", -- Default language (can be changed with :Leet lang)
     cn = { enabled = false }, -- Use LeetCode.com (not .cn)
 
     storage = {
@@ -23,7 +23,7 @@ return {
     },
 
     plugins = {
-      non_standalone = false,
+      non_standalone = true,
     },
 
     logging = true,
@@ -52,7 +52,57 @@ return {
 
     hooks = {
       ["enter"] = {},
-      ["question_enter"] = {},
+      ["question_enter"] = {
+        -- Fix Rust LSP by generating rust-project.json
+        function()
+          local file_extension = vim.fn.expand("%:e")
+          if file_extension == "rs" then
+            local leetcode_dir = vim.fn.stdpath("data") .. "/leetcode"
+
+            -- Get sysroot path
+            local handle = io.popen("rustc --print sysroot")
+            local sysroot = handle:read("*a"):gsub("%s+", "")
+            handle:close()
+            local sysroot_src = sysroot .. "/lib/rustlib/src/rust/library"
+
+            -- Find all .rs files in the leetcode directory
+            local rs_files = vim.fn.glob(leetcode_dir .. "/*.rs", false, true)
+            local crates = {}
+
+            for _, file in ipairs(rs_files) do
+              local filename = vim.fn.fnamemodify(file, ":t")
+              table.insert(crates, {
+                root_module = filename,
+                edition = "2021",
+                deps = {},
+              })
+            end
+
+            -- Generate rust-project.json
+            local rust_project = {
+              sysroot_src = sysroot_src,
+              crates = crates,
+            }
+
+            local json_file = leetcode_dir .. "/rust-project.json"
+            local f = io.open(json_file, "w")
+            if f then
+              f:write(vim.fn.json_encode(rust_project))
+              f:close()
+
+              -- Restart rust_analyzer LSP if it's attached
+              vim.defer_fn(function()
+                for _, client in ipairs(vim.lsp.get_clients({ bufnr = 0 })) do
+                  if client.name == "rust_analyzer" then
+                    vim.cmd("LspRestart rust_analyzer")
+                    break
+                  end
+                end
+              end, 100)
+            end
+          end
+        end,
+      },
       ["leave"] = {},
     },
 
