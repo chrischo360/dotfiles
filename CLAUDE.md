@@ -342,6 +342,12 @@ yt "URL"   # Audio-only (alias for mpv --no-video)
 ytv "URL"  # Video playback (alias for mpv)
 ```
 
+**Tmux integration:**
+- Shows `🎵 Track Title [Time Remaining]` in left statusline when playing
+- Format: `[session] 🎵 Rick Astley - Never... [2:34]`
+- Automatically disappears when playback stops
+- Requires `socat` for IPC communication (install: `brew install socat`)
+
 ### ccstatusline Configuration
 Configure the statusline interactively:
 ```bash

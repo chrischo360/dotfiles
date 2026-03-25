@@ -48,7 +48,7 @@ return {
     {
       "<leader>Ov",
       function()
-        vim.cmd("Octo pr view")
+        vim.cmd("Octo pr")
       end,
       desc = "View current PR",
     },
@@ -80,6 +80,13 @@ return {
       end,
       desc = "Resume review",
     },
+    {
+      "<leader>Ou",
+      function()
+        vim.cmd("!gh pr merge --update-branch")
+      end,
+      desc = "Update PR branch",
+    },
   },
   config = function()
     require("octo").setup({
@@ -87,6 +94,13 @@ return {
       enable_builtin = true,
       default_merge_method = "squash",
       use_local_fs = true,
+
+      poll = {
+        enabled = true,
+        interval = 60000, -- Poll every 60 seconds (1 minute)
+        notify_on_refresh = true,
+        notify_on_change = true,
+      },
 
       reviews = {
         auto_show_threads = true,

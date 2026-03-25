@@ -20,6 +20,7 @@ brew "curl"                # HTTP client (better than macOS default)
 brew "swiftlint"           # Swift linter (macOS/iOS development)
 brew "fancy-cat"           # Terminal PDF viewer using Kitty image protocol
 brew "mpv"                 # Video player (works with yt-dlp)
+brew "socat"               # Socket utility (for mpv IPC communication)
 
 # ============================================
 # Fonts

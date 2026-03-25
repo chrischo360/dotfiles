@@ -16,8 +16,9 @@ alias cat="bat --style=plain --paging=never"
 alias less="bat"
 
 # YouTube/Media playback (mpv + yt-dlp)
-alias yt="mpv --no-video"        # Audio-only playback
-alias ytv="mpv"                  # Video playback
+# IPC socket enables track info and time remaining in tmux statusline
+alias yt="mpv --no-video --input-ipc-server=/tmp/mpvsocket"
+alias ytv="mpv --input-ipc-server=/tmp/mpvsocket"
 
 # Dev CLI - Context-aware development commands
 alias dev='$DOTFILES_DIR/scripts/dev/dev.sh'
@@ -49,6 +50,7 @@ alias gd="git diff"
 
 # GitHub PR shortcuts
 alias ghpr="gh pr view --web"
+alias pr-merge-spam='~/dotfiles/git/scripts/pr-spam-merge.sh'
 
 # Git rebase
 alias grb="git rebase"
