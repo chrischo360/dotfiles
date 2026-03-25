@@ -126,6 +126,7 @@ See `MISE_MIGRATION.md` for migration details and limitations.
 
 **Shell Enhancements:**
 - zoxide, eza, bat, fd, ripgrep, fzf
+- yt-dlp
 
 **Terminal & Editors:**
 - tmux, neovim
@@ -153,6 +154,7 @@ See `MISE_MIGRATION.md` for migration details and limitations.
 - rsync (better than macOS default)
 - curl (better than macOS default)
 - swiftlint (Swift/iOS development)
+- mpv (video player, works with yt-dlp)
 
 **Applications:**
 - aerospace, docker-desktop, claude-code, chromium, homerow
@@ -305,6 +307,40 @@ Claude automatically uses PAL tools for:
 Configuration: See `claude/PAL_CONFIG.md` for setup details.
 
 ## Usage Notes
+
+### YouTube Playback (mpv + yt-dlp)
+
+Play YouTube videos/audio from terminal:
+
+```bash
+# Video playback
+mpv "https://youtube.com/watch?v=VIDEO_ID"
+
+# Audio only
+mpv --no-video "https://youtube.com/watch?v=VIDEO_ID"
+
+# Play playlist
+mpv "https://youtube.com/playlist?list=PLAYLIST_ID"
+
+# Shuffle playlist
+mpv --shuffle "https://youtube.com/playlist?list=PLAYLIST_ID"
+
+# Start at timestamp
+mpv --start=1:30 "URL"
+```
+
+**mpv keyboard controls:**
+- `Space` - Pause/play
+- `←/→` - Seek backward/forward
+- `↑/↓` - Volume
+- `f` - Fullscreen
+- `q` - Quit
+
+**Aliases:**
+```bash
+yt "URL"   # Audio-only (alias for mpv --no-video)
+ytv "URL"  # Video playback (alias for mpv)
+```
 
 ### ccstatusline Configuration
 Configure the statusline interactively:

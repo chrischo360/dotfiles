@@ -39,6 +39,7 @@ bat = "latest"                  # Cat with syntax highlighting
 fd = "latest"                   # Modern find
 ripgrep = "latest"              # Fast text search (rg)
 fzf = "latest"                  # Fuzzy finder
+yt-dlp = "latest"               # YouTube downloader/streamer
 
 # ============================================
 # Terminal & Editors

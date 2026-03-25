@@ -15,6 +15,10 @@ alias tree="eza --tree --icons"
 alias cat="bat --style=plain --paging=never"
 alias less="bat"
 
+# YouTube/Media playback (mpv + yt-dlp)
+alias yt="mpv --no-video"        # Audio-only playback
+alias ytv="mpv"                  # Video playback
+
 # Dev CLI - Context-aware development commands
 alias dev='$DOTFILES_DIR/scripts/dev/dev.sh'
 alias d='dev'
