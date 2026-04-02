@@ -18,7 +18,7 @@ brew "terminal-notifier"   # macOS notifications (macOS-only API)
 brew "rsync"               # File sync (better than macOS default)
 brew "curl"                # HTTP client (better than macOS default)
 brew "swiftlint"           # Swift linter (macOS/iOS development)
-brew "fancy-cat"           # Terminal PDF viewer using Kitty image protocol
+brew "fancy-cat"           # Terminal PDF viewer using Ghostty/Kitty image protocol
 brew "mpv"                 # Video player (works with yt-dlp)
 brew "socat"               # Socket utility (for mpv IPC communication)
 
@@ -27,6 +27,8 @@ brew "socat"               # Socket utility (for mpv IPC communication)
 # ============================================
 # Note: homebrew/cask-fonts tap is deprecated but fonts still work
 cask "font-jetbrains-mono-nerd-font"
+cask "font-caskaydia-cove-nerd-font"    # Cascadia Code with Nerd Font patches
+cask "font-sauce-code-pro-nerd-font"    # Source Code Pro with Nerd Font patches
 
 # ============================================
 # GUI Applications
@@ -35,6 +37,7 @@ cask "aerospace"           # Tiling window manager
 cask "docker-desktop"      # Container runtime with GUI
 cask "claude-code"         # Claude AI CLI (GUI installer)
 cask "chromium"            # Open-source browser
+cask "ghostty"             # Modern GPU-accelerated terminal
 cask "homerow"             # Keyboard navigation
 
 # ============================================

@@ -6,14 +6,15 @@ return {
   "folke/tokyonight.nvim",
   enabled = false,
   priority = 1000,
-  opts = {
-    style = "night",  -- "night", "moon", "storm", or "day"
-    transparent = false,
-    terminal_colors = true,
-  },
-  config = function(_, opts)
-    require("tokyonight").setup(opts)
+  config = function()
+    local mode = vim.fn.readfile(vim.fn.expand("~/.config/theme-mode"))[1] or "dark"
+    local style = mode == "light" and "day" or "night"
+    require("tokyonight").setup({
+      style = style,
+      transparent = false,
+      terminal_colors = true,
+    })
     vim.cmd.colorscheme("tokyonight")
-    require("config.highlights").dark()  -- Apply shared dark theme highlights
+    require("config.highlights")[mode == "light" and "light" or "dark"]()
   end,
 }

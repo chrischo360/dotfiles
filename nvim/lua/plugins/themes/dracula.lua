@@ -4,7 +4,7 @@
 
 return {
   "Mofiqul/dracula.nvim",
-  enabled = true,
+  enabled = false,
   priority = 1000,
   opts = {
     transparent_bg = false,

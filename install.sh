@@ -160,6 +160,32 @@ else
 fi
 
 echo ""
+echo -e "${BLUE}[2b/6] Installing ytfzf and pipe-viewer...${NC}"
+
+# ytfzf - not in Homebrew, install via curl
+if ! command -v ytfzf &> /dev/null; then
+    echo -e "${YELLOW}  Installing ytfzf...${NC}"
+    curl -sL https://raw.githubusercontent.com/pystardust/ytfzf/master/ytfzf -o "$HOME/.local/bin/ytfzf"
+    chmod +x "$HOME/.local/bin/ytfzf"
+    echo -e "${GREEN}  ✓ ytfzf installed${NC}"
+else
+    echo -e "${GREEN}  ✓ ytfzf already installed${NC}"
+fi
+
+# pipe-viewer - install via cpanm
+if ! command -v pipe-viewer &> /dev/null; then
+    echo -e "${YELLOW}  Installing pipe-viewer via cpanm...${NC}"
+    if command -v cpanm &> /dev/null; then
+        cpanm App::pipe-viewer
+    else
+        curl -L https://cpanmin.us | perl - App::pipe-viewer
+    fi
+    echo -e "${GREEN}  ✓ pipe-viewer installed${NC}"
+else
+    echo -e "${GREEN}  ✓ pipe-viewer already installed${NC}"
+fi
+
+echo ""
 echo -e "${BLUE}[3/6] Initializing git submodules...${NC}"
 
 if git -C "$DOTFILES_DIR" rev-parse --git-dir > /dev/null 2>&1; then
@@ -207,8 +233,9 @@ create_symlink "$DOTFILES_DIR/hammerspoon" "$HOME/.hammerspoon"
 # Create ~/.config directory
 mkdir -p "$HOME/.config"
 
-# Alacritty
-create_symlink "$DOTFILES_DIR/alacritty" "$HOME/.config/alacritty"
+# Terminal emulators
+create_symlink "$DOTFILES_DIR/kitty" "$HOME/.config/kitty"
+create_symlink "$DOTFILES_DIR/ghostty" "$HOME/.config/ghostty"
 
 # Neovim
 create_symlink "$DOTFILES_DIR/nvim" "$HOME/.config/nvim"
@@ -258,10 +285,23 @@ echo -e "${BLUE}[6/6] Making scripts executable...${NC}"
 # Make all shell scripts executable
 find "$DOTFILES_DIR/claude/scripts" -type f -name "*.sh" -exec chmod +x {} \;
 find "$DOTFILES_DIR/claude/hooks" -type f -name "*.sh" -exec chmod +x {} \;
-find "$DOTFILES_DIR/alacritty/scripts" -name "*.sh" -exec chmod +x {} \;
 find "$DOTFILES_DIR/raycast" -name "*.sh" -exec chmod +x {} \;
 find "$DOTFILES_DIR/tmux/scripts" -name "*.sh" -exec chmod +x {} \;
 chmod +x "$DOTFILES_DIR/claude/status"
+
+# Ghostty font switching script
+if [ -f "$DOTFILES_DIR/scripts/ghostty-font" ]; then
+    chmod +x "$DOTFILES_DIR/scripts/ghostty-font"
+    create_symlink "$DOTFILES_DIR/scripts/ghostty-font" "$HOME/.local/bin/ghostty-font"
+    echo -e "${GREEN}  ✓ ghostty-font script linked${NC}"
+fi
+
+# Theme switching script (Ghostty + Neovim)
+if [ -f "$DOTFILES_DIR/scripts/theme" ]; then
+    chmod +x "$DOTFILES_DIR/scripts/theme"
+    create_symlink "$DOTFILES_DIR/scripts/theme" "$HOME/.local/bin/theme"
+    echo -e "${GREEN}  ✓ theme script linked${NC}"
+fi
 
 # Browser automation scripts
 if [ -d "$DOTFILES_DIR/scripts/browser" ]; then
@@ -327,11 +367,17 @@ fi
 # Platform-specific application checks
 if [[ "$OS" == "Darwin" ]]; then
     # macOS-specific checks
-    if [ -d "/Applications/Alacritty.app" ]; then
-        echo -e "${GREEN}  ✓ Alacritty${NC}"
+    if [ -d "/Applications/kitty.app" ]; then
+        echo -e "${GREEN}  ✓ Kitty${NC}"
     else
-        echo -e "${RED}  ✗ Alacritty (not installed)${NC}"
-        echo -e "${YELLOW}    Run: brew bundle --file=$DOTFILES_DIR/Brewfile${NC}"
+        echo -e "${YELLOW}  ⚠ Kitty (optional - not installed)${NC}"
+    fi
+
+    if [ -d "/Applications/Ghostty.app" ]; then
+        echo -e "${GREEN}  ✓ Ghostty${NC}"
+    else
+        echo -e "${RED}  ✗ Ghostty (not installed)${NC}"
+        echo -e "${YELLOW}    Run: brew bundle --file=$DOTFILES_DIR/Brewfile.macos${NC}"
     fi
 
     if [ -d "/Applications/AeroSpace.app" ]; then
@@ -367,7 +413,8 @@ if [[ "$OS" == "Darwin" ]]; then
     fi
 elif [[ "$OS" == "Linux" ]]; then
     # Linux-specific checks
-    check_command "alacritty" || echo -e "${YELLOW}    Install via package manager${NC}"
+    check_command "ghostty" || echo -e "${YELLOW}  ⚠ Ghostty (install via package manager)${NC}"
+    check_command "kitty" || echo -e "${YELLOW}  ⚠ Kitty (optional - install via package manager)${NC}"
 
     # Check JetBrainsMono Nerd Font (Linux paths)
     if fc-list 2>/dev/null | grep -i "JetBrainsMono Nerd Font" > /dev/null || \
@@ -408,6 +455,7 @@ fi
 echo -e "  Zsh:        ~/.zshrc"
 echo -e "  tmux:       ~/.tmux.conf"
 echo -e "  Neovim:     ~/.config/nvim"
-echo -e "  Alacritty:  ~/.config/alacritty"
+echo -e "  Kitty:      ~/.config/kitty"
+echo -e "  Ghostty:    ~/.config/ghostty"
 echo -e "  Claude:     ~/.claude/settings.json"
 echo ""

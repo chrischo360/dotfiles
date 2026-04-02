@@ -1,0 +1,61 @@
+#!/bin/bash
+# Font switching for Ghostty terminal
+
+CONFIG_FILE="$HOME/dotfiles/ghostty/config"
+
+show_current() {
+    current=$(grep "^font-family" "$CONFIG_FILE" | sed 's/font-family = //')
+    weight=$(grep "^font-style =" "$CONFIG_FILE" | sed 's/font-style = //')
+    echo "Current: $current ($weight)"
+}
+
+switch_font() {
+    local font_name=$1
+
+    case "$font_name" in
+        jetbrains)
+            font="JetBrainsMono Nerd Font Mono"
+            style="ExtraBold"
+            ;;
+        cascadia)
+            font="CaskaydiaCove Nerd Font Mono"
+            style="SemiBold"
+            ;;
+        source)
+            font="SauceCodePro Nerd Font Mono"
+            style="SemiBold"
+            ;;
+        *)
+            echo "Unknown font: $font_name"
+            echo ""
+            echo "Usage: ghostty-font [jetbrains|cascadia|source]"
+            echo ""
+            echo "Available fonts:"
+            echo "  jetbrains  - JetBrains Mono (ExtraBold)"
+            echo "  cascadia   - Cascadia Code (SemiBold)"
+            echo "  source     - Source Code Pro (SemiBold)"
+            exit 1
+            ;;
+    esac
+
+    # Create backup
+    cp "$CONFIG_FILE" "$CONFIG_FILE.bak"
+
+    # Update config using sed
+    sed -i '' "s/^font-family = .*/font-family = $font/" "$CONFIG_FILE"
+    sed -i '' "s/^font-style = .*/font-style = $style/" "$CONFIG_FILE"
+    sed -i '' "s/^font-style-bold = .*/font-style-bold = $style/" "$CONFIG_FILE"
+    sed -i '' "s/^font-style-italic = .*/font-style-italic = $style Italic/" "$CONFIG_FILE"
+    sed -i '' "s/^font-style-bold-italic = .*/font-style-bold-italic = $style Italic/" "$CONFIG_FILE"
+
+    echo "Switched to: $font ($style)"
+    echo ""
+    echo "Reload Ghostty config: Cmd+Shift+, (or restart Ghostty)"
+}
+
+# Main
+if [ $# -eq 0 ]; then
+    show_current
+else
+    switch_font "$1"
+fi

@@ -28,6 +28,8 @@ Personal configuration files for macOS development environment.
 ├── git/                # Git configuration
 │   ├── gitconfig       # Global git config
 │   └── hooks/          # Git hooks
+├── ghostty/            # Ghostty terminal emulator config
+├── kitty/              # Kitty terminal emulator config
 ├── nvim/               # Neovim configuration
 ├── raycast/            # Raycast script commands (CodeForces workflows)
 ├── tmux/               # tmux terminal multiplexer config
@@ -77,7 +79,8 @@ The install script creates these symlinks:
 ~/.gitconfig                   -> ~/dotfiles/git/gitconfig
 ~/.aerospace.toml              -> ~/dotfiles/aerospace/aerospace.toml
 ~/.hammerspoon/                -> ~/dotfiles/hammerspoon/
-~/.config/alacritty/           -> ~/dotfiles/alacritty/
+~/.config/ghostty/             -> ~/dotfiles/ghostty/
+~/.config/kitty/               -> ~/dotfiles/kitty/
 ~/.config/nvim/                -> ~/dotfiles/nvim/
 ~/.config/ccstatusline/        -> ~/dotfiles/claude/ccstatusline/
 ~/.config/mise/config.toml     -> ~/dotfiles/.mise.toml (global mise config)
@@ -229,7 +232,8 @@ The install script will:
    # Create .config directory if needed
    mkdir -p ~/.config
 
-   ln -sf ~/dotfiles/alacritty ~/.config/alacritty
+   ln -sf ~/dotfiles/ghostty ~/.config/ghostty
+   ln -sf ~/dotfiles/kitty ~/.config/kitty
    ln -sf ~/dotfiles/nvim ~/.config/nvim
    ln -sf ~/dotfiles/ccstatusline ~/.config/ccstatusline
 
@@ -246,7 +250,6 @@ The install script will:
 7. **Make scripts executable:**
    ```bash
    chmod +x ~/dotfiles/claude/scripts/*.sh
-   chmod +x ~/dotfiles/alacritty/scripts/*.sh
    chmod +x ~/dotfiles/raycast/*.sh
    chmod +x ~/dotfiles/tmux/scripts/*.sh
    ```
@@ -499,10 +502,52 @@ tail -f ~/.claude/hook-debug.log
 # Actions: start, active, idle, waiting, stop
 ```
 
-### Alacritty Theme Switching
-Use the theme picker alias:
+### Terminal Emulators
+
+**Ghostty** (Primary):
+- Modern GPU-accelerated terminal written in Zig
+- Config: `~/.config/ghostty/config`
+- TERM: `xterm-ghostty`
+- Theme: GitHub Dark Dimmed (inline colors)
+- Features: Shell integration, OSC 52 clipboard, Kitty graphics protocol
+
+**Kitty** (Alternative):
+- GPU-accelerated terminal with image protocol support
+- Config: `~/.config/kitty/kitty.conf`
+- TERM: `xterm-kitty`
+- Theme: GitHub Dark Dimmed (via current-theme.conf)
+- Features: Required for fancy-cat PDF viewer, kitten utilities
+
+**Switching terminals:**
+- Both configurations maintained in dotfiles
+- Change default in System Settings → Desktop & Dock → Default Terminal
+- Or launch explicitly: `open -a Ghostty` / `open -a kitty`
+
+### Switching Fonts in Ghostty
+
+**Installed fonts:**
+- **JetBrains Mono** - Optimized for coding, 139 ligatures, excellent readability
+- **Cascadia Code** - Microsoft's modern terminal font, clean aesthetic
+- **Source Code Pro** - Adobe's refined design, exceptional clarity at small sizes
+
+**Switch fonts:**
 ```bash
-at  # Opens theme selection menu
+ghostty-font                 # Show current font
+ghostty-font jetbrains       # JetBrains Mono (ExtraBold)
+ghostty-font cascadia        # Cascadia Code (SemiBold)
+ghostty-font source          # Source Code Pro (SemiBold)
+```
+
+**After switching:**
+- Reload Ghostty config: Cmd+Shift+, (or restart Ghostty)
+- Verify: `ghostty +show-config | grep font-family`
+
+**Manual switching:**
+Edit `~/dotfiles/ghostty/config` and change the `font-family` line:
+```
+font-family = JetBrainsMono Nerd Font Mono
+font-family = CaskaydiaCove Nerd Font Mono
+font-family = SauceCodePro Nerd Font Mono
 ```
 
 ### Raycast CodeForces Commands

@@ -7,10 +7,12 @@ return {
   enabled = false,
   priority = 1000,
   init = function()
-    vim.o.background = "light"  -- Set BEFORE colorscheme loads
+    local mode = vim.fn.readfile(vim.fn.expand("~/.config/theme-mode"))[1] or "dark"
+    vim.o.background = mode
   end,
   config = function()
     vim.cmd.colorscheme("gruvbox")
-    require("config.highlights").light()  -- Apply shared light theme highlights
+    local mode = vim.o.background
+    require("config.highlights")[mode == "light" and "light" or "dark"]()
   end,
 }

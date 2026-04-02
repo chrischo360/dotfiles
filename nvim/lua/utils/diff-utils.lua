@@ -349,31 +349,23 @@ function M.file_history_advanced()
   end)
 end
 
--- Quick compare with main/master branch
+-- Quick compare with main/master branch (from branch point, not current tip)
 function M.compare_with_main()
-  -- Try main first, then master
-  local handle = io.popen("git rev-parse --verify main 2>/dev/null")
-  if handle then
+  local function get_merge_base(branch)
+    local handle = io.popen("git merge-base " .. branch .. " HEAD 2>/dev/null")
+    if not handle then return nil end
     local result = handle:read("*a")
     handle:close()
-    if result and result ~= "" then
-      vim.cmd("DiffviewOpen main...HEAD")
-      return
-    end
+    result = result and result:gsub("%s+$", "")
+    return (result and result ~= "") and result or nil
   end
 
-  -- Fallback to master
-  handle = io.popen("git rev-parse --verify master 2>/dev/null")
-  if handle then
-    local result = handle:read("*a")
-    handle:close()
-    if result and result ~= "" then
-      vim.cmd("DiffviewOpen master...HEAD")
-      return
-    end
+  local base = get_merge_base("main") or get_merge_base("master")
+  if base then
+    vim.cmd("DiffviewOpen " .. base)
+  else
+    vim.notify("Neither 'main' nor 'master' branch found", vim.log.levels.WARN)
   end
-
-  vim.notify("Neither 'main' nor 'master' branch found", vim.log.levels.WARN)
 end
 
 -- Quick diff commands

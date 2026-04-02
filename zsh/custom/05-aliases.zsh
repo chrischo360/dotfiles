@@ -463,6 +463,10 @@ sfb() {
     "$DOTFILES_DIR/scripts/codebase/sf-ui-web/sfb.sh" "$@"
 }
 
+# Garden - Deploy to ephemeral namespace from local CLI
+# Usage: garden-deploy <namespace> [garden-flags...]
+alias garden-deploy='$DOTFILES_DIR/scripts/codebase/garden-deploy.sh'
+
 # sf-ui-checkout - Development environment setup
 alias sf-ui-checkout-dev='$DOTFILES_DIR/scripts/codebase/sf-ui-checkout/setup-dev-env.sh'
 

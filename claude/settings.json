@@ -10,7 +10,24 @@
       "BashOutput",
       "WebFetch",
       "WebSearch",
-      "EnterPlanMode"
+      "EnterPlanMode",
+      "mcp__sourcegraph__sg_diff_search",
+      "mcp__sourcegraph__sg_commit_search",
+      "mcp__sourcegraph__sg_keyword_search",
+      "mcp__sourcegraph__sg_nls_search",
+      "mcp__sourcegraph__sg_read_file",
+      "mcp__sourcegraph__sg_list_repos",
+      "mcp__sourcegraph__sg_list_files",
+      "mcp__sourcegraph__sg_get_contributor_repos",
+      "mcp__github_wayfair__pull_request_read",
+      "mcp__github_wayfair__search_repositories",
+      "mcp__github_wayfair__search_code",
+      "mcp__github_wayfair__search_pull_requests",
+      "mcp__glean_default__search",
+      "mcp__glean_default__read_document",
+      "mcp__glean_default__chat",
+      "mcp__glean_default__code_search",
+      "mcp__glean_default__employee_search"
     ],
     "deny": [
       "Read(./.env)",
@@ -61,7 +78,7 @@
       "Read(**/*~)"
     ],
     "ask": [],
-    "defaultMode": "default"
+    "defaultMode": "plan"
   },
   "model": "sonnet",
   "hooks": {
@@ -155,7 +172,21 @@
     "command": "ccstatusline",
     "padding": 0
   },
+  "enabledPlugins": {
+    "glean-search@glean-plugins": true,
+    "glean-people@glean-plugins": true,
+    "glean-docs@glean-plugins": true
+  },
+  "extraKnownMarketplaces": {
+    "glean-plugins": {
+      "source": {
+        "source": "github",
+        "repo": "gleanwork/claude-plugins"
+      }
+    }
+  },
   "alwaysThinkingEnabled": false,
+  "effortLevel": "medium",
   "defaultMode": "plan",
   "allowedTools": [
     {
@@ -236,28 +267,11 @@
     {
       "tool": "WebFetch",
       "urlPattern": "https://**"
-    },
-    {
-      "tool": "mcp__sourcegraph__*",
-      "pathPattern": "**"
-    },
-    {
-      "tool": "mcp__playwright__*",
-      "pathPattern": "**"
-    },
-    {
-      "tool": "mcp__github_wayfair__*",
-      "pathPattern": "**"
-    },
-    {
-      "tool": "mcp__glean_default__*",
-      "pathPattern": "**"
     }
   ],
   "allowedDirectories": [
     "/Users/cc446g/dotfiles",
     "/Users/cc446g/codebase",
-    "/Users/cc446g/notes",
     "/Users/cc446g/codebase/basket-service",
     "/Users/cc446g/codebase/block-builder-api",
     "/Users/cc446g/codebase/block-builder-app",
@@ -273,6 +287,5 @@
     "/Users/cc446g/codebase/sf-ui-web",
     "/Users/cc446g/codebase/terraform"
   ],
-  "mcpServers": {},
-  "effortLevel": "medium"
+  "mcpServers": {}
 }

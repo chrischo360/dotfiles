@@ -23,5 +23,12 @@ return {
 			"oil",
 			"TelescopePrompt",
 		},
+		-- Explicitly allow arrow keys
+		disabled_keys = {
+			["<Up>"] = false,
+			["<Down>"] = false,
+			["<Left>"] = false,
+			["<Right>"] = false,
+		},
 	},
 }

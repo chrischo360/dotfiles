@@ -87,6 +87,7 @@ return {
         vim.api.nvim_set_hl(0, "MarkdownLinkTextBuildkite", { fg = "#ea580c" })
         vim.api.nvim_set_hl(0, "MarkdownLinkTextLocal", { fg = "#16a34a" })
         vim.api.nvim_set_hl(0, "MarkdownLinkTextExternal", { fg = "#2563eb" })
+        vim.api.nvim_set_hl(0, "RenderMarkdownTodoChecked", { fg = "#d20f39", strikethrough = true })
       else
         -- Dark mode: bright, vibrant colors
         vim.api.nvim_set_hl(0, "RenderMarkdownLinkGitHub", { fg = "#ff79c6", bold = true })      -- Bright pink
@@ -101,6 +102,7 @@ return {
         vim.api.nvim_set_hl(0, "MarkdownLinkTextBuildkite", { fg = "#ff9e64" })
         vim.api.nvim_set_hl(0, "MarkdownLinkTextLocal", { fg = "#9ece6a" })
         vim.api.nvim_set_hl(0, "MarkdownLinkTextExternal", { fg = "#7aa2f7" })
+        vim.api.nvim_set_hl(0, "RenderMarkdownTodoChecked", { fg = "#9ece6a", strikethrough = true })
       end
     end
 
@@ -164,7 +166,7 @@ return {
       -- Links: Custom icons and colors per link type
       link = {
         enabled = true,
-        hyperlink = "🔗 ", -- Default fallback icon
+        hyperlink = "󰌷 ", -- Default fallback icon
         custom = {
           -- GitHub links (purple)
           github = {
@@ -188,14 +190,14 @@ return {
           -- Matches: ./file, ../file, ~/file
           relative = {
             pattern = "^[%.~]",
-            icon = "📄 ",
+            icon = "󰈔 ",
             highlight = "RenderMarkdownLinkLocal",
             priority = 10, -- Higher priority than generic http pattern
           },
           -- External web links (light blue, lowest priority)
           web = {
             pattern = "^http",
-            icon = "🌐 ",
+            icon = "󰖟 ",
             highlight = "RenderMarkdownLinkExternal",
             priority = 1, -- Lowest priority (checked last)
           },

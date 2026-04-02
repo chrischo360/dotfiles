@@ -21,7 +21,7 @@ deno = "latest"                 # Secure TypeScript runtime
 # Tools that benefit from version management
 
 yarn = "latest"                 # Yarn package manager
-kubectl = "latest"              # Kubernetes CLI
+kubectl = "1.27"
 
 # Java ecosystem (Java now via sdkman, but keep maven/sbt/scala in mise)
 maven = "latest"                # Java build tool
