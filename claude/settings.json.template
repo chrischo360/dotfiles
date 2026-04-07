@@ -236,6 +236,21 @@
     {
       "tool": "WebFetch",
       "urlPattern": "https://**"
+    },
+    {
+      "tool": "mcp__sourcegraph__*"
+    },
+    {
+      "tool": "mcp__graphql_storefront__*"
+    },
+    {
+      "tool": "mcp__graphql_service_to_service__*"
+    },
+    {
+      "tool": "mcp__graphql_partner__*"
+    },
+    {
+      "tool": "mcp__graphql_internal__*"
     }
   ],
   "allowedDirectories": [

@@ -10,24 +10,7 @@
       "BashOutput",
       "WebFetch",
       "WebSearch",
-      "EnterPlanMode",
-      "mcp__sourcegraph__sg_diff_search",
-      "mcp__sourcegraph__sg_commit_search",
-      "mcp__sourcegraph__sg_keyword_search",
-      "mcp__sourcegraph__sg_nls_search",
-      "mcp__sourcegraph__sg_read_file",
-      "mcp__sourcegraph__sg_list_repos",
-      "mcp__sourcegraph__sg_list_files",
-      "mcp__sourcegraph__sg_get_contributor_repos",
-      "mcp__github_wayfair__pull_request_read",
-      "mcp__github_wayfair__search_repositories",
-      "mcp__github_wayfair__search_code",
-      "mcp__github_wayfair__search_pull_requests",
-      "mcp__glean_default__search",
-      "mcp__glean_default__read_document",
-      "mcp__glean_default__chat",
-      "mcp__glean_default__code_search",
-      "mcp__glean_default__employee_search"
+      "EnterPlanMode"
     ],
     "deny": [
       "Read(./.env)",
@@ -78,7 +61,7 @@
       "Read(**/*~)"
     ],
     "ask": [],
-    "defaultMode": "plan"
+    "defaultMode": "default"
   },
   "model": "sonnet",
   "hooks": {
@@ -122,10 +105,6 @@
           {
             "type": "command",
             "command": "/Users/cc446g/dotfiles/claude/hooks/session/claude-stop.sh"
-          },
-          {
-            "type": "command",
-            "command": "/Users/cc446g/dotfiles/claude/hooks/tracking/track-tokens.sh"
           }
         ]
       }
@@ -176,21 +155,7 @@
     "command": "ccstatusline",
     "padding": 0
   },
-  "enabledPlugins": {
-    "glean-search@glean-plugins": true,
-    "glean-people@glean-plugins": true,
-    "glean-docs@glean-plugins": true
-  },
-  "extraKnownMarketplaces": {
-    "glean-plugins": {
-      "source": {
-        "source": "github",
-        "repo": "gleanwork/claude-plugins"
-      }
-    }
-  },
   "alwaysThinkingEnabled": false,
-  "effortLevel": "medium",
   "defaultMode": "plan",
   "allowedTools": [
     {
@@ -271,6 +236,21 @@
     {
       "tool": "WebFetch",
       "urlPattern": "https://**"
+    },
+    {
+      "tool": "mcp__sourcegraph__*"
+    },
+    {
+      "tool": "mcp__graphql_storefront__*"
+    },
+    {
+      "tool": "mcp__graphql_service_to_service__*"
+    },
+    {
+      "tool": "mcp__graphql_partner__*"
+    },
+    {
+      "tool": "mcp__graphql_internal__*"
     }
   ],
   "allowedDirectories": [

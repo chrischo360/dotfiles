@@ -92,6 +92,124 @@ Visualization of all Claude commands and their relationships.
 
 ---
 
+### test
+**Skill:** `global:test`
+**Purpose:** Parent test command — menu-driven entry point for test-env, test-plan, test-execute
+
+**Uses:**
+- git (repository detection)
+- AskUserQuestion (presents menu)
+- Delegates to test-env, test-plan, test-execute
+
+**Used by:**
+- User invoked for discovery/navigation
+
+**Options:**
+- Full workflow (test-env → test-plan → test-execute)
+- Set up environment (test-env)
+- Plan tests (test-plan)
+- Run tests (test-execute)
+
+**Related:** [[#test-env]], [[#test-plan]], [[#test-execute]]
+
+---
+
+### test-env
+**Skill:** `global:test-env`
+**Purpose:** Set up testing environment (services, env vars, dependencies)
+
+**Uses:**
+- git (repository detection)
+- Explore agent (research env requirements)
+- docker-compose, .env.example, README, Makefile
+
+**Used by:**
+- [[#test]] ← **delegates to this**
+- User invoked manually
+
+**Adaptive strategy:**
+1. Check for repos/${REPO_NAME}/test-env.md
+2. Research env requirements
+3. Offer: run now / create command / skip
+
+**Related:** [[#test-plan]], [[#test-execute]]
+
+---
+
+### test-plan
+**Skill:** `global:test-plan`
+**Purpose:** Research and surface a plan for running tests
+
+**Uses:**
+- git (repository detection)
+- ~/dotfiles/claude/test-memory/${REPO_NAME}.md (prior session context)
+- Explore agent (research test structure)
+- jest.config, vitest.config, pytest.ini, CI configs
+
+**Used by:**
+- [[#test]] ← **delegates to this**
+- User invoked manually
+
+**Adaptive strategy:**
+1. Check for repos/${REPO_NAME}/test-plan.md
+2. Read prior test session memory if available
+3. Research test frameworks and commands
+4. Present findings (+ prior sessions), offer to save as repo-specific command
+
+**Related:** [[#test-env]], [[#test-execute]], [[#test-log]]
+
+---
+
+### test-execute
+**Skill:** `global:test-execute`
+**Purpose:** Execute tests for the current repository
+
+**Uses:**
+- git (repository detection)
+- Explore agent (find test command if needed)
+- package.json, Makefile, CI config
+- [[#test-log]] ← **invokes after each run**
+
+**Used by:**
+- [[#test]] ← **delegates to this**
+- User invoked manually
+
+**Adaptive strategy:**
+1. Check for repos/${REPO_NAME}/test-execute.md
+2. Find test command via research or test-plan context
+3. Show command, ask confirmation, run
+4. Invoke test-log to record outcome
+
+**Related:** [[#test-env]], [[#test-plan]], [[#test-log]]
+
+---
+
+### test-log
+**Skill:** `global:test-log`
+**Purpose:** Log a test session to per-repo memory and Claude project memory
+
+**Uses:**
+- AskUserQuestion (what was tested, outcome, notes)
+- File I/O (~/dotfiles/claude/test-memory/${REPO_NAME}.md)
+- Claude project memory (~/.claude/projects/memory/test_${REPO_NAME}_latest.md)
+
+**Used by:**
+- [[#test-execute]] ← **invoked automatically after each run**
+- User invoked manually to log a session retroactively
+
+**Memory format:**
+```
+## YYYY-MM-DD
+**What:** feature/scenario tested
+**Command:** exact command used
+**Outcome:** Pass / Pass (flaky) / Fail / Inconclusive
+**Notes:** edge cases, follow-ups, things to watch
+```
+
+**Related:** [[#test-execute]], [[#test-plan]] (reads this memory)
+
+---
+
 ### git-commit
 **Skill:** `global:git-commit`
 **Purpose:** Commit with branch validation (warns if no ticket reference)
