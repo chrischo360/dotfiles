@@ -451,21 +451,6 @@ alias claude='claude-mcp --servers sourcegraph,glean_default'
 # Claude Code - Get costs
 alias claude-costs='$DOTFILES_DIR/claude/scripts/cost/analyze-costs.py'
 
-# sf-ui-web - Build/clean utility (DEPRECATED: use `dev` instead)
-# Mapping: sfb -> dev rebuild, sfb -d -> dev clean:dist, sfb -a -> dev clean:all, etc.
-sfb() {
-    echo -e "\033[1;33m⚠️  sfb is deprecated. Use 'dev' instead:\033[0m"
-    echo -e "\033[2m   sfb      -> dev rebuild"
-    echo -e "   sfb -d   -> dev clean:dist"
-    echo -e "   sfb -t   -> dev clean:turbo"
-    echo -e "   sfb -g   -> dev clean:generated"
-    echo -e "   sfb -a   -> dev clean:all"
-    echo -e "   sfb -f   -> dev :run fullreset\033[0m"
-    echo ""
-    # Still run the old script for now
-    "$DOTFILES_DIR/scripts/codebase/sf-ui-web/sfb.sh" "$@"
-}
-
 # Garden - Deploy to ephemeral namespace from local CLI
 # Usage: garden-deploy <namespace> [garden-flags...]
 alias garden-deploy='$DOTFILES_DIR/scripts/codebase/garden-deploy.sh'

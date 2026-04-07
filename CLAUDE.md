@@ -78,7 +78,6 @@ The install script creates these symlinks:
 ~/.config/tmux/scripts/        -> ~/dotfiles/tmux/scripts/
 ~/.gitconfig                   -> ~/dotfiles/git/gitconfig
 ~/.aerospace.toml              -> ~/dotfiles/aerospace/aerospace.toml
-~/.hammerspoon/                -> ~/dotfiles/hammerspoon/
 ~/.config/ghostty/             -> ~/dotfiles/ghostty/
 ~/.config/kitty/               -> ~/dotfiles/kitty/
 ~/.config/nvim/                -> ~/dotfiles/nvim/
@@ -227,8 +226,6 @@ The install script will:
    ln -sf ~/dotfiles/zsh/.zshrc ~/.zshrc
    ln -sf ~/dotfiles/tmux/tmux.conf ~/.tmux.conf
    ln -sf ~/dotfiles/aerospace/aerospace.toml ~/.aerospace.toml
-   ln -sf ~/dotfiles/hammerspoon ~/.hammerspoon
-
    # Create .config directory if needed
    mkdir -p ~/.config
 

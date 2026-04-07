@@ -214,9 +214,6 @@ create_symlink "$DOTFILES_DIR/git/gitconfig" "$HOME/.gitconfig"
 # AeroSpace
 create_symlink "$DOTFILES_DIR/aerospace/aerospace.toml" "$HOME/.aerospace.toml"
 
-# Hammerspoon
-create_symlink "$DOTFILES_DIR/hammerspoon" "$HOME/.hammerspoon"
-
 # Create ~/.config directory
 mkdir -p "$HOME/.config"
 
