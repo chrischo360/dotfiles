@@ -94,6 +94,18 @@
       "command": "npx",
       "args": ["-y", "@storybook/mcp"],
       "env": {}
+    },
+    "graphql_storefront": {
+      "url": "http://kube-unified-schema-mcp-server.service.intradsm1.sdeconsul.csnzoo.com/mcp"
+    },
+    "graphql_service_to_service": {
+      "url": "http://kube-unified-schema-mcp-server-service-to-service.service.intradsm1.sdeconsul.csnzoo.com/mcp"
+    },
+    "graphql_partner": {
+      "url": "http://kube-unified-schema-mcp-server-partner.service.intradsm1.sdeconsul.csnzoo.com/mcp"
+    },
+    "graphql_internal": {
+      "url": "http://kube-unified-schema-mcp-server-internal.service.intradsm1.sdeconsul.csnzoo.com/mcp"
     }
   }
 }

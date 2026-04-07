@@ -445,6 +445,9 @@ claude-mcp-split() {
   echo "Switch to it with: Ctrl-b o"
 }
 
+# Claude Code - default launcher with MCP servers
+alias claude='claude-mcp --servers sourcegraph,glean_default'
+
 # Claude Code - Get costs
 alias claude-costs='$DOTFILES_DIR/claude/scripts/cost/analyze-costs.py'
 

@@ -160,7 +160,7 @@ else
 fi
 
 echo ""
-echo -e "${BLUE}[2b/6] Installing ytfzf and pipe-viewer...${NC}"
+echo -e "${BLUE}[2b/6] Installing ytfzf...${NC}"
 
 # ytfzf - not in Homebrew, install via curl
 if ! command -v ytfzf &> /dev/null; then
@@ -170,19 +170,6 @@ if ! command -v ytfzf &> /dev/null; then
     echo -e "${GREEN}  ✓ ytfzf installed${NC}"
 else
     echo -e "${GREEN}  ✓ ytfzf already installed${NC}"
-fi
-
-# pipe-viewer - install via cpanm
-if ! command -v pipe-viewer &> /dev/null; then
-    echo -e "${YELLOW}  Installing pipe-viewer via cpanm...${NC}"
-    if command -v cpanm &> /dev/null; then
-        cpanm App::pipe-viewer
-    else
-        curl -L https://cpanmin.us | perl - App::pipe-viewer
-    fi
-    echo -e "${GREEN}  ✓ pipe-viewer installed${NC}"
-else
-    echo -e "${GREEN}  ✓ pipe-viewer already installed${NC}"
 fi
 
 echo ""
