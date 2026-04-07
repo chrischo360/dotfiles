@@ -115,7 +115,25 @@ Steps:
    echo "$PR_URL"
    ```
 
-5. Display next steps and exit:
+5. Run lint after PR creation and commit fixes if needed:
+   - Invoke `global:pr-lint` skill
+   - After lint completes, check for modified files:
+     ```bash
+     LINT_CHANGES=$(git status --short)
+     echo "$LINT_CHANGES"
+     ```
+   - If LINT_CHANGES is non-empty (lint auto-fixed files):
+     - Use AskUserQuestion: "Lint fixed some issues. Commit and push them?"
+     - Options: Yes, No
+     - If Yes:
+       ```bash
+       git add -A && git commit -m "fix: lint"
+       git push
+       ```
+   - If lint reports unfixable errors: show output, continue to next steps
+   - If lint passes cleanly: continue silently
+
+6. Display next steps and exit:
    - Show PR URL
    - Suggest: `gh pr view --web`, `/pr-watch`, `/pr-dashboard`, `/pr-automerge`
 
@@ -129,6 +147,8 @@ Steps:
 1. Single bash: all preflight checks + uncommitted status + remote info
 2. Parallel: `global:pr-template` skill + fetch/push bash
 3. Single bash: `gh pr create`
+4. Skill: `global:pr-lint` (post-PR)
+5. If lint auto-fixed files: 1 AskUserQuestion + 1 bash (commit + push)
 
 If uncommitted changes exist, add 1 AskUserQuestion call (+ 1 bash for commit if yes).
 

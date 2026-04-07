@@ -5,7 +5,8 @@
       {
         "id": "1",
         "type": "model",
-        "color": "cyan"
+        "color": "cyan",
+        "rawValue": true
       },
       {
         "id": "2",
@@ -13,8 +14,8 @@
       },
       {
         "id": "3",
-        "type": "context-length",
-        "color": "brightBlack"
+        "type": "git-branch",
+        "color": "magenta"
       },
       {
         "id": "4",
@@ -22,31 +23,36 @@
       },
       {
         "id": "5",
-        "type": "git-branch",
-        "color": "magenta"
-      },
+        "type": "session-clock",
+        "color": "blue"
+      }
+    ],
+    [
       {
         "id": "6",
-        "type": "separator"
+        "type": "context-percentage-usable",
+        "color": "yellow"
       },
       {
         "id": "7",
-        "type": "git-changes",
-        "color": "yellow"
+        "type": "separator"
+      },
+      {
+        "id": "14",
+        "type": "session-cost",
+        "color": "red"
       }
-    ],
-    [],
-    []
+    ]
   ],
-  "flexMode": "full-minus-40",
+  "flexMode": "always-full",
   "compactThreshold": 60,
-  "colorLevel": 2,
+  "colorLevel": 3,
   "inheritSeparatorColors": false,
   "globalBold": false,
   "powerline": {
     "enabled": false,
     "separators": [
-      ""
+      ""
     ],
     "separatorInvertBackground": [
       false

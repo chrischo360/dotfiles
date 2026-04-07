@@ -26,6 +26,7 @@ switch_theme() {
     case "$theme" in
         dracula)
             nvim_file="dracula.lua"
+            nvim_plugin_name="dracula.nvim"
             nvim_colorscheme="dracula"
             if [ "$mode" = "light" ]; then
                 echo "dracula: no light variant, using dark"
@@ -35,6 +36,7 @@ switch_theme() {
             ;;
         tokyonight)
             nvim_file="tokyonight.lua"
+            nvim_plugin_name="tokyonight.nvim"
             if [ "$mode" = "light" ]; then
                 ghostty_theme="TokyoNight Day"
                 nvim_colorscheme="tokyonight-day"
@@ -45,6 +47,7 @@ switch_theme() {
             ;;
         gruvbox)
             nvim_file="gruvbox.lua"
+            nvim_plugin_name="gruvbox"
             nvim_colorscheme="gruvbox"
             if [ "$mode" = "light" ]; then
                 ghostty_theme="Gruvbox Light"
@@ -63,6 +66,7 @@ switch_theme() {
             ;;
         everforest)
             nvim_file="everforest.lua"
+            nvim_plugin_name="everforest"
             nvim_colorscheme="everforest"
             if [ "$mode" = "light" ]; then
                 ghostty_theme="Everforest Light Med"
@@ -72,6 +76,7 @@ switch_theme() {
             ;;
         onedark)
             nvim_file="onedark.lua"
+            nvim_plugin_name="onedark.nvim"
             nvim_colorscheme="onedark"
             if [ "$mode" = "light" ]; then
                 ghostty_theme="Atom One Light"
@@ -81,6 +86,7 @@ switch_theme() {
             ;;
         rose-pine)
             nvim_file="rose-pine.lua"
+            nvim_plugin_name="rose-pine"
             if [ "$mode" = "light" ]; then
                 ghostty_theme="Rose Pine Dawn"
                 nvim_colorscheme="rose-pine-dawn"
@@ -91,6 +97,7 @@ switch_theme() {
             ;;
         papercolor)
             nvim_file="papercolor.lua"
+            nvim_plugin_name="papercolor-theme"
             nvim_colorscheme="PaperColor"
             if [ "$mode" = "light" ]; then
                 ghostty_theme="Gruvbox Light"
@@ -148,7 +155,7 @@ switch_theme() {
         fi
         reloaded=0
         for socket in $sockets; do
-            if nvim --server "$socket" --remote-send ":lua vim.cmd.colorscheme('$nvim_colorscheme'); require('config.highlights').$mode()<CR>" 2>/dev/null; then
+            if nvim --server "$socket" --remote-send ":lua require('lazy').load({plugins={'$nvim_plugin_name'}}); vim.cmd.colorscheme('$nvim_colorscheme'); require('config.highlights').$mode()<CR>" 2>/dev/null; then
                 reloaded=$((reloaded + 1))
             fi
         done

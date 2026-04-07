@@ -33,7 +33,7 @@ fi
 temp_file=$(mktemp)
 trap 'rm -f "$temp_file"' EXIT
 
-jq -r '.sessions | to_entries[] | "\(.value.status)|\(.value.action // "")|\(.value.context.tmux_session // "?")|\(.value.context.repo // "?")"' "$STATE_FILE" 2>/dev/null | while IFS='|' read -r status action tmux_session repo; do
+jq -r '.sessions | to_entries[] | "\(.value.status)|\(.value.action // "")|\(.value.context.tmux_session // "?")|\(.value.context.repo // "?")|\(.value.context_warning // "")"' "$STATE_FILE" 2>/dev/null | while IFS='|' read -r status action tmux_session repo ctx_warning; do
   # Use tmux session name, fallback to repo if not available
   display_name="$tmux_session"
   if [[ -z "$display_name" || "$display_name" == "?" || "$display_name" == "unknown" ]]; then
@@ -48,7 +48,7 @@ jq -r '.sessions | to_entries[] | "\(.value.status)|\(.value.action // "")|\(.va
   [[ "$status" == "waiting_for_input" ]] && priority=2
   [[ "$status" == "active" ]] && priority=3
 
-  echo "$priority|$status|$action|$display_name" >> "$temp_file"
+  echo "$priority|$status|$action|$display_name|$ctx_warning" >> "$temp_file"
 done
 
 # Group by display_name, show all statuses/actions for each session
@@ -66,7 +66,7 @@ for session_name in $(cut -d'|' -f4 "$temp_file" | sort -u); do
 
   # Build icon string with all statuses
   icons=""
-  while IFS='|' read -r priority status action display_name; do
+  while IFS='|' read -r priority status action display_name ctx_warning; do
     # Determine icon based on status and action
     icon=""
     if [[ "$status" == "idle" ]]; then
@@ -104,6 +104,10 @@ for session_name in $(cut -d'|' -f4 "$temp_file" | sort -u); do
     fi
 
     icons="${icons}${icon}"
+
+    if [[ -n "$ctx_warning" ]] && (( $(echo "$ctx_warning >= 80" | bc -l) )); then
+      icons="${icons}⚠️"
+    fi
   done <<< "$entries"
 
   # Add session with all its icons

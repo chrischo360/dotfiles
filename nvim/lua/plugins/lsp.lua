@@ -17,6 +17,7 @@ return {
       "saadparwaiz1/cmp_luasnip",
       "hrsh7th/cmp-buffer",
       "hrsh7th/cmp-path",
+      "micangl/cmp-vimtex",
     },
     config = function()
       local capabilities = require("cmp_nvim_lsp").default_capabilities()
@@ -90,7 +91,7 @@ return {
         },
       })
       require("mason-lspconfig").setup({
-        ensure_installed = { "pyright", "lua_ls", "ts_ls", "jdtls", "intelephense", "rust_analyzer", "svelte", "graphql" },
+        ensure_installed = { "pyright", "lua_ls", "ts_ls", "jdtls", "intelephense", "rust_analyzer", "svelte", "graphql", "texlab" },
         automatic_installation = true,
       })
 
@@ -500,6 +501,7 @@ return {
         }),
         sources = cmp.config.sources({
           { name = "nvim_lsp", max_item_count = 10 },
+          { name = "vimtex" },
           { name = "luasnip", max_item_count = 5 },
         }, {
           { name = "buffer", max_item_count = 5 },

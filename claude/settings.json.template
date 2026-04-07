@@ -256,5 +256,6 @@
     "{{codebase}}/sf-ui-web",
     "{{codebase}}/terraform"
   ],
-  "mcpServers": {}
+  "mcpServers": {},
+  "autoUpdaterStatus": "disabled"
 }

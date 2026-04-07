@@ -37,8 +37,8 @@ export ANTHROPIC_DEFAULT_SONNET_MODEL='claude-sonnet-4-6[1m]'
 
 # Haiku
 # export ANTHROPIC_SMALL_FAST_MODEL='claude-sonnet-4-6[1m]'
-# export ANTHROPIC_SMALL_FAST_MODEL='claude-sonnet-4-5@20250929'
-export ANTHROPIC_SMALL_FAST_MODEL='claude-haiku-4-5-20251001'
+export ANTHROPIC_SMALL_FAST_MODEL='claude-sonnet-4-5@20250929'
+# export ANTHROPIC_SMALL_FAST_MODEL='claude-haiku-4-5-20251001'
 
 # Gemini CLI on Vertex AI
 export GOOGLE_GENAI_USE_VERTEXAI=true

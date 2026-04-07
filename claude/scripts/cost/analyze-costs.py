@@ -7,6 +7,7 @@ Analyzes transcript files from last 30 days to calculate usage costs
 import json
 import glob
 import os
+import argparse
 from datetime import datetime, timedelta, timezone
 from collections import defaultdict
 
@@ -73,14 +74,19 @@ def format_large_number(num):
         return str(num)
 
 def main():
+    parser = argparse.ArgumentParser(description='Claude Code Cost Analysis')
+    parser.add_argument('--days', type=int, default=30,
+                        help='Number of days to analyze (default: 30)')
+    args = parser.parse_args()
+    days = args.days
+
     print(f"{CYAN}================================================================={NC}")
-    print(f"{CYAN}          Claude Code Cost Analysis - Last 30 Days{NC}")
+    print(f"{CYAN}          Claude Code Cost Analysis - Last {days} Days{NC}")
     print(f"{CYAN}================================================================={NC}")
     print()
     print(f"{BLUE}Analyzing transcript files...{NC}")
 
-    # Date threshold (30 days ago)
-    cutoff = datetime.now(timezone.utc) - timedelta(days=30)
+    cutoff = datetime.now(timezone.utc) - timedelta(days=days)
 
     # Data structures
     daily_costs = defaultdict(float)

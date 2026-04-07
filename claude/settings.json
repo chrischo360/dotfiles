@@ -122,6 +122,10 @@
           {
             "type": "command",
             "command": "/Users/cc446g/dotfiles/claude/hooks/session/claude-stop.sh"
+          },
+          {
+            "type": "command",
+            "command": "/Users/cc446g/dotfiles/claude/hooks/tracking/track-tokens.sh"
           }
         ]
       }
@@ -287,5 +291,6 @@
     "/Users/cc446g/codebase/sf-ui-web",
     "/Users/cc446g/codebase/terraform"
   ],
-  "mcpServers": {}
+  "mcpServers": {},
+  "autoUpdaterStatus": "disabled"
 }

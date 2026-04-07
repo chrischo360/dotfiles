@@ -38,22 +38,16 @@ Steps:
    - Unstaged: `git diff`
    - Branch: `git diff main...HEAD`
 
-6. Identify distinct changes by analyzing:
-   - Modified directories/components (e.g., libs/financing-lab, libs/support-center, apps/core-funnel)
-   - Change types: new features, bug fixes, styling updates, refactors, schema changes
-   - File groupings that indicate separate concerns
-
-   Decision logic:
-   - **Single cohesive change** (all files relate to one feature/fix): Use single sentence
-   - **2 related changes**: Combine into one sentence if possible, otherwise 2 bullets
-   - **3+ unrelated changes** across different domains: Use bullet points
-
-   Examples:
-   - Single: "Update HFC banner styling with responsive gem positioning and LoadingButton states"
-   - Multiple distinct:
-     * Add HFC gem positioning with alignment controls in financing-lab
-     * Implement HTML sanitization for support center comments
-     * Update GraphQL schema with loyalty enrollment fields
+6. Identify distinct changes and order them logically:
+   - List all distinct changes by modified component/concern
+   - Build a rough dependency graph: which changes enable or require other changes?
+     * Schema/type changes → utilities/hooks → components → UI layer (foundational first)
+     * Or narrative: inciting change → fix → downstream effects (story order)
+   - Choose ordering heuristic:
+     * **Foundational first** when changes are layered (new type → new hook → new component)
+     * **Story order** when there's a clear narrative arc (problem → solution → guard)
+     * Default to foundational first if neither is obvious
+   - Single cohesive change: no bullets needed, incorporate into paragraph
 
 7. Generate PR title and description:
    - **PR Title** (under 70 characters): `[PGL-XXX] <terse description>`
@@ -62,20 +56,23 @@ Steps:
      * Examples: "[PGL-123] Add VPN documentation for build commands"
 
    - **PR Description** following these rules:
-     * **Brief summary** - 1-2 sentence overview of what changed
-       - If ticket context available from step 3, incorporate relevant intent/requirements
-       - Keep focused on technical implementation, not business justification
-     * **Bullet points** - List key technical changes without file names
-     * **Concise language** - "Refactor X", "Add Y", "Update Z"
-     * **No detailed explanations** - AI bot adds technical analysis automatically
-     * Examples matching Wayfair contributor style:
-       - Summary: "Update HighFrictionCheckoutBanner with responsive gem positioning, LoadingButton states, and improved button/radio spacing."
-       - Bullets:
-         * Refactor Gem component to use BlockBuilder FixedImage instead of hardcoded SVG
-         * Add configurable gem alignment (TOP/CENTER/BOTTOM) with responsive display (desktop only)
+     * **Flowing paragraph** - One paragraph covering WHAT changed, WHY it was needed (technical and/or business when both are relevant and clarifying), and HOW the approach was chosen (key decisions, tradeoffs)
+       - Include business why only when it clarifies the technical decision
+       - Every clause earns its place: cut "this change", "in order to", "we decided to"
+       - Paragraph explains intent; bullets enumerate the changes
+       - Example: "Refactors HFC banner to use BlockBuilder FixedImage instead of hardcoded SVG, enabling responsive gem alignment; replaces Button with LoadingButton to support enrollment state feedback without additional state management."
+     * **Bullet points** - Ordered by dependency graph or story flow (most foundational/inciting first)
+       - Terse verb phrases, no file names, no filler
+       - Include inline why when non-obvious and concise: "Add gem alignment enum (TOP/CENTER/BOTTOM) — SVG lacked positional API"
+       - Drop the why when it's obvious from the what
+     * Examples matching updated style:
+       - Paragraph: "Refactors HFC banner to use BlockBuilder FixedImage instead of hardcoded SVG, enabling responsive gem alignment controlled by a new alignment enum; replaces Button with LoadingButton to surface enrollment state without extra state management."
+       - Bullets (foundational first):
+         * Refactor Gem to use BlockBuilder FixedImage — SVG lacked positional API
+         * Add configurable gem alignment enum (TOP/CENTER/BOTTOM) with desktop-only display
          * Replace Button with LoadingButton for enrollment/decline actions
-         * Update button variations: condensed mobile buttons, primary/secondary desktop hierarchy
-         * Adjust radio button spacing and sizing for better alignment
+         * Update button hierarchy: condensed mobile, primary/secondary desktop
+         * Adjust radio button spacing for alignment consistency
 
 8. Output the formatted PR title and body:
 
@@ -90,11 +87,12 @@ Steps:
 ## Description
 [PGL-XXX](https://projecthub.service.csnzoo.com/browse/PGL-XXX)
 
-<Brief 1-2 sentence summary>
+<One flowing paragraph: WHAT changed, WHY needed (technical + business when relevant), HOW approach was decided>
 
-- <Bullet point of key change without file references>
-- <Another key change>
-- <Additional changes as needed>
+- <Most foundational/inciting change — inline why if non-obvious>
+- <Change that depends on above>
+- <Further downstream change>
+- <Final/surface-level change>
 
 ### How has this change been verified?
 
@@ -133,3 +131,6 @@ Anti-Patterns to Avoid:
 - Marketing language ("exciting new feature")
 - Implementation details ("uses useEffect to...")
 - Future plans ("this will enable us to...")
+- Bullets in diff/arbitrary order — order must reflect dependency chain or narrative arc
+- Paragraph that lists changes instead of explaining them — paragraph = WHAT/WHY/HOW, bullets = the changes
+- Inline why that restates the what ("Add X because we needed X")
