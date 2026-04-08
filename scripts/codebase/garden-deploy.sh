@@ -51,4 +51,13 @@ export GARDEN_NAMESPACE="$NAMESPACE"
 export GARDEN_ENABLE_NEW_SYNC=false
 export "${FEATURE_VARIANT_VAR}=${HOSTNAME}"
 
-garden deploy "$@"
+# Ensure kubectl credentials are set for GKE auth
+GCLOUD_ACCOUNT=$(gcloud config get-value account 2>/dev/null || true)
+if [ -z "$GCLOUD_ACCOUNT" ]; then
+  GCLOUD_ACCOUNT=$(gcloud config get-value account --configuration=default 2>/dev/null || true)
+fi
+if [ -n "$GCLOUD_ACCOUNT" ]; then
+  kubectl config set-credentials "$GCLOUD_ACCOUNT" --auth-provider=gke &>/dev/null
+fi
+
+/usr/local/bin/garden deploy "$@"
