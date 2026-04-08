@@ -116,7 +116,6 @@ return {
     })
 
     require("render-markdown").setup({
-      -- Enable/disable the plugin
       enabled = true,
 
       -- Headings: Icons with controlled backgrounds

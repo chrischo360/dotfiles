@@ -9,9 +9,16 @@ return {
   dependencies = { "nfrid/treesitter-utils" },
   ft = { "markdown" },
   config = function()
+    -- Shim nvim-treesitter.ts_utils for main branch compatibility
+    -- markdown-togglecheck only uses get_node_at_cursor()
+    package.loaded["nvim-treesitter.ts_utils"] = {
+      get_node_at_cursor = function()
+        return vim.treesitter.get_node()
+      end,
+    }
     require("markdown-togglecheck").setup({
-      create = false, -- Don't auto-create, only toggle existing
-      remove = false, -- Uncheck instead of removing when toggling checked boxes
+      create = false,
+      remove = false,
     })
   end,
   keys = {

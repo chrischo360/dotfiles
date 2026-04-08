@@ -58,21 +58,12 @@ Steps:
    - If not found, try global pr-lint: `global:pr-lint`
    - If validation fails: Ask "Validation failed. Continue with PR creation?"
 
-3. Generate PR template + fetch remote (parallel, 2 calls):
+3. Push branch + create draft PR immediately (parallel, 2 calls):
    - Run these two operations in parallel using multiple tool calls in a single message:
 
-   **Operation 1: Generate PR template**
-   - Invoke `global:pr-template` skill (MUST use fully qualified name)
-   - Parse output to extract `$PR_TITLE` and `$PR_BODY`
-
-   **Operation 2: Fetch remote + push in one command**
+   **Operation 1: Fetch remote + push in one command**
    ```bash
    git fetch origin 2>/dev/null
-
-   # Reuse REMOTE_INFO from step 1
-   # If no tracking: push with -u
-   # If tracking and local != remote: check divergence, push if ahead
-   # If tracking and local == remote: skip push
 
    REMOTE_BRANCH=$(git rev-parse --abbrev-ref --symbolic-full-name @{u} 2>/dev/null || echo "")
    if [[ -z "$REMOTE_BRANCH" ]]; then
@@ -92,12 +83,19 @@ Steps:
    fi
    ```
 
-   - If `--skip-push` flag: replace Operation 2 with just `git fetch origin 2>/dev/null`
+   - If `--skip-push` flag: replace Operation 1 with just `git fetch origin 2>/dev/null`
    - If push fails or diverged: stop and show error
 
-   **Note:** By combining fetch+push into one call and running it parallel with pr-template, we eliminate a separate push step entirely.
+   **Operation 2: Generate PR template**
+   - Invoke `global:pr-template` skill (MUST use fully qualified name)
+   - **Do NOT display the template output to the user** — capture `$PR_TITLE` and `$PR_BODY` silently for use in the next step
+   - The template skill will print a title block and body block — parse them from the skill's return value
 
-4. Create PR with gh CLI:
+4. Create PR with gh CLI using the captured template:
+   - Wait for both Operation 1 (push) and Operation 2 (template) to complete
+   - Use the `$PR_TITLE` and `$PR_BODY` parsed from the template output
+   - **Do not show the template to the user before creating the PR**
+
    ```bash
    PR_URL=$(gh pr create --title "$PR_TITLE" --body "$PR_BODY" 2>&1)
 
@@ -143,10 +141,10 @@ Steps:
 - If no ticket found: proceed silently without asking the user
 - pr-template will handle including/omitting the ticket ID in the output
 
-**Round-trip budget (target: 3 tool calls for happy path):**
+**Round-trip budget (target: 4 tool calls for happy path):**
 1. Single bash: all preflight checks + uncommitted status + remote info
-2. Parallel: `global:pr-template` skill + fetch/push bash
-3. Single bash: `gh pr create`
+2. Parallel: fetch/push bash + `global:pr-template` skill (both in same message)
+3. Single bash: `gh pr create` (using template output captured from step 2)
 4. Skill: `global:pr-lint` (post-PR)
 5. If lint auto-fixed files: 1 AskUserQuestion + 1 bash (commit + push)
 
@@ -191,3 +189,5 @@ Anti-Patterns to Avoid:
 - Don't use `gh auth status | grep` - use exit code instead
 - Don't split preflight into multiple parallel bash calls - one compound command is faster
 - Don't invoke `/pr-template` - use `global:pr-template` (fully qualified name)
+- **Don't display the pr-template output to the user** — parse title/body from it silently and proceed directly to `gh pr create`. The template is an internal intermediate artifact, not a user response. Surfacing it and stopping is a bug.
+- **Don't stop after generating the template** — always continue to `gh pr create` in the same flow

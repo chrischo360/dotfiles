@@ -1,41 +1,42 @@
 -- Plugin: nvim-treesitter
--- Description: Better syntax highlighting and code understanding using tree-sitter parsers.
---              Makes code more readable with accurate, context-aware highlighting.
--- Note: Using master branch (stable API) - main branch is a complete incompatible rewrite
---       that requires manual autocmd setup for highlighting/indentation
+-- Description: Parser installer and query provider for treesitter-based features.
+-- Note: On the main branch (Neovim 0.12+), highlighting/indent/injections are
+--       handled by Neovim's built-in treesitter support, not the plugin.
+
+local languages = {
+  "lua",
+  "vim",
+  "javascript",
+  "typescript",
+  "tsx",
+  "html",
+  "css",
+  "json",
+  "markdown",
+  "markdown_inline",
+  "swift",
+  "python",
+  "php",
+  "java",
+  "rust",
+  "bash",
+  "svelte",
+  "graphql",
+}
 
 return {
   "nvim-treesitter/nvim-treesitter",
+  branch = "main",
+  lazy = false,
   build = ":TSUpdate",
-  event = { "BufReadPre", "BufNewFile" },
   config = function()
-    local treesitter = require("nvim-treesitter.configs")
-    treesitter.setup({
-      highlight = {
-        enable = true,
-        additional_vim_regex_highlighting = false,
-      },
-      indent = { enable = true },
-      ensure_installed = {
-        "lua",
-        "vim",
-        "javascript",
-        "typescript",
-        "tsx",
-        "html",
-        "css",
-        "json",
-        "markdown",
-        "markdown_inline",
-        "swift",
-        "python",
-        "php",
-        "java",
-        "rust",
-        "bash",
-        "svelte",
-        "graphql",
-      },
+    require("nvim-treesitter").install(languages)
+
+    vim.api.nvim_create_autocmd("FileType", {
+      pattern = "*",
+      callback = function()
+        pcall(vim.treesitter.start)
+      end,
     })
   end,
 }

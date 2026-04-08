@@ -4,13 +4,13 @@
 
 return {
   'akinsho/git-conflict.nvim',
-  version = "*",
+  -- version = "*",  -- removed: causes API mismatch with latest plugin code
   event = "BufReadPre",
   config = function()
     require('git-conflict').setup({
       default_mappings = true,
       default_commands = true,
-      disable_diagnostics = true,
+      disable_diagnostics = false,  -- vim.diagnostic.disable removed in nvim 0.12
       list_opener = 'copen',
       highlights = {
         incoming = 'DiffAdd',

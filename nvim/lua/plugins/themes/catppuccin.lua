@@ -5,7 +5,7 @@
 return {
   "catppuccin/nvim",
   name = "catppuccin",
-  enabled = true,
+  enabled = false,
   priority = 1000,
   config = function()
     local mode = vim.fn.readfile(vim.fn.expand("~/.config/theme-mode"))[1] or "dark"

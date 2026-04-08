@@ -56,6 +56,7 @@ tmux = "latest"                 # Terminal multiplexer
 # Development Tools
 # ============================================
 jq = "latest"                   # JSON processor
+tree-sitter = "latest"          # Parser generator (required by nvim-treesitter main branch)
 "vfox:mise-plugins/vfox-gradle" = "latest"  # Gradle (vfox backend avoids GitHub API)
 "asdf:mise-plugins/mise-pipx" = "latest"    # pipx (asdf backend avoids GitHub API)
 mkcert = "latest"               # Local SSL certificates
