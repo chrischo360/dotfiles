@@ -54,7 +54,7 @@ mouse-hide-while-typing = true
 # Note: Bell settings not exposed in Ghostty config
 
 # Theme (switch with: theme <name>)
-theme = Rose Pine Dawn
+theme = Catppuccin Latte
 
 # Keybindings (macOS-style)
 keybind = cmd+n=new_window

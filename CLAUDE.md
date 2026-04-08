@@ -273,11 +273,11 @@ The `~/dotfiles/claude/` directory contains Claude Code configuration and utilit
 - **hooks/** - Session event handlers:
   - `session/` - Session lifecycle (session-start, session-end, claude-stop, user-input)
   - `tools/` - Tool tracking (pre-tool-use, post-tool-use)
-  - `tracking/` - Metrics (track-tokens, log-session-cost, track-agent, inject-buffers)
+  - `tracking/` - Metrics (track-agent)
 - **scripts/** - Utility scripts:
   - `state/` - Session state management (update-session-state, debug-status)
   - `cost/` - Cost tracking and analysis (token-tracker, display-status, analyze-costs)
-  - `monitoring/` - CI/CD build monitoring (monitor-buildkite, monitor-all-builds, etc.)
+  - `monitoring/` - CI/CD build monitoring (buildkite-monitor-pr)
   - `utils/` - Notifications, buffers, aliases (notify, get-buffers, agent-stats)
 
 See `claude/README.md` for detailed Claude Code documentation.

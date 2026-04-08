@@ -455,6 +455,9 @@ alias claude-costs='$DOTFILES_DIR/claude/scripts/cost/analyze-costs.py'
 # Usage: garden-deploy <namespace> [garden-flags...]
 alias garden-deploy='$DOTFILES_DIR/scripts/codebase/garden-deploy.sh'
 
+# sf-ui-web - Development environment setup
+alias sf-ui-web-dev='$DOTFILES_DIR/scripts/codebase/sf-ui-web/setup-dev-env.sh'
+
 # sf-ui-checkout - Development environment setup
 alias sf-ui-checkout-dev='$DOTFILES_DIR/scripts/codebase/sf-ui-checkout/setup-dev-env.sh'
 
