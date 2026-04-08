@@ -17,6 +17,6 @@ Steps:
      - Cypress component tests - Start Storybook or dev server per lib/app.
 
 3. Delegate:
-   - Local dev: Skill("repos:sf-ui-web:test-env-e2e-dev")
+   - Local dev: Skill("repos:sf-ui-web:test-env-dev")
    - Playwright: Skill("repos:sf-ui-web:test-env-e2e-playwright")
    - Cypress: Skill("repos:sf-ui-web:test-env-e2e-cypress")
