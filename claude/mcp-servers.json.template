@@ -89,6 +89,10 @@
       "type": "http",
       "url": "https://mcp.figma.com/mcp"
     },
+    "outline": {
+      "type": "http",
+      "url": "https://wiki.chrischomeserver.duckdns.org/mcp"
+    },
     "storybook": {
       "type": "stdio",
       "command": "npx",
