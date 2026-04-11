@@ -365,7 +365,7 @@ claude-mcp() {
           profile=\$(echo {} | awk '{print \$2}');
           jq \".profiles.\\\"\$profile\\\"\" $profiles_config;
         elif [[ {} != \"===\"* ]] && [[ -n {} ]]; then
-          jq \".mcpServers.{}\" $servers_config;
+          jq --arg s {} '.mcpServers[\$s]' $servers_config;
         fi" \
         --preview-window='right:60%')
 
@@ -446,7 +446,7 @@ claude-mcp-split() {
 }
 
 # Claude Code - default launcher with MCP servers
-alias claude='claude-mcp --servers sourcegraph,glean_default'
+alias claude='claude-mcp --servers sourcegraph,glean_default,outline'
 
 # Claude Code - Get costs
 alias claude-costs='$DOTFILES_DIR/claude/scripts/cost/analyze-costs.py'

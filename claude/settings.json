@@ -238,6 +238,9 @@
       "urlPattern": "https://**"
     },
     {
+      "tool": "mcp__outline__*"
+    },
+    {
       "tool": "mcp__sourcegraph__*"
     },
     {
