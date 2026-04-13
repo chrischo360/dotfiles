@@ -41,8 +41,8 @@ local function get_jira_prs(ticket)
       -- Create a floating window
       local buf = vim.api.nvim_create_buf(false, true)
       vim.api.nvim_buf_set_lines(buf, 0, -1, false, lines)
-      vim.api.nvim_buf_set_option(buf, "modifiable", false)
-      vim.api.nvim_buf_set_option(buf, "buftype", "nofile")
+      vim.bo[buf].modifiable = false
+      vim.bo[buf].buftype = "nofile"
 
       local width = 100
       local height = math.min(#lines + 2, 30)
@@ -59,8 +59,8 @@ local function get_jira_prs(ticket)
       })
 
       -- Enable line numbers in the floating window
-      vim.api.nvim_win_set_option(win, "number", true)
-      vim.api.nvim_win_set_option(win, "relativenumber", true)
+      vim.wo[win].number = true
+      vim.wo[win].relativenumber = true
 
       -- Close on q or Esc
       vim.api.nvim_buf_set_keymap(buf, "n", "q", ":close<CR>", { noremap = true, silent = true })

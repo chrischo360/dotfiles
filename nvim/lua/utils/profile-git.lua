@@ -100,7 +100,7 @@ function M.show_profile()
     border = "rounded",
   })
 
-  vim.api.nvim_buf_set_option(buf, "modifiable", false)
+  vim.bo[buf].modifiable = false
   vim.api.nvim_buf_set_keymap(buf, "n", "q", ":close<CR>", { noremap = true, silent = true })
   vim.api.nvim_buf_set_keymap(buf, "n", "<Esc>", ":close<CR>", { noremap = true, silent = true })
 end

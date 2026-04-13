@@ -1,6 +1,6 @@
 return {
   "stevearc/conform.nvim",
-  branch = "nvim-0.9",
+  -- branch = "nvim-0.9", -- Removed: main branch supports nvim 0.12
   event = { "BufWritePre" },
   cmd = { "ConformInfo" },
   keys = {

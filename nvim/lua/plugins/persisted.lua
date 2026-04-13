@@ -22,8 +22,8 @@ return {
 
         local bufs = vim.api.nvim_list_bufs()
         for _, buf in ipairs(bufs) do
-          if vim.api.nvim_buf_is_loaded(buf) and vim.api.nvim_buf_get_option(buf, "buflisted") then
-            local buftype = vim.api.nvim_buf_get_option(buf, "buftype")
+          if vim.api.nvim_buf_is_loaded(buf) and vim.bo[buf].buflisted then
+            local buftype = vim.bo[buf].buftype
             local bufname = vim.api.nvim_buf_get_name(buf)
 
             -- Filter out special buffers
@@ -159,9 +159,9 @@ return {
         for _, buf in ipairs(bufs) do
           if vim.api.nvim_buf_is_loaded(buf) then
             local bufname = vim.api.nvim_buf_get_name(buf)
-            local buftype = vim.api.nvim_buf_get_option(buf, "buftype")
-            local filetype = vim.api.nvim_buf_get_option(buf, "filetype")
-            local listed = vim.api.nvim_buf_get_option(buf, "buflisted")
+            local buftype = vim.bo[buf].buftype
+            local filetype = vim.bo[buf].filetype
+            local listed = vim.bo[buf].buflisted
 
             -- Check if this would be filtered
             local is_special = buftype ~= ""
