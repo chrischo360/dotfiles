@@ -20,7 +20,7 @@ local function detect_project_root()
 
   -- Try LSP root
   local bufnr = vim.api.nvim_get_current_buf()
-  local clients = vim.lsp.get_active_clients({ bufnr = bufnr })
+  local clients = vim.lsp.get_clients({ bufnr = bufnr })
   for _, client in ipairs(clients) do
     if client.config.root_dir then
       return client.config.root_dir
