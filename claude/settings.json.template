@@ -73,16 +73,6 @@
             "command": "{{dotfiles}}/claude/hooks/session/session-start.sh"
           }
         ]
-      },
-      {
-        "hooks": [
-          {
-            "type": "command",
-            "command": "node \"{{home}}/.claude/hooks/caveman-activate.js\"",
-            "timeout": 5,
-            "statusMessage": "Loading caveman mode..."
-          }
-        ]
       }
     ],
     "SessionEnd": [
@@ -135,16 +125,6 @@
           {
             "type": "command",
             "command": "{{dotfiles}}/claude/hooks/session/user-input.sh"
-          }
-        ]
-      },
-      {
-        "hooks": [
-          {
-            "type": "command",
-            "command": "node \"{{home}}/.claude/hooks/caveman-mode-tracker.js\"",
-            "timeout": 5,
-            "statusMessage": "Tracking caveman mode..."
           }
         ]
       }
