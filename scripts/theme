@@ -207,6 +207,8 @@ switch_theme() {
         fi
         reloaded=0
         for socket in $sockets; do
+            # Validate socket is a real nvim RPC server before sending commands
+            nvim --server "$socket" --remote-expr "1" &>/dev/null || continue
             result=$(nvim --server "$socket" --remote-expr "v:lua.require('config.theme').switch('$nvim_colorscheme', '$mode')" 2>/dev/null)
             if [ "$result" = "ok" ]; then
                 reloaded=$((reloaded + 1))

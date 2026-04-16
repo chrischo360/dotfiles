@@ -4,7 +4,7 @@
 
 return {
   "folke/tokyonight.nvim",
-  enabled = false,
+  enabled = true,
   priority = 1000,
   config = function()
     local mode = vim.fn.readfile(vim.fn.expand("~/.config/theme-mode"))[1] or "dark"
