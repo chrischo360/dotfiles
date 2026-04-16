@@ -33,6 +33,17 @@
         "id": "7",
         "type": "git-changes",
         "color": "yellow"
+      },
+      {
+        "id": "8",
+        "type": "separator"
+      },
+      {
+        "id": "9",
+        "type": "custom-command",
+        "commandPath": "bash /Users/cc446g/.claude/hooks/caveman-statusline.sh",
+        "color": "yellow",
+        "preserveColors": true
       }
     ],
     [],

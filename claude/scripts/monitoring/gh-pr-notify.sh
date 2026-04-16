@@ -1,7 +1,8 @@
 #!/bin/bash
 # GitHub PR notification monitor
-# Polls all open PRs for new review comments and CI/CD failures
-# State persisted to avoid duplicate notifications
+# Uses GitHub Notifications API for efficient polling (1 API call per check)
+# Supports conditional requests (If-Modified-Since) to avoid rate limit usage
+# when nothing has changed.
 #
 # Usage:
 #   gh-pr-notify.sh [--once] [--reset] [--dry-run] [--status] [--interval <seconds>]
@@ -17,6 +18,7 @@ set -euo pipefail
 
 STATE_DIR="$HOME/.cache/gh-pr-notify"
 STATE_FILE="$STATE_DIR/state.json"
+LAST_MODIFIED_FILE="$STATE_DIR/last-modified"
 LOG_FILE="/tmp/gh-pr-notify.log"
 POLL_INTERVAL=300
 ONCE_MODE=false
@@ -26,7 +28,7 @@ STATUS_MODE=false
 while [[ $# -gt 0 ]]; do
   case $1 in
     --once) ONCE_MODE=true; shift ;;
-    --reset) rm -f "$STATE_FILE"; echo "State cleared."; shift ;;
+    --reset) rm -f "$STATE_FILE" "$LAST_MODIFIED_FILE"; echo "State cleared."; shift ;;
     --dry-run) DRY_RUN=true; shift ;;
     --status) STATUS_MODE=true; shift ;;
     --interval) POLL_INTERVAL="$2"; shift 2 ;;
@@ -37,7 +39,7 @@ done
 mkdir -p "$STATE_DIR"
 
 if [[ ! -f "$STATE_FILE" ]]; then
-  echo '{"seen_comments":{},"seen_failures":{}}' > "$STATE_FILE"
+  echo '{"seen":{}}' > "$STATE_FILE"
 fi
 
 log() {
@@ -64,107 +66,137 @@ notify() {
 }
 
 get_seen() {
-  local category="$1" key="$2"
-  jq -r --arg cat "$category" --arg key "$key" '.[$cat][$key] // ""' "$STATE_FILE"
+  local key="$1"
+  jq -r --arg key "$key" '.seen[$key] // ""' "$STATE_FILE"
 }
 
 mark_seen() {
-  local category="$1" key="$2" value="$3"
+  local key="$1" value="$2"
   local tmp
   tmp=$(mktemp)
-  jq --arg cat "$category" --arg key "$key" --arg val "$value" \
-    '.[$cat][$key] = $val' "$STATE_FILE" > "$tmp" && mv "$tmp" "$STATE_FILE"
+  jq --arg key "$key" --arg val "$value" \
+    '.seen[$key] = $val' "$STATE_FILE" > "$tmp" && mv "$tmp" "$STATE_FILE"
 }
 
-check_prs() {
-  log "Checking PRs..."
+check_notifications() {
+  log "Checking notifications..."
 
-  local prs
-  prs=$(gh search prs --author=@me --state=open --json repository,number,title,url 2>/dev/null) || {
-    log "ERROR: Failed to fetch PRs"
+  local headers_file
+  headers_file=$(mktemp)
+
+  # Build curl args for conditional request
+  local api_args=(
+    "notifications"
+    "--jq" '.'
+    "-i"
+  )
+
+  # Use If-Modified-Since if we have a cached timestamp
+  if [[ -f "$LAST_MODIFIED_FILE" ]]; then
+    local last_mod
+    last_mod=$(cat "$LAST_MODIFIED_FILE")
+    api_args+=("-H" "If-Modified-Since: ${last_mod}")
+  fi
+
+  local response
+  response=$(gh api "${api_args[@]}" 2>/dev/null) || {
+    log "ERROR: Failed to fetch notifications"
+    rm -f "$headers_file"
     return 1
   }
+  rm -f "$headers_file"
 
-  local pr_count
-  pr_count=$(echo "$prs" | jq 'length')
-  log "Found $pr_count open PRs"
+  # Parse headers and body from -i output
+  local headers body
+  # Split on the blank line between headers and body
+  headers=$(echo "$response" | sed '/^\r\{0,1\}$/q')
+  body=$(echo "$response" | sed '1,/^\r\{0,1\}$/d')
 
-  if [[ "$pr_count" -eq 0 ]]; then
+  # Check for 304 Not Modified
+  if echo "$headers" | grep -q "304"; then
+    log "No changes (304 Not Modified)"
     return 0
   fi
 
-  echo "$prs" | jq -c '.[]' | while read -r pr; do
-    local repo number title url
-    repo=$(echo "$pr" | jq -r '.repository.nameWithOwner')
-    number=$(echo "$pr" | jq -r '.number')
-    title=$(echo "$pr" | jq -r '.title')
-    url=$(echo "$pr" | jq -r '.url')
+  # Save Last-Modified header for next request
+  local new_last_modified
+  new_last_modified=$(echo "$headers" | grep -i "^Last-Modified:" | sed 's/^[^:]*: //' | tr -d '\r')
+  if [[ -n "$new_last_modified" ]]; then
+    echo "$new_last_modified" > "$LAST_MODIFIED_FILE"
+  fi
 
-    check_comments "$repo" "$number" "$title" "$url"
-    check_ci "$repo" "$number" "$title" "$url"
+  # Filter to only PullRequest notifications for reviews and CI
+  local pr_notifications
+  pr_notifications=$(echo "$body" | jq -c '[
+    .[] | select(
+      .subject.type == "PullRequest" and
+      (.reason == "review_requested" or .reason == "comment" or .reason == "ci_activity" or .reason == "state_change" or .reason == "mention")
+    )
+  ]' 2>/dev/null) || {
+    log "ERROR: Failed to parse notifications"
+    return 1
+  }
+
+  local count
+  count=$(echo "$pr_notifications" | jq 'length')
+  log "Found $count relevant PR notifications"
+
+  if [[ "$count" -eq 0 ]]; then
+    return 0
+  fi
+
+  echo "$pr_notifications" | jq -c '.[]' | while read -r notif; do
+    local notif_id updated_at reason subject_title subject_url repo_name
+    notif_id=$(echo "$notif" | jq -r '.id')
+    updated_at=$(echo "$notif" | jq -r '.updated_at')
+    reason=$(echo "$notif" | jq -r '.reason')
+    subject_title=$(echo "$notif" | jq -r '.subject.title')
+    subject_url=$(echo "$notif" | jq -r '.subject.url')
+    repo_name=$(echo "$notif" | jq -r '.repository.full_name')
+
+    # Deduplicate using notif_id + updated_at
+    local seen_key="${notif_id}"
+    local seen_val
+    seen_val=$(get_seen "$seen_key")
+    [[ "$seen_val" == "$updated_at" ]] && continue
+
+    # Convert API URL to web URL
+    # subject.url is like: https://api.github.com/repos/owner/repo/pulls/123
+    local pr_number web_url
+    pr_number=$(echo "$subject_url" | grep -oE '[0-9]+$')
+    web_url="https://github.com/${repo_name}/pull/${pr_number}"
+
+    local title message
+    case "$reason" in
+      review_requested)
+        title="Review Requested"
+        message="${repo_name}#${pr_number}: ${subject_title}"
+        ;;
+      comment)
+        title="PR Comment"
+        message="${repo_name}#${pr_number}: ${subject_title}"
+        ;;
+      ci_activity)
+        title="CI Update"
+        message="${repo_name}#${pr_number}: ${subject_title}"
+        ;;
+      state_change)
+        title="PR State Change"
+        message="${repo_name}#${pr_number}: ${subject_title}"
+        ;;
+      mention)
+        title="PR Mention"
+        message="${repo_name}#${pr_number}: ${subject_title}"
+        ;;
+      *)
+        title="PR Update"
+        message="${repo_name}#${pr_number}: ${subject_title}"
+        ;;
+    esac
+
+    notify "$title" "$message" "$web_url"
+    mark_seen "$seen_key" "$updated_at"
   done
-}
-
-check_comments() {
-  local repo="$1" number="$2" title="$3" url="$4"
-  local state_key="${repo}#${number}"
-
-  local comments
-  comments=$(gh api "repos/${repo}/pulls/${number}/reviews" \
-    --jq '[.[] | select(.state != "PENDING")] | sort_by(.submitted_at) | last | {id: .id, user: .user.login, state: .state, submitted_at: .submitted_at}' 2>/dev/null) || return 0
-
-  local review_id
-  review_id=$(echo "$comments" | jq -r '.id // ""')
-  [[ -z "$review_id" || "$review_id" == "null" ]] && return 0
-
-  local seen
-  seen=$(get_seen "seen_comments" "$state_key")
-  [[ "$seen" == "$review_id" ]] && return 0
-
-  local reviewer state
-  reviewer=$(echo "$comments" | jq -r '.user')
-  state=$(echo "$comments" | jq -r '.state')
-
-  local label
-  case "$state" in
-    APPROVED) label="approved" ;;
-    CHANGES_REQUESTED) label="requested changes on" ;;
-    COMMENTED) label="commented on" ;;
-    DISMISSED) label="dismissed review on" ;;
-    *) label="reviewed" ;;
-  esac
-
-  notify "PR Review: ${repo}#${number}" "${reviewer} ${label}: ${title}" "$url"
-  mark_seen "seen_comments" "$state_key" "$review_id"
-}
-
-check_ci() {
-  local repo="$1" number="$2" title="$3" url="$4"
-  local state_key="${repo}#${number}"
-
-  local status
-  status=$(gh api "repos/${repo}/commits/$(gh api "repos/${repo}/pulls/${number}" --jq '.head.sha' 2>/dev/null)/check-runs" \
-    --jq '{
-      failed: [.check_runs[] | select(.conclusion == "failure" or .conclusion == "timed_out") | .name],
-      sha: (.check_runs[0].head_sha // "")
-    }' 2>/dev/null) || return 0
-
-  local failed_count sha
-  failed_count=$(echo "$status" | jq '.failed | length')
-  sha=$(echo "$status" | jq -r '.sha')
-
-  [[ "$failed_count" -eq 0 || -z "$sha" || "$sha" == "null" ]] && return 0
-
-  local seen_sha
-  seen_sha=$(get_seen "seen_failures" "$state_key")
-  local failure_key="${sha}:${failed_count}"
-  [[ "$seen_sha" == "$failure_key" ]] && return 0
-
-  local failed_names
-  failed_names=$(echo "$status" | jq -r '.failed | join(", ")' | head -c 100)
-
-  notify "CI Failed: ${repo}#${number}" "${failed_names}" "$url"
-  mark_seen "seen_failures" "$state_key" "$failure_key"
 }
 
 show_status() {
@@ -182,10 +214,8 @@ show_status() {
     return 0
   fi
 
-  # Column widths
   local col_pr=35 col_review=20 col_ci=30
 
-  # Header
   printf "\n %-${col_pr}s %-${col_review}s %s\n" "PR" "Review" "CI"
   printf " %s %s %s\n" \
     "$(printf '─%.0s' $(seq 1 $col_pr))" \
@@ -199,7 +229,6 @@ show_status() {
     title=$(echo "$pr" | jq -r '.title')
     url=$(echo "$pr" | jq -r '.url')
 
-    # Fetch review status
     local review_display="--"
     local review_data
     review_data=$(gh api "repos/${repo}/pulls/${number}/reviews" \
@@ -221,7 +250,6 @@ show_status() {
       fi
     fi
 
-    # Fetch CI status
     local ci_display="--"
     local head_sha
     head_sha=$(gh api "repos/${repo}/pulls/${number}" --jq '.head.sha' 2>/dev/null) || true
@@ -255,7 +283,6 @@ show_status() {
       fi
     fi
 
-    # Truncate PR label to fit column
     local pr_label="${repo}#${number}"
     if [[ ${#pr_label} -gt $col_pr ]]; then
       pr_label="${pr_label:0:$((col_pr - 2))}.."
@@ -265,21 +292,6 @@ show_status() {
   done
 
   echo ""
-}
-
-cleanup_state() {
-  local prs
-  prs=$(gh search prs --author=@me --state=open --json repository,number 2>/dev/null) || return 0
-
-  local active_keys
-  active_keys=$(echo "$prs" | jq -r '.[] | "\(.repository.nameWithOwner)#\(.number)"')
-
-  local tmp
-  tmp=$(mktemp)
-  jq --argjson keys "$(echo "$active_keys" | jq -R -s 'split("\n") | map(select(length > 0))')" '
-    .seen_comments |= with_entries(select(.key as $k | $keys | any(. == $k))) |
-    .seen_failures |= with_entries(select(.key as $k | $keys | any(. == $k)))
-  ' "$STATE_FILE" > "$tmp" && mv "$tmp" "$STATE_FILE"
 }
 
 if ! command -v terminal-notifier &>/dev/null; then
@@ -305,12 +317,10 @@ fi
 log "Starting gh-pr-notify (interval: ${POLL_INTERVAL}s, once: ${ONCE_MODE})"
 
 if [[ "$ONCE_MODE" == "true" ]]; then
-  check_prs
-  cleanup_state
+  check_notifications
 else
   while true; do
-    check_prs || true
-    cleanup_state || true
+    check_notifications || true
     sleep "$POLL_INTERVAL"
   done
 fi
