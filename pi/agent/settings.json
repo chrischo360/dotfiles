@@ -1,7 +1,5 @@
 {
-  "extensions": [
-    "~/dotfiles/pi/agent/extensions/theme-sync.ts"
-  ],
+  "extensions": [],
   "defaultProvider": "anthropic-vertex",
   "prompts": [
     "~/dotfiles/claude/commands/global"
