@@ -1,4 +1,7 @@
 {
+  "extensions": [
+    "~/dotfiles/pi/agent/extensions/theme-sync.ts"
+  ],
   "defaultProvider": "anthropic-vertex",
   "prompts": [
     "~/dotfiles/claude/commands/global"
@@ -11,5 +14,6 @@
     "anthropic-vertex/claude-sonnet-4-6",
     "anthropic-vertex/claude-opus-4-7",
     "anthropic-vertex/claude-opus-4-6"
-  ]
+  ],
+  "theme": "dracula"
 }

@@ -1,0 +1,83 @@
+{
+	"$schema": "https://raw.githubusercontent.com/badlogic/pi-mono/main/packages/coding-agent/src/modes/interactive/theme/theme-schema.json",
+	"name": "rose-pine",
+	"vars": {
+		"base":       "#191724",
+		"surface":    "#1f1d2e",
+		"overlay":    "#26233a",
+		"muted":      "#6e6a86",
+		"subtle":     "#908caa",
+		"text":       "#e0def4",
+		"love":       "#eb6f92",
+		"gold":       "#f6c177",
+		"rose":       "#ebbcba",
+		"pine":       "#31748f",
+		"foam":       "#9ccfd8",
+		"iris":       "#c4a7e7",
+		"highlight":  "#403d52"
+	},
+	"colors": {
+		"accent":             "iris",
+		"border":             "pine",
+		"borderAccent":       "foam",
+		"borderMuted":        "muted",
+		"success":            "pine",
+		"error":              "love",
+		"warning":            "gold",
+		"muted":              "muted",
+		"dim":                "subtle",
+		"text":               "",
+		"thinkingText":       "muted",
+
+		"selectedBg":         "highlight",
+		"userMessageBg":      "surface",
+		"userMessageText":    "",
+		"customMessageBg":    "#231f31",
+		"customMessageText":  "",
+		"customMessageLabel": "iris",
+		"toolPendingBg":      "#1e1c2e",
+		"toolSuccessBg":      "#1c2429",
+		"toolErrorBg":        "#2d1e24",
+		"toolTitle":          "foam",
+		"toolOutput":         "muted",
+
+		"mdHeading":          "gold",
+		"mdLink":             "foam",
+		"mdLinkUrl":          "muted",
+		"mdCode":             "rose",
+		"mdCodeBlock":        "text",
+		"mdCodeBlockBorder":  "muted",
+		"mdQuote":            "subtle",
+		"mdQuoteBorder":      "muted",
+		"mdHr":               "muted",
+		"mdListBullet":       "iris",
+
+		"toolDiffAdded":      "pine",
+		"toolDiffRemoved":    "love",
+		"toolDiffContext":    "muted",
+
+		"syntaxComment":      "#6e6a86",
+		"syntaxKeyword":      "#eb6f92",
+		"syntaxFunction":     "#9ccfd8",
+		"syntaxVariable":     "#e0def4",
+		"syntaxString":       "#f6c177",
+		"syntaxNumber":       "#ebbcba",
+		"syntaxType":         "#c4a7e7",
+		"syntaxOperator":     "#908caa",
+		"syntaxPunctuation":  "#908caa",
+
+		"thinkingOff":        "muted",
+		"thinkingMinimal":    "subtle",
+		"thinkingLow":        "pine",
+		"thinkingMedium":     "foam",
+		"thinkingHigh":       "iris",
+		"thinkingXhigh":      "love",
+
+		"bashMode":           "pine"
+	},
+	"export": {
+		"pageBg":  "#13111e",
+		"cardBg":  "#191724",
+		"infoBg":  "#2e2719"
+	}
+}

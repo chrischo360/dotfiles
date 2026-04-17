@@ -41,9 +41,9 @@ export default function planModeExtension(pi: ExtensionAPI): void {
 	let todoItems: TodoItem[] = [];
 
 	pi.registerFlag("plan", {
-		description: "Start in plan mode (read-only exploration)",
+		description: "Start in plan mode (read-only exploration). Use --plan=false to disable.",
 		type: "boolean",
-		default: false,
+		default: true,  // mirrors Claude Code's defaultMode: "plan"
 	});
 
 	function updateStatus(ctx: ExtensionContext): void {

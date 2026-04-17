@@ -247,6 +247,12 @@ create_symlink "$DOTFILES_DIR/pi/agent/extensions/anthropic-vertex" "$HOME/.pi/a
 create_symlink "$DOTFILES_DIR/pi/agent/extensions/plan-mode" "$HOME/.pi/agent/extensions/plan-mode"
 create_symlink "$DOTFILES_DIR/pi/agent/extensions/session-status.ts" "$HOME/.pi/agent/extensions/session-status.ts"
 create_symlink "$DOTFILES_DIR/pi/agent/extensions/protected-paths.ts" "$HOME/.pi/agent/extensions/protected-paths.ts"
+create_symlink "$DOTFILES_DIR/pi/agent/extensions/mcp-sourcegraph" "$HOME/.pi/agent/extensions/mcp-sourcegraph"
+create_symlink "$DOTFILES_DIR/pi/agent/extensions/mcp-glean" "$HOME/.pi/agent/extensions/mcp-glean"
+create_symlink "$DOTFILES_DIR/pi/agent/extensions/mcp-github" "$HOME/.pi/agent/extensions/mcp-github"
+create_symlink "$DOTFILES_DIR/pi/agent/extensions/mcp-buildkite" "$HOME/.pi/agent/extensions/mcp-buildkite"
+create_symlink "$DOTFILES_DIR/pi/agent/extensions/theme-sync.ts" "$HOME/.pi/agent/extensions/theme-sync.ts"
+create_symlink "$DOTFILES_DIR/pi/agent/themes" "$HOME/.pi/agent/themes"
 for f in "$DOTFILES_DIR/pi/agent/prompts"/*.md; do
   create_symlink "$f" "$HOME/.pi/agent/prompts/$(basename "$f")"
 done

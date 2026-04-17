@@ -1,0 +1,83 @@
+{
+	"$schema": "https://raw.githubusercontent.com/badlogic/pi-mono/main/packages/coding-agent/src/modes/interactive/theme/theme-schema.json",
+	"name": "dracula",
+	"vars": {
+		"bg":         "#282a36",
+		"bgAlt":      "#343746",
+		"bgSel":      "#44475a",
+		"comment":    "#6272a4",
+		"cyan":        "#8be9fd",
+		"green":       "#50fa7b",
+		"orange":      "#ffb86c",
+		"pink":        "#ff79c6",
+		"purple":      "#bd93f9",
+		"red":         "#ff5555",
+		"yellow":      "#f1fa8c",
+		"fg":          "#f8f8f2",
+		"dimFg":       "#6272a4"
+	},
+	"colors": {
+		"accent":             "purple",
+		"border":             "purple",
+		"borderAccent":       "pink",
+		"borderMuted":        "comment",
+		"success":            "green",
+		"error":              "red",
+		"warning":            "orange",
+		"muted":              "comment",
+		"dim":                "dimFg",
+		"text":               "",
+		"thinkingText":       "comment",
+
+		"selectedBg":         "bgSel",
+		"userMessageBg":      "bgAlt",
+		"userMessageText":    "",
+		"customMessageBg":    "#312d47",
+		"customMessageText":  "",
+		"customMessageLabel": "pink",
+		"toolPendingBg":      "#2d2f3d",
+		"toolSuccessBg":      "#253330",
+		"toolErrorBg":        "#3d2828",
+		"toolTitle":          "cyan",
+		"toolOutput":         "comment",
+
+		"mdHeading":          "yellow",
+		"mdLink":             "cyan",
+		"mdLinkUrl":          "comment",
+		"mdCode":             "green",
+		"mdCodeBlock":        "fg",
+		"mdCodeBlockBorder":  "comment",
+		"mdQuote":            "comment",
+		"mdQuoteBorder":      "comment",
+		"mdHr":               "comment",
+		"mdListBullet":       "pink",
+
+		"toolDiffAdded":      "green",
+		"toolDiffRemoved":    "red",
+		"toolDiffContext":    "comment",
+
+		"syntaxComment":      "#6272a4",
+		"syntaxKeyword":      "#ff79c6",
+		"syntaxFunction":     "#50fa7b",
+		"syntaxVariable":     "#f8f8f2",
+		"syntaxString":       "#f1fa8c",
+		"syntaxNumber":       "#bd93f9",
+		"syntaxType":         "#8be9fd",
+		"syntaxOperator":     "#ff79c6",
+		"syntaxPunctuation":  "#f8f8f2",
+
+		"thinkingOff":        "comment",
+		"thinkingMinimal":    "#6272a4",
+		"thinkingLow":        "purple",
+		"thinkingMedium":     "cyan",
+		"thinkingHigh":       "pink",
+		"thinkingXhigh":      "red",
+
+		"bashMode":           "green"
+	},
+	"export": {
+		"pageBg":  "#1e2029",
+		"cardBg":  "#282a36",
+		"infoBg":  "#3d3a26"
+	}
+}

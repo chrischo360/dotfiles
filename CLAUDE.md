@@ -94,6 +94,8 @@ The install script creates these symlinks:
 ~/.pi/agent/extensions/plan-mode          -> ~/dotfiles/pi/agent/extensions/plan-mode
 ~/.pi/agent/extensions/session-status.ts  -> ~/dotfiles/pi/agent/extensions/session-status.ts
 ~/.pi/agent/extensions/protected-paths.ts -> ~/dotfiles/pi/agent/extensions/protected-paths.ts
+~/.pi/agent/extensions/theme-sync.ts      -> ~/dotfiles/pi/agent/extensions/theme-sync.ts
+~/.pi/agent/themes/                       -> ~/dotfiles/pi/agent/themes/
 ~/.pi/agent/prompts/*.md       -> ~/dotfiles/pi/agent/prompts/*.md
 ~/.gemini/settings.json        -> ~/dotfiles/gemini/settings.json (generated from template)
 ~/.local/bin/gemini            -> $(npm bin -g)/gemini
