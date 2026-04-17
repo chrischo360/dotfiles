@@ -71,6 +71,7 @@ just = "latest"                 # Modern make alternative
 "npm:ccstatusline" = "latest"          # Claude Code statusline
 "npm:prettier" = "latest"              # Code formatter
 "npm:prettier-plugin-svelte" = "latest"  # Svelte support for prettier
+"npm:@mariozechner/pi-coding-agent" = "latest"  # Pi coding agent
 
 # NOTE: macOS-specific CLI tools (terminal-notifier, rsync, curl, swiftlint) → Brewfile.macos
 # NOTE: GUI apps and fonts → Brewfile.macos

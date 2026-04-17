@@ -23,6 +23,8 @@ function M.switch(colorscheme, mode)
     ["onedark"]              = "onedark.nvim",
     ["gruvbox"]              = "gruvbox",
     ["PaperColor"]           = "papercolor-theme",
+    ["github_dark_dimmed"]   = "github-theme",
+    ["github_light"]         = "github-theme",
   }
 
   local plugin = plugin_map[colorscheme]

@@ -56,12 +56,14 @@ switch_theme() {
             fi
             ;;
         github-dark)
-            nvim_file=""
-            nvim_colorscheme=""
+            nvim_file="github.lua"
+            nvim_plugin_name="github-theme"
             if [ "$mode" = "light" ]; then
                 ghostty_theme="GitHub Light Default"
+                nvim_colorscheme="github_light"
             else
                 ghostty_theme="GitHub Dark Dimmed"
+                nvim_colorscheme="github_dark_dimmed"
             fi
             ;;
         everforest)
@@ -207,9 +209,7 @@ switch_theme() {
         fi
         reloaded=0
         for socket in $sockets; do
-            # Validate socket is a real nvim RPC server before sending commands
-            nvim --server "$socket" --remote-expr "1" &>/dev/null || continue
-            result=$(nvim --server "$socket" --remote-expr "v:lua.require('config.theme').switch('$nvim_colorscheme', '$mode')" 2>/dev/null)
+            result=$(nvim --server "$socket" --remote-expr "v:lua.require('config.theme').switch('$nvim_colorscheme', '$mode')" </dev/null 2>/dev/null)
             if [ "$result" = "ok" ]; then
                 reloaded=$((reloaded + 1))
             elif [ -n "$result" ]; then

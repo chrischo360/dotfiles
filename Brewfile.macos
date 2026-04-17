@@ -40,6 +40,7 @@ cask "claude-code"         # Claude AI CLI (GUI installer)
 cask "chromium"            # Open-source browser
 cask "ghostty"             # Modern GPU-accelerated terminal
 cask "homerow"             # Keyboard navigation
+cask "iina"                # Modern macOS video player (mpv-based)
 
 # ============================================
 # Optional Applications

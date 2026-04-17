@@ -19,6 +19,7 @@ alias less="bat"
 # IPC socket enables track info and time remaining in tmux statusline
 alias yt="mpv --no-video --input-ipc-server=/tmp/mpvsocket"
 alias ytv="mpv --input-ipc-server=/tmp/mpvsocket"
+alias yti="open -a IINA"
 
 # Dev CLI - Context-aware development commands
 alias dev='$DOTFILES_DIR/scripts/dev/dev.sh'

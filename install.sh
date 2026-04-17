@@ -238,6 +238,11 @@ create_symlink "$DOTFILES_DIR/claude/agents" "$HOME/.claude/agents"
 create_symlink "$DOTFILES_DIR/claude/commands" "$HOME/.claude/commands"
 create_symlink "$DOTFILES_DIR/claude/CLAUDE.md" "$HOME/.claude/CLAUDE.md"
 
+# Pi Coding Agent
+mkdir -p "$HOME/.pi/agent/extensions"
+create_symlink "$DOTFILES_DIR/pi/agent/settings.json" "$HOME/.pi/agent/settings.json"
+create_symlink "$DOTFILES_DIR/pi/agent/extensions/anthropic-vertex" "$HOME/.pi/agent/extensions/anthropic-vertex"
+
 # Gemini CLI
 mkdir -p "$HOME/.gemini"
 substitute_json_template "$DOTFILES_DIR/gemini/settings.json.template" "$HOME/.gemini/settings.json"

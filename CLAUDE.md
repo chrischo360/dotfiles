@@ -31,6 +31,9 @@ Personal configuration files for macOS development environment.
 ├── ghostty/            # Ghostty terminal emulator config
 ├── kitty/              # Kitty terminal emulator config
 ├── nvim/               # Neovim configuration
+├── pi/                 # Pi coding agent configuration
+│   └── agent/
+│       └── settings.json
 ├── raycast/            # Raycast script commands (CodeForces workflows)
 ├── tmux/               # tmux terminal multiplexer config
 ├── zsh/                # Zsh shell configuration
@@ -86,6 +89,7 @@ The install script creates these symlinks:
 ~/.claude/settings.json        -> ~/dotfiles/claude/settings.json (generated from template)
 ~/.claude/agents/              -> ~/dotfiles/claude/agents/
 ~/.claude/CLAUDE.md            -> ~/dotfiles/claude/CLAUDE.md
+~/.pi/agent/settings.json      -> ~/dotfiles/pi/agent/settings.json
 ~/.gemini/settings.json        -> ~/dotfiles/gemini/settings.json (generated from template)
 ~/.local/bin/gemini            -> $(npm bin -g)/gemini
 ~/.cursor/User/settings.json   -> ~/dotfiles/cursor/User/settings.json

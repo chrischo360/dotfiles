@@ -54,7 +54,7 @@ mouse-hide-while-typing = true
 # Note: Bell settings not exposed in Ghostty config
 
 # Theme (switch with: theme <name>)
-theme = TokyoNight Day
+theme = Everforest Light Med
 
 # Keybindings (macOS-style)
 keybind = cmd+n=new_window
