@@ -90,6 +90,11 @@ The install script creates these symlinks:
 ~/.claude/agents/              -> ~/dotfiles/claude/agents/
 ~/.claude/CLAUDE.md            -> ~/dotfiles/claude/CLAUDE.md
 ~/.pi/agent/settings.json      -> ~/dotfiles/pi/agent/settings.json
+~/.pi/agent/keybindings.json   -> ~/dotfiles/pi/agent/keybindings.json
+~/.pi/agent/extensions/plan-mode          -> ~/dotfiles/pi/agent/extensions/plan-mode
+~/.pi/agent/extensions/session-status.ts  -> ~/dotfiles/pi/agent/extensions/session-status.ts
+~/.pi/agent/extensions/protected-paths.ts -> ~/dotfiles/pi/agent/extensions/protected-paths.ts
+~/.pi/agent/prompts/*.md       -> ~/dotfiles/pi/agent/prompts/*.md
 ~/.gemini/settings.json        -> ~/dotfiles/gemini/settings.json (generated from template)
 ~/.local/bin/gemini            -> $(npm bin -g)/gemini
 ~/.cursor/User/settings.json   -> ~/dotfiles/cursor/User/settings.json

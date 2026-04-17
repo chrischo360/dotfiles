@@ -240,8 +240,29 @@ create_symlink "$DOTFILES_DIR/claude/CLAUDE.md" "$HOME/.claude/CLAUDE.md"
 
 # Pi Coding Agent
 mkdir -p "$HOME/.pi/agent/extensions"
+mkdir -p "$HOME/.pi/agent/prompts"
 create_symlink "$DOTFILES_DIR/pi/agent/settings.json" "$HOME/.pi/agent/settings.json"
+create_symlink "$DOTFILES_DIR/pi/agent/keybindings.json" "$HOME/.pi/agent/keybindings.json"
 create_symlink "$DOTFILES_DIR/pi/agent/extensions/anthropic-vertex" "$HOME/.pi/agent/extensions/anthropic-vertex"
+create_symlink "$DOTFILES_DIR/pi/agent/extensions/plan-mode" "$HOME/.pi/agent/extensions/plan-mode"
+create_symlink "$DOTFILES_DIR/pi/agent/extensions/session-status.ts" "$HOME/.pi/agent/extensions/session-status.ts"
+create_symlink "$DOTFILES_DIR/pi/agent/extensions/protected-paths.ts" "$HOME/.pi/agent/extensions/protected-paths.ts"
+for f in "$DOTFILES_DIR/pi/agent/prompts"/*.md; do
+  create_symlink "$f" "$HOME/.pi/agent/prompts/$(basename "$f")"
+done
+
+# Pi repo-specific prompts — symlink claude commands into each codebase repo
+for repo_dir in "$DOTFILES_DIR/claude/commands/repos"/*/; do
+  repo_name=$(basename "$repo_dir")
+  repo_path="$HOME/codebase/$repo_name"
+  if [ -d "$repo_path" ]; then
+    mkdir -p "$repo_path/.pi/prompts"
+    for f in "$repo_dir"*.md; do
+      [ -f "$f" ] || continue
+      create_symlink "$f" "$repo_path/.pi/prompts/$(basename "$f")"
+    done
+  fi
+done
 
 # Gemini CLI
 mkdir -p "$HOME/.gemini"

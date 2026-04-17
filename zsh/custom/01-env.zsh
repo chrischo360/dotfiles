@@ -50,3 +50,7 @@ export GEMINI_API_KEY="REDACTED_GEMINI_API_KEY"
 
 # CD PATH - codebase
 export CDPATH=".:~:~/codebase"
+
+# Editor - used by Ctrl+G in pi, git commit messages, etc.
+export EDITOR="nvim"
+export VISUAL="nvim"
