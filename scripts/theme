@@ -3,83 +3,39 @@
 
 DOTFILES_DIR="$HOME/dotfiles"
 GHOSTTY_CONFIG="$DOTFILES_DIR/ghostty/config"
-NVIM_THEMES="$DOTFILES_DIR/nvim/lua/plugins/themes"
 MODE_FILE="$HOME/.config/theme-mode"
+ACTIVE_THEME_FILE="$HOME/.config/active-theme"
 
 get_mode() {
     cat "$MODE_FILE" 2>/dev/null || echo "dark"
 }
 
+get_active() {
+    cat "$ACTIVE_THEME_FILE" 2>/dev/null || echo "dracula"
+}
+
 show_current() {
     ghostty_theme=$(grep "^theme = " "$GHOSTTY_CONFIG" | sed 's/theme = //')
     echo "Ghostty: ${ghostty_theme:-unknown}"
-
-    nvim_theme=$(grep -l "enabled = true" "$NVIM_THEMES"/*.lua 2>/dev/null | xargs -I{} basename {} .lua 2>/dev/null)
-    echo "Neovim:  ${nvim_theme:-none}"
+    echo "Neovim:  $(get_active)"
     echo "Mode:    $(get_mode)"
 }
 
 switch_theme() {
     local theme=$1
     local mode=${2:-dark}
+    local ghostty_theme
+    local nvim_theme="$theme"
 
     case "$theme" in
         dracula)
-            nvim_file="dracula.lua"
-            nvim_plugin_name="dracula.nvim"
-            nvim_colorscheme="dracula"
             if [ "$mode" = "light" ]; then
                 echo "dracula: no light variant, using dark"
                 mode="dark"
             fi
             ghostty_theme="Dracula"
             ;;
-        tokyonight)
-            nvim_file="tokyonight.lua"
-            nvim_plugin_name="tokyonight.nvim"
-            if [ "$mode" = "light" ]; then
-                ghostty_theme="TokyoNight Day"
-                nvim_colorscheme="tokyonight-day"
-            else
-                ghostty_theme="TokyoNight"
-                nvim_colorscheme="tokyonight-night"
-            fi
-            ;;
-        gruvbox)
-            nvim_file="gruvbox.lua"
-            nvim_plugin_name="gruvbox"
-            nvim_colorscheme="gruvbox"
-            if [ "$mode" = "light" ]; then
-                ghostty_theme="Gruvbox Light"
-            else
-                ghostty_theme="Gruvbox Dark"
-            fi
-            ;;
-        github-dark)
-            nvim_file="github.lua"
-            nvim_plugin_name="github-theme"
-            if [ "$mode" = "light" ]; then
-                ghostty_theme="GitHub Light Default"
-                nvim_colorscheme="github_light"
-            else
-                ghostty_theme="GitHub Dark Dimmed"
-                nvim_colorscheme="github_dark_dimmed"
-            fi
-            ;;
-        everforest)
-            nvim_file="everforest.lua"
-            nvim_plugin_name="everforest"
-            nvim_colorscheme="everforest"
-            if [ "$mode" = "light" ]; then
-                ghostty_theme="Everforest Light Med"
-            else
-                ghostty_theme="Everforest Dark Hard"
-            fi
-            ;;
         onedark)
-            nvim_file="onedark.lua"
-            nvim_plugin_name="onedark.nvim"
-            nvim_colorscheme="onedark"
             if [ "$mode" = "light" ]; then
                 ghostty_theme="Atom One Light"
             else
@@ -87,71 +43,28 @@ switch_theme() {
             fi
             ;;
         rose-pine)
-            nvim_file="rose-pine.lua"
-            nvim_plugin_name="rose-pine"
-            if [ "$mode" = "light" ]; then
-                ghostty_theme="Rose Pine Dawn"
-                nvim_colorscheme="rose-pine-dawn"
-            else
-                ghostty_theme="Rose Pine"
-                nvim_colorscheme="rose-pine"
-            fi
-            ;;
-        catppuccin)
-            nvim_file="catppuccin.lua"
-            nvim_plugin_name="catppuccin"
-            if [ "$mode" = "light" ]; then
-                ghostty_theme="Catppuccin Latte"
-                nvim_colorscheme="catppuccin-latte"
-            else
-                ghostty_theme="Catppuccin Mocha"
-                nvim_colorscheme="catppuccin-mocha"
-            fi
-            ;;
-        catppuccin-macchiato)
-            nvim_file="catppuccin.lua"
-            nvim_plugin_name="catppuccin"
-            ghostty_theme="Catppuccin Macchiato"
-            nvim_colorscheme="catppuccin-macchiato"
-            mode="dark"
-            ;;
-        catppuccin-frappe)
-            nvim_file="catppuccin.lua"
-            nvim_plugin_name="catppuccin"
-            ghostty_theme="Catppuccin Frappe"
-            nvim_colorscheme="catppuccin-frappe"
-            mode="dark"
-            ;;
-        kanagawa)
-            nvim_file="kanagawa.lua"
-            nvim_plugin_name="kanagawa.nvim"
-            if [ "$mode" = "light" ]; then
-                ghostty_theme="Kanagawa Lotus"
-                nvim_colorscheme="kanagawa-lotus"
-            else
-                ghostty_theme="Kanagawa Wave"
-                nvim_colorscheme="kanagawa-wave"
-            fi
-            ;;
-        gruvbox-material)
-            nvim_file="gruvbox-material.lua"
-            nvim_plugin_name="gruvbox-material"
-            if [ "$mode" = "light" ]; then
-                ghostty_theme="Gruvbox Material Light"
-                nvim_colorscheme="gruvbox-material"
-            else
-                ghostty_theme="Gruvbox Material Dark"
-                nvim_colorscheme="gruvbox-material"
-            fi
+            ghostty_theme="Rose Pine Dawn"
+            mode="light"
             ;;
         papercolor)
-            nvim_file="papercolor.lua"
-            nvim_plugin_name="papercolor-theme"
-            nvim_colorscheme="PaperColor"
             if [ "$mode" = "light" ]; then
                 ghostty_theme="Pencil Light"
             else
                 ghostty_theme="Pencil Dark"
+            fi
+            ;;
+        github-dark)
+            if [ "$mode" = "light" ]; then
+                ghostty_theme="GitHub Light Default"
+            else
+                ghostty_theme="GitHub Dark Dimmed"
+            fi
+            ;;
+        catppuccin)
+            if [ "$mode" = "light" ]; then
+                ghostty_theme="Catppuccin Latte"
+            else
+                ghostty_theme="Catppuccin Frappe"
             fi
             ;;
         *)
@@ -160,40 +73,23 @@ switch_theme() {
             echo "Usage: theme <name> [dark|light]"
             echo ""
             echo "Available themes:"
-            echo "  dracula             - Purple/pink dark theme"
-            echo "  tokyonight          - Neon theme (dark/light)"
-            echo "  everforest          - Green-tinted theme (dark/light)"
-            echo "  onedark             - Atom-inspired theme (dark/light)"
-            echo "  rose-pine           - Elegant muted theme (dark/light)"
-            echo "  gruvbox             - Warm retro theme (dark/light)"
-            echo "  gruvbox-material    - Softer gruvbox (dark/light)"
-            echo "  papercolor          - Clean high-contrast theme (dark/light)"
-            echo "  github-dark         - GitHub theme (dark/light)"
-            echo "  catppuccin          - Pastel theme, mocha/latte (dark/light)"
-            echo "  catppuccin-macchiato - Pastel, medium dark"
-            echo "  catppuccin-frappe   - Pastel, softer dark"
-            echo "  kanagawa            - Japanese ink theme (dark/light)"
+            echo "  dracula     - Purple/pink dark theme"
+            echo "  onedark     - Atom-inspired theme (dark/light)"
+            echo "  rose-pine   - Elegant light theme (dawn)"
+            echo "  papercolor  - Clean high-contrast theme (dark/light)"
+            echo "  github-dark - GitHub theme (dark/light)"
+            echo "  catppuccin  - Pastel theme, frappe (dark) / latte (light)"
             return 1
             ;;
     esac
 
-    # Save mode
+    # Save state
     echo "$mode" > "$MODE_FILE"
+    echo "$nvim_theme" > "$ACTIVE_THEME_FILE"
 
     # --- Ghostty ---
     sed -i '' "s/^theme = .*/theme = $ghostty_theme/" "$GHOSTTY_CONFIG"
     echo "Ghostty: $ghostty_theme"
-
-    # --- Neovim ---
-    if [ -n "$nvim_file" ]; then
-        for f in "$NVIM_THEMES"/*.lua; do
-            sed -i '' 's/enabled = true/enabled = false/' "$f"
-        done
-        sed -i '' 's/enabled = false/enabled = true/' "$NVIM_THEMES/$nvim_file"
-        echo "Neovim:  ${nvim_file%.lua} ($mode)"
-    else
-        echo "Neovim:  no matching theme (unchanged)"
-    fi
 
     # Reload Ghostty config across all windows (simulate Cmd+Shift+,)
     osascript \
@@ -201,59 +97,63 @@ switch_theme() {
         -e 'tell application "System Events" to keystroke "," using {command down, shift down}' \
         2>/dev/null && echo "Ghostty: reloaded all windows"
 
-    # Live-reload all running Neovim instances
-    if [ -n "$nvim_colorscheme" ]; then
-        sockets=$(find /tmp /var/folders -name 'nvim.*' -type s 2>/dev/null)
-        if [ -n "$XDG_RUNTIME_DIR" ]; then
-            sockets="$sockets $(find "$XDG_RUNTIME_DIR" -name 'nvim.*' -type s 2>/dev/null)"
-        fi
-        reloaded=0
-        for socket in $sockets; do
-            result=$(nvim --server "$socket" --remote-expr "v:lua.require('config.theme').switch('$nvim_colorscheme', '$mode')" </dev/null 2>/dev/null)
-            if [ "$result" = "ok" ]; then
-                reloaded=$((reloaded + 1))
-            elif [ -n "$result" ]; then
-                echo "Neovim:  warning: $result"
-            fi
-        done
-        [ "$reloaded" -gt 0 ] && echo "Neovim:  reloaded $reloaded instance(s) live"
+    # --- Neovim live reload ---
+    echo "Neovim:  $theme ($mode)"
+    sockets=$(find /tmp /var/folders -name 'nvim.*' -type s 2>/dev/null)
+    if [ -n "$XDG_RUNTIME_DIR" ]; then
+        sockets="$sockets $(find "$XDG_RUNTIME_DIR" -name 'nvim.*' -type s 2>/dev/null)"
     fi
+    reloaded=0
+    for socket in $sockets; do
+        result=$(nvim --server "$socket" --remote-expr "v:lua.require('config.theme').switch('$theme', '$mode')" </dev/null 2>/dev/null)
+        if [ "$result" = "ok" ]; then
+            reloaded=$((reloaded + 1))
+        elif [ -n "$result" ]; then
+            echo "Neovim:  warning: $result"
+        fi
+    done
+    [ "$reloaded" -gt 0 ] && echo "Neovim:  reloaded $reloaded instance(s) live"
 }
 
 pick_theme() {
-    local current_nvim current_mode
-    current_nvim=$(grep -l "enabled = true" "$NVIM_THEMES"/*.lua 2>/dev/null | xargs -I{} basename {} .lua 2>/dev/null)
+    local current_mode
     current_mode=$(get_mode)
 
+    # Step 1: pick mode
+    local mode
+    mode=$(printf '%s\n' "dark" "light" \
+        | fzf --header "Current: $(get_active) ($current_mode)" \
+              --prompt "Mode > " \
+              --height 20% --reverse)
+    [ -z "$mode" ] && return
+
+    # Step 2: show themes for that mode
+    local themes
+    if [ "$mode" = "dark" ]; then
+        themes=$(printf '%s\n' \
+            "dracula|Purple/pink dark theme" \
+            "onedark|Atom-inspired dark theme" \
+            "papercolor|Clean high-contrast dark theme" \
+            "github-dark|GitHub Dark Dimmed" \
+            "catppuccin|Pastel dark theme (frappe)")
+    else
+        themes=$(printf '%s\n' \
+            "onedark|Atom-inspired light theme" \
+            "rose-pine|Elegant light theme (dawn)" \
+            "papercolor|Clean high-contrast light theme" \
+            "github-dark|GitHub Light" \
+            "catppuccin|Pastel light theme (latte)")
+    fi
+
     local selection
-    selection=$(printf '%s\n' \
-        "dracula|Purple/pink dark theme" \
-        "tokyonight|Neon theme (dark/light)" \
-        "everforest|Green-tinted theme (dark/light)" \
-        "onedark|Atom-inspired theme (dark/light)" \
-        "rose-pine|Elegant muted theme (dark/light)" \
-        "gruvbox|Warm retro theme (dark/light)" \
-        "gruvbox-material|Softer gruvbox (dark/light)" \
-        "papercolor|Clean high-contrast theme (dark/light)" \
-        "github-dark|GitHub theme (dark/light)" \
-        "catppuccin|Pastel - mocha/latte (dark/light)" \
-        "catppuccin-macchiato|Pastel - medium dark" \
-        "catppuccin-frappe|Pastel - softer dark" \
-        "kanagawa|Japanese ink theme (dark/light)" \
+    selection=$(printf '%s\n' "$themes" \
         | column -t -s'|' \
-        | fzf --header "Current: ${current_nvim:-none} ($current_mode)" \
+        | fzf --header "Select $mode theme" \
               --prompt "Theme > " \
-              --height 40% --reverse \
+              --height 30% --reverse \
         | awk '{print $1}')
 
-    if [ -n "$selection" ]; then
-        local mode
-        mode=$(printf '%s\n' "dark" "light" \
-            | fzf --header "Mode for $selection" \
-                  --prompt "Mode > " \
-                  --height 30% --reverse)
-        [ -n "$mode" ] && switch_theme "$selection" "$mode"
-    fi
+    [ -n "$selection" ] && switch_theme "$selection" "$mode"
 }
 
 if [ $# -eq 0 ]; then
