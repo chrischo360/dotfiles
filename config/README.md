@@ -30,7 +30,6 @@ The install script (`install.sh`) reads these path definitions and uses them to 
 
 **Files using templates:**
 - `claude/settings.json.template` → `~/.claude/settings.json`
-- `gemini/settings.json.template` → `~/.gemini/settings.json`
 
 **Why:**
 JSON files cannot use environment variables. Templates with placeholders allow portable configuration that works across different:

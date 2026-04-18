@@ -20,16 +20,10 @@ Personal configuration files for macOS development environment.
 │   │   ├── monitoring/ # CI/CD build monitoring
 │   │   └── utils/      # Notifications, buffers, aliases
 │   └── settings.json   # Claude Code settings
-├── cursor/             # Cursor AI editor configuration
-│   ├── User/           # User settings
-│   │   └── settings.json
-│   ├── mcp.json        # MCP server configuration
-│   └── cli-config.json # Cursor agent CLI configuration
 ├── git/                # Git configuration
 │   ├── gitconfig       # Global git config
 │   └── hooks/          # Git hooks
 ├── ghostty/            # Ghostty terminal emulator config
-├── kitty/              # Kitty terminal emulator config
 ├── nvim/               # Neovim configuration
 ├── pi/                 # Pi coding agent configuration
 │   └── agent/
@@ -82,7 +76,6 @@ The install script creates these symlinks:
 ~/.gitconfig                   -> ~/dotfiles/git/gitconfig
 ~/.aerospace.toml              -> ~/dotfiles/aerospace/aerospace.toml
 ~/.config/ghostty/             -> ~/dotfiles/ghostty/
-~/.config/kitty/               -> ~/dotfiles/kitty/
 ~/.config/nvim/                -> ~/dotfiles/nvim/
 ~/.config/ccstatusline/        -> ~/dotfiles/claude/ccstatusline/
 ~/.config/mise/config.toml     -> ~/dotfiles/.mise.toml (global mise config)
@@ -97,11 +90,6 @@ The install script creates these symlinks:
 ~/.pi/agent/extensions/theme-sync.ts      -> ~/dotfiles/pi/agent/extensions/theme-sync.ts
 ~/.pi/agent/themes/                       -> ~/dotfiles/pi/agent/themes/
 ~/.pi/agent/prompts/*.md       -> ~/dotfiles/pi/agent/prompts/*.md
-~/.gemini/settings.json        -> ~/dotfiles/gemini/settings.json (generated from template)
-~/.local/bin/gemini            -> $(npm bin -g)/gemini
-~/.cursor/User/settings.json   -> ~/dotfiles/cursor/User/settings.json
-~/.cursor/mcp.json             -> ~/dotfiles/cursor/mcp.json
-~/.cursor/cli-config.json      -> ~/dotfiles/cursor/cli-config.json
 ```
 
 ## Package Management
@@ -152,7 +140,6 @@ See `MISE_MIGRATION.md` for migration details and limitations.
 
 **npm Global Packages:**
 - ccstatusline - Claude Code statusline
-- @google/gemini-cli - Gemini AI CLI (settings: ~/dotfiles/gemini/)
 - prettier - Code formatter (for Svelte and other formats)
 - prettier-plugin-svelte - Svelte support for prettier
 
@@ -241,7 +228,6 @@ The install script will:
    mkdir -p ~/.config
 
    ln -sf ~/dotfiles/ghostty ~/.config/ghostty
-   ln -sf ~/dotfiles/kitty ~/.config/kitty
    ln -sf ~/dotfiles/nvim ~/.config/nvim
    ln -sf ~/dotfiles/ccstatusline ~/.config/ccstatusline
 
@@ -292,18 +278,6 @@ The `~/dotfiles/claude/` directory contains Claude Code configuration and utilit
   - `utils/` - Notifications, buffers, aliases (notify, get-buffers, agent-stats)
 
 See `claude/README.md` for detailed Claude Code documentation.
-
-## Gemini CLI Directory
-
-`~/dotfiles/gemini/` contains Gemini CLI configuration:
-
-- **settings.json** - Gemini CLI config (auth type, editor, UI, MCP servers)
-
-**Sensitive files** (gitignored, local in `~/.gemini/`):
-- `google_accounts.json`, `mcp-oauth-tokens-v2.json` - Authentication
-- `installation_id`, `state.json` - Session tracking
-
-**Binary:** `~/.local/bin/gemini` → stable symlink to npm global
 
 ## PAL MCP Workflow
 
@@ -433,11 +407,7 @@ memory --all              # Top 20 processes by memory
 2. **Orphaned LSP servers** - Look for `👻 ORPHANED` marker
    - Kill with: `pkill -f typescript-language-server`
    
-3. **Cursor agent processes** - Can grow large over time
-   - Listed under "OTHER NODE PROCESSES"
-   - Restart Cursor if excessive
-
-4. **Too many nvim instances** - Each instance spawns LSP servers
+3. **Too many nvim instances** - Each instance spawns LSP servers
    - Close unused nvim sessions
    - Kill all: `pkill nvim`
 
@@ -510,26 +480,14 @@ tail -f ~/.claude/hook-debug.log
 # Actions: start, active, idle, waiting, stop
 ```
 
-### Terminal Emulators
+### Terminal Emulator
 
-**Ghostty** (Primary):
+**Ghostty:**
 - Modern GPU-accelerated terminal written in Zig
 - Config: `~/.config/ghostty/config`
 - TERM: `xterm-ghostty`
 - Theme: GitHub Dark Dimmed (inline colors)
 - Features: Shell integration, OSC 52 clipboard, Kitty graphics protocol
-
-**Kitty** (Alternative):
-- GPU-accelerated terminal with image protocol support
-- Config: `~/.config/kitty/kitty.conf`
-- TERM: `xterm-kitty`
-- Theme: GitHub Dark Dimmed (via current-theme.conf)
-- Features: Required for fancy-cat PDF viewer, kitten utilities
-
-**Switching terminals:**
-- Both configurations maintained in dotfiles
-- Change default in System Settings → Desktop & Dock → Default Terminal
-- Or launch explicitly: `open -a Ghostty` / `open -a kitty`
 
 ### Switching Fonts in Ghostty
 
@@ -700,7 +658,6 @@ Test the install script in a clean environment:
 
 **JSON Configuration Files:** Generated from templates during install
 - `claude/settings.json.template` → `~/.claude/settings.json`
-- `gemini/settings.json.template` → `~/.gemini/settings.json`
 - Templates use placeholders like `{{dotfiles}}`, `{{home}}`
 - Generated files have absolute paths substituted during `install.sh`
 - **Important:** Re-run `install.sh` if you move the dotfiles directory

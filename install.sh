@@ -218,7 +218,6 @@ create_symlink "$DOTFILES_DIR/aerospace/aerospace.toml" "$HOME/.aerospace.toml"
 mkdir -p "$HOME/.config"
 
 # Terminal emulators
-create_symlink "$DOTFILES_DIR/kitty" "$HOME/.config/kitty"
 create_symlink "$DOTFILES_DIR/ghostty" "$HOME/.config/ghostty"
 
 # Neovim
@@ -272,30 +271,6 @@ for repo_dir in "$DOTFILES_DIR/claude/commands/repos"/*/; do
   fi
 done
 
-# Gemini CLI
-mkdir -p "$HOME/.gemini"
-substitute_json_template "$DOTFILES_DIR/gemini/settings.json.template" "$HOME/.gemini/settings.json"
-
-# Create stable binary symlink
-if command -v npm &> /dev/null; then
-    NPM_GLOBAL_BIN="$(npm bin -g)"
-    if [ -f "$NPM_GLOBAL_BIN/gemini" ]; then
-        create_symlink "$NPM_GLOBAL_BIN/gemini" "$HOME/.local/bin/gemini"
-        echo -e "${GREEN}  ✓ Gemini CLI binary linked${NC}"
-    else
-        echo -e "${YELLOW}  ⚠ Gemini CLI not found. Install with: npm install -g @google/gemini-cli${NC}"
-    fi
-else
-    echo -e "${YELLOW}  ⚠ npm not found. Ensure mise tools are installed${NC}"
-fi
-
-# Cursor AI
-echo -e "${YELLOW}  Setting up Cursor AI configuration...${NC}"
-mkdir -p "$HOME/.cursor/User"
-create_symlink "$DOTFILES_DIR/cursor/User/settings.json" "$HOME/.cursor/User/settings.json"
-create_symlink "$DOTFILES_DIR/cursor/mcp.json" "$HOME/.cursor/mcp.json"
-create_symlink "$DOTFILES_DIR/cursor/cli-config.json" "$HOME/.cursor/cli-config.json"
-echo -e "${GREEN}  ✓ Cursor AI configuration linked${NC}"
 
 echo ""
 echo -e "${BLUE}[6/6] Making scripts executable...${NC}"
@@ -385,12 +360,6 @@ fi
 # Platform-specific application checks
 if [[ "$OS" == "Darwin" ]]; then
     # macOS-specific checks
-    if [ -d "/Applications/kitty.app" ]; then
-        echo -e "${GREEN}  ✓ Kitty${NC}"
-    else
-        echo -e "${YELLOW}  ⚠ Kitty (optional - not installed)${NC}"
-    fi
-
     if [ -d "/Applications/Ghostty.app" ]; then
         echo -e "${GREEN}  ✓ Ghostty${NC}"
     else
@@ -432,7 +401,6 @@ if [[ "$OS" == "Darwin" ]]; then
 elif [[ "$OS" == "Linux" ]]; then
     # Linux-specific checks
     check_command "ghostty" || echo -e "${YELLOW}  ⚠ Ghostty (install via package manager)${NC}"
-    check_command "kitty" || echo -e "${YELLOW}  ⚠ Kitty (optional - install via package manager)${NC}"
 
     # Check JetBrainsMono Nerd Font (Linux paths)
     if fc-list 2>/dev/null | grep -i "JetBrainsMono Nerd Font" > /dev/null || \
@@ -473,7 +441,6 @@ fi
 echo -e "  Zsh:        ~/.zshrc"
 echo -e "  tmux:       ~/.tmux.conf"
 echo -e "  Neovim:     ~/.config/nvim"
-echo -e "  Kitty:      ~/.config/kitty"
 echo -e "  Ghostty:    ~/.config/ghostty"
 echo -e "  Claude:     ~/.claude/settings.json"
 echo ""
