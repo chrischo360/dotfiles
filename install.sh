@@ -198,6 +198,9 @@ fi
 echo ""
 echo -e "${BLUE}[5/6] Creating symlinks...${NC}"
 
+# Buildkite
+create_symlink "$DOTFILES_DIR/buildkite/.bk.yaml" "$HOME/.bk.yaml"
+
 # Zsh
 create_symlink "$DOTFILES_DIR/zsh/.zshrc" "$HOME/.zshrc"
 

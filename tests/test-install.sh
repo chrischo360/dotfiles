@@ -29,7 +29,7 @@ echo ""
 
 # Build test image
 echo -e "${BLUE}[1/3] Building test Docker image...${NC}"
-docker build -f "$SCRIPT_DIR/Dockerfile.test" -t dotfiles-test "$SCRIPT_DIR"
+docker build -f "$SCRIPT_DIR/Dockerfile.test" -t dotfiles-test "$(dirname "$SCRIPT_DIR")"
 echo -e "${GREEN}✓ Test image built${NC}"
 echo ""
 

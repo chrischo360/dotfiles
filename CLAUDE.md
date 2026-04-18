@@ -7,6 +7,8 @@ Personal configuration files for macOS development environment.
 ```
 ~/dotfiles/
 ├── aerospace/          # AeroSpace window manager config
+├── biome/              # Biome JS/TS formatter config
+├── buildkite/          # Buildkite CLI config
 ├── claude/             # Claude Code configuration and tools
 │   ├── agents/         # Custom Claude Code agents
 │   ├── ccstatusline/   # ccstatusline configuration
@@ -24,9 +26,11 @@ Personal configuration files for macOS development environment.
 ├── git/                # Git configuration
 ├── ghostty/            # Ghostty terminal emulator config
 ├── kitty/              # Kitty terminal emulator config
+├── lua/                # Lua tooling config (stylua)
 ├── nvim/               # Neovim configuration
 ├── pi/                 # Pi coding agent configuration
 ├── raycast/            # Raycast script commands
+├── tests/              # Docker-based install test suite
 ├── tmux/               # tmux terminal multiplexer config
 ├── zsh/                # Zsh shell configuration
 ├── docs/               # Documentation
@@ -34,9 +38,7 @@ Personal configuration files for macOS development environment.
 │   ├── maintenance.md  # Maintenance and package management
 │   ├── portability.md  # Path config and cross-platform notes
 │   └── tools/          # Per-tool reference docs
-├── Brewfile            # Homebrew package dependencies
-├── biome.json          # Biome code formatter config
-├── stylua.toml         # Lua code formatter config
+├── Brewfile.macos      # Homebrew package dependencies
 ├── .env.example        # Environment variables template
 └── .env                # Your API keys (gitignored, not committed)
 ```
@@ -65,6 +67,7 @@ See `.env.example` for full list.
 ## Symlink Map
 
 ```
+~/.bk.yaml                     -> ~/dotfiles/buildkite/.bk.yaml
 ~/.zshrc                       -> ~/dotfiles/zsh/.zshrc
 ~/.tmux.conf                   -> ~/dotfiles/tmux/tmux.conf
 ~/.config/tmux/scripts/        -> ~/dotfiles/tmux/scripts/

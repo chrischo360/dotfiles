@@ -19,4 +19,4 @@ case "$AGENT_NAME" in
     *)
         # Skip built-in agents like Explore, Plan, etc.
         ;;
-esac
+
