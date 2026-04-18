@@ -58,8 +58,6 @@ substitute_json_template() {
     local dotfiles="$DOTFILES_DIR"
     local codebase="${HOME}/codebase"
     local local_bin="${HOME}/.local/bin"
-    local pal_server="${HOME}/pal-mcp-server/pal-mcp-server"
-
     # Create parent directory if needed
     mkdir -p "$(dirname "$output")"
 
@@ -68,7 +66,6 @@ substitute_json_template() {
         -e "s|{{dotfiles}}|$dotfiles|g" \
         -e "s|{{codebase}}|$codebase|g" \
         -e "s|{{local_bin}}|$local_bin|g" \
-        -e "s|{{pal_server}}|$pal_server|g" \
         "$template" > "$output"
 
     echo -e "${GREEN}  ✓ Generated: $output${NC}"
@@ -278,7 +275,6 @@ echo -e "${BLUE}[6/6] Making scripts executable...${NC}"
 # Make all shell scripts executable
 find "$DOTFILES_DIR/claude/scripts" -type f -name "*.sh" -exec chmod +x {} \;
 find "$DOTFILES_DIR/claude/hooks" -type f -name "*.sh" -exec chmod +x {} \;
-find "$DOTFILES_DIR/raycast" -name "*.sh" -exec chmod +x {} \;
 find "$DOTFILES_DIR/tmux/scripts" -name "*.sh" -exec chmod +x {} \;
 chmod +x "$DOTFILES_DIR/claude/status"
 
@@ -381,14 +377,6 @@ if [[ "$OS" == "Darwin" ]]; then
         echo -e "${YELLOW}    Run: brew bundle --file=$DOTFILES_DIR/Brewfile.macos${NC}"
     fi
 
-    if [ -d "/Applications/Raycast.app" ]; then
-        echo -e "${GREEN}  ✓ Raycast${NC}"
-        echo -e "${YELLOW}    Note: Raycast is optional and not in Brewfile.macos${NC}"
-    else
-        echo -e "${YELLOW}  ⚠ Raycast (optional - not installed)${NC}"
-        echo -e "${YELLOW}    Install manually: brew install --cask raycast${NC}"
-    fi
-
     # Check JetBrainsMono Nerd Font (macOS paths)
     if fc-list 2>/dev/null | grep -i "JetBrainsMono Nerd Font" > /dev/null || \
        ls ~/Library/Fonts/ 2>/dev/null | grep -i "JetBrainsMono" > /dev/null || \
@@ -425,13 +413,7 @@ echo -e "  1. Restart your terminal or run: ${YELLOW}exec zsh${NC}"
 echo -e "  2. If tools are missing, run: ${YELLOW}cd $DOTFILES_DIR && mise install${NC}"
 if [[ "$OS" == "Darwin" ]]; then
 echo -e "  3. If macOS apps are missing, run: ${YELLOW}brew bundle --file=$DOTFILES_DIR/Brewfile.macos${NC}"
-echo -e "  4. Setup Raycast script commands (optional):"
-else
-echo -e "  3. Setup Raycast script commands (optional):"
 fi
-echo -e "     - Open Raycast Settings (⌘,)"
-echo -e "     - Extensions → Script Commands"
-echo -e "     - Add directory: ${YELLOW}$DOTFILES_DIR/raycast${NC}"
 echo ""
 echo -e "${BLUE}Configuration locations:${NC}"
 echo -e "  mise:       $DOTFILES_DIR/.mise.toml"

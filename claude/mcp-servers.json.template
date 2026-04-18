@@ -69,18 +69,6 @@
         "Authorization": "token {{sourcegraph_token}}"
       }
     },
-    "pal": {
-      "type": "stdio",
-      "command": "{{pal_server}}",
-      "args": [],
-      "env": {
-        "PATH": "{{home}}/.nvm/versions/node/v22.18.0/bin:/usr/local/bin:/usr/bin:/bin:/opt/homebrew/bin:{{home}}/.local/bin",
-        "GOOGLE_GENAI_USE_VERTEXAI": "true",
-        "GOOGLE_CLOUD_PROJECT": "wf-gcp-us-sf-genai-pilot-sbx",
-        "GOOGLE_CLOUD_LOCATION": "us-east5",
-        "DEFAULT_MODEL": "auto"
-      }
-    },
     "datadog_remote": {
       "type": "http",
       "url": "https://mcp.datadoghq.com/api/unstable/mcp-server/mcp"

@@ -47,5 +47,4 @@ cask "iina"                # Modern macOS video player (mpv-based)
 # ============================================
 # Uncomment if you want to install these
 
-# cask "raycast"           # Launcher (requires manual setup)
 # cask "alacritty"         # GPU-accelerated terminal
