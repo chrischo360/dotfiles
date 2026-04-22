@@ -60,10 +60,9 @@
       "Read(**/*.swo)",
       "Read(**/*~)"
     ],
-    "ask": [],
-    "defaultMode": "default"
+    "ask": []
   },
-  "model": "sonnet",
+  "model": "opus",
   "hooks": {
     "SessionStart": [
       {

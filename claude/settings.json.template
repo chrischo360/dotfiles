@@ -10,7 +10,9 @@
       "BashOutput",
       "WebFetch",
       "WebSearch",
-      "EnterPlanMode"
+      "EnterPlanMode",
+      "mcp__sourcegraph__*",
+      "mcp__glean_default__*"
     ],
     "deny": [
       "Read(./.env)",
@@ -239,6 +241,9 @@
     },
     {
       "tool": "mcp__sourcegraph__*"
+    },
+    {
+      "tool": "mcp__glean_default__*"
     },
     {
       "tool": "mcp__graphql_storefront__*"

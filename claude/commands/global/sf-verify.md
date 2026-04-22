@@ -24,10 +24,8 @@ Steps:
    ```
 
 2. Based on what you've learned, decide:
-   - **Which process**: `checkout.yaml`, `pdp.yaml`, `browse.yaml`, or `dev.yaml`
    - **Which account**: `member` or `nonmember` (member for loyalty/account features, nonmember for cart/checkout)
    - **Which URL**: the specific page most likely to show the feature
-   - **Which flags**: `--local-prod`, `--skip-setup`, etc.
    - **What to look for**: the specific UI element, modal, popup, or behavior described by the branch/ticket
 
    State your reasoning before running anything.
@@ -42,7 +40,7 @@ Steps:
    **3b. Run the dev environment process in the background:**
    ```bash
    cd ~/codebase/agent-devenv-poc
-   yarn run:<process> --account <account> [--url <path>] [--local-prod] --skip-setup &
+   yarn run:checkout --account <account> [--url <path>] --local-prod --skip-setup &
    RUNNER_PID=$!
    ```
 

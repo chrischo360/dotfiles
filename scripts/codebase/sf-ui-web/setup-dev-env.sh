@@ -27,6 +27,7 @@ readonly PANE_DEV=2  # yarn dev runs in pane 2; pane 1 is used for build output 
 
 DEBUG_MODE=false
 SKIP_LINT=false
+LOCAL_PRODUCTION=false
 SETUP_START_TIME=$(date +%s)
 CRITICAL_FAILURE=false
 
@@ -200,7 +201,11 @@ run_codegen() {
 start_dev_server() {
     log_progress "Phase 6: Starting dev server..."
 
-    send_command_to_pane $PANE_DEV "cd $SF_UI_WEB_DIR/apps/core-funnel && yarn dev"
+    if [[ "$LOCAL_PRODUCTION" == "true" ]]; then
+        send_command_to_pane $PANE_DEV "cd $SF_UI_WEB_DIR/apps/core-funnel && yarn local-production"
+    else
+        send_command_to_pane $PANE_DEV "cd $SF_UI_WEB_DIR/apps/core-funnel && yarn dev"
+    fi
 
     if monitor_dev_server $PANE_DEV; then
         notify_phase_complete "Phase 6" "Dev server ready"
@@ -255,6 +260,11 @@ parse_arguments() {
                 log_info "Skipping lint"
                 shift
                 ;;
+            --local-production)
+                LOCAL_PRODUCTION=true
+                log_info "Using local-production mode"
+                shift
+                ;;
             -h|--help)
                 show_help
                 exit 0
@@ -277,8 +287,9 @@ USAGE:
 
 OPTIONS:
     -d, --debug      Enable debug output
-    --skip-lint      Skip lint step
-    -h, --help       Show this help
+    --skip-lint          Skip lint step
+    --local-production   Run yarn local-production instead of yarn dev
+    -h, --help           Show this help
 
 STEPS:
     1. yarn biome lint + yarn lint
@@ -286,7 +297,7 @@ STEPS:
     3. yarn install
     4. yarn turbo run build --filter="[main...HEAD]"
     5. yarn gql:codegen + yarn gql:register
-    6. yarn dev (apps/core-funnel, in tmux pane)
+    6. yarn dev or yarn local-production (apps/core-funnel, in tmux pane)
 
 TMUX PANES:
     Pane 1: Build output (phases 3-5)
