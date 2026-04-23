@@ -1,10 +1,12 @@
 {
-  "extensions": [],
+  "extensions": [
+    "~/.pi/agent/extensions/mcp-glean"
+  ],
   "defaultProvider": "anthropic-vertex",
   "prompts": [
     "~/dotfiles/claude/commands/global"
   ],
-  "defaultModel": "claude-sonnet-4-6",
+  "defaultModel": "claude-opus-4-6",
   "lastChangelogVersion": "0.67.4",
   "defaultThinkingLevel": "off",
   "enabledModels": [
@@ -13,5 +15,5 @@
     "anthropic-vertex/claude-opus-4-7",
     "anthropic-vertex/claude-opus-4-6"
   ],
-  "theme": "onedark"
+  "theme": "dracula"
 }
