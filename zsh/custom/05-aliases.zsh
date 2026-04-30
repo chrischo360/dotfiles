@@ -20,6 +20,7 @@ alias less="bat"
 alias yt="mpv --no-video --input-ipc-server=/tmp/mpvsocket"
 alias ytv="mpv --input-ipc-server=/tmp/mpvsocket"
 alias yti="open -a IINA"
+alias music='yt "https://www.youtube.com/playlist?list=PLGpO1PrgW3bifY2tgAFqLN1vZWrEs2isv"'
 
 # Dev CLI - Context-aware development commands
 alias dev='$DOTFILES_DIR/scripts/dev/dev.sh'
