@@ -11,6 +11,7 @@ return {
     "MunifTanjim/nui.nvim",
     "nvim-treesitter/nvim-treesitter",
     "nvim-tree/nvim-web-devicons",
+    "3rd/image.nvim",
   },
   cmd = "Leet",
   opts = {
@@ -121,7 +122,7 @@ return {
     },
 
     theme = {},
-    image_support = false,
+    image_support = true,
   },
 
   keys = {
