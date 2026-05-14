@@ -83,7 +83,7 @@ See `.env.example` for full list.
 ~/.claude/settings.json        -> ~/dotfiles/claude/settings.json (generated from template)
 ~/.claude/commands/            -> ~/dotfiles/claude/commands/  (global/ subdir symlinks to ~/dotfiles/agent/commands/)
 ~/.claude/agents/              -> ~/dotfiles/claude/agents/
-~/.claude/CLAUDE.md            -> ~/dotfiles/claude/CLAUDE.md
+~/.claude/AGENTS.md            -> ~/dotfiles/claude/AGENTS.md
 ~/.pi/agent/settings.json      -> ~/dotfiles/pi/agent/settings.json
 ~/.pi/agent/keybindings.json   -> ~/dotfiles/pi/agent/keybindings.json
 ~/.pi/agent/extensions/        -> ~/dotfiles/pi/agent/extensions/*

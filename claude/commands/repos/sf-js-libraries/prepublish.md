@@ -454,12 +454,12 @@ For each updated repo:
    - Run: `dev build`
    - Display output
 
-3. **If `dev` doesn't exist, check CLAUDE.md:**
-   - Read: `/Users/cc446g/codebase/<repo-name>/CLAUDE.md`
+3. **If `dev` doesn't exist, check AGENTS.md:**
+   - Read: `/Users/cc446g/codebase/<repo-name>/AGENTS.md`
    - Parse for "Build:" or "build" command patterns
    - Extract repo-specific build command (e.g., `yarn lib:build`, `yarn build:dev`)
 
-4. **Fallback commands if CLAUDE.md doesn't exist:**
+4. **Fallback commands if AGENTS.md doesn't exist:**
    - sf-ui-web: `yarn lib:build && yarn build:dev`
    - sf-ui-checkout: `yarn build`
    - sf-ui-cart-and-checkout: `yarn build:dev`
@@ -653,7 +653,7 @@ claude-mcp --servers "buildkite,github_wayfair" /prepublish
 
 **Build command detection:**
 1. Check if `dev` command exists
-2. Parse CLAUDE.md in consuming repo
+2. Parse AGENTS.md in consuming repo
 3. Use hardcoded fallbacks per repo
 
 **Error handling:**

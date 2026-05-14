@@ -336,4 +336,4 @@ When adding/removing commands, update:
 - `~/dotfiles/claude/README.md` - Claude Code configuration
 - `~/dotfiles/scripts/dev/README.md` - `dev` CLI documentation
 - `~/codebase/scout/README.md` - `scout` CLI documentation
-- `~/dotfiles/CLAUDE.md` - Global workflow rules
+- `~/dotfiles/AGENTS.md` - Global workflow rules

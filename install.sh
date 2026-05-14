@@ -235,7 +235,7 @@ mkdir -p "$HOME/.claude"
 substitute_json_template "$DOTFILES_DIR/claude/settings.json.template" "$HOME/.claude/settings.json"
 create_symlink "$DOTFILES_DIR/claude/agents" "$HOME/.claude/agents"
 create_symlink "$DOTFILES_DIR/claude/commands" "$HOME/.claude/commands"
-create_symlink "$DOTFILES_DIR/claude/CLAUDE.md" "$HOME/.claude/CLAUDE.md"
+create_symlink "$DOTFILES_DIR/claude/AGENTS.md" "$HOME/.claude/AGENTS.md"
 
 # Pi Coding Agent
 mkdir -p "$HOME/.pi/agent/extensions"

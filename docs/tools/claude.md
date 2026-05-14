@@ -6,7 +6,7 @@ Config location: `~/dotfiles/claude/`
 
 ```
 claude/
-├── CLAUDE.md           # Global instructions (symlinked to ~/.claude/CLAUDE.md)
+├── AGENTS.md           # Global instructions (symlinked to ~/.claude/AGENTS.md)
 ├── STATE_FLOW.md       # Hook state machine documentation
 ├── settings.json       # Main config (permissions, model, hooks, statusline)
 ├── mcp-profiles.json   # Predefined MCP server combinations

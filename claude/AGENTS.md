@@ -184,7 +184,7 @@ TESTED: true
 ## Project-Specific Context
 
 When working in specific projects:
-- Look for local `.claude/` or `CLAUDE.md` files for project-specific rules
+- Look for local `.claude/` or `AGENTS.md` files for project-specific rules
 - Local rules override these global preferences
 - Ask about conventions if unclear
 

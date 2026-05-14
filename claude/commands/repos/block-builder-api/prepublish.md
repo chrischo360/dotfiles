@@ -619,7 +619,7 @@ claude-mcp --servers "buildkite,github_wayfair" /prepublish
 
 **Build command detection:**
 1. Check if `dev` command exists
-2. Parse sf-ui-web/CLAUDE.md for repo-specific commands
+2. Parse sf-ui-web/AGENTS.md for repo-specific commands
 3. Use hardcoded fallbacks (yarn dev, yarn build:dev)
 
 **Error handling:**

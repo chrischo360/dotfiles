@@ -180,10 +180,10 @@ sync_file() {
   [[ "$abs_path" == */.git/* ]] && return 0
   [[ "$(basename "$abs_path")" == .* ]] && return 0
 
-  # Skip CLAUDE.md, COMMAND_MAP.md (meta files)
+  # Skip AGENTS.md, COMMAND_MAP.md (meta files)
   local basename
   basename=$(basename "$abs_path")
-  [[ "$basename" == "CLAUDE.md" || "$basename" == "COMMAND_MAP.md" || "$basename" == "README.md" ]] && return 0
+  [[ "$basename" == "AGENTS.md" || "$basename" == "COMMAND_MAP.md" || "$basename" == "README.md" ]] && return 0
 
   local rel_path="${abs_path#$NOTES_DIR/}"
   local title="${basename%.md}"
@@ -234,7 +234,7 @@ full_sync() {
     sleep 0.1
   done < <(find "$NOTES_DIR" -name "*.md" \
     -not -path "*/.git/*" \
-    -not -name "CLAUDE.md" \
+    -not -name "AGENTS.md" \
     -not -name "COMMAND_MAP.md" \
     -not -name "README.md" \
     -not -type l \
