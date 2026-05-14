@@ -58,6 +58,7 @@ export VISUAL="nvim"
 
 export GLEAN_API_TOKEN="***REMOVED-SECRET***"
 export GLEAN_INSTANCE="wayfair"
-export SOURCEGRAPH_TOKEN="***REMOVED-SECRET***"
+# export SOURCEGRAPH_TOKEN="***REMOVED-SECRET***"
 export SOURCEGRAPH_URL="https://wayfair.sourcegraphcloud.com"
-
+export SOURCEGRAPH_TOKEN="***REMOVED-SECRET***"
+export OUTLINE_API_TOKEN=***REMOVED-SECRET***

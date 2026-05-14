@@ -9,7 +9,7 @@
   ],
   "defaultModel": "claude-opus-4-6",
   "lastChangelogVersion": "0.73.1",
-  "defaultThinkingLevel": "off",
+  "defaultThinkingLevel": "medium",
   "enabledModels": [
     "anthropic-vertex/claude-haiku-4-5-20251001",
     "anthropic-vertex/claude-sonnet-4-6",
