@@ -5,7 +5,7 @@
  * built-in WebFetch and WebSearch tools.
  *
  * web_fetch: fetches a URL via curl, strips HTML to readable text
- * web_search: DuckDuckGo search (no API key required)
+ * web_search: Brave Search when BRAVE_SEARCH_API_KEY is set, DuckDuckGo fallback
  */
 
 import type { ExtensionAPI } from "@mariozechner/pi-coding-agent";
@@ -13,6 +13,32 @@ import { Type } from "@sinclair/typebox";
 import { StringEnum } from "@mariozechner/pi-ai";
 
 const MAX_BYTES = 50_000;
+const BRAVE_SEARCH_URL = "https://api.search.brave.com/res/v1/web/search";
+const DUCKDUCKGO_URL = "https://api.duckduckgo.com/";
+
+type SearchResult = {
+	title: string;
+	url: string;
+	description?: string;
+	age?: string;
+};
+
+function renderSearchResults(results: SearchResult[], provider: string, query: string): string {
+	if (results.length === 0) {
+		return `No results found for: ${query}\nTip: Try a more specific query, or use web_fetch with a direct URL.`;
+	}
+
+	return [
+		`Provider: ${provider}`,
+		"",
+		...results.map((result, index) => {
+			const lines = [`${index + 1}. ${result.title}`, `   ${result.url}`];
+			if (result.description) lines.push(`   ${result.description}`);
+			if (result.age) lines.push(`   ${result.age}`);
+			return lines.join("\n");
+		}),
+	].join("\n");
+}
 
 /** Strip HTML tags and collapse whitespace to readable plain text */
 function stripHtml(html: string): string {
@@ -82,81 +108,111 @@ export default function (pi: ExtensionAPI) {
 		},
 	});
 
-	// web_search — equivalent of Claude's WebSearch, uses DuckDuckGo
 	pi.registerTool({
 		name: "web_search",
 		label: "Web Search",
-		description: "Search the web using DuckDuckGo. Returns titles, URLs, and snippets. Use for researching libraries, error messages, documentation.",
+		description: "Search the web. Uses Brave Search when BRAVE_SEARCH_API_KEY is set, with DuckDuckGo as a no-key fallback. Returns titles, URLs, and snippets.",
 		promptSnippet: "Search the web for information",
 		parameters: Type.Object({
 			query: Type.String({ description: "Search query" }),
-			limit: Type.Optional(Type.Number({ description: "Max results to return (default: 8)" })),
+			limit: Type.Optional(Type.Number({ description: "Max results to return (default: 8, max: 20)" })),
+			provider: Type.Optional(
+				StringEnum(["auto", "brave", "duckduckgo"] as const, {
+					description: "Search provider (default: auto; Brave when BRAVE_SEARCH_API_KEY is set, otherwise DuckDuckGo)",
+				}),
+			),
 		}),
 		async execute(_id, params, signal) {
-			// DuckDuckGo Instant Answer API — no key required
-			const encoded = encodeURIComponent(params.query);
-			const url = `https://api.duckduckgo.com/?q=${encoded}&format=json&no_html=1&skip_disambig=1`;
+			const limit = Math.min(Math.max(params.limit ?? 8, 1), 20);
+			const provider = params.provider ?? "auto";
+			const braveKey = process.env.BRAVE_SEARCH_API_KEY;
 
+			if ((provider === "auto" && braveKey) || provider === "brave") {
+				if (!braveKey) {
+					throw new Error("BRAVE_SEARCH_API_KEY is required when provider is 'brave'");
+				}
+
+				const url = `${BRAVE_SEARCH_URL}?q=${encodeURIComponent(params.query)}&count=${limit}&text_decorations=false&result_filter=web`;
+				const result = await pi.exec(
+					"curl",
+					[
+						"--silent",
+						"--location",
+						"--compressed",
+						"--max-time", "15",
+						"--header", "Accept: application/json",
+						"--header", `X-Subscription-Token: ${braveKey}`,
+						url,
+					],
+					{ signal, timeout: 20000 },
+				);
+
+				if (result.code !== 0) throw new Error(`Brave search failed: ${result.stderr.slice(0, 200)}`);
+
+				let data: { web?: { results?: Array<Record<string, unknown>> } };
+				try {
+					data = JSON.parse(result.stdout);
+				} catch {
+					throw new Error("Failed to parse Brave search results");
+				}
+
+				const results = (data.web?.results ?? []).slice(0, limit).map((item) => ({
+					title: String(item.title ?? "Untitled"),
+					url: String(item.url ?? ""),
+					description: item.description ? String(item.description) : undefined,
+					age: item.age ? String(item.age) : undefined,
+				})).filter((item) => item.url);
+
+				return {
+					content: [{ type: "text", text: renderSearchResults(results, "Brave Search", params.query) }],
+					details: { query: params.query, provider: "brave", resultCount: results.length },
+				};
+			}
+
+			const url = `${DUCKDUCKGO_URL}?q=${encodeURIComponent(params.query)}&format=json&no_html=1&skip_disambig=1`;
 			const result = await pi.exec(
 				"curl",
 				["--silent", "--location", "--max-time", "15", url],
 				{ signal, timeout: 20000 },
 			);
 
-			if (result.code !== 0) throw new Error(`Search failed: ${result.stderr.slice(0, 200)}`);
+			if (result.code !== 0) throw new Error(`DuckDuckGo search failed: ${result.stderr.slice(0, 200)}`);
 
 			let data: Record<string, unknown>;
 			try {
 				data = JSON.parse(result.stdout);
 			} catch {
-				throw new Error("Failed to parse search results");
+				throw new Error("Failed to parse DuckDuckGo search results");
 			}
 
-			const lines: string[] = [];
-			const limit = Math.min(params.limit ?? 8, 20);
-
-			// Instant answer / abstract
+			const results: SearchResult[] = [];
 			const abstract = data.Abstract as string;
 			const abstractUrl = data.AbstractURL as string;
-			if (abstract) {
-				lines.push(`**Answer:** ${abstract}`);
-				if (abstractUrl) lines.push(`Source: ${abstractUrl}`);
-				lines.push("");
+			if (abstract && abstractUrl) {
+				results.push({ title: abstract, url: abstractUrl });
 			}
 
-			// Related topics (main results)
 			const topics = (data.RelatedTopics as Array<Record<string, unknown>>) ?? [];
-			let count = 0;
 			for (const topic of topics) {
-				if (count >= limit) break;
-
-				// Skip category headers
+				if (results.length >= limit) break;
 				if (topic.Topics) continue;
 
 				const text = topic.Text as string;
 				const firstUrl = topic.FirstURL as string;
 				if (text && firstUrl) {
-					lines.push(`${count + 1}. ${text}`);
-					lines.push(`   ${firstUrl}`);
-					count++;
+					results.push({ title: text, url: firstUrl });
 				}
 			}
 
-			if (lines.length === 0) {
-				// Fall back to showing the raw definition if no topics
-				const definition = data.Definition as string;
-				if (definition) {
-					lines.push(definition);
-					lines.push((data.DefinitionURL as string) ?? "");
-				} else {
-					lines.push(`No results found for: ${params.query}`);
-					lines.push("Tip: Try a more specific query, or use web_fetch with a direct URL.");
-				}
+			const definition = data.Definition as string;
+			const definitionUrl = data.DefinitionURL as string;
+			if (results.length < limit && definition && definitionUrl) {
+				results.push({ title: definition, url: definitionUrl });
 			}
 
 			return {
-				content: [{ type: "text", text: lines.join("\n") }],
-				details: { query: params.query, resultCount: count },
+				content: [{ type: "text", text: renderSearchResults(results.slice(0, limit), "DuckDuckGo", params.query) }],
+				details: { query: params.query, provider: "duckduckgo", resultCount: Math.min(results.length, limit) },
 			};
 		},
 	});

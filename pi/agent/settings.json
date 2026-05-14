@@ -2,13 +2,14 @@
   "extensions": [
     "~/.pi/agent/extensions/mcp-glean",
     "~/.pi/agent/extensions/mcp-sourcegraph",
-    "~/.pi/agent/extensions/session-status"
+    "~/.pi/agent/extensions/session-status",
+    "~/.pi/agent/extensions/web-tools"
   ],
-  "defaultProvider": "anthropic-vertex",
+  "defaultProvider": "openai-codex",
   "prompts": [
     "~/dotfiles/claude/commands/global"
   ],
-  "defaultModel": "claude-sonnet-4-6",
+  "defaultModel": "gpt-5.5",
   "lastChangelogVersion": "0.74.0",
   "defaultThinkingLevel": "medium",
   "enabledModels": [

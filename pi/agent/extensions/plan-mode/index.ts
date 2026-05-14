@@ -19,8 +19,43 @@ import { Key } from "@mariozechner/pi-tui";
 import { extractTodoItems, isSafeCommand, markCompletedSteps, type TodoItem } from "./utils.js";
 
 // Tools
-const PLAN_MODE_TOOLS = ["read", "bash", "grep", "find", "ls", "questionnaire"];
-const NORMAL_MODE_TOOLS = ["read", "bash", "edit", "write", "grep", "find", "ls"];
+const GLEAN_TOOLS = [
+	"glean_search",
+	"glean_chat",
+	"glean_code_search",
+	"glean_employee_search",
+	"glean_read_document",
+	"glean_user_activity",
+	"glean_gmail_search",
+	"glean_meeting_lookup",
+	"glean_read_memory",
+];
+
+const SOURCEGRAPH_TOOLS = [
+	"sg_keyword_search",
+	"sg_nls_search",
+	"sg_read_file",
+	"sg_list_files",
+	"sg_list_repos",
+	"sg_commit_search",
+	"sg_diff_search",
+	"sg_find_references",
+	"sg_go_to_definition",
+	"sg_compare_revisions",
+	"sg_get_contributor_repos",
+];
+
+const PLAN_MODE_TOOLS = [
+	"read",
+	"bash",
+	"grep",
+	"find",
+	"ls",
+	"questionnaire",
+	...GLEAN_TOOLS,
+	...SOURCEGRAPH_TOOLS,
+];
+const NORMAL_MODE_TOOLS = ["read", "bash", "edit", "write", "grep", "find", "ls", ...GLEAN_TOOLS, ...SOURCEGRAPH_TOOLS];
 
 // Type guard for assistant messages
 function isAssistantMessage(m: AgentMessage): m is AssistantMessage {
@@ -41,9 +76,9 @@ export default function planModeExtension(pi: ExtensionAPI): void {
 	let todoItems: TodoItem[] = [];
 
 	pi.registerFlag("plan", {
-		description: "Start in plan mode (read-only exploration). Use --plan=false to disable.",
+		description: "Start in plan mode (read-only exploration). Use --plan to enable.",
 		type: "boolean",
-		default: true,  // mirrors Claude Code's defaultMode: "plan"
+		default: false,
 	});
 
 	function updateStatus(ctx: ExtensionContext): void {
@@ -165,11 +200,12 @@ export default function planModeExtension(pi: ExtensionAPI): void {
 You are in plan mode - a read-only exploration mode for safe code analysis.
 
 Restrictions:
-- You can only use: read, bash, grep, find, ls, questionnaire
+- You can only use: read, bash, grep, find, ls, questionnaire, Glean tools, Sourcegraph tools
 - You CANNOT use: edit, write (file modifications are disabled)
 - Bash is restricted to an allowlist of read-only commands
 
 Ask clarifying questions using the questionnaire tool.
+Use Glean for company knowledge and Sourcegraph for code research.
 Use brave-search skill via bash for web research.
 
 Create a detailed numbered plan under a "Plan:" header:
