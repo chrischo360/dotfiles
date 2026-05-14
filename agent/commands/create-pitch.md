@@ -1,6 +1,7 @@
-# Create Pitch Command
-
-Command to generate tailored job application pitches by combining company/role info with personal background.
+---
+description: Generate a tailored job application pitch from a job posting
+---
+Generate a tailored job application pitch by combining company/role info with personal background.
 
 ## Usage
 ```
@@ -85,42 +86,6 @@ Sources to pull from:
 - Lists of skills without context
 - No demonstration of research
 
-## Example Analysis
-
-### PointOne Role Extraction
-**About Company:**
-- AI time platform for law firms
-- Customers: SMBs to world's largest law firms
-- $3.5M seed (Bessemer, 8VC, General Catalyst)
-- Small team, 2x'ing in 2 months
-- Solving: Time tracking (6-min increments), billing admin
-
-**About Role:**
-- New Grad Software Engineer
-- $100K-$140K, 0.10%-0.20% equity
-- New York, in-person
-- Multi-product company
-
-**Who You Are:**
-- Internship experience (hyper-growth startups / big tech)
-- CS degree from top university
-- Strong product sense
-- High ownership, autonomous
-- Entrepreneurial mindset
-- Excited about in-person, customer interaction
-
-**What You'll Do:**
-- Develop novel AI products
-- Work directly with customers (visit offices)
-- Prototype AI pipelines (RAG, etc.)
-- Lead through mentoring, pairing, code reviews
-- Shape engineering culture
-
-**Why Join:**
-- Growth: Work with founders, own high-impact projects
-- Impact: Sticky tools, hard ROI, multi-product company
-- Support: Collaborative, high feedback culture
-
 ## Resources Needed
 
 Create these files to support the command:
@@ -140,8 +105,3 @@ Examples of pitches that got responses:
 - Pitch text
 - Outcome (interview, offer, etc.)
 - What worked (analysis)
-
-### `career/pitch-templates/` (optional)
-- `startup.md` - Template for startup roles
-- `big-tech.md` - Template for established companies
-- `technical.md` - Deep technical roles

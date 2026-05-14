@@ -117,13 +117,6 @@ Steps:
    - <specific hypothesis for human follow-up>
    ```
 
-What this does:
-- Infers feature, process, account, URL, and flags from the branch name + Glean ticket context
-- Runs the dev environment and takes a screenshot
-- If verification fails: reads source files, diagnoses the issue, makes a targeted fix, and retries
-- Caps at 3 attempts to avoid runaway loops
-- Produces a structured attempt log so you can see exactly what it tried
-
 Options:
 - Pass a ticket or description to override branch inference: `/sf-verify PGL-1298 loyalty autopop popup`
 - Pass `--account <name>` to force a specific account
@@ -143,13 +136,12 @@ Error handling:
 - If a code fix introduces a build error: report the build error and stop
 
 Related commands:
-- `repos:sf-ui-web:test-env-dev` — manual dev environment without autonomous verification
-- `repos:sf-ui-web:test-env-e2e-playwright` — Playwright smoke tests
-- `notes:ticket-summary` — summarize a ticket's branches and PRs
+- `/pr-review` - Review branch diff before verifying
+- `/pr-template` - Generate PR description after verification passes
 
 Notes:
 - Always kills port 3000 before each attempt to avoid EADDRINUSE errors
 - Code fixes are made in `~/codebase/sf-ui-web` — the agent can read and edit source files there
 - Only rebuilds when a code fix was made — URL/account/flag changes don't need a rebuild
 - On PASS: screenshot is opened in Preview, macOS notification is sent, and the server is killed
-- On FAIL: kill `$RUNNER_PID` and port 3000 before each retry (3a already handles port; also `kill $RUNNER_PID`); after final failure, leave browser open for manual inspection
+- On FAIL: kill `$RUNNER_PID` and port 3000 before each retry; after final failure, leave browser open for manual inspection

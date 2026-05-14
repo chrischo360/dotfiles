@@ -1,3 +1,6 @@
+---
+description: Set up E2E test environment (services, tunnels, browsers, file sync)
+---
 Set up the E2E test environment (services, tunnels, browsers, file sync).
 
 Covers everything needed to run end-to-end tests: external services, SSH connections, browser drivers, and real-time sync. Assumes code environment (deps/build) is already set up.

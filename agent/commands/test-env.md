@@ -1,3 +1,6 @@
+---
+description: Router for test environment setup — delegates to test-env-code or test-env-e2e
+---
 Router for test environment setup. Asks which kind of environment is needed, then delegates to test-env-code or test-env-e2e.
 
 Steps:

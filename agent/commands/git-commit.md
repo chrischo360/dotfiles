@@ -1,3 +1,6 @@
+---
+description: Interactive commit helper with branch validation and ticket reference check
+---
 Commit changes with branch name validation (warns if no ticket reference).
 
 Interactive commit helper that validates branch naming and creates commits.
@@ -84,3 +87,7 @@ Notes:
 - Warning is non-blocking (user choice)
 - Always stages all changes (git add -A)
 - Works in any git repository
+
+Related commands:
+- `/commit` - Conventional commit message generator (simpler, no branch validation)
+- `/pr-create` - Create pull request after committing

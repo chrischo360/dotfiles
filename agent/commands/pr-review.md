@@ -1,3 +1,6 @@
+---
+description: Review code changes on the current branch vs main
+---
 Review code changes on the current branch with the eye of a code reviewer.
 
 Analyzes the diff between this branch and main, then provides structured feedback covering correctness, style, edge cases, and potential issues.
@@ -96,9 +99,9 @@ Notes:
 - Use alongside /pr-template to generate the PR description after addressing issues
 
 Related commands:
+- `/review` - General code review (not branch-specific)
 - `/pr-template` - Generate PR title and description
 - `/pr-create` - Create the PR after review passes
-- `/pr-check` - Monitor CI checks after pushing
 
 Anti-Patterns to Avoid:
 - Don't flag style issues as [ISSUE] — use [NITPICK] for pure preferences

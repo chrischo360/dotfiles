@@ -1,3 +1,6 @@
+---
+description: Run minimal validation (format + lint) with intelligent repo adaptation
+---
 Run minimal validation (format + lint) with intelligent adaptation.
 
 Fast validation before running full pr-check. Automatically creates repo-specific command if needed.
@@ -47,13 +50,6 @@ Steps:
      # Invoke create-command skill with context
      echo "Researching ${REPO_NAME} to create pr-lint command..."
 
-     # Use Task tool to spawn agent that:
-     # 1. Reads package.json, explores codebase
-     # 2. Identifies format/lint tools (ESLint config, Prettier config, etc.)
-     # 3. Proposes command structure
-     # 4. Asks user for approval
-     # 5. Creates ~/dotfiles/claude/commands/repos/${REPO_NAME}/pr-lint.md
-
      Task(
        subagent_type="Plan",
        prompt="Research this repository and create a pr-lint command.
@@ -74,9 +70,6 @@ Steps:
        - Command file at: ~/dotfiles/claude/commands/repos/${REPO_NAME}/pr-lint.md
        - Should follow same pattern as sf-ui-web commands"
      )
-
-     # If user approves: Command created, run it
-     # If user denies: Skip and continue
    else
      echo "Skipping validation"
      exit 0
@@ -125,4 +118,3 @@ Notes:
 - Never runs arbitrary commands without understanding them
 - Creates reusable commands for future use
 - Graceful degradation (skip if unavailable)
-- Learns from each repository

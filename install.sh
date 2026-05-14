@@ -239,7 +239,6 @@ create_symlink "$DOTFILES_DIR/claude/CLAUDE.md" "$HOME/.claude/CLAUDE.md"
 
 # Pi Coding Agent
 mkdir -p "$HOME/.pi/agent/extensions"
-mkdir -p "$HOME/.pi/agent/prompts"
 create_symlink "$DOTFILES_DIR/pi/agent/settings.json" "$HOME/.pi/agent/settings.json"
 create_symlink "$DOTFILES_DIR/pi/agent/AGENTS.md" "$HOME/.pi/agent/AGENTS.md"
 create_symlink "$DOTFILES_DIR/pi/agent/keybindings.json" "$HOME/.pi/agent/keybindings.json"
@@ -254,9 +253,7 @@ create_symlink "$DOTFILES_DIR/pi/agent/extensions/mcp-buildkite" "$HOME/.pi/agen
 create_symlink "$DOTFILES_DIR/pi/agent/extensions/web-tools.ts" "$HOME/.pi/agent/extensions/web-tools.ts"
 create_symlink "$DOTFILES_DIR/pi/agent/extensions/theme-sync.ts" "$HOME/.pi/agent/extensions/theme-sync.ts"
 create_symlink "$DOTFILES_DIR/pi/agent/themes" "$HOME/.pi/agent/themes"
-for f in "$DOTFILES_DIR/pi/agent/prompts"/*.md; do
-  create_symlink "$f" "$HOME/.pi/agent/prompts/$(basename "$f")"
-done
+create_symlink "$DOTFILES_DIR/agent/commands" "$HOME/.pi/agent/prompts"
 
 # Pi repo-specific prompts — symlink claude commands into each codebase repo
 for repo_dir in "$DOTFILES_DIR/claude/commands/repos"/*/; do

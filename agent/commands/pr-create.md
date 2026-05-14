@@ -1,3 +1,6 @@
+---
+description: Create GitHub PR with automated workflow (checks, template, push, create)
+---
 Create GitHub PR with automated workflow (checks, template, push, create).
 
 Automates PR creation: optional pre-checks, template generation, branch push, GitHub PR creation.
@@ -179,15 +182,12 @@ Related commands:
 - `global:pr-template` - Generate PR description (used internally, always use fully qualified name)
 - `/pr-check` - Run validation suite (called conditionally)
 - `/pr-watch` - Monitor PR CI checks (suggested next step)
-- `/pr-build` - Prepare branch before PR (run before this command)
-- `/pr-automerge` - Auto-merge when checks pass
 
 Anti-Patterns to Avoid:
 - Don't use on main/master - create feature branch first
 - Don't retry on "PR exists" error - use `gh pr view` instead
 - Don't ask the user about missing ticket IDs - just proceed
-- Don't use `gh auth status | grep` - use exit code instead
 - Don't split preflight into multiple parallel bash calls - one compound command is faster
 - Don't invoke `/pr-template` - use `global:pr-template` (fully qualified name)
-- **Don't display the pr-template output to the user** — parse title/body from it silently and proceed directly to `gh pr create`. The template is an internal intermediate artifact, not a user response. Surfacing it and stopping is a bug.
+- **Don't display the pr-template output to the user** — parse title/body from it silently and proceed directly to `gh pr create`
 - **Don't stop after generating the template** — always continue to `gh pr create` in the same flow

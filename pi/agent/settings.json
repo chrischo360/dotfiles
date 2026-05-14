@@ -1,20 +1,28 @@
 {
   "extensions": [
     "~/.pi/agent/extensions/mcp-glean",
-    "~/.pi/agent/extensions/mcp-sourcegraph"
+    "~/.pi/agent/extensions/mcp-sourcegraph",
+    "~/.pi/agent/extensions/session-status"
   ],
   "defaultProvider": "anthropic-vertex",
   "prompts": [
     "~/dotfiles/claude/commands/global"
   ],
-  "defaultModel": "claude-opus-4-6",
-  "lastChangelogVersion": "0.73.1",
+  "defaultModel": "claude-sonnet-4-6",
+  "lastChangelogVersion": "0.74.0",
   "defaultThinkingLevel": "medium",
   "enabledModels": [
     "anthropic-vertex/claude-haiku-4-5-20251001",
     "anthropic-vertex/claude-sonnet-4-6",
     "anthropic-vertex/claude-opus-4-7",
-    "anthropic-vertex/claude-opus-4-6"
+    "anthropic-vertex/claude-opus-4-6",
+    "openai-codex/gpt-5.5"
   ],
-  "theme": "dark"
+  "theme": "dark",
+  "compaction": {
+    "enabled": false
+  },
+  "hideThinkingBlock": true,
+  "quietStartup": true,
+  "treeFilterMode": "default"
 }

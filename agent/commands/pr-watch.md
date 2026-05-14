@@ -1,3 +1,6 @@
+---
+description: Monitor GitHub PR CI checks in real-time via scout
+---
 Monitor GitHub PR CI checks in real-time.
 
 Wrapper for `scout check` to watch PR status for current branch.
@@ -52,8 +55,7 @@ Error handling:
 - Press Ctrl+C to stop watching
 
 Related commands:
-- `/pr-submit` - Full validation + watch (sf-ui-web only)
-- `/pr-automerge` - Watch + auto-merge (sf-ui-web only)
+- `/pr-check` - Lightweight gh-native check monitor (no scout dependency)
 - `/pr-dashboard` - View all PRs for a repo
 
 Notes:
@@ -61,7 +63,6 @@ Notes:
 - Requires `gh` CLI authentication
 - Requires `scout` CLI installed globally
 - Auto-detects PR from current branch
-- Can also pass PR URL directly: `scout check <URL>`
 
 Anti-Patterns to Avoid:
 - Don't use before creating PR - create PR first

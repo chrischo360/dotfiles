@@ -1,3 +1,6 @@
+---
+description: Deploy to a Garden ephemeral namespace
+---
 Deploy to a Garden ephemeral namespace using `garden-deploy`.
 
 **Steps:**

@@ -1,3 +1,6 @@
+---
+description: Display PR dashboard for a repository showing status of all open PRs
+---
 Display PR dashboard for a repository showing status of all open PRs.
 
 Wrapper for `scout pr-dashboard` to view all PRs in a repository.
@@ -37,11 +40,6 @@ Examples:
   scout pr-dashboard wayfair-shared/sf-ui-web
   ```
 
-- View PRs for different repo:
-  ```bash
-  scout pr-dashboard wayfair/php
-  ```
-
 Error handling:
 - If not in git repo and no repo provided: Prompts for repository
 - If invalid repo format: Shows error
@@ -56,7 +54,6 @@ Notes:
 - Requires `gh` CLI authentication
 - Requires `scout` CLI installed globally
 - Useful for team PR review queue
-- Can identify stale PRs or blocked PRs
 
 Anti-Patterns to Avoid:
 - Don't use for repos with hundreds of PRs - scout may timeout

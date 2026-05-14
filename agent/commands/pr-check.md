@@ -1,3 +1,6 @@
+---
+description: Monitor GitHub PR CI checks in real-time using gh CLI
+---
 Monitor GitHub PR CI checks using native `gh` CLI.
 
 Lightweight wrapper around `gh pr checks` for real-time CI status monitoring.
@@ -71,7 +74,7 @@ Error handling:
 Related commands:
 - `/pr-watch` - Enhanced wrapper with auto-merge and notifications (requires scout)
 - `/pr-dashboard` - View all open PRs for a repository
-- `/global:pr-create` - Create a new PR
+- `/pr-create` - Create a new PR
 
 Notes:
 - Works for any GitHub repository

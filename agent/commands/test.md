@@ -1,3 +1,6 @@
+---
+description: Parent test command — menu-driven entry point for test-env, test-plan, test-execute
+---
 Parent test command. Presents a menu to run test-env, test-plan, or test-execute — or runs the full workflow in sequence.
 
 Also checks for a repo-specific test.md to delegate to.
@@ -28,5 +31,5 @@ Steps:
 
 Notes:
 - Entry point for users who don't know which sub-command they need
-- Repo-specific test.md can override the entire flow (e.g., a custom opinionated workflow)
+- Repo-specific test.md can override the entire flow
 - Falls back to the global sub-commands if no repo-specific command exists

@@ -9,141 +9,221 @@
  */
 
 import type { ExtensionAPI } from "@mariozechner/pi-coding-agent";
-import { readFileSync, writeFileSync, existsSync } from "node:fs";
-import { basename, resolve } from "node:path";
+import { readFileSync, writeFileSync, existsSync, appendFileSync } from "node:fs";
+import { basename } from "node:path";
+import { execSync, spawn } from "node:child_process";
 
 const STATE_FILE = `${process.env.HOME}/.pi/agent/session-state.json`;
 const HOOK_LOG = `${process.env.HOME}/.pi/agent/hook-debug.log`;
 
-// Tool → emoji mapping (matches your Claude setup)
-const TOOL_ICONS: Record<string, string> = {
-	read: "📖",
-	grep: "🔍",
-	find: "🔍",
-	ls: "🔍",
-	edit: "✏️",
-	write: "✏️",
-	bash: "⚙️",
+// Maps Pi tool names → Claude-compatible action strings (used by tmux pi_status.sh)
+const TOOL_ACTION: Record<string, string> = {
+	read: "reading",
+	find: "reading",
+	ls: "reading",
+	grep: "searching",
+	edit: "editing",
+	write: "editing",
+	bash: "running",
+};
+
+// Action → display icon (mirrors Claude STATE_FLOW.md)
+const ACTION_ICONS: Record<string, string> = {
+	reading: "📖",
+	searching: "🔍",
+	editing: "✏️",
+	running: "⚙️",
 };
 
 function log(msg: string): void {
 	try {
-		const line = `[${new Date().toTimeString().slice(0, 8)}] ${msg}\n`;
-		const { appendFileSync } = require("node:fs");
-		appendFileSync(HOOK_LOG, line);
+		appendFileSync(HOOK_LOG, `[${new Date().toTimeString().slice(0, 8)}] ${msg}\n`);
 	} catch {}
 }
 
-function updateState(status: string, toolName?: string): void {
-	const paneId = process.env.TMUX_PANE;
-	if (!paneId) return;
+interface SessionContext {
+	dir: string;
+	repo: string;
+	branch: string;
+	tmux_session: string;
+	tmux_pane: string;
+}
+
+function getContext(cwd?: string): SessionContext {
+	const dir = cwd || process.cwd();
+	const paneId = process.env.TMUX_PANE || "";
+	let repo = basename(dir);
+	let branch = "";
+	let tmux_session = "unknown";
 
 	try {
-		let state: Record<string, unknown> = {};
-		if (existsSync(STATE_FILE)) {
-			state = JSON.parse(readFileSync(STATE_FILE, "utf-8"));
+		const root = execSync("git rev-parse --show-toplevel", {
+			cwd: dir,
+			encoding: "utf-8",
+			stdio: ["pipe", "pipe", "pipe"],
+		}).trim();
+		repo = basename(root);
+		branch = execSync("git branch --show-current", {
+			cwd: dir,
+			encoding: "utf-8",
+			stdio: ["pipe", "pipe", "pipe"],
+		}).trim();
+	} catch {}
+
+	try {
+		if (process.env.TMUX) {
+			tmux_session = execSync("tmux display-message -p '#S'", { encoding: "utf-8" }).trim();
 		}
-		const sessions = (state.sessions as Record<string, Record<string, unknown>>) || {};
-		sessions[paneId] = {
-			...(sessions[paneId] || {}),
-			status,
-			tool: toolName || null,
-			last_updated: new Date().toISOString(),
-		};
-		state.sessions = sessions;
+	} catch {}
+
+	return { dir, repo, branch, tmux_session, tmux_pane: paneId };
+}
+
+function readState(): Record<string, unknown> {
+	try {
+		if (existsSync(STATE_FILE)) return JSON.parse(readFileSync(STATE_FILE, "utf-8"));
+	} catch {}
+	return { sessions: {} };
+}
+
+function writeState(state: Record<string, unknown>): void {
+	try {
 		writeFileSync(STATE_FILE, JSON.stringify(state, null, 2));
 	} catch {}
 }
 
-function getProjectName(cwd: string): string {
+function updateSession(status: string, action?: string, context?: SessionContext): void {
+	const paneId = process.env.TMUX_PANE;
+	if (!paneId) return;
+
+	const state = readState();
+	const sessions = (state.sessions as Record<string, Record<string, unknown>>) || {};
+	const existing = sessions[paneId] || {};
+
+	// Lazily capture context if this pane doesn't have it yet (heals old-format entries)
+	const effectiveContext = context ?? (!existing.context ? getContext() : undefined);
+
+	sessions[paneId] = {
+		...existing,
+		status,
+		last_update: new Date().toISOString(),
+		...(effectiveContext ? { context: effectiveContext } : {}),
+	};
+
+	if (action) {
+		sessions[paneId].action = action;
+	} else {
+		delete sessions[paneId].action;
+	}
+
+	state.sessions = sessions;
+	writeState(state);
+}
+
+function removeSession(): void {
+	const paneId = process.env.TMUX_PANE;
+	if (!paneId) return;
+
+	const state = readState();
+	const sessions = state.sessions as Record<string, unknown>;
+	if (sessions) {
+		delete sessions[paneId];
+		state.sessions = sessions;
+		writeState(state);
+	}
+}
+
+function notify(args: string[]): void {
 	try {
-		const { execSync } = require("node:child_process");
-		const root = execSync("git rev-parse --show-toplevel", { cwd, encoding: "utf-8" }).trim();
+		const proc = spawn("terminal-notifier", args, { detached: true, stdio: "ignore" });
+		proc.unref();
+	} catch {}
+}
+
+function getProjectName(cwd?: string): string {
+	const dir = cwd || process.cwd();
+	try {
+		const root = execSync("git rev-parse --show-toplevel", {
+			cwd: dir,
+			encoding: "utf-8",
+			stdio: ["pipe", "pipe", "pipe"],
+		}).trim();
 		return basename(root);
 	} catch {
-		return basename(cwd);
+		return basename(dir);
 	}
 }
 
 export default function (pi: ExtensionAPI) {
-	// Session start → active
+	// Session start → active, capture context for tmux statusline
 	pi.on("session_start", async (_event, ctx) => {
-		log("SessionStart hook fired");
-		updateState("active");
+		log("session_start fired");
+		const context = getContext((ctx as { cwd?: string }).cwd);
+		updateSession("active", undefined, context);
 		ctx.ui.setStatus("session", ctx.ui.theme.fg("success", "● active"));
 	});
 
 	// User submits input → active
 	pi.on("input", async (_event, ctx) => {
-		updateState("active");
-		ctx.ui.setStatus("session", ctx.ui.theme.fg("accent", "🔄 working"));
+		updateSession("active");
+		ctx.ui.setStatus("session", ctx.ui.theme.fg("accent", "⚡ working"));
 	});
 
-	// Tool activity tracking
+	// Tool starts → active with tool-specific action icon
 	pi.on("tool_execution_start", async (event, ctx) => {
-		const icon = TOOL_ICONS[event.toolName] || "⚙️";
-		updateState("active", event.toolName);
-		ctx.ui.setStatus("session", ctx.ui.theme.fg("accent", `${icon} ${event.toolName}`));
+		const toolName = ((event as { toolName: string }).toolName || "").toLowerCase();
+		const action = TOOL_ACTION[toolName] || "running";
+		const icon = ACTION_ICONS[action] || "⚙️";
+		updateSession("active", action);
+		ctx.ui.setStatus("session", ctx.ui.theme.fg("accent", `${icon} ${toolName}`));
 	});
 
-	// Agent finished → idle + notification
+	// Agent finished responding → idle + macOS notification
 	pi.on("agent_end", async (_event, ctx) => {
-		updateState("idle");
+		updateSession("idle");
 		ctx.ui.setStatus("session", ctx.ui.theme.fg("success", "✅ ready"));
-		log("Agent ended, sending notification");
+		log("agent_end fired");
 
-		// macOS notification via terminal-notifier
-		const project = getProjectName(ctx.cwd);
-		try {
-			const args = [
-				"-title", "🤖 Pi Complete",
-				"-message", `Repository: ${project}`,
-				"-sound", "default",
-			];
+		const cwd = (ctx as { cwd?: string }).cwd;
+		const project = getProjectName(cwd);
+		const args = ["-title", "Pi Complete", "-message", `Repository: ${project}`, "-sound", "default"];
 
-			// Add tmux context if available
-			if (process.env.TMUX) {
-				const { execSync } = require("node:child_process");
+		if (process.env.TMUX) {
+			try {
 				const tmuxInfo = execSync("tmux display-message -p '#S:#I.#P [#W]'", { encoding: "utf-8" }).trim();
 				args.push("-subtitle", tmuxInfo);
-			}
-
-			await pi.exec("terminal-notifier", args, { timeout: 5000 });
-		} catch {
-			// terminal-notifier not available, silently skip
+			} catch {}
 		}
+
+		notify(args);
 	});
 
-	// Session shutdown
+	// Session ends → remove from state file (prevents stale accumulation)
 	pi.on("session_shutdown", async () => {
-		log("Session shutdown");
-		updateState("stopped");
+		log("session_shutdown fired");
+		removeSession();
 	});
 
-	// Context usage warning (check after each turn)
+	// After each turn → check context usage, warn at 80%+
 	pi.on("turn_end", async (_event, ctx) => {
-		const usage = ctx.getContextUsage();
-		if (!usage) return;
+		try {
+			const usage = (ctx as { getContextUsage?: () => { tokens: number; maxTokens: number } | null }).getContextUsage?.();
+			if (!usage) return;
 
-		const percentage = (usage.tokens / usage.maxTokens) * 100;
-		if (percentage >= 80) {
-			ctx.ui.setStatus(
-				"context-warn",
-				ctx.ui.theme.fg("warning", `⚠️ ${Math.round(percentage)}% context`)
-			);
-
-			// Notify once when crossing 80%
-			const project = getProjectName(ctx.cwd);
-			try {
-				await pi.exec("terminal-notifier", [
+			const percentage = (usage.tokens / usage.maxTokens) * 100;
+			if (percentage >= 80) {
+				ctx.ui.setStatus("context-warn", ctx.ui.theme.fg("warning", `⚠️ ${Math.round(percentage)}% context`));
+				const cwd = (ctx as { cwd?: string }).cwd;
+				const project = getProjectName(cwd);
+				notify([
 					"-title", "Pi: Context Warning",
 					"-message", `${Math.round(percentage)}% context used — consider /compact or /new`,
 					"-sound", "default",
 					"-group", `pi-context-${project}`,
-				], { timeout: 5000 });
-			} catch {}
-		} else {
-			ctx.ui.setStatus("context-warn", undefined);
-		}
+				]);
+			} else {
+				ctx.ui.setStatus("context-warn", undefined);
+			}
+		} catch {}
 	});
 }

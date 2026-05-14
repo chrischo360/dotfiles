@@ -14,7 +14,7 @@ Steps:
    HAS_UNSTAGED=$(git diff --quiet 2>/dev/null || echo "yes")
    HAS_PR=$(gh pr view --json url -q '.url' 2>/dev/null)
 
-   echo "📋 Available Commands for: $REPO_NAME"
+   echo "🗂 Available Commands for: $REPO_NAME"
    echo ""
 
    # Show context-aware recommendations
@@ -152,26 +152,13 @@ Output format:
 - Command name + brief description
 - Contextual based on where you are
 
-Examples:
-
-**In sf-ui-web repository:**
-Shows all global commands + sf-ui-web specific commands + dev CLI + scout CLI
-
-**In dotfiles repository:**
-Shows global commands + dev CLI (if available) + scout CLI
-
-**In unknown repository:**
-Shows only global commands + scout CLI
-
 Related commands:
-- `/dev` - Show dev CLI commands for current repo
 - `/create-command` - Create new Claude command
 - `dev :docs` - Show full dev CLI documentation
 - `scout --help` - Show scout CLI help
 
 Notes:
 - Command availability depends on current context (repository, installed tools)
-- Commands are automatically registered as skills from `~/dotfiles/claude/commands/`
 - Global commands work anywhere, repo commands work only in their respective repos
 - dev CLI commands are context-aware (different behavior in root vs apps/* vs libs/*)
 

@@ -1,3 +1,6 @@
+---
+description: Execute tests for the current repository
+---
 Execute tests for the current repository.
 
 Detects repo-specific test-execute command. If none exists, uses test-plan findings or researches how to run tests.

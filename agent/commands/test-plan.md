@@ -1,3 +1,6 @@
+---
+description: Research and plan what tests to run and how
+---
 Research and plan what tests to run and how.
 
 Detects repo-specific test-plan command. If none exists, researches the repo to understand test structure and surfaces a run plan.
@@ -18,7 +21,6 @@ Steps:
    ```bash
    MEMORY_FILE="~/dotfiles/claude/test-memory/${REPO_NAME}.md"
    if [[ -f "$MEMORY_FILE" ]]; then
-     # Read and surface recent sessions as context for the plan
      echo "Prior test sessions found — incorporating into plan"
    fi
    ```

@@ -1,3 +1,6 @@
+---
+description: Log a test session to per-repo memory
+---
 Log a test session to per-repo memory and Claude project memory.
 
 Called automatically after test-execute completes, or invoked manually to log a session.

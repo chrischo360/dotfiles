@@ -1,3 +1,6 @@
+---
+description: Watch a PR and auto-merge; diagnose and fix CI failures or merge conflicts
+---
 Watch a PR and auto-merge when ready. If blocked by CI failures or merge conflicts, diagnose and propose a fix plan.
 
 Steps:

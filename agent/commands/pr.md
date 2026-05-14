@@ -1,3 +1,6 @@
+---
+description: Interactive PR workflow menu with repository detection
+---
 Interactive PR workflow menu with repository detection.
 
 Steps:

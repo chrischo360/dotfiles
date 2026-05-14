@@ -1,3 +1,6 @@
+---
+description: Monitor Buildkite build status with live progress and notifications
+---
 Monitor Buildkite build status with live progress and notifications.
 
 Intelligent Buildkite monitoring that auto-detects PR context, monitors build progress with visual feedback, and handles MCP-aware strategy selection.
@@ -299,12 +302,6 @@ Use Skill tool to invoke buildkite-watch:
 ```bash
 /buildkite-watch --pr 1234 --timeout 10
 ```
-
-**Benefits of delegation:**
-- Single source of truth for monitoring UX
-- Consistent progress visualization across all commands
-- Easy to test independently
-- No duplication of ~200 lines of polling logic
 
 ## Exit Code Summary
 

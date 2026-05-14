@@ -1,6 +1,9 @@
-Generate a new Claude command from a natural language description.
+---
+description: Generate a new command from a natural language description
+---
+Generate a new command from a natural language description.
 
-This meta-command creates properly structured command files in the correct location within ~/dotfiles/claude.
+This meta-command creates properly structured command files in the correct location within ~/dotfiles/agent/commands (shared) or ~/dotfiles/claude/commands/repos/<repo> (repo-specific).
 
 Steps:
 
@@ -14,7 +17,7 @@ Steps:
    - Optional: "Does it need any parameters/flags?" (e.g., --watch, --timeout=N)
 
 2. **Determine file location**:
-   - Global commands: `~/dotfiles/claude/commands/global/<command-name>.md`
+   - Global commands: `~/dotfiles/agent/commands/<command-name>.md`
    - Repo-specific: `~/dotfiles/claude/commands/repos/<repo-name>/<command-name>.md`
    - Verify parent directory exists, create if needed
 
@@ -28,6 +31,9 @@ Steps:
 4. **Generate command content** following this template:
 
 ```markdown
+---
+description: <one-line description>
+---
 <One-line description of what this command does>
 
 <Optional: Brief context or when to use this command>
@@ -79,7 +85,7 @@ Notes (optional):
    ✓ Created command: <command-name>
    Location: <full-path>
 
-   To use: /<command-name> or Skill tool with skill="<scope>:<command-name>"
+   To use: /<command-name>
    ```
 
 **Command Naming Conventions:**
@@ -96,6 +102,7 @@ Notes (optional):
 - Add examples for non-obvious usage
 - Keep explanations terse and technical
 - No marketing language or over-explanation
+- Always include `description:` frontmatter (required for Pi compatibility)
 
 **Common Command Patterns:**
 
@@ -116,3 +123,4 @@ Anti-Patterns to Avoid:
 - Don't create commands for one-time tasks - commands should be reusable
 - Don't duplicate existing commands - check first with user or command list
 - Don't use verbose explanations - keep it terse and technical
+- Don't omit the `description:` frontmatter — it's required for Pi to display the command

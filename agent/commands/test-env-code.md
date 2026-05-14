@@ -1,3 +1,6 @@
+---
+description: Set up code test environment (dependencies, compilation, build artifacts)
+---
 Set up the code test environment (dependencies, compilation, build artifacts).
 
 Covers everything needed to run unit and integration tests locally. Does NOT start services, SSH tunnels, or browsers.

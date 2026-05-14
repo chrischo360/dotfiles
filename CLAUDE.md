@@ -28,6 +28,8 @@ Personal configuration files for macOS development environment.
 ├── kitty/              # Kitty terminal emulator config
 ├── lua/                # Lua tooling config (stylua)
 ├── nvim/               # Neovim configuration
+├── agent/              # Shared commands for Claude and Pi
+│   └── commands/       # Canonical command/prompt source (31 files)
 ├── pi/                 # Pi coding agent configuration
 ├── raycast/            # Raycast script commands
 ├── tests/              # Docker-based install test suite
@@ -79,13 +81,17 @@ See `.env.example` for full list.
 ~/.config/ccstatusline/        -> ~/dotfiles/claude/ccstatusline/
 ~/.config/mise/config.toml     -> ~/dotfiles/.mise.toml
 ~/.claude/settings.json        -> ~/dotfiles/claude/settings.json (generated from template)
+~/.claude/commands/            -> ~/dotfiles/claude/commands/  (global/ subdir symlinks to ~/dotfiles/agent/commands/)
 ~/.claude/agents/              -> ~/dotfiles/claude/agents/
 ~/.claude/CLAUDE.md            -> ~/dotfiles/claude/CLAUDE.md
 ~/.pi/agent/settings.json      -> ~/dotfiles/pi/agent/settings.json
 ~/.pi/agent/keybindings.json   -> ~/dotfiles/pi/agent/keybindings.json
 ~/.pi/agent/extensions/        -> ~/dotfiles/pi/agent/extensions/*
 ~/.pi/agent/themes/            -> ~/dotfiles/pi/agent/themes/
-~/.pi/agent/prompts/*.md       -> ~/dotfiles/pi/agent/prompts/*.md
+~/.pi/agent/prompts/           -> ~/dotfiles/agent/commands/  (shared with Claude)
+
+# Internal dotfiles symlinks (not home directory):
+~/dotfiles/claude/commands/global/ -> ~/dotfiles/agent/commands/  (makes commands available to ~/.claude/commands)
 ~/.gemini/settings.json        -> ~/dotfiles/gemini/settings.json (generated from template)
 ~/.local/bin/gemini            -> $(npm bin -g)/gemini
 ~/.cursor/User/settings.json   -> ~/dotfiles/cursor/User/settings.json

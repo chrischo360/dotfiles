@@ -1,3 +1,6 @@
+---
+description: Generate PR title and description from git changes
+---
 Generate PR title and description from git changes matching your terse, technical style.
 
 Steps:
@@ -60,19 +63,10 @@ Steps:
        - Include business why only when it clarifies the technical decision
        - Every clause earns its place: cut "this change", "in order to", "we decided to"
        - Paragraph explains intent; bullets enumerate the changes
-       - Example: "Refactors HFC banner to use BlockBuilder FixedImage instead of hardcoded SVG, enabling responsive gem alignment; replaces Button with LoadingButton to support enrollment state feedback without additional state management."
      * **Bullet points** - Ordered by dependency graph or story flow (most foundational/inciting first)
        - Terse verb phrases, no file names, no filler
        - Include inline why when non-obvious and concise: "Add gem alignment enum (TOP/CENTER/BOTTOM) — SVG lacked positional API"
        - Drop the why when it's obvious from the what
-     * Examples matching updated style:
-       - Paragraph: "Refactors HFC banner to use BlockBuilder FixedImage instead of hardcoded SVG, enabling responsive gem alignment controlled by a new alignment enum; replaces Button with LoadingButton to surface enrollment state without extra state management."
-       - Bullets (foundational first):
-         * Refactor Gem to use BlockBuilder FixedImage — SVG lacked positional API
-         * Add configurable gem alignment enum (TOP/CENTER/BOTTOM) with desktop-only display
-         * Replace Button with LoadingButton for enrollment/decline actions
-         * Update button hierarchy: condensed mobile, primary/secondary desktop
-         * Adjust radio button spacing for alignment consistency
 
 8. Output the formatted PR title and body:
 

@@ -1,5 +1,6 @@
-# PR Notification Monitor
-
+---
+description: Manage GitHub PR notification daemon (new review comments, CI failures)
+---
 Manage the GitHub PR notification system that watches for new review comments and CI/CD failures across all your open PRs.
 
 ## Instructions
