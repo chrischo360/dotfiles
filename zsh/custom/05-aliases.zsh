@@ -528,3 +528,6 @@ php-fix() {
 
 # Sync server from remote Windows machine
 alias sync-server='rsync -avz --progress --rsync-path="wsl rsync" --exclude-from="$HOME/.rsyncignore" homeserver-remote:/mnt/c/Users/chris/codebase/server/ ~/server/'
+
+# Storefront PR review complexity score
+alias sage-pr-score="node $DOTFILES_DIR/scripts/sage-pr-score.mjs"

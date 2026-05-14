@@ -11,7 +11,6 @@ return {
     "MunifTanjim/nui.nvim",
     "nvim-treesitter/nvim-treesitter",
     "nvim-tree/nvim-web-devicons",
-    "3rd/image.nvim",
   },
   cmd = "Leet",
   opts = {
@@ -121,8 +120,31 @@ return {
       focus_result = "L",
     },
 
-    theme = {},
-    image_support = true,
+    theme = (function()
+      local bg = vim.o.background
+      if bg == "light" then
+        return {
+          normal    = { fg = "#111111" },
+          alt       = { fg = "#444444" },
+          header    = { fg = "#000000", bold = true },
+          easy      = { fg = "#007a00" },
+          medium    = { fg = "#b36200" },
+          hard      = { fg = "#cc0000" },
+          link      = { fg = "#0055cc", underline = true },
+        }
+      else
+        return {
+          normal    = { fg = "#e0e0e0" },
+          alt       = { fg = "#aaaaaa" },
+          header    = { fg = "#ffffff", bold = true },
+          easy      = { fg = "#4ec94e" },
+          medium    = { fg = "#f0a030" },
+          hard      = { fg = "#ff5555" },
+          link      = { fg = "#6699ff", underline = true },
+        }
+      end
+    end)(),
+    image_support = false,
   },
 
   keys = {
