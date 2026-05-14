@@ -20,7 +20,7 @@ local plugin_map = {
   ["dayfox"]             = "nightfox.nvim",
   ["everforest"]         = "everforest-nvim",
   ["solarized"]          = "solarized.nvim",
-  ["custom"]             = "gruvbox-material",
+  ["custom"]             = "gruvbox.nvim",
 }
 
 -- Map theme name + mode -> colorscheme string and any pre-setup needed
@@ -129,14 +129,14 @@ local function resolve(theme, mode)
 
   elseif theme == "custom" then
     -- Hand-rolled dark/light pair. Tweak colors here to build your own aesthetic.
-    -- Currently based on gruvbox-material for a warm earthy base.
-    local variant = mode == "light" and "light" or "dark"
-    return "gruvbox-material", function()
-      vim.g.gruvbox_material_background = mode == "dark" and "hard" or "soft"
-      vim.g.gruvbox_material_foreground = "original"
-      vim.g.gruvbox_material_enable_italic = 1
-      vim.g.gruvbox_material_enable_bold = 1
-      vim.o.background = variant
+    -- Currently based on gruvbox as a starting point.
+    return "gruvbox", function()
+      require("gruvbox").setup({
+        contrast = mode == "dark" and "hard" or "soft",
+        bold = true,
+        italic = { strings = true, comments = true },
+      })
+      vim.o.background = mode == "light" and "light" or "dark"
     end
 
   else

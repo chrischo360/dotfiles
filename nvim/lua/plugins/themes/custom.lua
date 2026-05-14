@@ -1,6 +1,6 @@
--- Custom theme: a hand-rolled dark/light pair built on top of gruvbox-material palette.
--- Swap the base plugin below if you want a different starting point.
+-- Custom theme scaffold — built on gruvbox as a starting point.
+-- Tweak colors in config/theme.lua under the "custom" branch.
 return {
-  "sainnhe/gruvbox-material",
+  "ellisonleao/gruvbox.nvim",
   lazy = true,
 }
