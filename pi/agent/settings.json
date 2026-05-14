@@ -1,13 +1,14 @@
 {
   "extensions": [
-    "~/.pi/agent/extensions/mcp-glean"
+    "~/.pi/agent/extensions/mcp-glean",
+    "~/.pi/agent/extensions/mcp-sourcegraph"
   ],
   "defaultProvider": "anthropic-vertex",
   "prompts": [
     "~/dotfiles/claude/commands/global"
   ],
   "defaultModel": "claude-opus-4-6",
-  "lastChangelogVersion": "0.67.4",
+  "lastChangelogVersion": "0.73.1",
   "defaultThinkingLevel": "off",
   "enabledModels": [
     "anthropic-vertex/claude-haiku-4-5-20251001",
@@ -15,5 +16,5 @@
     "anthropic-vertex/claude-opus-4-7",
     "anthropic-vertex/claude-opus-4-6"
   ],
-  "theme": "papercolor-light"
+  "theme": "dark"
 }
