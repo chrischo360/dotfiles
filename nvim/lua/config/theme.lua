@@ -5,14 +5,22 @@
 local M = {}
 
 local plugin_map = {
-  ["dracula"]          = "dracula.nvim",
-  ["onedark"]          = "onedark.nvim",
-  ["catppuccin-frappe"] = "catppuccin",
-  ["catppuccin-latte"]  = "catppuccin",
-  ["rose-pine-dawn"]   = "rose-pine",
-  ["PaperColor"]       = "papercolor-theme",
+  ["dracula"]            = "dracula.nvim",
+  ["onedark"]            = "onedark.nvim",
+  ["catppuccin-frappe"]  = "catppuccin",
+  ["catppuccin-latte"]   = "catppuccin",
+  ["rose-pine-dawn"]     = "rose-pine",
+  ["PaperColor"]         = "papercolor-theme",
   ["github_dark_dimmed"] = "github-theme",
-  ["github_light"]     = "github-theme",
+  ["github_light"]       = "github-theme",
+  ["gruvbox"]            = "gruvbox.nvim",
+  ["nightfox"]           = "nightfox.nvim",
+  ["carbonfox"]          = "nightfox.nvim",
+  ["duskfox"]            = "nightfox.nvim",
+  ["dayfox"]             = "nightfox.nvim",
+  ["everforest"]         = "everforest-nvim",
+  ["solarized"]          = "solarized.nvim",
+  ["custom"]             = "gruvbox-material",
 }
 
 -- Map theme name + mode -> colorscheme string and any pre-setup needed
@@ -78,6 +86,57 @@ local function resolve(theme, mode)
     local cs = mode == "light" and "github_light" or "github_dark_dimmed"
     return cs, function()
       require("github-theme").setup({})
+    end
+
+  elseif theme == "gruvbox" then
+    return "gruvbox", function()
+      require("gruvbox").setup({
+        contrast = mode == "dark" and "hard" or "soft",
+        bold = true,
+        italic = { strings = true, comments = true },
+      })
+      vim.o.background = mode == "light" and "light" or "dark"
+    end
+
+  elseif theme == "nightfox" then
+    -- dark variants: nightfox, duskfox, carbonfox
+    -- light variant: dayfox
+    -- nightfox uses pre-compiled themes; setup() not needed for defaults
+    local cs = mode == "light" and "dayfox" or "nightfox"
+    return cs, function() end
+
+  elseif theme == "carbonfox" then
+    return "carbonfox", function() end
+
+  elseif theme == "duskfox" then
+    return "duskfox", function() end
+
+  elseif theme == "everforest" then
+    return "everforest", function()
+      require("everforest").setup({
+        background = mode == "light" and "soft" or "hard",
+      })
+      vim.o.background = mode == "light" and "light" or "dark"
+    end
+
+  elseif theme == "solarized" then
+    return "solarized", function()
+      require("solarized").setup({
+        theme = mode == "light" and "neo" or "default",
+      })
+      vim.o.background = mode == "light" and "light" or "dark"
+    end
+
+  elseif theme == "custom" then
+    -- Hand-rolled dark/light pair. Tweak colors here to build your own aesthetic.
+    -- Currently based on gruvbox-material for a warm earthy base.
+    local variant = mode == "light" and "light" or "dark"
+    return "gruvbox-material", function()
+      vim.g.gruvbox_material_background = mode == "dark" and "hard" or "soft"
+      vim.g.gruvbox_material_foreground = "original"
+      vim.g.gruvbox_material_enable_italic = 1
+      vim.g.gruvbox_material_enable_bold = 1
+      vim.o.background = variant
     end
 
   else

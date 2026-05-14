@@ -28,12 +28,13 @@ export ANTHROPIC_VERTEX_PROJECT_ID=wf-gcp-us-sf-genai-pilot-sbx
 export CLOUD_ML_REGION=us-east5
 
 # Opus
-export ANTHROPIC_DEFAULT_OPUS_MODEL='claude-opus-4-6[1m]'
+export ANTHROPIC_DEFAULT_OPUS_MODEL='claude-opus-4-7[1m]'
+# export ANTHROPIC_DEFAULT_OPUS_MODEL='claude-opus-4-6[1m]'
 
 # Sonnet
-export ANTHROPIC_DEFAULT_SONNET_MODEL='claude-sonnet-4-6[1m]'
+# export ANTHROPIC_DEFAULT_SONNET_MODEL='claude-sonnet-4-6[1m]'
 # export ANTHROPIC_DEFAULT_SONNET_MODEL='claude-sonnet-4-6'
-# export ANTHROPIC_DEFAULT_SONNET_MODEL='claude-sonnet-4-5@20250929'
+export ANTHROPIC_DEFAULT_SONNET_MODEL='claude-sonnet-4-5@20250929'
 
 # Haiku
 # export ANTHROPIC_SMALL_FAST_MODEL='claude-sonnet-4-6[1m]'

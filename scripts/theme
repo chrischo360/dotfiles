@@ -67,6 +67,50 @@ switch_theme() {
                 ghostty_theme="Catppuccin Frappe"
             fi
             ;;
+        gruvbox)
+            if [ "$mode" = "light" ]; then
+                ghostty_theme="Gruvbox Light"
+            else
+                ghostty_theme="Gruvbox Dark Hard"
+            fi
+            ;;
+        nightfox)
+            if [ "$mode" = "light" ]; then
+                ghostty_theme="Dayfox"
+                nvim_theme="nightfox"
+            else
+                ghostty_theme="Nightfox"
+            fi
+            ;;
+        carbonfox)
+            ghostty_theme="Carbonfox"
+            mode="dark"
+            ;;
+        duskfox)
+            ghostty_theme="Duskfox"
+            mode="dark"
+            ;;
+        everforest)
+            if [ "$mode" = "light" ]; then
+                ghostty_theme="Everforest Light Med"
+            else
+                ghostty_theme="Everforest Dark Hard"
+            fi
+            ;;
+        solarized)
+            if [ "$mode" = "light" ]; then
+                ghostty_theme="iTerm2 Solarized Light"
+            else
+                ghostty_theme="iTerm2 Solarized Dark"
+            fi
+            ;;
+        custom)
+            if [ "$mode" = "light" ]; then
+                ghostty_theme="Gruvbox Light"
+            else
+                ghostty_theme="Gruvbox Dark Hard"
+            fi
+            ;;
         *)
             echo "Unknown theme: $theme"
             echo ""
@@ -79,6 +123,13 @@ switch_theme() {
             echo "  papercolor  - Clean high-contrast theme (dark/light)"
             echo "  github-dark - GitHub theme (dark/light)"
             echo "  catppuccin  - Pastel theme, frappe (dark) / latte (light)"
+            echo "  gruvbox     - Retro earthy yellows/oranges (dark/light)"
+            echo "  nightfox    - Muted blues dark (use 'light' for dayfox)"
+            echo "  carbonfox   - Carbon-toned dark (nightfox family)"
+            echo "  duskfox     - Warm dusk dark (nightfox family)"
+            echo "  everforest  - Natural green palette (dark/light)"
+            echo "  solarized   - Classic solarized (dark/light)"
+            echo "  custom      - Your custom theme (dark/light)"
             return 1
             ;;
     esac
@@ -97,21 +148,28 @@ switch_theme() {
         -e 'tell application "System Events" to keystroke "," using {command down, shift down}' \
         2>/dev/null && echo "Ghostty: reloaded all windows"
 
-    # --- Neovim live reload ---
+    # --- Neovim live reload (parallel, 3s timeout) ---
     echo "Neovim:  $theme ($mode)"
-    sockets=$(find /tmp /var/folders -name 'nvim.*' -type s 2>/dev/null)
-    if [ -n "$XDG_RUNTIME_DIR" ]; then
-        sockets="$sockets $(find "$XDG_RUNTIME_DIR" -name 'nvim.*' -type s 2>/dev/null)"
-    fi
-    reloaded=0
+    sockets=$(lsof -U -a -c nvim 2>/dev/null | awk '/nvim\.[0-9]+/ {print $NF}' | sort -u)
+    tmp_dir=$(mktemp -d)
+    pids=()
     for socket in $sockets; do
-        result=$(nvim --server "$socket" --remote-expr "v:lua.require('config.theme').switch('$theme', '$mode')" </dev/null 2>/dev/null)
-        if [ "$result" = "ok" ]; then
-            reloaded=$((reloaded + 1))
-        elif [ -n "$result" ]; then
-            echo "Neovim:  warning: $result"
-        fi
+        (
+            result=$(nvim --server "$socket" --remote-expr "v:lua.require('config.theme').switch('$theme', '$mode')" </dev/null 2>/dev/null)
+            [ "$result" = "ok" ] && echo "ok" >> "$tmp_dir/results"
+            [ -n "$result" ] && [ "$result" != "ok" ] && \
+              case "$result" in *"unknown theme"*) ;; *) echo "warn: $result" >> "$tmp_dir/results" ;; esac
+        ) &
+        pids+=($!)
     done
+    # Kill stragglers after 3s, then collect results
+    ( sleep 3; for pid in "${pids[@]}"; do kill "$pid" 2>/dev/null; done ) &
+    killer=$!
+    wait "${pids[@]}" 2>/dev/null
+    kill "$killer" 2>/dev/null
+    reloaded=$(grep -c "^ok$" "$tmp_dir/results" 2>/dev/null || echo 0)
+    grep "^warn:" "$tmp_dir/results" 2>/dev/null | while read -r line; do echo "Neovim:  $line"; done
+    rm -rf "$tmp_dir"
     [ "$reloaded" -gt 0 ] && echo "Neovim:  reloaded $reloaded instance(s) live"
 }
 
@@ -135,14 +193,26 @@ pick_theme() {
             "onedark|Atom-inspired dark theme" \
             "papercolor|Clean high-contrast dark theme" \
             "github-dark|GitHub Dark Dimmed" \
-            "catppuccin|Pastel dark theme (frappe)")
+            "catppuccin|Pastel dark theme (frappe)" \
+            "gruvbox|Retro earthy yellows/oranges" \
+            "nightfox|Muted navy blues" \
+            "carbonfox|Carbon-toned dark (nightfox family)" \
+            "duskfox|Warm dusk dark (nightfox family)" \
+            "everforest|Natural green palette" \
+            "solarized|Classic solarized dark" \
+            "custom|Your custom dark theme")
     else
         themes=$(printf '%s\n' \
             "onedark|Atom-inspired light theme" \
             "rose-pine|Elegant light theme (dawn)" \
             "papercolor|Clean high-contrast light theme" \
             "github-dark|GitHub Light" \
-            "catppuccin|Pastel light theme (latte)")
+            "catppuccin|Pastel light theme (latte)" \
+            "gruvbox|Retro earthy warm tones" \
+            "nightfox|Dayfox clean professional light" \
+            "everforest|Natural green palette light" \
+            "solarized|Classic solarized light" \
+            "custom|Your custom light theme")
     fi
 
     local selection
