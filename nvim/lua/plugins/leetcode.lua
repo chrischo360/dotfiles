@@ -2,6 +2,44 @@
 -- Description: Solve LeetCode problems directly in Neovim
 -- Keybindings: <leader>lq (menu), <leader>lr (run), <leader>ls (submit), <leader>lc (change language)
 
+local function leetcode_theme()
+  if vim.o.background == "light" then
+    return {
+      [""] = { fg = "#111111" },
+      normal = { fg = "#111111" },
+      alt = { fg = "#444444" },
+      header = { fg = "#000000", bold = true },
+      easy = { fg = "#007a00" },
+      medium = { fg = "#b36200" },
+      hard = { fg = "#cc0000" },
+      link = { fg = "#0055cc", underline = true },
+    }
+  end
+
+  return {
+    normal = { fg = "#e0e0e0" },
+    alt = { fg = "#aaaaaa" },
+    header = { fg = "#ffffff", bold = true },
+    easy = { fg = "#4ec94e" },
+    medium = { fg = "#f0a030" },
+    hard = { fg = "#ff5555" },
+    link = { fg = "#6699ff", underline = true },
+  }
+end
+
+vim.api.nvim_create_autocmd("ColorScheme", {
+  group = vim.api.nvim_create_augroup("leetcode_theme_sync", { clear = true }),
+  callback = function()
+    local config_ok, config = pcall(require, "leetcode.config")
+    local theme_ok, theme = pcall(require, "leetcode.theme")
+
+    if config_ok and theme_ok and config.user then
+      config.user.theme = leetcode_theme()
+      theme.load()
+    end
+  end,
+})
+
 return {
   "kawre/leetcode.nvim",
   build = ":TSUpdate html",
@@ -11,141 +49,137 @@ return {
     "MunifTanjim/nui.nvim",
     "nvim-treesitter/nvim-treesitter",
     "nvim-tree/nvim-web-devicons",
+    {
+      "3rd/image.nvim",
+      build = false,
+      opts = {
+        backend = "kitty",
+        processor = "magick_cli",
+        integrations = {
+          markdown = { enabled = false },
+          asciidoc = { enabled = false },
+          neorg = { enabled = false },
+          rst = { enabled = false },
+          typst = { enabled = false },
+          html = { enabled = false },
+          css = { enabled = false },
+        },
+      },
+    },
   },
   cmd = "Leet",
-  opts = {
-    lang = "python3", -- Default language (can be changed with :Leet lang)
-    cn = { enabled = false }, -- Use LeetCode.com (not .cn)
+  opts = function()
+    return {
+      lang = "python3", -- Default language (can be changed with :Leet lang)
+      cn = { enabled = false }, -- Use LeetCode.com (not .cn)
 
-    storage = {
-      home = vim.fn.expand("~/leetcode"),
-      cache = vim.fn.stdpath("cache") .. "/leetcode",
-    },
-
-    plugins = {
-      non_standalone = true,
-    },
-
-    logging = true,
-    injector = {},
-
-    cache = {
-      update_interval = 60 * 60 * 24 * 7, -- Update cache every 7 days
-    },
-
-    console = {
-      open_on_runcode = true,
-      dir = "row",
-      size = { width = "90%", height = "75%" },
-      result = { size = "60%" },
-      testcase = {
-        virt_text = true,
-        size = "40%",
+      storage = {
+        home = vim.fn.expand("~/leetcode"),
+        cache = vim.fn.stdpath("cache") .. "/leetcode",
       },
-    },
 
-    description = {
-      position = "left",
-      width = "40%",
-      show_stats = true,
-    },
-
-    hooks = {
-      ["enter"] = {
-        function()
-          vim.keymap.set("n", "<C-h>", "<C-w>h", { noremap = true, silent = true })
-          vim.keymap.set("n", "<C-l>", "<C-w>l", { noremap = true, silent = true })
-        end,
+      plugins = {
+        non_standalone = true,
       },
-      ["question_enter"] = {
-        -- Fix Rust LSP by generating rust-project.json
-        function()
-          local file_extension = vim.fn.expand("%:e")
-          if file_extension == "rs" then
-            local leetcode_dir = vim.fn.stdpath("data") .. "/leetcode"
 
-            -- Get sysroot path
-            local handle = io.popen("rustc --print sysroot")
-            local sysroot = handle:read("*a"):gsub("%s+", "")
-            handle:close()
-            local sysroot_src = sysroot .. "/lib/rustlib/src/rust/library"
+      logging = true,
+      injector = {},
 
-            -- Find all .rs files in the leetcode directory
-            local rs_files = vim.fn.glob(leetcode_dir .. "/*.rs", false, true)
-            local crates = {}
+      cache = {
+        update_interval = 60 * 60 * 24 * 7, -- Update cache every 7 days
+      },
 
-            for _, file in ipairs(rs_files) do
-              local filename = vim.fn.fnamemodify(file, ":t")
-              table.insert(crates, {
-                root_module = filename,
-                edition = "2021",
-                deps = {},
-              })
-            end
+      console = {
+        open_on_runcode = true,
+        dir = "row",
+        size = { width = "90%", height = "75%" },
+        result = { size = "60%" },
+        testcase = {
+          virt_text = true,
+          size = "40%",
+        },
+      },
 
-            -- Generate rust-project.json
-            local rust_project = {
-              sysroot_src = sysroot_src,
-              crates = crates,
-            }
+      description = {
+        position = "left",
+        width = "40%",
+        show_stats = true,
+      },
 
-            local json_file = leetcode_dir .. "/rust-project.json"
-            local f = io.open(json_file, "w")
-            if f then
-              f:write(vim.fn.json_encode(rust_project))
-              f:close()
+      hooks = {
+        ["enter"] = {
+          function()
+            vim.keymap.set("n", "<C-h>", "<C-w>h", { noremap = true, silent = true })
+            vim.keymap.set("n", "<C-l>", "<C-w>l", { noremap = true, silent = true })
+          end,
+        },
+        ["question_enter"] = {
+          -- Fix Rust LSP by generating rust-project.json
+          function()
+            local file_extension = vim.fn.expand("%:e")
+            if file_extension == "rs" then
+              local leetcode_dir = vim.fn.stdpath("data") .. "/leetcode"
 
-              -- Restart rust_analyzer LSP if it's attached
-              vim.defer_fn(function()
-                for _, client in ipairs(vim.lsp.get_clients({ bufnr = 0 })) do
-                  if client.name == "rust_analyzer" then
-                    vim.cmd("LspRestart rust_analyzer")
-                    break
+              -- Get sysroot path
+              local handle = io.popen("rustc --print sysroot")
+              local sysroot = handle:read("*a"):gsub("%s+", "")
+              handle:close()
+              local sysroot_src = sysroot .. "/lib/rustlib/src/rust/library"
+
+              -- Find all .rs files in the leetcode directory
+              local rs_files = vim.fn.glob(leetcode_dir .. "/*.rs", false, true)
+              local crates = {}
+
+              for _, file in ipairs(rs_files) do
+                local filename = vim.fn.fnamemodify(file, ":t")
+                table.insert(crates, {
+                  root_module = filename,
+                  edition = "2021",
+                  deps = {},
+                })
+              end
+
+              -- Generate rust-project.json
+              local rust_project = {
+                sysroot_src = sysroot_src,
+                crates = crates,
+              }
+
+              local json_file = leetcode_dir .. "/rust-project.json"
+              local f = io.open(json_file, "w")
+              if f then
+                f:write(vim.fn.json_encode(rust_project))
+                f:close()
+
+                -- Restart rust_analyzer LSP if it's attached
+                vim.defer_fn(function()
+                  for _, client in ipairs(vim.lsp.get_clients({ bufnr = 0 })) do
+                    if client.name == "rust_analyzer" then
+                      vim.cmd("LspRestart rust_analyzer")
+                      break
+                    end
                   end
-                end
-              end, 100)
+                end, 100)
+              end
             end
-          end
-        end,
+          end,
+        },
+        ["leave"] = {},
       },
-      ["leave"] = {},
-    },
 
-    keys = {
-      toggle = { "q" },
-      confirm = { "<CR>" },
-      reset_testcases = "r",
-      use_testcase = "U",
-      focus_testcases = "H",
-      focus_result = "L",
-    },
+      keys = {
+        toggle = { "q" },
+        confirm = { "<CR>" },
+        reset_testcases = "r",
+        use_testcase = "U",
+        focus_testcases = "H",
+        focus_result = "L",
+      },
 
-    theme = (function()
-      local bg = vim.o.background
-      if bg == "light" then
-        return {
-          normal    = { fg = "#111111" },
-          alt       = { fg = "#444444" },
-          header    = { fg = "#000000", bold = true },
-          easy      = { fg = "#007a00" },
-          medium    = { fg = "#b36200" },
-          hard      = { fg = "#cc0000" },
-          link      = { fg = "#0055cc", underline = true },
-        }
-      else
-        return {
-          normal    = { fg = "#e0e0e0" },
-          alt       = { fg = "#aaaaaa" },
-          header    = { fg = "#ffffff", bold = true },
-          easy      = { fg = "#4ec94e" },
-          medium    = { fg = "#f0a030" },
-          hard      = { fg = "#ff5555" },
-          link      = { fg = "#6699ff", underline = true },
-        }
-      end
-    end)(),
-    image_support = false,
-  },
+      theme = leetcode_theme(),
+      image_support = false,
+    }
+  end,
 
   keys = {
     -- Core commands

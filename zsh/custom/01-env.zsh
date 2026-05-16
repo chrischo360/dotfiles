@@ -56,8 +56,11 @@ export CDPATH=".:~:~/codebase"
 export EDITOR="nvim"
 export VISUAL="nvim"
 
+# export GLEAN_API_TOKEN="***REMOVED-SECRET***"
 export GLEAN_API_TOKEN="***REMOVED-SECRET***"
+export GLEAN_MCP_TOKEN="***REMOVED-SECRET***"
 export GLEAN_INSTANCE="wayfair"
+export GLEAN_MCP_USE_API_TOKEN=true
 # export SOURCEGRAPH_TOKEN="***REMOVED-SECRET***"
 export SOURCEGRAPH_URL="https://wayfair.sourcegraphcloud.com"
 export SOURCEGRAPH_TOKEN="***REMOVED-SECRET***"

@@ -1,5 +1,6 @@
 {
   "extensions": [
+    "~/.pi/agent/extensions/mcp-datadog",
     "~/.pi/agent/extensions/mcp-glean",
     "~/.pi/agent/extensions/mcp-sourcegraph",
     "~/.pi/agent/extensions/session-status",
@@ -11,7 +12,7 @@
   ],
   "defaultModel": "gpt-5.5",
   "lastChangelogVersion": "0.74.0",
-  "defaultThinkingLevel": "medium",
+  "defaultThinkingLevel": "off",
   "enabledModels": [
     "anthropic-vertex/claude-haiku-4-5-20251001",
     "anthropic-vertex/claude-sonnet-4-6",
@@ -23,7 +24,7 @@
   "compaction": {
     "enabled": false
   },
-  "hideThinkingBlock": true,
+  "hideThinkingBlock": false,
   "quietStartup": true,
   "treeFilterMode": "default"
 }

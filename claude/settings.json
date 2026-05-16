@@ -158,6 +158,11 @@
     "padding": 0
   },
   "alwaysThinkingEnabled": false,
+  "theme": "dark-ansi",
+  "editorMode": "vim",
+  "preferredNotifChannel": "kitty",
+  "autoCompactEnabled": false,
+  "fileCheckpointingEnabled": false,
   "defaultMode": "plan",
   "allowedTools": [
     {
@@ -277,5 +282,8 @@
     "/Users/cc446g/codebase/terraform"
   ],
   "mcpServers": {},
-  "autoUpdaterStatus": "disabled"
+  "autoUpdaterStatus": "disabled",
+  "enabledPlugins": {
+    "vercel@claude-plugins-official": true
+  }
 }

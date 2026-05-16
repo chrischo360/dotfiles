@@ -63,7 +63,29 @@ Ask: "This involves [reason]. Would you like me to use [approach]?"
 
 ### 6. Version Control
 - **NEVER commit code** — I handle all commits manually
-- **NEVER run git commands** — no `git add`, `git commit`, `git push`, etc.
+- **Safe git commands are allowed for inspection only**:
+  - `git status`
+  - `git diff`
+  - `git diff --staged`
+  - `git log`
+  - `git show`
+  - `git branch --show-current`
+  - `git merge-base`
+  - `git ls-files`
+- **Never run git commands that change repository state** unless explicitly requested:
+  - `git add`
+  - `git commit`
+  - `git push`
+  - `git pull`
+  - `git fetch`
+  - `git checkout`
+  - `git switch`
+  - `git merge`
+  - `git rebase`
+  - `git reset`
+  - `git stash`
+  - `git clean`
+  - `git restore`
 - **After completing implementations**, provide the git commit command in one of two ways:
 
   **Option 1: Write to /tmp script (preferred for complex commits):**

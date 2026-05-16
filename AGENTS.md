@@ -61,6 +61,10 @@ vim ~/dotfiles/.env
 - `BUILDKITE_TOKEN` - Buildkite API token (CI monitoring)
 - `GLEAN_API_TOKEN` - Glean API token (Wayfair knowledge base)
 - `GLEAN_INSTANCE` - Glean instance name (default: wayfair)
+- `DD_API_KEY` - Datadog API key (Pi Datadog MCP)
+- `DD_APPLICATION_KEY` - Datadog application key (Pi Datadog MCP)
+- `DD_MCP_DOMAIN` - Datadog MCP domain (default: mcp.datadoghq.com)
+- `DD_MCP_TOOLSETS` - Datadog MCP toolsets (default: all)
 - `GIT_AUTHOR_EMAIL` - Git user email (for reference, actual value in gitconfig)
 - `GIT_AUTHOR_NAME` - Git user name (for reference, actual value in gitconfig)
 
