@@ -421,38 +421,4 @@ function M.quick_diff_menu()
   end)
 end
 
--- Setup keymaps for these utilities
-function M.setup_keymaps()
-  local opts = { noremap = true, silent = true }
-
-  -- GitHub link utilities
-  vim.keymap.set(
-    "n",
-    "<leader>gy",
-    M.copy_github_permalink,
-    vim.tbl_extend("force", opts, { desc = "Copy GitHub permalink" })
-  )
-
-  vim.keymap.set(
-    "v",
-    "<leader>gy",
-    M.copy_github_permalink_range,
-    vim.tbl_extend("force", opts, { desc = "Copy GitHub permalink (selection)" })
-  )
-
-  vim.keymap.set(
-    "n",
-    "<leader>go",
-    M.open_on_github,
-    vim.tbl_extend("force", opts, { desc = "Open file on GitHub" })
-  )
-
-  vim.keymap.set(
-    "n",
-    "<leader>gp",
-    M.open_pr_diff,
-    vim.tbl_extend("force", opts, { desc = "Open GitHub PR in diffview" })
-  )
-end
-
 return M

@@ -12,10 +12,6 @@ eval "$(~/.local/bin/mise activate zsh)"
 # Set JAVA_HOME immediately after mise activation
 export JAVA_HOME="$HOME/.sdkman/candidates/java/current"
 
-# mise shims - Add explicitly to ensure tools are found before Homebrew
-# This ensures mise-managed tools take priority over Homebrew
-export PATH="$HOME/.local/share/mise/shims:$PATH"
-
 # Yarn (for legacy yarn installations)
 export PATH="$HOME/.yarn/bin:$HOME/.config/yarn/global/node_modules/.bin:$PATH"
 

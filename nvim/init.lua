@@ -1,5 +1,6 @@
 require("config.lazy")
 require("config.notes")
+require("config.git-keymaps")
 
 -- Clear search highlighting with Escape
 vim.keymap.set("n", "<Esc>", "<cmd>nohlsearch<CR>", { desc = "Clear search highlighting" })

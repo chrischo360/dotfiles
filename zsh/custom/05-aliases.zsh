@@ -35,6 +35,21 @@ fi
 # Change this to switch AI providers: "claude", "cursor agent", "gemini", etc.
 alias cli-agent='cursor agent'
 
+# Pi - inject Claude's Glean MCP token for this process only
+pi() {
+  if [ -z "$GLEAN_MCP_TOKEN" ] && [ -z "$GLEAN_MCP_AUTH_HEADER" ] && [ -r "$HOME/.claude/.credentials.json" ]; then
+    local token
+    token=$(jq -r '.mcpOAuth | to_entries[] | select(.value.serverName=="glean_default" or .value.serverUrl=="https://wayfair-be.glean.com/mcp/default") | .value.accessToken' "$HOME/.claude/.credentials.json" 2>/dev/null | head -n1)
+
+    if [ -n "$token" ] && [ "$token" != "null" ]; then
+      GLEAN_MCP_TOKEN="$token" command pi "$@"
+      return
+    fi
+  fi
+
+  command pi "$@"
+}
+
 # Git shortcuts
 alias gs="git status -sb"
 alias gc="git commit"

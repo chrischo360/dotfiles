@@ -1,3 +1,7 @@
+import { execFileSync } from "node:child_process";
+import fs from "node:fs";
+import os from "node:os";
+import path from "node:path";
 import type { ExtensionAPI } from "@mariozechner/pi-coding-agent";
 import { Type } from "@sinclair/typebox";
 
@@ -7,13 +11,78 @@ function getMcpUrl(): string {
 	return process.env.GLEAN_MCP_URL || "https://wayfair-be.glean.com/mcp/default";
 }
 
-function getAuthHeader(): string | undefined {
-	if (process.env.GLEAN_MCP_AUTH_HEADER) return process.env.GLEAN_MCP_AUTH_HEADER;
-	if (process.env.GLEAN_MCP_TOKEN) return `Bearer ${process.env.GLEAN_MCP_TOKEN}`;
-	if (process.env.GLEAN_MCP_USE_API_TOKEN === "true" && process.env.GLEAN_API_TOKEN) {
-		return `Bearer ${process.env.GLEAN_API_TOKEN}`;
+function getClaudeGleanAuthHeader(): string | undefined {
+	const credentialsPath = path.join(os.homedir(), ".claude", ".credentials.json");
+	if (!fs.existsSync(credentialsPath)) return undefined;
+
+	try {
+		const credentials = JSON.parse(fs.readFileSync(credentialsPath, "utf8"));
+		const oauth = credentials?.mcpOAuth ?? {};
+		const key = Object.keys(oauth).find((entryKey) => {
+			const entry = oauth[entryKey];
+			return entry?.serverName === "glean_default" || entry?.serverUrl === "https://wayfair-be.glean.com/mcp/default";
+		});
+		if (!key) return undefined;
+
+		const entry = oauth[key] as {
+			accessToken?: string;
+			refreshToken?: string;
+			clientId?: string;
+			expiresAt?: number;
+			scope?: string;
+		};
+
+		if (entry.accessToken && entry.expiresAt && entry.expiresAt > Date.now() + 60_000) {
+			return `Bearer ${entry.accessToken}`;
+		}
+
+		if (!entry.refreshToken || !entry.clientId) return entry.accessToken ? `Bearer ${entry.accessToken}` : undefined;
+
+		const tokenResponse = JSON.parse(
+			execFileSync(
+				"curl",
+				[
+					"--silent",
+					"--show-error",
+					"--fail",
+					"--max-time",
+					"15",
+					"--request",
+					"POST",
+					"--header",
+					"Content-Type: application/x-www-form-urlencoded",
+					"--data",
+					new URLSearchParams({
+						grant_type: "refresh_token",
+						refresh_token: entry.refreshToken,
+						client_id: entry.clientId,
+					}).toString(),
+					"https://wayfair-be.glean.com/oauth/token",
+				],
+				{ encoding: "utf8" },
+			),
+		);
+
+		entry.accessToken = tokenResponse.access_token;
+		entry.refreshToken = tokenResponse.refresh_token ?? entry.refreshToken;
+		entry.expiresAt = Date.now() + Number(tokenResponse.expires_in ?? 0) * 1000;
+		entry.scope = tokenResponse.scope ?? entry.scope;
+		fs.writeFileSync(credentialsPath, JSON.stringify(credentials));
+
+		return entry.accessToken ? `Bearer ${entry.accessToken}` : undefined;
+	} catch {
+		return undefined;
 	}
-	return undefined;
+}
+
+function getAuthHeader(): string {
+	if (process.env.GLEAN_MCP_AUTH_HEADER) return process.env.GLEAN_MCP_AUTH_HEADER;
+	const claudeAuth = getClaudeGleanAuthHeader();
+	if (claudeAuth) return claudeAuth;
+	if (process.env.GLEAN_MCP_TOKEN) return `Bearer ${process.env.GLEAN_MCP_TOKEN}`;
+	throw new Error(
+		"Glean MCP auth missing. Run Claude with glean_default once, or set GLEAN_MCP_AUTH_HEADER / GLEAN_MCP_TOKEN before starting Pi.",
+	);
 }
 
 function truncate(content: string): string {
@@ -91,9 +160,9 @@ async function mcpCall(
 	}
 
 	const content = extractMcpText(result.stdout || result.stderr);
-	if (content.includes('"error":"invalid_token"') || content.includes("Authentication required")) {
+	if (content.includes('"error":"invalid_token"') || content.includes("Authentication required") || content.includes("Invalid Secret")) {
 		throw new Error(
-			"Glean MCP authentication failed. Set GLEAN_MCP_AUTH_HEADER or GLEAN_MCP_TOKEN for https://wayfair-be.glean.com/mcp/default.",
+			"Glean MCP authentication failed. Refresh Claude's glean_default MCP login, or set GLEAN_MCP_AUTH_HEADER / GLEAN_MCP_TOKEN for https://wayfair-be.glean.com/mcp/default.",
 		);
 	}
 	return truncate(content);

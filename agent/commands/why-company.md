@@ -16,7 +16,7 @@ Steps:
    cat ~/notes/resumes/app-questions.md
    ```
    ```bash
-   cat ~/dotfiles/claude/commands/notes/experience.md
+   cat ~/dotfiles/career/background.md
    ```
 
 3. Extract 1-2 company-specific hooks from the JD that map to the user's documented motivations.
@@ -52,8 +52,8 @@ Steps:
    - [ ] At least one concrete detail: company name, product area, or specific outcome
    - [ ] Reads like the pitch template voice — declarative, peer-to-peer, no cover letter formality
 
-   Reference: the pitch template at ~/dotfiles/claude/commands/notes/pitch.md is the canonical
-   voice example. Match that register, not a polished essay register.
+   Reference: the pitch command at ~/dotfiles/agent/commands/pitch.md is the canonical voice
+   example. Match that register, not a polished essay register.
 
 7. Output the answer, then ask: "Does this feel right? Anything to adjust?"
    Apply any edits surgically — don't rewrite sections that weren't touched.
@@ -75,8 +75,8 @@ What this does:
 
 Notes:
 - Bank file: ~/notes/resumes/app-questions.md (why-company entry is the canonical base)
-- Experience profile: ~/dotfiles/claude/commands/notes/experience.md
-- Pitch template: ~/dotfiles/claude/commands/notes/pitch.md — canonical voice reference
+- Experience profile: ~/dotfiles/career/background.md
+- Pitch command: ~/dotfiles/agent/commands/pitch.md — canonical voice reference
 - Do not fabricate experience — draw only from the bank raw notes or what the user provides
 - This command is for written application fields. For interview prep, use /answer-app-questions
 - If the user provides new context not in the raw notes, use it for the answer and flag that

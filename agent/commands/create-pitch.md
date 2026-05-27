@@ -86,22 +86,10 @@ Sources to pull from:
 - Lists of skills without context
 - No demonstration of research
 
-## Resources Needed
+## Resources
 
-Create these files to support the command:
+Read these files before generating:
+- `career/background.md` — required experience profile
+- `career/examples/successful-pitches.md` — optional examples; use only if it has real examples
 
-### `career/background.md`
-Your professional background:
-- Work experience (companies, roles, achievements)
-- Technical skills (languages, frameworks, tools)
-- Education (degree, school, relevant coursework)
-- Projects (personal, entrepreneurial, side projects)
-- Key strengths (product sense, ownership examples, etc.)
-
-### `career/examples/successful-pitches.md`
-Examples of pitches that got responses:
-- Company name
-- Role applied for
-- Pitch text
-- Outcome (interview, offer, etc.)
-- What worked (analysis)
+If `career/background.md` is missing, stop and ask the user for background details. Do not invent experience.

@@ -12,57 +12,6 @@ return {
     "DiffviewFileHistory",
     "DiffviewRefresh",
   },
-  keys = {
-    -- Toggle diffview (shows uncommitted changes by default)
-    {
-      "<leader>dv",
-      function()
-        if next(require("diffview.lib").views) == nil then
-          local start = vim.loop.hrtime()
-          vim.cmd("DiffviewOpen")
-          local elapsed = (vim.loop.hrtime() - start) / 1e6
-          -- Below print command for debugging time took
-          -- print(string.format("DiffviewOpen took %.2f ms", elapsed))
-        else
-          vim.cmd("DiffviewClose")
-        end
-      end,
-      desc = "Toggle Diffview (uncommitted changes)",
-    },
-    -- File history
-    {
-      "<leader>dfh",
-      "<cmd>DiffviewFileHistory %<cr>",
-      desc = "File History (current file)",
-    },
-    {
-      "<leader>dfa",
-      "<cmd>DiffviewFileHistory<cr>",
-      desc = "File History (all files)",
-    },
-    {
-      "<leader>gl",
-      ":'<,'>DiffviewFileHistory<CR>",
-      desc = "Git Line History (selected lines)",
-      mode = "v",
-    },
-    -- Quick HEAD~n comparisons
-    { "<leader>d1", "<cmd>DiffviewOpen HEAD~1<cr>", desc = "Diff with HEAD~1" },
-    { "<leader>d2", "<cmd>DiffviewOpen HEAD~2<cr>", desc = "Diff with HEAD~2" },
-    { "<leader>d3", "<cmd>DiffviewOpen HEAD~3<cr>", desc = "Diff with HEAD~3" },
-    { "<leader>d4", "<cmd>DiffviewOpen HEAD~4<cr>", desc = "Diff with HEAD~4" },
-    { "<leader>d5", "<cmd>DiffviewOpen HEAD~5<cr>", desc = "Diff with HEAD~5" },
-    { "<leader>d6", "<cmd>DiffviewOpen HEAD~6<cr>", desc = "Diff with HEAD~6" },
-    { "<leader>d7", "<cmd>DiffviewOpen HEAD~7<cr>", desc = "Diff with HEAD~7" },
-    { "<leader>d8", "<cmd>DiffviewOpen HEAD~8<cr>", desc = "Diff with HEAD~8" },
-    { "<leader>d9", "<cmd>DiffviewOpen HEAD~9<cr>", desc = "Diff with HEAD~9" },
-    { "<leader>d0", "<cmd>DiffviewOpen HEAD~10<cr>", desc = "Diff with HEAD~10" },
-    -- diff-utils.lua keymaps — listed here so lazy.nvim loads diffview on keypress
-    { "<leader>dm", function() require("utils.diff-utils").compare_with_main() end, desc = "Compare with main/master" },
-    { "<leader>db", function() require("utils.diff-utils").compare_with_branch_interactive() end, desc = "Compare current with branch" },
-    { "<leader>d2b", function() require("utils.diff-utils").compare_branches_interactive() end, desc = "Compare two branches" },
-    { "<leader>dq", function() require("utils.diff-utils").quick_diff_menu() end, desc = "Quick Diff Menu" },
-  },
   config = function()
     local actions = require("diffview.actions")
 
@@ -337,9 +286,5 @@ return {
         },
       },
     })
-
-    -- Setup advanced diff utilities
-    local diff_utils = require("utils.diff-utils")
-    diff_utils.setup_keymaps()
   end,
 }

@@ -21,7 +21,26 @@ show_current() {
     echo "Mode:    $(get_mode)"
 }
 
-switch_theme() {
+print_usage() {
+    echo "Usage: theme <name> [dark|light]"
+    echo ""
+    echo "Available themes:"
+    echo "  dracula     - Purple/pink dark theme"
+    echo "  onedark     - Atom-inspired theme (dark/light)"
+    echo "  rose-pine   - Elegant light theme (dawn)"
+    echo "  papercolor  - Clean high-contrast theme (dark/light)"
+    echo "  github-dark - GitHub theme (dark/light)"
+    echo "  catppuccin  - Pastel theme, frappe (dark) / latte (light)"
+    echo "  gruvbox     - Retro earthy yellows/oranges (dark/light)"
+    echo "  nightfox    - Muted blues dark (use 'light' for dayfox)"
+    echo "  carbonfox   - Carbon-toned dark (nightfox family)"
+    echo "  duskfox     - Warm dusk dark (nightfox family)"
+    echo "  everforest  - Natural green palette (dark/light)"
+    echo "  solarized   - Classic solarized (dark/light)"
+    echo "  custom      - Your custom theme (dark/light)"
+}
+
+resolve_theme() {
     local theme=$1
     local mode=${2:-dark}
     local ghostty_theme
@@ -30,7 +49,7 @@ switch_theme() {
     case "$theme" in
         dracula)
             if [ "$mode" = "light" ]; then
-                echo "dracula: no light variant, using dark"
+                echo "dracula: no light variant, using dark" >&2
                 mode="dark"
             fi
             ghostty_theme="Dracula"
@@ -112,27 +131,49 @@ switch_theme() {
             fi
             ;;
         *)
-            echo "Unknown theme: $theme"
-            echo ""
-            echo "Usage: theme <name> [dark|light]"
-            echo ""
-            echo "Available themes:"
-            echo "  dracula     - Purple/pink dark theme"
-            echo "  onedark     - Atom-inspired theme (dark/light)"
-            echo "  rose-pine   - Elegant light theme (dawn)"
-            echo "  papercolor  - Clean high-contrast theme (dark/light)"
-            echo "  github-dark - GitHub theme (dark/light)"
-            echo "  catppuccin  - Pastel theme, frappe (dark) / latte (light)"
-            echo "  gruvbox     - Retro earthy yellows/oranges (dark/light)"
-            echo "  nightfox    - Muted blues dark (use 'light' for dayfox)"
-            echo "  carbonfox   - Carbon-toned dark (nightfox family)"
-            echo "  duskfox     - Warm dusk dark (nightfox family)"
-            echo "  everforest  - Natural green palette (dark/light)"
-            echo "  solarized   - Classic solarized (dark/light)"
-            echo "  custom      - Your custom theme (dark/light)"
+            echo "Unknown theme: $theme" >&2
+            echo "" >&2
+            print_usage >&2
             return 1
             ;;
     esac
+
+    printf '%s|%s|%s\n' "$ghostty_theme" "$nvim_theme" "$mode"
+}
+
+preview_theme() {
+    local theme=$1
+    local mode=${2:-dark}
+    local desc=$3
+    local resolved ghostty_theme nvim_theme
+
+    resolved=$(resolve_theme "$theme" "$mode" 2>/dev/null) || exit 0
+    ghostty_theme=$(echo "$resolved" | cut -d'|' -f1)
+    nvim_theme=$(echo "$resolved" | cut -d'|' -f2)
+    mode=$(echo "$resolved" | cut -d'|' -f3)
+
+    printf 'Theme:   %s\n' "$theme"
+    printf 'Mode:    %s\n' "$mode"
+    printf 'Ghostty: %s\n' "$ghostty_theme"
+    printf 'Neovim:  %s\n\n' "$nvim_theme"
+    [ -n "$desc" ] && printf '%s\n\n' "$desc"
+
+    printf 'ANSI sample:\n\n'
+    printf '\033[30mBlack\033[0m   \033[37mWhite\033[0m   \033[90mBright black\033[0m\n'
+    printf '\033[31mRed\033[0m     \033[32mGreen\033[0m   \033[33mYellow\033[0m\n'
+    printf '\033[34mBlue\033[0m    \033[35mMagenta\033[0m \033[36mCyan\033[0m\n\n'
+    printf '\033[40m  \033[0m \033[41m  \033[0m \033[42m  \033[0m \033[43m  \033[0m \033[44m  \033[0m \033[45m  \033[0m \033[46m  \033[0m \033[47m  \033[0m\n'
+}
+
+switch_theme() {
+    local theme=$1
+    local mode=${2:-dark}
+    local resolved ghostty_theme nvim_theme
+
+    resolved=$(resolve_theme "$theme" "$mode") || return 1
+    ghostty_theme=$(echo "$resolved" | cut -d'|' -f1)
+    nvim_theme=$(echo "$resolved" | cut -d'|' -f2)
+    mode=$(echo "$resolved" | cut -d'|' -f3)
 
     # Save state
     echo "$mode" > "$MODE_FILE"
@@ -149,13 +190,13 @@ switch_theme() {
         2>/dev/null && echo "Ghostty: reloaded all windows"
 
     # --- Neovim live reload (parallel, 3s timeout) ---
-    echo "Neovim:  $theme ($mode)"
+    echo "Neovim:  $nvim_theme ($mode)"
     sockets=$(lsof -U -a -c nvim 2>/dev/null | awk '/nvim\.[0-9]+/ {print $NF}' | sort -u)
     tmp_dir=$(mktemp -d)
     pids=()
     for socket in $sockets; do
         (
-            result=$(nvim --server "$socket" --remote-expr "v:lua.require('config.theme').switch('$theme', '$mode')" </dev/null 2>/dev/null)
+            result=$(nvim --server "$socket" --remote-expr "v:lua.require('config.theme').switch('$nvim_theme', '$mode')" </dev/null 2>/dev/null)
             [ "$result" = "ok" ] && echo "ok" >> "$tmp_dir/results"
             [ -n "$result" ] && [ "$result" != "ok" ] && \
               case "$result" in *"unknown theme"*) ;; *) echo "warn: $result" >> "$tmp_dir/results" ;; esac
@@ -217,14 +258,22 @@ pick_theme() {
 
     local selection
     selection=$(printf '%s\n' "$themes" \
-        | column -t -s'|' \
-        | fzf --header "Select $mode theme" \
+        | fzf --delimiter='|' \
+              --with-nth=1,2 \
+              --header "Select $mode theme" \
               --prompt "Theme > " \
-              --height 30% --reverse \
-        | awk '{print $1}')
+              --height 50% --reverse \
+              --preview "$0 --preview {1} $mode {2}" \
+              --preview-window=right:55% \
+        | cut -d'|' -f1)
 
     [ -n "$selection" ] && switch_theme "$selection" "$mode"
 }
+
+if [ "$1" = "--preview" ]; then
+    preview_theme "$2" "$3" "$4"
+    exit 0
+fi
 
 if [ $# -eq 0 ]; then
     if command -v fzf &>/dev/null; then

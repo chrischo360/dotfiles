@@ -7,20 +7,18 @@
     "~/.pi/agent/extensions/web-tools"
   ],
   "defaultProvider": "openai-codex",
-  "prompts": [
-    "~/dotfiles/claude/commands/global"
-  ],
   "defaultModel": "gpt-5.5",
   "lastChangelogVersion": "0.74.0",
-  "defaultThinkingLevel": "off",
+  "defaultThinkingLevel": "medium",
   "enabledModels": [
     "anthropic-vertex/claude-haiku-4-5-20251001",
     "anthropic-vertex/claude-sonnet-4-6",
     "anthropic-vertex/claude-opus-4-7",
     "anthropic-vertex/claude-opus-4-6",
-    "openai-codex/gpt-5.5"
+    "openai-codex/gpt-5.5",
+    "openai/gpt-5.4-mini"
   ],
-  "theme": "dark",
+  "theme": "papercolor-light",
   "compaction": {
     "enabled": false
   },

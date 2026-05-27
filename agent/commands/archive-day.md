@@ -3,10 +3,20 @@ Move uncompleted tasks from current day to a specified day in the weekly plan.
 Steps:
 
 1. Parse command arguments:
-   - Determine source day: auto-detect from system date (Monday-Friday) or use `--from <day>` flag
-   - Determine target day: next calendar day by default or use `--to <day>` flag
+   - Use the system clock to determine the current weekday and hour:
+     ```bash
+     current_day="$(date +%A)"
+     current_hour="$(date +%H)"
+     ```
+   - Determine source/target defaults from current time unless overridden by `--from <day>` or `--to <day>`:
+     * Beginning/midday (`current_hour` < 15): move previous weekday → current day
+     * End of day (`current_hour` >= 15): move current day → next weekday
+   - Explicit flags override only the specified side:
+     * `/archive-day --to Thursday`: auto-detect source from time, target Thursday
+     * `/archive-day --from Tuesday`: source Tuesday, auto-detect target from time
    - Validate: source ≠ target, both are valid weekdays (Monday-Friday)
    - If run on weekend: error "archive-day only works Monday-Friday"
+   - Day mapping for previous-day: Monday→Friday, Tuesday→Monday, Wednesday→Tuesday, Thursday→Wednesday, Friday→Thursday
    - Day mapping for next-day: Monday→Tuesday, Tuesday→Wednesday, Wednesday→Thursday, Thursday→Friday, Friday→Monday
 
 2. Read and parse ~/notes/plans/week.md:
@@ -85,7 +95,7 @@ Target day (Tuesday) AFTER:
 
 Command invocation:
 ```bash
-/archive-day                              # Today → Tomorrow
-/archive-day --to Thursday                # Today → Thursday
+/archive-day                              # Before 15: previous weekday → today; after 15: today → next weekday
+/archive-day --to Thursday                # Auto-detected source → Thursday
 /archive-day --from Monday --to Wednesday # Monday → Wednesday
 ```

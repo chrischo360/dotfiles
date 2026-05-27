@@ -17,7 +17,7 @@ Steps:
    cat ~/notes/resumes/extra-bullets.md
    ```
    ```bash
-   cat ~/dotfiles/claude/commands/notes/experience.md
+   cat ~/dotfiles/career/background.md
    ```
 
 3. Normalize the job description text before keyword extraction:

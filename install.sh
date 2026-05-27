@@ -255,6 +255,13 @@ create_symlink "$DOTFILES_DIR/pi/agent/extensions/theme-sync.ts" "$HOME/.pi/agen
 create_symlink "$DOTFILES_DIR/pi/agent/themes" "$HOME/.pi/agent/themes"
 create_symlink "$DOTFILES_DIR/agent/commands" "$HOME/.pi/agent/prompts"
 
+# Shared agent skills
+mkdir -p "$HOME/.agents/skills"
+for skill_dir in "$DOTFILES_DIR/agent/skills"/*/; do
+  [ -d "$skill_dir" ] || continue
+  create_symlink "$skill_dir" "$HOME/.agents/skills/$(basename "$skill_dir")"
+done
+
 # Pi repo-specific prompts — symlink claude commands into each codebase repo
 for repo_dir in "$DOTFILES_DIR/claude/commands/repos"/*/; do
   repo_name=$(basename "$repo_dir")

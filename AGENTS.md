@@ -59,8 +59,9 @@ vim ~/dotfiles/.env
 - `GITHUB_TOKEN` - GitHub personal access token (gh CLI, scout)
 - `ANTHROPIC_API_KEY` - Claude API key
 - `BUILDKITE_TOKEN` - Buildkite API token (CI monitoring)
-- `GLEAN_API_TOKEN` - Glean API token (Wayfair knowledge base)
+- `GLEAN_MCP_AUTH_HEADER` or `GLEAN_MCP_TOKEN` - Fresh Glean MCP auth for Pi (local shell only, not dotfiles)
 - `GLEAN_INSTANCE` - Glean instance name (default: wayfair)
+- `GLEAN_MCP_URL` - Glean MCP endpoint
 - `DD_API_KEY` - Datadog API key (Pi Datadog MCP)
 - `DD_APPLICATION_KEY` - Datadog application key (Pi Datadog MCP)
 - `DD_MCP_DOMAIN` - Datadog MCP domain (default: mcp.datadoghq.com)

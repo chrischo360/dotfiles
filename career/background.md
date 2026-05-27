@@ -1,9 +1,3 @@
----
-name: Christopher Cho — Experience Profile
-description: Full work history, tech stack, domains, and seniority signals for use when tailoring resumes, scoring JD fit, and selecting bullets
-type: user
----
-
 ## Identity
 
 - **Name:** Christopher Cho

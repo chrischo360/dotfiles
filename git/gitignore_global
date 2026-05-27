@@ -12,9 +12,11 @@ Thumbs.db
 
 # AI assistant configs
 .claude/
+**/.claude/**
 .cursor/*
 !.cursor/rules/
 .pi/
+**/.pi/**
 
 # Debug logs
 npm-debug.log*
