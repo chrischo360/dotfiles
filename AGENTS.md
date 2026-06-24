@@ -85,6 +85,7 @@ See `.env.example` for full list.
 ~/.config/nvim/                -> ~/dotfiles/nvim/
 ~/.config/ccstatusline/        -> ~/dotfiles/claude/ccstatusline/
 ~/.config/mise/config.toml     -> ~/dotfiles/.mise.toml
+~/.config/devin/config.json    -> ~/dotfiles/devin/config.json
 ~/.claude/settings.json        -> ~/dotfiles/claude/settings.json (generated from template)
 ~/.claude/commands/            -> ~/dotfiles/claude/commands/  (global/ subdir symlinks to ~/dotfiles/agent/commands/)
 ~/.claude/agents/              -> ~/dotfiles/claude/agents/

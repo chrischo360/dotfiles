@@ -1,0 +1,146 @@
+{
+  "version": 1,
+  "shell": {
+    "setup_complete": true
+  },
+  "theme_mode": "dark",
+  "agent": {
+    "model": "claude-opus-4-8-medium"
+  },
+  "permissions": {
+    "allow": [
+      "Fetch(domain:docs.csnzoo.com)"
+    ]
+  },
+  "mcpServers": {
+    "sequential-thinking": {
+      "command": "/bin/zsh",
+      "args": [
+        "-lc",
+        "exec npx -y @modelcontextprotocol/server-sequential-thinking@latest"
+      ]
+    },
+    "memory": {
+      "command": "/bin/zsh",
+      "args": [
+        "-lc",
+        "exec npx -y @modelcontextprotocol/server-memory@latest"
+      ]
+    },
+    "github": {
+      "command": "/bin/zsh",
+      "args": [
+        "-lc",
+        "exec docker run -i --rm -e GITHUB_PERSONAL_ACCESS_TOKEN ghcr.io/github/github-mcp-server"
+      ]
+    },
+    "atlassian": {
+      "command": "/bin/zsh",
+      "args": [
+        "-lc",
+        "MCP_VERBOSE=true exec uvx mcp-atlassian --transport stdio"
+      ]
+    },
+    "pagerduty-mcp": {
+      "command": "/bin/zsh",
+      "args": [
+        "-lc",
+        "exec uvx pagerduty-mcp --enable-write-tools"
+      ]
+    },
+    "buildkite": {
+      "command": "/bin/zsh",
+      "args": [
+        "-lc",
+        "exec docker run -i --rm -e BUILDKITE_API_TOKEN ghcr.io/buildkite/buildkite-mcp-server stdio"
+      ]
+    },
+    "glean_default": {
+      "url": "https://wayfair-be.glean.com/mcp/default",
+      "headers": {},
+      "transport": "http"
+    },
+    "bigquery": {
+      "command": "/bin/zsh",
+      "args": [
+        "-lc",
+        "BIGQUERY_PROJECT=$BIGQUERY_PROJECT exec npx -y @toolbox-sdk/server --prebuilt bigquery --stdio"
+      ]
+    },
+    "sonarqube": {
+      "command": "/bin/zsh",
+      "args": [
+        "-lc",
+        "SONARQUBE_URL=https://sonarqube-enterprise.service.csnzoo.com SONARQUBE_TOKEN='' SONARQUBE_USERNAME=${env:SONARQUBE_USERNAME} NODE_OPTIONS=--use-system-ca NODE_EXTRA_CA_CERTS=/Users/cc446g/.sonarqube-mcp/sonarqube-fullchain.pem exec npx -y sonarqube-mcp-server@latest"
+      ]
+    },
+    "kubernetes": {
+      "command": "/bin/zsh",
+      "args": [
+        "-lc",
+        "exec npx -y kubernetes-mcp-server@latest"
+      ]
+    },
+    "kubernetes-dev": {
+      "command": "/bin/zsh",
+      "args": [
+        "-lc",
+        "KUBECONFIG_DEV=${env:KUBECONFIG_DEV} exec ai-kit kube-mcp --env dev"
+      ]
+    },
+    "kubernetes-prod": {
+      "command": "/bin/zsh",
+      "args": [
+        "-lc",
+        "KUBECONFIG_PROD=${env:KUBECONFIG_PROD} exec ai-kit kube-mcp --env prod"
+      ]
+    },
+    "sourcegraph": {
+      "url": "https://wayfair.sourcegraphcloud.com/.api/mcp/v1",
+      "headers": {
+        "Authorization": "token ${env:SOURCEGRAPH_ACCESS_TOKEN}"
+      },
+      "transport": "http"
+    },
+    "terraform": {
+      "command": "/bin/zsh",
+      "args": [
+        "-lc",
+        "exec npx -y terraform-mcp-server@latest"
+      ]
+    },
+    "deepwiki": {
+      "url": "https://mcp.deepwiki.com/mcp",
+      "transport": "http"
+    },
+    "fetch": {
+      "command": "/bin/zsh",
+      "args": [
+        "-lc",
+        "exec docker run -i --rm mcp/fetch"
+      ]
+    },
+    "context7": {
+      "command": "/bin/zsh",
+      "args": [
+        "-lc",
+        "exec npx -y @upstash/context7-mcp"
+      ]
+    },
+    "mcp-playwright": {
+      "command": "/bin/zsh",
+      "args": [
+        "-lc",
+        "exec npx -y @playwright/mcp@latest"
+      ]
+    },
+    "datadog": {
+      "url": "https://mcp.datadoghq.com/api/unstable/mcp-server/mcp",
+      "transport": "http"
+    },
+    "miro": {
+      "url": "https://mcp.miro.com/",
+      "transport": "http"
+    }
+  }
+}
