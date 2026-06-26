@@ -28,18 +28,13 @@ export ANTHROPIC_VERTEX_PROJECT_ID=wf-gcp-us-sf-genai-pilot-sbx
 export CLOUD_ML_REGION=us-east5
 
 # Opus
-export ANTHROPIC_DEFAULT_OPUS_MODEL='claude-opus-4-7[1m]'
-# export ANTHROPIC_DEFAULT_OPUS_MODEL='claude-opus-4-6[1m]'
+export ANTHROPIC_DEFAULT_OPUS_MODEL='claude-opus-4-6'
 
 # Sonnet
-# export ANTHROPIC_DEFAULT_SONNET_MODEL='claude-sonnet-4-6[1m]'
-# export ANTHROPIC_DEFAULT_SONNET_MODEL='claude-sonnet-4-6'
-export ANTHROPIC_DEFAULT_SONNET_MODEL='claude-sonnet-4-5@20250929'
+export ANTHROPIC_DEFAULT_SONNET_MODEL='claude-sonnet-4-6'
 
 # Haiku
-# export ANTHROPIC_SMALL_FAST_MODEL='claude-sonnet-4-6[1m]'
-export ANTHROPIC_SMALL_FAST_MODEL='claude-sonnet-4-5@20250929'
-# export ANTHROPIC_SMALL_FAST_MODEL='claude-haiku-4-5-20251001'
+export ANTHROPIC_SMALL_FAST_MODEL='claude-haiku-4-6'
 
 # Gemini CLI on Vertex AI
 export GOOGLE_GENAI_USE_VERTEXAI=true
@@ -47,7 +42,7 @@ export GOOGLE_CLOUD_PROJECT=wf-gcp-us-sf-genai-pilot-sbx
 export GOOGLE_CLOUD_LOCATION=us-east5
 
 # Google Gemini AI Studio API Key
-export GEMINI_API_KEY="REDACTED_GEMINI_API_KEY"
+# export GEMINI_API_KEY="set-in-local-env"
 
 # CD PATH - codebase
 export CDPATH=".:~:~/codebase"
@@ -58,9 +53,8 @@ export VISUAL="nvim"
 
 export GLEAN_INSTANCE="wayfair"
 export GLEAN_MCP_URL="https://wayfair-be.glean.com/mcp/default"
-# export SOURCEGRAPH_TOKEN="***REMOVED-SECRET***"
 export SOURCEGRAPH_URL="https://wayfair.sourcegraphcloud.com"
-export SOURCEGRAPH_TOKEN="***REMOVED-SECRET***"
-export OUTLINE_API_TOKEN="***REMOVED-SECRET***"
-export BRAVE_SEARCH_API_KEY="***REMOVED-SECRET***"
+
+# Secrets are loaded from $DOTFILES_DIR/.env by zsh/.zshrc.
+# Keep tokens out of tracked shell modules.
 

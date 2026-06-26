@@ -19,3 +19,23 @@ nvim/last-theme.txt
 
 # LeetCode solutions (stored in ~/leetcode, not in dotfiles)
 leetcode/
+
+# Local/private agent state
+.claude/
+.devin/
+claude/.claude.json
+claude/mcp-servers-bak.json
+**/mcp_servers.json
+**/mcp-servers.json
+**/config.yaml.bak*
+**/history.txt
+
+# Archived/generated backups
+__archive/
+ai-config/backups/
+
+# Logs/artifacts
+.playwright-mcp/
+gitleaks-report.*
+**/logs/
+*.log

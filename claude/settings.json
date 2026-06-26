@@ -65,7 +65,7 @@
     "ask": [],
     "defaultMode": "default"
   },
-  "model": "sonnet",
+  "model": "opus",
   "hooks": {
     "SessionStart": [
       {
@@ -156,6 +156,9 @@
     "type": "command",
     "command": "ccstatusline",
     "padding": 0
+  },
+  "enabledPlugins": {
+    "vercel@claude-plugins-official": true
   },
   "alwaysThinkingEnabled": false,
   "theme": "dark-ansi",
@@ -282,8 +285,5 @@
     "/Users/cc446g/codebase/terraform"
   ],
   "mcpServers": {},
-  "autoUpdaterStatus": "disabled",
-  "enabledPlugins": {
-    "vercel@claude-plugins-official": true
-  }
+  "autoUpdaterStatus": "disabled"
 }

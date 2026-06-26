@@ -16,7 +16,7 @@ compinit -C -i
 # Enable prompt substitution (for git branch in prompt)
 setopt PROMPT_SUBST
 
-# Load environment variables from .env
+# Load local secrets from gitignored .env before tracked modules
 if [ -f "$DOTFILES_DIR/.env" ]; then
   set -a
   source "$DOTFILES_DIR/.env"
