@@ -2,6 +2,10 @@
     name = Christopher Cho
     email = ccho@wayfair.com
 
+# Personal identity for repos under ~/dotfiles (overrides the work identity above)
+[includeIf "gitdir:~/dotfiles/"]
+    path = ~/dotfiles/git/gitconfig-personal
+
 [core]
     editor = nvim
     autocrlf = input
