@@ -1,7 +1,7 @@
 Generate a tailored LaTeX resume for a specific job description.
 
-Reads ~/notes/resumes/resume.tex as the base, incorporates JD keywords, selects
-relevant extra bullets, and writes a new ~/notes/resumes/resume-<company>.tex.
+Reads ~/notes/Resumes/resume.tex as the base, incorporates JD keywords, selects
+relevant extra bullets, and writes a new ~/notes/Resumes/resume-<company>.tex.
 
 Steps:
 
@@ -11,13 +11,13 @@ Steps:
 
 2. Read the base resume, extra bullets pool, and experience profile in parallel:
    ```bash
-   cat ~/notes/resumes/resume.tex
+   cat ~/notes/Resumes/resume.tex
    ```
    ```bash
-   cat ~/notes/resumes/extra-bullets.md
+   cat ~/notes/Resumes/extra_bullets.md
    ```
    ```bash
-   cat ~/dotfiles/career/background.md
+   cat ~/notes/Career/background.md
    ```
 
 3. Normalize the job description text before keyword extraction:
@@ -79,7 +79,7 @@ Steps:
 
    Wait for user approval before proceeding. If the user requests changes, apply them and re-summarize before writing.
 
-7. Write output to ~/notes/resumes/resume-<company>.tex
+7. Write output to ~/notes/Resumes/resume-<company>.tex
    - Lowercase company name, hyphens for spaces (e.g. resume-stripe.tex, resume-jane-street.tex)
    - Preserve all LaTeX formatting and escaping from the original (\%, \$, \&, etc.)
    - Keep \documentclass{resume} and all \begin/\end environments intact
@@ -101,10 +101,10 @@ Steps:
 
 9. Compile and move to the finished output location:
    ```bash
-   cd ~/notes/resumes && mkdir -p finished/<company> && pdflatex resume-<company>.tex && mv resume-<company>.pdf finished/<company>/Christopher_Cho_Resume.pdf && rm -f resume-<company>.{aux,log,out}
+   cd ~/notes/Resumes && mkdir -p Finished/<company> && pdflatex resume-<company>.tex && mv resume-<company>.pdf Finished/<company>/Christopher_Cho_Resume.pdf && rm -f resume-<company>.{aux,log,out}
    ```
-   - Output: `~/notes/resumes/finished/<company>/Christopher_Cho_Resume.pdf`
-   - The `.tex` source stays at `~/notes/resumes/resume-<company>.tex`
+   - Output: `~/notes/Resumes/Finished/<company>/Christopher_Cho_Resume.pdf`
+   - The `.tex` source stays at `~/notes/Resumes/resume-<company>.tex`
    - aux/log/out files are cleaned up automatically
 
 10. Output a gap analysis table comparing the JD against the final resume. Run through all six keyword categories from step 4:
@@ -164,7 +164,7 @@ Steps:
     - For each "missing" or "partial" gap identified in step 10, ask:
       "Do you have real experience with [term/skill] that isn't captured in the resume yet?"
     - If yes, ask them to describe it briefly, then offer a draft bullet pre-filled with the JD action verb and domain as a template (e.g. "Designed and implemented [X] for [Y], reducing [Z] by [N]%") — user fills in the specifics
-    - Append confirmed bullets to ~/notes/resumes/extra-bullets.md under the correct role section
+    - Append confirmed bullets to ~/notes/Resumes/extra_bullets.md under the correct role section
     - This step is optional — user can skip any or all gaps
 
 What this does:
@@ -174,8 +174,8 @@ What this does:
 - Outputs a ready-to-compile .tex file
 
 Notes:
-- Base resume is always ~/notes/resumes/resume.tex
-- Output filename pattern: resumes/resume-<company>.tex
-- Extra bullets are auto-read from ~/notes/resumes/extra-bullets.md — no need to paste them
+- Base resume is always ~/notes/Resumes/resume.tex
+- Output filename pattern: Resumes/resume-<company>.tex
+- Extra bullets are auto-read from ~/notes/Resumes/extra_bullets.md — no need to paste them
 - Do not commit the output file
 - If the JD mentions a technology already in the resume, ensure it appears in Skills even if not currently listed

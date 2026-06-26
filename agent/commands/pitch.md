@@ -15,10 +15,10 @@ Ask for anything not already provided:
 ## Sources
 
 Read these files before generating:
-- `career/background.md` — required experience profile
-- `career/examples/successful-pitches.md` — optional examples; use only if it has real examples
+- `~/notes/Career/background.md` — required experience profile
+- `~/notes/Career/examples/successful-pitches.md` — optional examples; use only if it has real examples
 
-If `career/background.md` is missing, stop and ask the user for background details. Do not invent experience.
+If `~/notes/Career/background.md` is missing, stop and ask the user for background details. Do not invent experience.
 
 ## Output rules
 
@@ -29,7 +29,7 @@ Tone: direct, specific, peer-to-peer; not a cover letter.
 
 Do:
 - Reference concrete company/product/role details from the posting
-- Connect the role to specific background from `career/background.md`
+- Connect the role to specific background from `~/notes/Career/background.md`
 - Emphasize strongest matching experience: Wayfair checkout/cart/browse, fintech/payments, React/Next.js/TypeScript, GraphQL, Java microservices, observability, A/B testing, startup/co-founder ownership
 - Use examples/phrasing from successful pitches only when relevant
 
