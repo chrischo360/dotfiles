@@ -9,8 +9,8 @@ Personal configuration files for macOS development environment.
 ├── aerospace/          # AeroSpace window manager config
 ├── biome/              # Biome JS/TS formatter config
 ├── buildkite/          # Buildkite CLI config
+├── career/             # Career background and pitch material (used by agent commands)
 ├── claude/             # Claude Code configuration and tools
-│   ├── agents/         # Custom Claude Code agents
 │   ├── ccstatusline/   # ccstatusline configuration
 │   ├── hooks/          # Session hooks
 │   │   ├── session/    # Session lifecycle (start, end, stop, user-input)
@@ -22,16 +22,16 @@ Personal configuration files for macOS development environment.
 │   │   ├── monitoring/ # CI/CD build monitoring
 │   │   └── utils/      # Notifications, buffers, aliases
 │   └── settings.json   # Claude Code settings
-├── cursor/             # Cursor AI editor configuration
+├── devin/              # Devin CLI global config
 ├── git/                # Git configuration
 ├── ghostty/            # Ghostty terminal emulator config
-├── kitty/              # Kitty terminal emulator config
 ├── lua/                # Lua tooling config (stylua)
 ├── nvim/               # Neovim configuration
-├── agent/              # Shared commands for Claude and Pi
-│   └── commands/       # Canonical command/prompt source (31 files)
+├── agent/              # Shared commands/skills for Claude and Pi
+│   ├── commands/       # Canonical command/prompt source
+│   └── skills/         # Shared agent skills
 ├── pi/                 # Pi coding agent configuration
-├── raycast/            # Raycast script commands
+├── scripts/            # Standalone scripts (theme, codebase dev envs, notes sync)
 ├── tests/              # Docker-based install test suite
 ├── tmux/               # tmux terminal multiplexer config
 ├── zsh/                # Zsh shell configuration
@@ -81,14 +81,12 @@ See `.env.example` for full list.
 ~/.gitconfig                   -> ~/dotfiles/git/gitconfig
 ~/.aerospace.toml              -> ~/dotfiles/aerospace/aerospace.toml
 ~/.config/ghostty/             -> ~/dotfiles/ghostty/
-~/.config/kitty/               -> ~/dotfiles/kitty/
 ~/.config/nvim/                -> ~/dotfiles/nvim/
 ~/.config/ccstatusline/        -> ~/dotfiles/claude/ccstatusline/
 ~/.config/mise/config.toml     -> ~/dotfiles/.mise.toml
 ~/.config/devin/config.json    -> ~/dotfiles/devin/config.json
 ~/.claude/settings.json        -> ~/dotfiles/claude/settings.json (generated from template)
 ~/.claude/commands/            -> ~/dotfiles/claude/commands/  (global/ subdir symlinks to ~/dotfiles/agent/commands/)
-~/.claude/agents/              -> ~/dotfiles/claude/agents/
 ~/.claude/AGENTS.md            -> ~/dotfiles/claude/AGENTS.md
 ~/.pi/agent/settings.json      -> ~/dotfiles/pi/agent/settings.json
 ~/.pi/agent/keybindings.json   -> ~/dotfiles/pi/agent/keybindings.json
@@ -98,11 +96,9 @@ See `.env.example` for full list.
 
 # Internal dotfiles symlinks (not home directory):
 ~/dotfiles/claude/commands/global/ -> ~/dotfiles/agent/commands/  (makes commands available to ~/.claude/commands)
-~/.gemini/settings.json        -> ~/dotfiles/gemini/settings.json (generated from template)
-~/.local/bin/gemini            -> $(npm bin -g)/gemini
-~/.cursor/User/settings.json   -> ~/dotfiles/cursor/User/settings.json
-~/.cursor/mcp.json             -> ~/dotfiles/cursor/mcp.json
-~/.cursor/cli-config.json      -> ~/dotfiles/cursor/cli-config.json
+
+# Shared agent skills:
+~/.agents/skills/<name>/       -> ~/dotfiles/agent/skills/<name>/
 ```
 
 ## Instructions for Claude Code

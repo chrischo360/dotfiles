@@ -478,9 +478,6 @@ alias sf-ui-web-dev='$DOTFILES_DIR/scripts/codebase/sf-ui-web/setup-dev-env.sh'
 # sf-ui-checkout - Development environment setup
 alias sf-ui-checkout-dev='$DOTFILES_DIR/scripts/codebase/sf-ui-checkout/setup-dev-env.sh'
 
-# sf-ui-cart-and-checkout - Development environment setup
-alias sf-ui-cart-and-checkout-dev='$DOTFILES_DIR/scripts/codebase/sf-ui-cart-and-checkout/setup-dev-env.sh'
-
 # alias cfbuild='(cd ~/codebase/cp-toolkit && cargo install --path cp --force && cargo install --path interview --force && cargo install --path interview-tui --force)'
 alias cf-dev="cargo run -p coachforces-cli --release --"
 

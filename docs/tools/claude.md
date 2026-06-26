@@ -11,7 +11,6 @@ claude/
 ├── settings.json       # Main config (permissions, model, hooks, statusline)
 ├── mcp-profiles.json   # Predefined MCP server combinations
 ├── mcp-servers.json    # MCP server definitions
-├── agents/             # Custom agent definitions
 ├── ccstatusline/       # ccstatusline configuration
 ├── commands/           # Slash commands
 │   ├── global/         # Available in all repos
@@ -107,9 +106,9 @@ Multi-session awareness in tmux statusline. Tracks Claude Code sessions across p
 
 **Debugging:**
 ```bash
-~/dotfiles/claude/scripts/debug-status.sh          # View current state
+~/dotfiles/claude/scripts/state/debug-status.sh          # View current state
 tail -f ~/.claude/hook-debug.log                   # Monitor hooks in real-time
-~/dotfiles/claude/scripts/update-session-state.sh <action>  # Manual update
+~/dotfiles/claude/scripts/state/update-session-state.sh <action>  # Manual update
 # Actions: start, active, idle, waiting, stop
 ```
 

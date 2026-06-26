@@ -233,7 +233,6 @@ create_symlink "$DOTFILES_DIR/.mise.toml" "$HOME/.config/mise/config.toml"
 # Claude Code
 mkdir -p "$HOME/.claude"
 substitute_json_template "$DOTFILES_DIR/claude/settings.json.template" "$HOME/.claude/settings.json"
-create_symlink "$DOTFILES_DIR/claude/agents" "$HOME/.claude/agents"
 create_symlink "$DOTFILES_DIR/claude/commands" "$HOME/.claude/commands"
 create_symlink "$DOTFILES_DIR/claude/AGENTS.md" "$HOME/.claude/AGENTS.md"
 
@@ -249,7 +248,6 @@ create_symlink "$DOTFILES_DIR/pi/agent/extensions/protected-paths.ts" "$HOME/.pi
 create_symlink "$DOTFILES_DIR/pi/agent/extensions/mcp-sourcegraph" "$HOME/.pi/agent/extensions/mcp-sourcegraph"
 create_symlink "$DOTFILES_DIR/pi/agent/extensions/mcp-glean" "$HOME/.pi/agent/extensions/mcp-glean"
 create_symlink "$DOTFILES_DIR/pi/agent/extensions/mcp-github" "$HOME/.pi/agent/extensions/mcp-github"
-create_symlink "$DOTFILES_DIR/pi/agent/extensions/mcp-buildkite" "$HOME/.pi/agent/extensions/mcp-buildkite"
 create_symlink "$DOTFILES_DIR/pi/agent/extensions/web-tools.ts" "$HOME/.pi/agent/extensions/web-tools.ts"
 create_symlink "$DOTFILES_DIR/pi/agent/extensions/theme-sync.ts" "$HOME/.pi/agent/extensions/theme-sync.ts"
 create_symlink "$DOTFILES_DIR/pi/agent/themes" "$HOME/.pi/agent/themes"
@@ -299,29 +297,6 @@ if [ -f "$DOTFILES_DIR/scripts/theme" ]; then
     echo -e "${GREEN}  ✓ theme script linked${NC}"
 fi
 
-# Browser automation scripts
-if [ -d "$DOTFILES_DIR/scripts/browser" ]; then
-    echo -e "${YELLOW}  Setting up browser automation scripts...${NC}"
-
-    # Make all .mjs and .sh scripts executable
-    find "$DOTFILES_DIR/scripts/browser" -name "*.mjs" -exec chmod +x {} \;
-    find "$DOTFILES_DIR/scripts/browser" -name "*.sh" -exec chmod +x {} \;
-
-    # Install npm dependencies
-    if [ -f "$DOTFILES_DIR/scripts/browser/package.json" ]; then
-        echo -e "${YELLOW}  Installing npm dependencies...${NC}"
-        cd "$DOTFILES_DIR/scripts/browser"
-        npm install --silent
-
-        # Install Playwright Chromium browser
-        echo -e "${YELLOW}  Installing Playwright Chromium...${NC}"
-        npx playwright install chromium --with-deps
-
-        cd "$DOTFILES_DIR"
-        echo -e "${GREEN}  ✓ Browser automation setup complete${NC}"
-    fi
-fi
-
 echo -e "${GREEN}  ✓ Scripts made executable${NC}"
 
 echo ""
@@ -350,14 +325,6 @@ check_command "rg" || echo -e "${YELLOW}    Run: cd $DOTFILES_DIR && mise instal
 if [[ "$OS" == "Darwin" ]]; then
     check_command "brew" || echo -e "${YELLOW}    Install: /bin/bash -c \"\$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)\"${NC}"
     check_command "terminal-notifier" || echo -e "${YELLOW}    Run: brew bundle --file=$DOTFILES_DIR/Brewfile.macos${NC}"
-fi
-
-# Check browser automation setup
-if [ -d "$DOTFILES_DIR/scripts/browser/node_modules" ]; then
-    echo -e "${GREEN}  ✓ Browser automation (Playwright)${NC}"
-else
-    echo -e "${RED}  ✗ Browser automation (npm dependencies missing)${NC}"
-    echo -e "${YELLOW}    Run: cd $DOTFILES_DIR/scripts/browser && npm install && npx playwright install chromium${NC}"
 fi
 
 # Platform-specific application checks
