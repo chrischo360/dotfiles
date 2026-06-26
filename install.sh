@@ -101,9 +101,13 @@ if command -v mise &> /dev/null && [ -f "$DOTFILES_DIR/.mise.toml" ]; then
     # Load environment variables from .env (includes GITHUB_TOKEN for aqua backend)
     if [ -f "$DOTFILES_DIR/.env" ]; then
         echo -e "${YELLOW}  Loading environment variables from .env...${NC}"
+        # Don't let a malformed line in .env (e.g. an unquoted value with spaces)
+        # abort the whole install via `set -e`.
+        set +e
         set -a
-        source "$DOTFILES_DIR/.env"
+        source "$DOTFILES_DIR/.env" 2>/dev/null
         set +a
+        set -e
         # Only pass GITHUB_TOKEN to mise's aqua backend if it looks like a real
         # token. A placeholder/expired token causes 401s; an unset token lets the
         # backend fetch anonymously (rate-limited but works for public tools).
@@ -121,6 +125,11 @@ if command -v mise &> /dev/null && [ -f "$DOTFILES_DIR/.mise.toml" ]; then
 
     # Change to dotfiles directory so mise picks up .mise.toml
     cd "$DOTFILES_DIR"
+
+    # Recent mise versions refuse to use a config until it's trusted.
+    # Trust both the repo config and the global symlinked config.
+    mise trust "$DOTFILES_DIR/.mise.toml" 2>/dev/null || true
+    mise trust "$HOME/.config/mise/config.toml" 2>/dev/null || true
 
     # Install Java first (required by Scala)
     echo -e "${YELLOW}  Installing Java first (required by Scala)...${NC}"
