@@ -9,7 +9,57 @@
   },
   "permissions": {
     "allow": [
-      "Fetch(domain:docs.csnzoo.com)"
+      "Read(/**)",
+      "Write(/**)",
+      "exec",
+      "Fetch(domain:docs.csnzoo.com)",
+      "mcp__*"
+    ],
+    "deny": [
+      "Exec(rm)",
+      "Exec(sudo)",
+      "Exec(chmod 777)",
+      "Exec(chown)",
+      "Exec(kill)",
+      "Exec(killall)",
+      "Exec(pkill)",
+      "Exec(dd)",
+      "Exec(mkfs)",
+      "Exec(diskutil)",
+      "Exec(shutdown)",
+      "Exec(reboot)",
+      "Exec(git push --force)",
+      "Exec(git push --force-with-lease)",
+      "Exec(git reset --hard)",
+      "Exec(git clean)",
+      "Write(**/.env)",
+      "Write(.env)"
+    ],
+    "ask": [
+      "mcp__bigquery__execute_sql",
+      "mcp__pagerduty-mcp__create_incident",
+      "mcp__pagerduty-mcp__manage_incidents",
+      "mcp__pagerduty-mcp__add_responders",
+      "mcp__pagerduty-mcp__add_note_to_incident",
+      "mcp__pagerduty-mcp__start_incident_workflow",
+      "mcp__pagerduty-mcp__create_alert_grouping_setting",
+      "mcp__pagerduty-mcp__update_alert_grouping_setting",
+      "mcp__pagerduty-mcp__delete_alert_grouping_setting",
+      "mcp__pagerduty-mcp__create_service",
+      "mcp__pagerduty-mcp__update_service",
+      "mcp__pagerduty-mcp__create_team",
+      "mcp__pagerduty-mcp__update_team",
+      "mcp__pagerduty-mcp__delete_team",
+      "mcp__pagerduty-mcp__add_team_member",
+      "mcp__pagerduty-mcp__remove_team_member",
+      "mcp__pagerduty-mcp__create_schedule",
+      "mcp__pagerduty-mcp__create_schedule_override",
+      "mcp__pagerduty-mcp__update_schedule",
+      "mcp__pagerduty-mcp__update_event_orchestration_router",
+      "mcp__pagerduty-mcp__append_event_orchestration_router_rule",
+      "mcp__pagerduty-mcp__create_status_page_post",
+      "mcp__pagerduty-mcp__create_status_page_post_update",
+      "mcp__pagerduty-mcp__create_user"
     ]
   },
   "mcpServers": {
