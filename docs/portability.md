@@ -2,12 +2,6 @@
 
 ## Path Configuration
 
-**Centralized Paths:** All paths are managed through `config/paths.json`:
-- `home` - User home directory
-- `dotfiles` - Dotfiles repository location
-- `codebase` - Development projects directory
-- `local_bin` - Local binaries
-
 **Shell Scripts:** Use `$DOTFILES_DIR` environment variable
 - Set automatically in `.zshrc` — no manual configuration needed
 - Works regardless of where dotfiles repository is cloned
@@ -15,7 +9,6 @@
 
 **JSON Configuration Files:** Generated from templates during install
 - `claude/settings.json.template` → `~/.claude/settings.json`
-- `gemini/settings.json.template` → `~/.gemini/settings.json`
 - Templates use placeholders like `{{dotfiles}}`, `{{home}}`
 - Generated files have absolute paths substituted during `install.sh`
 - Re-run `install.sh` if you move the dotfiles directory
@@ -26,27 +19,48 @@
 
 ## Template Placeholders
 
-The install script reads `config/paths.json` and substitutes these placeholders in template files:
+`install.sh` (via `substitute_json_template`) substitutes these placeholders in
+template files. The values are derived at runtime from the environment — there is
+no separate paths config file to edit.
 
-| Placeholder | Value |
-|-------------|-------|
-| `{{home}}` | User home directory |
-| `{{dotfiles}}` | Dotfiles repository location |
-| `{{codebase}}` | Codebase directory |
-| `{{local_bin}}` | Local binary directory |
+| Placeholder | Value (runtime) |
+|-------------|-----------------|
+| `{{home}}` | `$HOME` |
+| `{{dotfiles}}` | `$DOTFILES_DIR` (location of this repo) |
+| `{{codebase}}` | `$HOME/codebase` |
+| `{{local_bin}}` | `$HOME/.local/bin` |
 
-JSON files cannot use environment variables directly — templates solve this for portable configuration across different users, machines, and directory locations.
+JSON files cannot use environment variables directly — templates solve this for
+portable configuration across different users, machines, and directory locations.
 
 ## Cross-Platform Support
 
+**Tooling strategy:**
+- **mise** (`.mise.toml`) installs nearly all CLI tools on both macOS and Linux —
+  including `neovim`, `gh`, and `delta` (via the aqua backend). This is the
+  primary, cross-platform install path.
+- **macOS:** `Brewfile.macos` adds GUI apps (Ghostty, AeroSpace, Hammerspoon),
+  fonts, and macOS-only notifiers (`terminal-notifier`, `alerter`).
+- **Linux:** `install.sh` installs base system packages via `apt-get`
+  (`git`, `curl`, `build-essential`, font/runtime build deps). GUI apps and macOS
+  notifiers are skipped.
+- `ytfzf` is fetched via `curl` on both platforms (not in any package registry);
+  the install step skips gracefully if the download fails.
+
 **OS Detection:** `install.sh` detects macOS vs Linux
-- macOS: Checks `/Applications/*.app` for GUI apps
-- Linux: Uses command-line tool checks
+- macOS: Homebrew packages + checks `/Applications/*.app` for GUI apps
+- Linux: apt base packages + command-line tool checks
 - Font paths adapted per platform
 
+**Resilience:** install steps are guarded so a single failed download or package
+won't abort the whole run — failures are reported and skipped.
+
 **Supported Platforms:**
-- macOS (primary)
-- Linux (basic support)
+- macOS (primary, fully supported)
+- Linux (CLI environment supported via mise + apt; GUI apps are macOS-only)
+
+**Testing Linux:** `tests/test-install.sh` runs `install.sh` in a clean Ubuntu
+container (requires Docker).
 
 ## API Keys and Secrets
 

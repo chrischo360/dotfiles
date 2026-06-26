@@ -6,15 +6,13 @@
 # ============================================
 # CLI Tools (Not in mise registry or better via Homebrew)
 # ============================================
-brew "git"                 # Version control (not in mise)
-brew "gh"                  # GitHub CLI (not in mise)
-brew "git-delta"           # Better git diff (not in mise)
-brew "neovim"              # Modern Vim (not in mise)
+brew "git"                 # Version control (system/Homebrew; not built via mise)
+# gh, git-delta, neovim now managed by mise (.mise.toml) — cross-platform
 
 # ============================================
 # macOS-Specific CLI Tools
 # ============================================
-brew "terminal-notifier"   # macOS notifications (macOS-only API)
+brew "terminal-notifier"   # macOS notifications (shared agent notify hook + monitoring/cost scripts)
 brew "rsync"               # File sync (better than macOS default)
 brew "curl"                # HTTP client (better than macOS default)
 brew "swiftlint"           # Swift linter (macOS/iOS development)

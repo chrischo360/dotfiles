@@ -92,7 +92,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "{{dotfiles}}/claude/scripts/utils/notify.sh"
+            "command": "{{dotfiles}}/agent/hooks/notify.sh Claude"
           }
         ]
       }
@@ -102,7 +102,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "{{dotfiles}}/claude/scripts/utils/notify.sh"
+            "command": "{{dotfiles}}/agent/hooks/notify.sh Claude"
           },
           {
             "type": "command",

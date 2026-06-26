@@ -45,12 +45,14 @@ yt-dlp = "latest"               # YouTube downloader/streamer
 # Terminal & Editors
 # ============================================
 tmux = "latest"                 # Terminal multiplexer
-# neovim → Brewfile.macos (not in mise registry)
+neovim = "latest"               # Editor (aqua backend, cross-platform)
 
 # ============================================
 # Version Control
 # ============================================
-# git, gh, delta → Brewfile.macos (not in mise registry, better via Homebrew)
+# git → system/Homebrew (building via mise is heavy; system git is fine)
+gh = "latest"                   # GitHub CLI (aqua:cli/cli, cross-platform)
+delta = "latest"                # Git diff pager (aqua:dandavison/delta, cross-platform)
 
 # ============================================
 # Development Tools
@@ -117,5 +119,12 @@ jobs = 4
 
 # Enable experimental features (required for hooks)
 experimental = true
+
+# Disable GitHub Artifact Attestations verification (aqua + github backends).
+# The attestation API check is fragile across mise versions and auth states
+# (e.g. fails to decode the response, blocking `gh`). SHA256 checksum
+# verification still runs, so download integrity is preserved.
+aqua.github_attestations = false
+github.github_attestations = false
 
 # No hooks needed for standard mise usage

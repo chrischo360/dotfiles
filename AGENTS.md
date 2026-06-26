@@ -9,7 +9,6 @@ Personal configuration files for macOS development environment.
 ├── aerospace/          # AeroSpace window manager config
 ├── biome/              # Biome JS/TS formatter config
 ├── buildkite/          # Buildkite CLI config
-├── career/             # Career background and pitch material (used by agent commands)
 ├── claude/             # Claude Code configuration and tools
 │   ├── ccstatusline/   # ccstatusline configuration
 │   ├── hooks/          # Session hooks
@@ -27,8 +26,9 @@ Personal configuration files for macOS development environment.
 ├── ghostty/            # Ghostty terminal emulator config
 ├── lua/                # Lua tooling config (stylua)
 ├── nvim/               # Neovim configuration
-├── agent/              # Shared commands/skills for Claude and Pi
+├── agent/              # Shared resources for Claude, Pi, and Devin
 │   ├── commands/       # Canonical command/prompt source
+│   ├── hooks/          # Shared notification hook (notify.sh + click handler)
 │   └── skills/         # Shared agent skills
 ├── pi/                 # Pi coding agent configuration
 ├── scripts/            # Standalone scripts (theme, codebase dev envs, notes sync)

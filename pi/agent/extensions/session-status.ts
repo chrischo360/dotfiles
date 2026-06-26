@@ -140,6 +140,17 @@ function notify(args: string[]): void {
 	} catch {}
 }
 
+// Shared agent notification hook (also used by Claude and Devin).
+// Handles repo/tmux context + click-to-focus internally.
+const SHARED_NOTIFY = `${process.env.HOME}/dotfiles/agent/hooks/notify.sh`;
+
+function notifyShared(agent: string): void {
+	try {
+		const proc = spawn(SHARED_NOTIFY, [agent], { detached: true, stdio: "ignore" });
+		proc.unref();
+	} catch {}
+}
+
 function getProjectName(cwd?: string): string {
 	const dir = cwd || process.cwd();
 	try {
@@ -184,18 +195,7 @@ export default function (pi: ExtensionAPI) {
 		ctx.ui.setStatus("session", ctx.ui.theme.fg("success", "✅ ready"));
 		log("agent_end fired");
 
-		const cwd = (ctx as { cwd?: string }).cwd;
-		const project = getProjectName(cwd);
-		const args = ["-title", "Pi Complete", "-message", `Repository: ${project}`, "-sound", "default"];
-
-		if (process.env.TMUX) {
-			try {
-				const tmuxInfo = execSync("tmux display-message -p '#S:#I.#P [#W]'", { encoding: "utf-8" }).trim();
-				args.push("-subtitle", tmuxInfo);
-			} catch {}
-		}
-
-		notify(args);
+		notifyShared("Pi");
 	});
 
 	// Session ends → remove from state file (prevents stale accumulation)

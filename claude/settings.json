@@ -92,7 +92,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "/Users/cc446g/dotfiles/claude/scripts/utils/notify.sh"
+            "command": "/Users/cc446g/dotfiles/agent/hooks/notify.sh Claude"
           }
         ]
       }
@@ -102,7 +102,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "/Users/cc446g/dotfiles/claude/scripts/utils/notify.sh"
+            "command": "/Users/cc446g/dotfiles/agent/hooks/notify.sh Claude"
           },
           {
             "type": "command",

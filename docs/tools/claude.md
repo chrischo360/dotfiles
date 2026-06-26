@@ -23,7 +23,7 @@ claude/
     ├── state/          # Session state management
     ├── cost/           # Cost tracking and analysis
     ├── monitoring/     # CI/CD build monitoring
-    └── utils/          # Notifications, buffers, aliases
+    └── utils/          # Agent stats, buffers, aliases (notifications: agent/hooks/notify.sh)
 ```
 
 ## Settings

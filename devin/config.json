@@ -7,6 +7,19 @@
   "agent": {
     "model": "claude-opus-4-8-medium"
   },
+  "hooks": {
+    "Stop": [
+      {
+        "matcher": "",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "/Users/cc446g/dotfiles/agent/hooks/notify.sh Devin"
+          }
+        ]
+      }
+    ]
+  },
   "permissions": {
     "allow": [
       "Read(/**)",
