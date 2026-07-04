@@ -285,5 +285,13 @@
     "/Users/cc446g/codebase/terraform"
   ],
   "mcpServers": {},
-  "autoUpdaterStatus": "disabled"
+  "autoUpdaterStatus": "disabled",
+  "extraKnownMarketplaces": {
+    "claude-plugins-official": {
+      "source": {
+        "source": "github",
+        "repo": "anthropics/claude-plugins-official"
+      }
+    }
+  }
 }

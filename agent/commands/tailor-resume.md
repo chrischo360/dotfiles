@@ -1,22 +1,33 @@
+---
+description: Generate a tailored LaTeX resume from a company and job description
+---
 Generate a tailored LaTeX resume for a specific job description.
 
-Reads ~/notes/Resumes/resume.tex as the base, incorporates JD keywords, selects
-relevant extra bullets, and writes a new ~/notes/Resumes/resume-<company>.tex.
+Shared command for Pi, Claude, and Devin. Treat this file as the canonical workflow; do not copy agent-specific variants. Use native file-read/edit tools when available, and use the bash snippets only as fallbacks or for compilation.
 
-Steps:
+Reads the best-matching base template from `~/notes/Resumes/Templates/`, incorporates JD keywords, selects relevant extra bullets, and writes a new `~/notes/Resumes/resume-<company>-<date>.tex`.
 
-1. Ask the user for the following if not already provided:
-   - Company name (used for output filename, e.g. "stripe" → resume-stripe.tex)
-   - Job description (full text, pasted inline)
+## Inputs
 
-2. Read the base resume, extra bullets pool, and experience profile in parallel:
+Ask the user for anything not already provided:
+- Company name (used for output filename, e.g. `stripe`)
+- Date for output filename, defaulting to today's date in `YYYY-MM-DD` format
+- Job description (full text pasted inline, or fetched content if the user provides a URL and the agent can fetch it)
+
+## Workflow
+
+1. Confirm the inputs are available. If either company name or job description is missing, ask for it before continuing.
+
+2. Select and read the base resume template, extra bullets pool, and experience profile in parallel:
+   - List available templates in `~/notes/Resumes/Templates/`.
+   - Choose the best-matching `.tex` template based on role emphasis:
+     - Frontend/product/growth/design roles: `frontend_product_growth.tex`
+     - AI/devtools/tooling roles: `ai_devtools_engineer.tex`
+     - If no clear match exists, ask the user which template to use.
+   - Read the selected template plus the support files using the agent's native read tool. If unavailable, use:
    ```bash
-   cat ~/notes/Resumes/resume.tex
-   ```
-   ```bash
+   cat ~/notes/Resumes/Templates/<selected-template>.tex
    cat ~/notes/Resumes/extra_bullets.md
-   ```
-   ```bash
    cat ~/notes/Career/background.md
    ```
 
@@ -65,11 +76,14 @@ Steps:
    - Update the Skills section to mirror exact terminology from **Category B** (e.g. if JD says "React.js" not "React", use that). Before adding a term, check for existing aliases and replace rather than append (e.g. if "React" is already listed, replace it with "React.js" — do not add both).
    - Do NOT fabricate experience, invent metrics, or add claims that aren't supported by the input content
 
-   **Bullet length rules (enforce strictly):**
-   - Target: 1 line (~85 characters). Maximum: 2 lines (~140 characters)
-   - If a bullet exceeds 140 characters, trim it: cut filler phrases, collapse redundant detail, or split into two separate bullets if both halves are strong enough to stand alone
-   - Prefer a tight 1-line bullet over a padded 2-line one
-   - After ordering bullets within a role, check that adjacent bullet lengths are varied — avoid 3+ consecutive long bullets, which makes the section feel dense
+   **Bullet visual-fit rules (enforce strictly):**
+   - Target: bullets may render as 1 or 2 visual lines in the compiled PDF
+   - A 2-line bullet is acceptable when the first line reaches near the right margin and the second line is substantial
+   - Avoid bullets where the second line is only a few words; trim or rephrase those
+   - Never allow bullets that wrap to 3+ visual lines
+   - Prefer high-density, high-signal bullets over artificially short bullets
+   - Do not trim a strong bullet solely because it exceeds a character-count threshold
+   - Trim only when the bullet wraps poorly, has filler, or creates an orphan second line
 
 6. Before writing the file, show a structured summary of planned changes and ask the user to confirm:
    - Which bullets were reordered or reworded (show before → after for any reworded bullets)
@@ -79,32 +93,43 @@ Steps:
 
    Wait for user approval before proceeding. If the user requests changes, apply them and re-summarize before writing.
 
-7. Write output to ~/notes/Resumes/resume-<company>.tex
-   - Lowercase company name, hyphens for spaces (e.g. resume-stripe.tex, resume-jane-street.tex)
+7. Write output to `~/notes/Resumes/resume-<company>-<date>.tex`
+   - Lowercase company name, hyphens for spaces, and use `YYYY-MM-DD` date format (e.g. `resume-stripe-2026-06-26.tex`, `resume-jane-street-2026-06-26.tex`)
    - Preserve all LaTeX formatting and escaping from the original (\%, \$, \&, etc.)
    - Keep \documentclass{resume} and all \begin/\end environments intact
 
-8. Run a bullet length audit on the written file. For every `\item` line:
-   - Count characters (excluding the `\item ` prefix and LaTeX escape sequences like `\%`, `\$`)
-   - Flag any bullet over 140 characters as **TOO LONG** — trim it before continuing
-   - Flag any bullet over 85 characters as **2-line** — acceptable but note it
+8. Run a visual bullet-fit audit on the written file:
+   - Compile the PDF before finalizing
+   - Inspect each `\item` in the rendered PDF
+   - Classify each bullet by rendered visual fit:
+     - `OK`: 1 line
+     - `OK-2`: 2 lines with good line usage; first line reaches near the right margin and second line is substantial
+     - `ORPHAN`: 2 lines where the second line is only a few words
+     - `TOO LONG`: 3+ lines
    - Print a compact audit table:
 
-   | # | Role | Length | Status | Bullet (truncated) |
+   | # | Role | Visual Fit | Status | Bullet |
    |---|---|---|---|---|
-   | 1 | Wayfair | 105 | 2-line | "Responded to production incidents..." |
-   | 2 | Wayfair | 175 | TOO LONG | "Built an agentic developer toolchain..." |
+   | 1 | Wayfair | 1 line | OK | "Designed Java Spring Boot..." |
+   | 2 | Wayfair | 2 lines | OK-2 | "Built a GraphQL preloading flow..." |
+   | 3 | Wayfair | 3 lines | TOO LONG | "Led the full product lifecycle..." |
 
-   - For any TOO LONG bullets: trim inline (remove filler, collapse redundant detail) and update the file
-   - Check rhythm: flag if 3+ consecutive bullets are all 2-line length (dense sections read poorly)
-   - Re-audit after any trims until all bullets pass
+   - Trim every `TOO LONG` bullet
+   - Rephrase every `ORPHAN` bullet to either fit on 1 line or use the second line meaningfully
+   - Check rhythm: 2-line bullets are fine if they are high-signal and visually balanced
+   - Recompile and re-audit after trims until all bullets are `OK` or `OK-2`
+   - If PDF inspection is unavailable, use character count only as a fallback:
+     - Do not automatically trim based on character count alone
+     - Flag bullets under ~95 characters as likely `OK`
+     - Flag bullets between ~96–135 characters as likely `OK-2`; review for orphan second lines
+     - Flag bullets over ~135 characters as likely `TOO LONG`, but confirm visually if possible
 
 9. Compile and move to the finished output location:
    ```bash
-   cd ~/notes/Resumes && mkdir -p Finished/<company> && pdflatex resume-<company>.tex && mv resume-<company>.pdf Finished/<company>/Christopher_Cho_Resume.pdf && rm -f resume-<company>.{aux,log,out}
+   cd ~/notes/Resumes && mkdir -p Finished/<company>-<date> && pdflatex resume-<company>-<date>.tex && mv resume-<company>-<date>.pdf Finished/<company>-<date>/Christopher_Cho_Resume.pdf && rm -f resume-<company>-<date>.{aux,log,out}
    ```
-   - Output: `~/notes/Resumes/Finished/<company>/Christopher_Cho_Resume.pdf`
-   - The `.tex` source stays at `~/notes/Resumes/resume-<company>.tex`
+   - Output: `~/notes/Resumes/Finished/<company>-<date>/Christopher_Cho_Resume.pdf`
+   - The `.tex` source stays at `~/notes/Resumes/resume-<company>-<date>.tex`
    - aux/log/out files are cleaned up automatically
 
 10. Output a gap analysis table comparing the JD against the final resume. Run through all six keyword categories from step 4:
@@ -173,9 +198,15 @@ What this does:
 - Selects the strongest subset of bullets for the target role
 - Outputs a ready-to-compile .tex file
 
+Agent compatibility:
+- Pi discovers this from `~/.pi/agent/prompts/` via the shared symlink.
+- Claude discovers this from `~/.claude/commands/global/` via the shared symlink.
+- Devin can execute this by reading `~/dotfiles/agent/commands/tailor-resume.md` as the canonical command prompt.
+- Keep the workflow tool-agnostic: prefer read/edit/write operations, reserve bash for listing files and compiling LaTeX.
+
 Notes:
-- Base resume is always ~/notes/Resumes/resume.tex
-- Output filename pattern: Resumes/resume-<company>.tex
-- Extra bullets are auto-read from ~/notes/Resumes/extra_bullets.md — no need to paste them
+- Base resumes live in `~/notes/Resumes/Templates/`; select the best-matching `.tex` template for the JD.
+- Output filename pattern: `Resumes/resume-<company>-<date>.tex`
+- Extra bullets are auto-read from `~/notes/Resumes/extra_bullets.md` — no need to paste them
 - Do not commit the output file
 - If the JD mentions a technology already in the resume, ensure it appears in Skills even if not currently listed

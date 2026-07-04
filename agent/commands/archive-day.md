@@ -1,101 +1,90 @@
-Move uncompleted tasks from current day to a specified day in the weekly plan.
+Move uncompleted tasks from a source day to a target day in weekly plan files.
+
+Plan files:
+- Work: `~/notes/Plans/week.md` (Monday-Friday)
+- Personal: `~/notes/Plans/personal_week.md` (Sunday-Saturday)
+
+Process both files when present. Skip a file only when it does not exist or the resolved source/target day is outside that file's day set.
 
 Steps:
 
 1. Parse command arguments:
+   - Supported flags: `--from <day>` and `--to <day>`
    - Use the system clock to determine the current weekday and hour:
      ```bash
      current_day="$(date +%A)"
      current_hour="$(date +%H)"
      ```
-   - Determine source/target defaults from current time unless overridden by `--from <day>` or `--to <day>`:
-     * Beginning/midday (`current_hour` < 15): move previous weekday → current day
-     * End of day (`current_hour` >= 15): move current day → next weekday
-   - Explicit flags override only the specified side:
-     * `/archive-day --to Thursday`: auto-detect source from time, target Thursday
-     * `/archive-day --from Tuesday`: source Tuesday, auto-detect target from time
-   - Validate: source ≠ target, both are valid weekdays (Monday-Friday)
-   - If run on weekend: error "archive-day only works Monday-Friday"
-   - Day mapping for previous-day: Monday→Friday, Tuesday→Monday, Wednesday→Tuesday, Thursday→Wednesday, Friday→Thursday
-   - Day mapping for next-day: Monday→Tuesday, Tuesday→Wednesday, Wednesday→Thursday, Thursday→Friday, Friday→Monday
+   - Resolve defaults per file unless overridden by `--from` or `--to`:
+     * Work file (`week.md`):
+       - Beginning/midday (`current_hour` < 15): previous weekday → current weekday
+       - End of day (`current_hour` >= 15): current weekday → next weekday
+       - Weekday maps: previous Monday→Friday, Tuesday→Monday, Wednesday→Tuesday, Thursday→Wednesday, Friday→Thursday; next Monday→Tuesday, Tuesday→Wednesday, Wednesday→Thursday, Thursday→Friday, Friday→Monday
+       - If run on Saturday/Sunday with no explicit Monday-Friday source/target pair, skip `week.md`
+     * Personal file (`personal_week.md`):
+       - Beginning/midday (`current_hour` < 15): previous calendar day → current day
+       - End of day (`current_hour` >= 15): current day → next calendar day
+       - Calendar maps include Sunday-Saturday
+   - Explicit flags override only the specified side for each file:
+     * `/archive-day --to Thursday`: auto-detect source per file, target Thursday
+     * `/archive-day --from Tuesday`: source Tuesday, auto-detect target per file
+     * `/archive-day --from Saturday --to Sunday`: process `personal_week.md` only
+   - Validate day names. Work days are Monday-Friday; personal days are Sunday-Saturday.
+   - Validate source ≠ target for every processed file.
+   - If no files are eligible, error with a clear message.
 
-2. Read and parse ~/notes/plans/week.md:
-   - Identify day sections: `## Monday` through `## Friday`
-   - Identify priority subsections within each day:
+2. Read and parse each eligible plan file:
+   - `~/notes/Plans/week.md`: identify day sections `## Monday` through `## Friday`
+   - `~/notes/Plans/personal_week.md`: identify day sections `## Sunday` through `## Saturday`
+   - If `personal_week.md` has duplicate day headers, process all matching source sections and append moved tasks to the last matching target section.
+   - Identify priority subsections within each day when present:
      * `--- **Important** + **Urgent** ---`
      * `--- Not Important + Urgent ---`
      * `--- Important + Not Urgent ---`
      * `--- Not Important + Not Urgent ---`
-   - Extract all tasks from source day section with their priority subsection context
+   - Extract all tasks from source day section(s) with their priority subsection and local heading context.
 
 3. Process tasks for migration:
-   - Identify uncompleted tasks (`- [ ]`) in source day
+   - Identify uncompleted tasks (`- [ ]`) in source day.
    - For standalone uncompleted tasks:
-     * Move entire task line to target day (preserve priority subsection)
+     * Move the entire task line to the target day.
    - For parent tasks with children:
      * If parent is `- [ ]` and has any uncompleted children (`- [ ]`):
-       - Source day: Replace parent with `- [x]` and keep ONLY completed children (`- [x]`)
-       - Target day: Create `- [ ]` parent with ONLY uncompleted children (`- [ ]`)
-     * If parent is `- [ ]` but ALL children are `- [x]`:
-       - Move entire task block to target day as-is
-   - Preserve indentation (4 spaces for children), links, and metadata
+       - Source day: replace parent with `- [x]` and keep only completed children (`- [x]`).
+       - Target day: create `- [ ]` parent with only uncompleted children (`- [ ]`).
+     * If parent is `- [ ]` but all children are `- [x]`:
+       - Move the entire task block to target day as-is.
+   - Completed tasks (`- [x]`) never move.
+   - Preserve indentation, links, metadata, priority subsection context, and personal `###` category headings when present.
 
-4. Update week.md:
-   - Remove uncompleted tasks from source day
-   - Keep completed parent stubs in source day (when parent has children)
-   - Append uncompleted tasks to target day in matching priority subsections
-   - If target day priority subsection doesn't exist, append at end of target day section
-   - Write modified content back to ~/notes/plans/week.md
+4. Update each eligible plan file:
+   - Remove moved uncompleted tasks from source day.
+   - Keep completed parent stubs in source day when parent tasks are split.
+   - Append moved tasks to target day in matching priority subsections when present.
+   - For `personal_week.md`, preserve personal category headings (for example `### Career`, `### Personal/Mental-Health`, `### Relationship`, `### Maybe`) and append under the matching category when present.
+   - If a matching priority subsection or category does not exist in the target day, append at the end of the target day section.
+   - Write modified content back to the same file.
 
-5. Display result:
-   - Success: "Moved {count} uncompleted tasks from {source_day} to {target_day}"
-   - No tasks: "No uncompleted tasks in {source_day}"
+5. Display per-file results:
+   - Success: `week.md: Moved {count} uncompleted tasks from {source_day} to {target_day}`
+   - Success: `personal_week.md: Moved {count} uncompleted tasks from {source_day} to {target_day}`
+   - No tasks: `{file}: No uncompleted tasks in {source_day}`
+   - If no tasks moved in any file, say so clearly.
 
-6. Do not commit changes
+6. Do not commit changes.
 
 Edge cases:
-- Source day has no uncompleted tasks: Display "No uncompleted tasks in {source_day}"
-- Source = target: Error "Source and target must be different days"
-- Command run on weekend: Error "archive-day only works Monday-Friday"
-- Target day not found in week.md: Error "Target day {day} not found in week.md"
-- Invalid day name: Error "Invalid day: {day}. Use Monday-Friday"
-
-Example:
-
-Source day (Monday) BEFORE:
-```
-## Monday
---- **Important** + **Urgent** ---
-- [ ] [PGL-948] ATC Mutation
-    - [x] Code Changes
-    - [x] Test in dev env
-    - [ ] Figure out solution for order summary errors
-    - [ ] Send out for code review
-- [x] Completed standalone task
-```
-
-Source day (Monday) AFTER:
-```
-## Monday
---- **Important** + **Urgent** ---
-- [x] [PGL-948] ATC Mutation
-    - [x] Code Changes
-    - [x] Test in dev env
-- [x] Completed standalone task
-```
-
-Target day (Tuesday) AFTER:
-```
-## Tuesday
---- **Important** + **Urgent** ---
-- [ ] [PGL-948] ATC Mutation
-    - [ ] Figure out solution for order summary errors
-    - [ ] Send out for code review
-```
+- Missing `personal_week.md`: skip it without failing.
+- Missing `week.md`: process `personal_week.md` if present.
+- Source = target: error `Source and target must be different days`.
+- Invalid day name: error `Invalid day: {day}. Use Sunday-Saturday`.
+- Target day missing from an eligible file: error `Target day {day} not found in {file}`.
+- Source day missing from an eligible file: error `Source day {day} not found in {file}`.
 
 Command invocation:
 ```bash
-/archive-day                              # Before 15: previous weekday → today; after 15: today → next weekday
-/archive-day --to Thursday                # Auto-detected source → Thursday
-/archive-day --from Monday --to Wednesday # Monday → Wednesday
+/archive-day                              # Defaults per file based on current time
+/archive-day --to Thursday                # Auto-detected source per file → Thursday
+/archive-day --from Monday --to Wednesday # Monday → Wednesday in both files when present
+/archive-day --from Saturday --to Sunday  # Personal plan only
 ```

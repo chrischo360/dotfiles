@@ -329,6 +329,63 @@ vim.api.nvim_create_user_command("PRLink", function(opts)
   vim.notify("Inserted: " .. markdown, vim.log.levels.INFO)
 end, { nargs = 1, desc = "Convert GitHub PR URL to markdown link with repo/branch name" })
 
+-- Compute a relative path (with ../) from a directory to a target file
+local function relpath(target, from_dir)
+  local t = vim.split(vim.fn.fnamemodify(target, ":p"), "/", { plain = true })
+  local f = vim.split((vim.fn.fnamemodify(from_dir, ":p"):gsub("/$", "")), "/", { plain = true })
+  local i = 1
+  while i <= #f and i <= #t and f[i] == t[i] do
+    i = i + 1
+  end
+  local parts = {}
+  for _ = i, #f do
+    table.insert(parts, "..")
+  end
+  for j = i, #t do
+    table.insert(parts, t[j])
+  end
+  return table.concat(parts, "/")
+end
+
+-- Insert a markdown link to a fuzzy-picked file at the cursor
+vim.api.nvim_create_user_command("MdLink", function()
+  local ok, builtin = pcall(require, "telescope.builtin")
+  if not ok then
+    vim.notify("Telescope not available", vim.log.levels.ERROR)
+    return
+  end
+  local actions = require("telescope.actions")
+  local action_state = require("telescope.actions.state")
+
+  local buf_dir = vim.fn.expand("%:p:h")
+  local search_root = buf_dir:find(notes_dir, 1, true) and notes_dir or vim.fn.getcwd()
+
+  builtin.find_files({
+    prompt_title = "Insert Markdown Link",
+    cwd = search_root,
+    attach_mappings = function(prompt_bufnr)
+      actions.select_default:replace(function()
+        local entry = action_state.get_selected_entry()
+        actions.close(prompt_bufnr)
+        if not entry then return end
+
+        local target = entry.path or (search_root .. "/" .. entry.value)
+        local rel = relpath(target, buf_dir)
+        local label = vim.fn.fnamemodify(target, ":t:r")
+        local link = string.format("[%s](%s)", label, rel)
+
+        local row, col = unpack(vim.api.nvim_win_get_cursor(0))
+        local line = vim.api.nvim_get_current_line()
+        vim.api.nvim_set_current_line(line:sub(1, col) .. link .. line:sub(col + 1))
+        vim.api.nvim_win_set_cursor(0, { row, col + #link })
+      end)
+      return true
+    end,
+  })
+end, { desc = "Insert markdown link to a fuzzy-picked file" })
+
+vim.keymap.set("n", "<leader>ml", "<cmd>MdLink<cr>", { desc = "Insert markdown link (fuzzy)" })
+
 -- Auto-sort completed todo items to the top of their sibling group on save
 
 local function get_indent(line)

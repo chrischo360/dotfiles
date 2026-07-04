@@ -70,6 +70,13 @@ return {
       { "<leader>ds", desc = "Document symbols" },
     })
 
+    -- Register Markdown keybindings
+    wk.add({
+      { "<leader>m", group = "📝 Markdown" },
+      { "<leader>mp", desc = "Toggle Markdown Preview" },
+      { "<leader>ml", desc = "Insert markdown link (fuzzy)" },
+    })
+
     -- Register GitHub keybindings
     wk.add({
       { "<leader>g", group = "🐙 Git/GitHub" },
