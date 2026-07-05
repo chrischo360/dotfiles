@@ -37,3 +37,4 @@ typeset -U path
 
 # Show profiling report if enabled
 [[ -n "$ZSH_PROFILE" ]] && zprof
+export PATH="/opt/homebrew/opt/libpq/bin:$PATH"

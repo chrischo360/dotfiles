@@ -12,6 +12,9 @@ eval "$(~/.local/bin/mise activate zsh)"
 # Set JAVA_HOME immediately after mise activation
 export JAVA_HOME="$HOME/.sdkman/candidates/java/current"
 
+# direnv - per-directory environment variables
+eval "$(direnv hook zsh)"
+
 # Yarn (for legacy yarn installations)
 export PATH="$HOME/.yarn/bin:$HOME/.config/yarn/global/node_modules/.bin:$PATH"
 

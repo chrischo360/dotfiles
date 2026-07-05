@@ -9,7 +9,7 @@
   "defaultProvider": "openai-codex",
   "defaultModel": "gpt-5.5",
   "lastChangelogVersion": "0.74.0",
-  "defaultThinkingLevel": "xhigh",
+  "defaultThinkingLevel": "high",
   "enabledModels": [
     "anthropic-vertex/claude-haiku-4-5-20251001",
     "anthropic-vertex/claude-sonnet-4-6",

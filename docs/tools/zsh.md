@@ -10,7 +10,7 @@ Live docs: `man zsh` | `man zshbuiltins`
 | File | Purpose |
 |------|---------|
 | `01-env.zsh` | Environment variables (history, Node certs, Vertex AI, Claude models) |
-| `02-paths.zsh` | PATH setup, mise activation |
+| `02-paths.zsh` | PATH setup, mise activation, direnv hook |
 | `03-lazy-load.zsh` | Lazy loaders for gcloud, zoxide |
 | `03-overrides.zsh` | Post-mise overrides (JAVA_HOME via sdkman) |
 | `05-aliases.zsh` | Aliases and functions |
