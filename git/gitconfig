@@ -9,9 +9,6 @@
 [includeIf "gitdir:~/codebase/lacuna/"]
     path = ~/dotfiles/git/gitconfig-personal
 
-[url "git@github.com:"]
-    insteadOf = git@github.com-personal:
-
 [core]
     editor = nvim
     autocrlf = input
