@@ -97,6 +97,7 @@ See `.env.example` for full list.
 
 # Internal dotfiles symlinks (not home directory):
 ~/dotfiles/claude/commands/global/ -> ~/dotfiles/agent/commands/  (makes commands available to ~/.claude/commands)
+~/dotfiles/pi/agent/extensions/codeblock-copy -> ~/codebase/pi-codeblock-copy
 
 # Shared agent skills:
 ~/.agents/skills/<name>/       -> ~/dotfiles/agent/skills/<name>/

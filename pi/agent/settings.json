@@ -4,6 +4,7 @@
     "~/.pi/agent/extensions/mcp-glean",
     "~/.pi/agent/extensions/mcp-sourcegraph",
     "~/.pi/agent/extensions/session-status",
+    "~/.pi/agent/extensions/codeblock-copy",
     "~/.pi/agent/extensions/web-tools"
   ],
   "defaultProvider": "openai-codex",
