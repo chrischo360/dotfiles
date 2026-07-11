@@ -31,7 +31,7 @@ sessions=(
   "sf-js-libraries|$HOME/codebase/sf-js-libraries|shell"
   "sf-ui-cart-and-checkout|$HOME/codebase/sf-ui-cart-and-checkout|shell"
   "sf-ui-checkout|$HOME/codebase/sf-ui-checkout|shell"
-  "sf-ui-web|$HOME/codebase/sf-ui-web|nvim,shell,shell,shell"
+  "sf-ui-web|$HOME/codebase/sf-ui-web|nvim,shell"
 )
 
 command_for_mode() {
