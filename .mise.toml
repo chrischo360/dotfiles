@@ -11,7 +11,7 @@
 node = "lts"                    # Node.js (replaces fnm)
 python = "latest"               # Python (replaces pyenv)
 ruby = "latest"                 # Ruby (replaces rbenv)
-# java → managed by sdkman instead (better for macOS development)
+java = "latest"               # Java (sdkman takes precedence on macOS via zshrc)
 bun = "latest"                  # Fast JavaScript runtime
 deno = "latest"                 # Secure TypeScript runtime
 
@@ -21,7 +21,7 @@ deno = "latest"                 # Secure TypeScript runtime
 # Tools that benefit from version management
 
 yarn = "latest"                 # Yarn package manager
-kubectl = "1.27"
+kubectl = "latest"
 
 # Java ecosystem (Java now via sdkman, but keep maven/sbt/scala in mise)
 maven = "latest"                # Java build tool
@@ -107,9 +107,6 @@ auto_install = true
 
 # Enable idiomatic version files (.nvmrc, .python-version, .ruby-version, etc.)
 idiomatic_version_file_enable_tools = ["node", "python", "ruby"]
-
-# Disable Java management - handled by sdkman
-disable_tools = ["java"]
 
 # Shorter plugin names
 shorthands_file = "~/.config/mise/shorthands.toml"

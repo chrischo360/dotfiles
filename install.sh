@@ -15,6 +15,21 @@ NC='\033[0m' # No Color
 # Get the directory where this script is located
 DOTFILES_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
+WITH_AGENTS=false
+
+while [ $# -gt 0 ]; do
+    case "$1" in
+        --with-agents)
+            WITH_AGENTS=true
+            shift
+            ;;
+        *)
+            echo "Unknown argument: $1" >&2
+            exit 1
+            ;;
+    esac
+done
+
 echo -e "${BLUE}╔════════════════════════════════════════╗${NC}"
 echo -e "${BLUE}║     Dotfiles Installation Script      ║${NC}"
 echo -e "${BLUE}╚════════════════════════════════════════╝${NC}"
@@ -71,13 +86,38 @@ substitute_json_template() {
     echo -e "${GREEN}  ✓ Generated: $output${NC}"
 }
 
+install_tmux_plugins() {
+    if ! command -v tmux > /dev/null 2>&1; then
+        echo -e "${YELLOW}  ⚠ tmux not found, skipping tmux plugins${NC}"
+        return 0
+    fi
+
+    if ! command -v git > /dev/null 2>&1; then
+        echo -e "${YELLOW}  ⚠ git not found, skipping tmux plugins${NC}"
+        return 0
+    fi
+
+    mkdir -p "$HOME/.tmux/plugins"
+
+    if [ ! -d "$HOME/.tmux/plugins/tpm" ]; then
+        echo -e "${YELLOW}  Installing Tmux Plugin Manager...${NC}"
+        git clone --depth 1 https://github.com/tmux-plugins/tpm "$HOME/.tmux/plugins/tpm"
+    else
+        echo -e "${GREEN}  ✓ Tmux Plugin Manager already installed${NC}"
+    fi
+
+    if [ -x "$HOME/.tmux/plugins/tpm/bin/install_plugins" ]; then
+        "$HOME/.tmux/plugins/tpm/bin/install_plugins" || echo -e "${YELLOW}  ⚠ Some tmux plugins failed to install${NC}"
+    fi
+}
+
 # Main installation steps
-echo -e "${BLUE}[1/6] Installing mise (dev tools manager)...${NC}"
+echo -e "${BLUE}[1/9] Installing mise (dev tools manager)...${NC}"
 
 # Install mise if not present
 if ! command -v mise &> /dev/null; then
     echo -e "${YELLOW}  Installing mise...${NC}"
-    curl -fsSL https://mise.run | sh || echo -e "${YELLOW}  ⚠ mise install script failed, continuing...${NC}"
+    curl https://mise.run | sh
 
     # Add mise to PATH for this session
     export PATH="$HOME/.local/bin:$PATH"
@@ -101,24 +141,11 @@ if command -v mise &> /dev/null && [ -f "$DOTFILES_DIR/.mise.toml" ]; then
     # Load environment variables from .env (includes GITHUB_TOKEN for aqua backend)
     if [ -f "$DOTFILES_DIR/.env" ]; then
         echo -e "${YELLOW}  Loading environment variables from .env...${NC}"
-        # Don't let a malformed line in .env (e.g. an unquoted value with spaces)
-        # abort the whole install via `set -e`.
-        set +e
         set -a
-        source "$DOTFILES_DIR/.env" 2>/dev/null
+        source "$DOTFILES_DIR/.env"
         set +a
-        set -e
-        # Only pass GITHUB_TOKEN to mise's aqua backend if it looks like a real
-        # token. A placeholder/expired token causes 401s; an unset token lets the
-        # backend fetch anonymously (rate-limited but works for public tools).
-        # Real tokens are a prefix + alphanumerics (the .env.example placeholder
-        # contains underscores/words, so it won't match).
-        if [[ "$GITHUB_TOKEN" =~ ^(ghp_|github_pat_|gho_|ghu_)[A-Za-z0-9_]{20,}$ && "$GITHUB_TOKEN" != *your_* ]]; then
-            export AQUA_GITHUB_TOKEN="${GITHUB_TOKEN}"
-        else
-            echo -e "${YELLOW}  ⚠ GITHUB_TOKEN not set (or still a placeholder) — using anonymous GitHub access${NC}"
-            unset AQUA_GITHUB_TOKEN GITHUB_TOKEN
-        fi
+        # Export AQUA_GITHUB_TOKEN for mise's aqua backend
+        export AQUA_GITHUB_TOKEN="${GITHUB_TOKEN}"
     else
         echo -e "${YELLOW}  ⚠ .env not found, aqua backend may hit GitHub API rate limits${NC}"
     fi
@@ -126,20 +153,19 @@ if command -v mise &> /dev/null && [ -f "$DOTFILES_DIR/.mise.toml" ]; then
     # Change to dotfiles directory so mise picks up .mise.toml
     cd "$DOTFILES_DIR"
 
-    # Recent mise versions refuse to use a config until it's trusted.
-    # Trust both the repo config and the global symlinked config.
-    mise trust "$DOTFILES_DIR/.mise.toml" 2>/dev/null || true
-    mise trust "$HOME/.config/mise/config.toml" 2>/dev/null || true
+    # On macOS, install sdkman for Java (takes precedence over mise's java in zshrc)
+    if [[ "$(uname -s)" == "Darwin" ]] && [ ! -d "$HOME/.sdkman" ]; then
+        echo -e "${YELLOW}  Installing sdkman (Java version manager)...${NC}"
+        curl -s "https://get.sdkman.io" | bash
+        # Source sdkman for this session so scala can find java during mise install
+        export SDKMAN_DIR="$HOME/.sdkman"
+        [[ -s "$SDKMAN_DIR/bin/sdkman-init.sh" ]] && source "$SDKMAN_DIR/bin/sdkman-init.sh"
+        sdk install java
+        echo -e "${GREEN}  ✓ sdkman + Java installed${NC}"
+    fi
 
-    # Install Java first (required by Scala)
-    echo -e "${YELLOW}  Installing Java first (required by Scala)...${NC}"
-    mise install java || echo -e "${YELLOW}  ⚠ Java installation had issues, continuing...${NC}"
-
-    # Activate mise environment to make Java available in PATH for Scala
-    eval "$(mise activate bash)"
-
-    # Install remaining tools
-    echo -e "${YELLOW}  Installing remaining tools...${NC}"
+    # Install all tools
+    echo -e "${YELLOW}  Installing tools...${NC}"
     mise install || echo -e "${YELLOW}  ⚠ Some tools failed to install, check output above${NC}"
 
     echo -e "${GREEN}  ✓ mise tools installed${NC}"
@@ -148,7 +174,7 @@ else
 fi
 
 echo ""
-echo -e "${BLUE}[2/6] Installing OS-specific packages...${NC}"
+echo -e "${BLUE}[2/9] Installing macOS-specific packages...${NC}"
 
 # Detect OS
 OS="$(uname -s)"
@@ -159,10 +185,8 @@ if [[ "$OS" == "Darwin" ]]; then
         echo -e "${GREEN}  ✓ Homebrew detected${NC}"
         if [ -f "$DOTFILES_DIR/Brewfile.macos" ]; then
             echo -e "${YELLOW}  Installing macOS packages from Brewfile.macos...${NC}"
-            # Don't let a single failing formula abort the whole install
-            brew bundle --file="$DOTFILES_DIR/Brewfile.macos" \
-                || echo -e "${YELLOW}  ⚠ Some Homebrew packages failed, continuing...${NC}"
-            echo -e "${GREEN}  ✓ macOS packages processed${NC}"
+            brew bundle --file="$DOTFILES_DIR/Brewfile.macos"
+            echo -e "${GREEN}  ✓ macOS packages installed${NC}"
         else
             echo -e "${YELLOW}  ⚠ Brewfile.macos not found, skipping package installation${NC}"
         fi
@@ -171,66 +195,38 @@ if [[ "$OS" == "Darwin" ]]; then
         echo -e "${YELLOW}  Install Homebrew first: /bin/bash -c \"\$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)\"${NC}"
         echo -e "${YELLOW}  Then re-run this script to install macOS packages${NC}"
     fi
-elif [[ "$OS" == "Linux" ]]; then
-    # Linux - most CLI tools come from mise; install base system packages via apt
-    if command -v apt-get &> /dev/null; then
-        echo -e "${YELLOW}  Installing base packages via apt...${NC}"
-        SUDO=""
-        if [ "$(id -u)" -ne 0 ] && command -v sudo &> /dev/null; then
-            SUDO="sudo"
-        fi
-        $SUDO apt-get update -y \
-            || echo -e "${YELLOW}  ⚠ apt-get update failed, continuing...${NC}"
-        # build-essential/headers let mise compile runtimes (python, ruby) from source
-        $SUDO apt-get install -y \
-            git curl build-essential fontconfig \
-            zlib1g-dev libssl-dev libreadline-dev libyaml-dev libffi-dev \
-            || echo -e "${YELLOW}  ⚠ Some apt packages failed, continuing...${NC}"
-        echo -e "${GREEN}  ✓ Base packages processed${NC}"
-    else
-        echo -e "${YELLOW}  ⚠ apt-get not found — install git, curl and build tools with your package manager${NC}"
-    fi
-    echo -e "${YELLOW}  Note: GUI apps (Ghostty/AeroSpace) and macOS notifiers are skipped on Linux${NC}"
-    echo -e "${YELLOW}  CLI tools (incl. neovim, gh, delta) come from mise${NC}"
 else
-    echo -e "${YELLOW}  ⚠ Unknown OS: $OS - skipping system packages${NC}"
+    echo -e "${YELLOW}  ⚠ Not on macOS - skipping Homebrew packages${NC}"
     echo -e "${YELLOW}  Most tools are installed via mise instead${NC}"
 fi
 
 echo ""
-echo -e "${BLUE}[2b/6] Installing ytfzf...${NC}"
+echo -e "${BLUE}[3/9] Installing ytfzf...${NC}"
 
-# ytfzf - not in any package registry, install via curl
+# ytfzf - not in Homebrew, install via curl
 if ! command -v ytfzf &> /dev/null; then
     echo -e "${YELLOW}  Installing ytfzf...${NC}"
-    mkdir -p "$HOME/.local/bin"
-    # -f makes curl fail on HTTP errors instead of writing an error page to the file
-    if curl -fsSL https://raw.githubusercontent.com/pystardust/ytfzf/master/ytfzf -o "$HOME/.local/bin/ytfzf"; then
-        chmod +x "$HOME/.local/bin/ytfzf"
-        echo -e "${GREEN}  ✓ ytfzf installed${NC}"
-    else
-        rm -f "$HOME/.local/bin/ytfzf"
-        echo -e "${YELLOW}  ⚠ ytfzf download failed, skipping${NC}"
-    fi
+    curl -sL https://raw.githubusercontent.com/pystardust/ytfzf/master/ytfzf -o "$HOME/.local/bin/ytfzf"
+    chmod +x "$HOME/.local/bin/ytfzf"
+    echo -e "${GREEN}  ✓ ytfzf installed${NC}"
 else
     echo -e "${GREEN}  ✓ ytfzf already installed${NC}"
 fi
 
 echo ""
-echo -e "${BLUE}[3/6] Initializing git submodules...${NC}"
+echo -e "${BLUE}[4/9] Initializing git submodules...${NC}"
 
 if git -C "$DOTFILES_DIR" rev-parse --git-dir > /dev/null 2>&1; then
     echo -e "${YELLOW}  Updating git submodules...${NC}"
-    git -C "$DOTFILES_DIR" submodule update --init --recursive \
-        || echo -e "${YELLOW}  ⚠ Some submodules failed to initialize, continuing...${NC}"
-    echo -e "${GREEN}  ✓ Git submodules processed${NC}"
+    git -C "$DOTFILES_DIR" submodule update --init --recursive
+    echo -e "${GREEN}  ✓ Git submodules initialized${NC}"
 else
     echo -e "${RED}  ✗ Not a git repository${NC}"
     echo -e "${YELLOW}  ⚠ Plugin submodules may not be initialized${NC}"
 fi
 
 echo ""
-echo -e "${BLUE}[4/6] Setting up environment variables...${NC}"
+echo -e "${BLUE}[5/9] Setting up environment variables...${NC}"
 
 # Copy .env.example to .env if .env doesn't exist
 if [ ! -f "$DOTFILES_DIR/.env" ]; then
@@ -244,7 +240,7 @@ else
 fi
 
 echo ""
-echo -e "${BLUE}[5/6] Creating symlinks...${NC}"
+echo -e "${BLUE}[6/9] Creating symlinks...${NC}"
 
 # Buildkite
 create_symlink "$DOTFILES_DIR/buildkite/.bk.yaml" "$HOME/.bk.yaml"
@@ -277,12 +273,11 @@ create_symlink "$DOTFILES_DIR/claude/ccstatusline" "$HOME/.config/ccstatusline"
 # mise global config (makes tools available everywhere)
 mkdir -p "$HOME/.config/mise"
 create_symlink "$DOTFILES_DIR/.mise.toml" "$HOME/.config/mise/config.toml"
-# .mise.toml references a shorthands file — create an empty one if missing so mise doesn't warn
-[ -f "$HOME/.config/mise/shorthands.toml" ] || touch "$HOME/.config/mise/shorthands.toml"
 
 # Claude Code
 mkdir -p "$HOME/.claude"
 substitute_json_template "$DOTFILES_DIR/claude/settings.json.template" "$HOME/.claude/settings.json"
+create_symlink "$DOTFILES_DIR/claude/agents" "$HOME/.claude/agents"
 create_symlink "$DOTFILES_DIR/claude/commands" "$HOME/.claude/commands"
 create_symlink "$DOTFILES_DIR/claude/AGENTS.md" "$HOME/.claude/AGENTS.md"
 
@@ -298,8 +293,10 @@ create_symlink "$DOTFILES_DIR/pi/agent/extensions/protected-paths.ts" "$HOME/.pi
 create_symlink "$DOTFILES_DIR/pi/agent/extensions/mcp-sourcegraph" "$HOME/.pi/agent/extensions/mcp-sourcegraph"
 create_symlink "$DOTFILES_DIR/pi/agent/extensions/mcp-glean" "$HOME/.pi/agent/extensions/mcp-glean"
 create_symlink "$DOTFILES_DIR/pi/agent/extensions/mcp-github" "$HOME/.pi/agent/extensions/mcp-github"
+create_symlink "$DOTFILES_DIR/pi/agent/extensions/mcp-buildkite" "$HOME/.pi/agent/extensions/mcp-buildkite"
 create_symlink "$DOTFILES_DIR/pi/agent/extensions/web-tools.ts" "$HOME/.pi/agent/extensions/web-tools.ts"
 create_symlink "$DOTFILES_DIR/pi/agent/extensions/theme-sync.ts" "$HOME/.pi/agent/extensions/theme-sync.ts"
+create_symlink "$DOTFILES_DIR/pi/agent/extensions/media-manager.ts" "$HOME/.pi/agent/extensions/media-manager.ts"
 create_symlink "$DOTFILES_DIR/pi/agent/themes" "$HOME/.pi/agent/themes"
 create_symlink "$DOTFILES_DIR/agent/commands" "$HOME/.pi/agent/prompts"
 
@@ -325,7 +322,12 @@ done
 
 
 echo ""
-echo -e "${BLUE}[6/6] Making scripts executable...${NC}"
+echo -e "${BLUE}[7/9] Installing tmux plugins...${NC}"
+install_tmux_plugins
+
+
+echo ""
+echo -e "${BLUE}[8/9] Making scripts executable...${NC}"
 
 # Make all shell scripts executable
 find "$DOTFILES_DIR/claude/scripts" -type f -name "*.sh" -exec chmod +x {} \;
@@ -340,10 +342,40 @@ if [ -f "$DOTFILES_DIR/scripts/ghostty-font" ]; then
     echo -e "${GREEN}  ✓ ghostty-font script linked${NC}"
 fi
 
+# Theme switching script (Ghostty + Neovim)
+if [ -f "$DOTFILES_DIR/scripts/theme" ]; then
+    chmod +x "$DOTFILES_DIR/scripts/theme"
+    create_symlink "$DOTFILES_DIR/scripts/theme" "$HOME/.local/bin/theme"
+    echo -e "${GREEN}  ✓ theme script linked${NC}"
+fi
+
+# Browser automation scripts
+if [ -d "$DOTFILES_DIR/scripts/browser" ]; then
+    echo -e "${YELLOW}  Setting up browser automation scripts...${NC}"
+
+    # Make all .mjs and .sh scripts executable
+    find "$DOTFILES_DIR/scripts/browser" -name "*.mjs" -exec chmod +x {} \;
+    find "$DOTFILES_DIR/scripts/browser" -name "*.sh" -exec chmod +x {} \;
+
+    # Install npm dependencies
+    if [ -f "$DOTFILES_DIR/scripts/browser/package.json" ]; then
+        echo -e "${YELLOW}  Installing npm dependencies...${NC}"
+        cd "$DOTFILES_DIR/scripts/browser"
+        npm install --silent
+
+        # Install Playwright Chromium browser
+        echo -e "${YELLOW}  Installing Playwright Chromium...${NC}"
+        npx playwright install chromium --with-deps
+
+        cd "$DOTFILES_DIR"
+        echo -e "${GREEN}  ✓ Browser automation setup complete${NC}"
+    fi
+fi
+
 echo -e "${GREEN}  ✓ Scripts made executable${NC}"
 
 echo ""
-echo -e "${BLUE}[7/7] Verifying installation...${NC}"
+echo -e "${BLUE}[9/9] Verifying installation...${NC}"
 
 # OS already detected earlier
 
@@ -368,8 +400,14 @@ check_command "rg" || echo -e "${YELLOW}    Run: cd $DOTFILES_DIR && mise instal
 if [[ "$OS" == "Darwin" ]]; then
     check_command "brew" || echo -e "${YELLOW}    Install: /bin/bash -c \"\$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)\"${NC}"
     check_command "terminal-notifier" || echo -e "${YELLOW}    Run: brew bundle --file=$DOTFILES_DIR/Brewfile.macos${NC}"
+fi
+
+# Check browser automation setup
+if [ -d "$DOTFILES_DIR/scripts/browser/node_modules" ]; then
+    echo -e "${GREEN}  ✓ Browser automation (Playwright)${NC}"
 else
-    check_command "noti" || echo -e "${YELLOW}    Install noti for agent notifications: https://github.com/variadico/noti${NC}"
+    echo -e "${RED}  ✗ Browser automation (npm dependencies missing)${NC}"
+    echo -e "${YELLOW}    Run: cd $DOTFILES_DIR/scripts/browser && npm install && npx playwright install chromium${NC}"
 fi
 
 # Platform-specific application checks
