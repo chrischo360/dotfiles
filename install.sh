@@ -340,13 +340,6 @@ if [ -f "$DOTFILES_DIR/scripts/ghostty-font" ]; then
     echo -e "${GREEN}  ✓ ghostty-font script linked${NC}"
 fi
 
-# Theme switching script (Ghostty + Neovim)
-if [ -f "$DOTFILES_DIR/scripts/theme" ]; then
-    chmod +x "$DOTFILES_DIR/scripts/theme"
-    create_symlink "$DOTFILES_DIR/scripts/theme" "$HOME/.local/bin/theme"
-    echo -e "${GREEN}  ✓ theme script linked${NC}"
-fi
-
 echo -e "${GREEN}  ✓ Scripts made executable${NC}"
 
 echo ""
