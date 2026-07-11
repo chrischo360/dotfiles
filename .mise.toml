@@ -109,7 +109,7 @@ auto_install = true
 idiomatic_version_file_enable_tools = ["node", "python", "ruby"]
 
 # Shorter plugin names
-shorthands_file = "~/.config/mise/shorthands.toml"
+# shorthands_file = "~/.config/mise/shorthands.toml"
 
 # Use all CPU cores for compilation
 jobs = 4
