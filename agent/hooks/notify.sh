@@ -11,7 +11,7 @@
 #   AGENT_LABEL - shown in the title (e.g. "Claude", "Pi", "Devin"). Default: "Agent".
 
 AGENT="${1:-Agent}"
-SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" >/dev/null && pwd)"
 
 # Resolve tmux's absolute path now. The click handler runs from terminal-notifier
 # with a minimal PATH that won't include mise/homebrew, so a bare "tmux" fails.

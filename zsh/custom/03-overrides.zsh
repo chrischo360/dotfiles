@@ -6,6 +6,7 @@
 # Solution: Add our own precmd hook that always restores JAVA_HOME
 _sdkman_java_override() {
   export JAVA_HOME="$HOME/.sdkman/candidates/java/current"
+  path=("$JAVA_HOME/bin" ${path:#$JAVA_HOME/bin})
 }
 
 # Add to precmd_functions array (runs before each prompt)

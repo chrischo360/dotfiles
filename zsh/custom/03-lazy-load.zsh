@@ -1,5 +1,18 @@
 # Lazy Loading for Performance
 
+# --- SDKMAN ---
+sdk() {
+  unfunction sdk
+
+  if [[ -s "$HOME/.sdkman/bin/sdkman-init.sh" ]]; then
+    source "$HOME/.sdkman/bin/sdkman-init.sh"
+    sdk "$@"
+  else
+    echo "sdkman init script not found" >&2
+    return 127
+  fi
+}
+
 # --- Google Cloud SDK ---
 gcloud() {
   if [ -f "$HOME/google-cloud-sdk/path.zsh.inc" ]; then

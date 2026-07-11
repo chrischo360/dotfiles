@@ -38,3 +38,7 @@ typeset -U path
 # Show profiling report if enabled
 [[ -n "$ZSH_PROFILE" ]] && zprof
 export PATH="/opt/homebrew/opt/libpq/bin:$PATH"
+
+# Added by Devin
+export PATH="/Users/cc446g/.codeium/windsurf/bin:$PATH"
+export PATH="$HOME/.local/bin:$HOME/Library/Android/sdk/platform-tools:$PATH"

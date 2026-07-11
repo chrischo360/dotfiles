@@ -84,6 +84,25 @@ return {
         },
       },
     })
+
+    -- Periodically save the session as a safety net against unclean exits
+    -- (crashes, OS restarts, `kill -9`, closing the terminal, etc. skip
+    -- VimLeavePre, which is the only event persisted.nvim saves on by default)
+    local persisted_timer = vim.uv.new_timer()
+    persisted_timer:start(60000, 60000, vim.schedule_wrap(function()
+      if vim.g.persisting then
+        require("persisted").save()
+      end
+    end))
+
+    -- Also save on focus lost / buffer write, since those are natural checkpoints
+    vim.api.nvim_create_autocmd({ "FocusLost", "BufWritePost" }, {
+      callback = function()
+        if vim.g.persisting then
+          require("persisted").save()
+        end
+      end,
+    })
   end,
   keys = {
     {

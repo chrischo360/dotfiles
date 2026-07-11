@@ -62,13 +62,17 @@ Live docs: `man tmux` | `tmux list-commands`
 
 ## Statusline
 
-**Left:** `[session-name]`
+**Left:** `[session-name]` + window list + `nvim count` on current window
 
-**Right:** `Claude status | Buildkite status | CPU% | RAM% | date/time`
+**Right:** `Pi status | Claude status | Devin status | Buildkite status | date/time`
 
-- Refreshes every 2 seconds
+- Refreshes every 10 seconds
+- Shared agent renderer: `~/.config/tmux/scripts/agent_status.sh`
+- Pi status script: `~/.config/tmux/scripts/pi_status.sh`
 - Claude status script: `~/.config/tmux/scripts/claude_status.sh`
+- Devin status script: `~/.config/tmux/scripts/devin_status.sh`
 - Buildkite status script: `~/.config/tmux/scripts/buildkite_status.sh`
+- Nvim count script: `~/.config/tmux/scripts/nvim_status.sh`
 
 ## mpv Integration
 
@@ -78,6 +82,5 @@ Requires `socat` and mpv launched with `--input-ipc-server=/tmp/mpvsocket` (hand
 ## Plugins
 
 - `tmux-plugins/tpm` — plugin manager
-- `tmux-plugins/tmux-resurrect` — save/restore sessions
+- `tmux-plugins/tmux-resurrect` — save/restore sessions, including nvim sessions
 - `tmux-plugins/tmux-continuum` — auto-save every 15 min, auto-restore
-- `tmux-plugins/tmux-cpu` — CPU/RAM metrics for statusline

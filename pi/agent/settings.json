@@ -9,7 +9,7 @@
   ],
   "defaultProvider": "openai-codex",
   "defaultModel": "gpt-5.5",
-  "lastChangelogVersion": "0.74.0",
+  "lastChangelogVersion": "0.80.6",
   "defaultThinkingLevel": "high",
   "enabledModels": [
     "anthropic-vertex/claude-haiku-4-5-20251001",
@@ -19,11 +19,14 @@
     "openai-codex/gpt-5.5",
     "openai/gpt-5.4-mini"
   ],
-  "theme": "onedark",
+  "theme": "papercolor-light",
   "compaction": {
     "enabled": false
   },
   "hideThinkingBlock": false,
   "quietStartup": true,
-  "treeFilterMode": "default"
+  "editorPaddingX": 0,
+  "outputPad": 0,
+  "collapseChangelog": true,
+  "treeFilterMode": "no-tools"
 }

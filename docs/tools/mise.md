@@ -7,7 +7,9 @@ macOS apps: `~/dotfiles/Brewfile.macos`
 
 ## Tools (from .mise.toml)
 
-**Language Runtimes:** node (lts), python, ruby, java, bun, deno, scala
+**Language Runtimes:** node (lts), python, ruby, bun, deno, scala
+
+Java is managed by sdkman, not mise.
 
 **Build Tools:** yarn, maven, sbt, kubectl, gradle (vfox), pipx (asdf)
 

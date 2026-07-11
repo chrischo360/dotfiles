@@ -185,6 +185,26 @@ return {
         },
       })
 
+      local function sdkman_java_runtimes()
+        local candidates_dir = vim.fn.expand("~/.sdkman/candidates/java")
+        local runtimes = {}
+
+        for _, major in ipairs({ "21", "17", "11" }) do
+          local matches = vim.fn.glob(candidates_dir .. "/" .. major .. ".*", false, true)
+          table.sort(matches)
+
+          local path = matches[#matches]
+          if path and vim.fn.isdirectory(path) == 1 then
+            table.insert(runtimes, {
+              name = "JavaSE-" .. major,
+              path = path,
+            })
+          end
+        end
+
+        return runtimes
+      end
+
       -- Java
       vim.lsp.config('jdtls', {
         capabilities = capabilities,
@@ -219,16 +239,7 @@ return {
               useBlocks = true,
             },
             configuration = {
-              runtimes = {
-                {
-                  name = "JavaSE-11",
-                  path = vim.fn.expand("~/.sdkman/candidates/java/11.0.12-open"),
-                },
-                {
-                  name = "JavaSE-17",
-                  path = vim.fn.expand("~/.sdkman/candidates/java/17.0.5-tem"),
-                },
-              },
+              runtimes = sdkman_java_runtimes(),
             },
           },
         },

@@ -14,9 +14,7 @@ setopt HIST_REDUCE_BLANKS        # Remove superfluous blanks
 # Node.js
 export NODE_EXTRA_CA_CERTS="$HOME/certificates/wayfair-certs.pem"
 
-# Java - Now managed by sdkman
-# Initialize sdkman (JAVA_HOME override happens in 03-overrides.zsh after mise activation)
-[[ -s "$HOME/.sdkman/bin/sdkman-init.sh" ]] && source "$HOME/.sdkman/bin/sdkman-init.sh"
+# Java - managed by sdkman, initialized lazily in 03-lazy-load.zsh
 
 # Scala/Coursier (optional - consider mise for scala too)
 export PATH="$PATH:$HOME/Library/Application Support/Coursier/bin"
@@ -28,10 +26,12 @@ export ANTHROPIC_VERTEX_PROJECT_ID=wf-gcp-us-sf-genai-pilot-sbx
 export CLOUD_ML_REGION=us-east5
 
 # Opus
-export ANTHROPIC_DEFAULT_OPUS_MODEL='claude-opus-4-6'
+# export ANTHROPIC_DEFAULT_OPUS_MODEL='claude-opus-4-6'
+export ANTHROPIC_DEFAULT_OPUS_MODEL='claude-opus-4-8'
 
 # Sonnet
-export ANTHROPIC_DEFAULT_SONNET_MODEL='claude-sonnet-4-6'
+# export ANTHROPIC_DEFAULT_SONNET_MODEL='claude-sonnet-4-6'
+export ANTHROPIC_DEFAULT_SONNET_MODEL='claude-sonnet-4-8'
 
 # Haiku
 export ANTHROPIC_SMALL_FAST_MODEL='claude-haiku-4-6'

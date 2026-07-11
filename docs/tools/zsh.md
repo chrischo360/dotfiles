@@ -11,7 +11,7 @@ Live docs: `man zsh` | `man zshbuiltins`
 |------|---------|
 | `01-env.zsh` | Environment variables (history, Node certs, Vertex AI, Claude models) |
 | `02-paths.zsh` | PATH setup, mise activation, direnv hook |
-| `03-lazy-load.zsh` | Lazy loaders for gcloud, zoxide |
+| `03-lazy-load.zsh` | Lazy loaders for sdkman, gcloud, zoxide |
 | `03-overrides.zsh` | Post-mise overrides (JAVA_HOME via sdkman) |
 | `05-aliases.zsh` | Aliases and functions |
 | `06-work.zsh` | Wayfair-specific config |
@@ -26,6 +26,7 @@ Live docs: `man zsh` | `man zshbuiltins`
 |----------|-------|
 | `EDITOR` / `VISUAL` | `nvim` |
 | `CDPATH` | `.:~:~/codebase` |
+| `JAVA_HOME` | `~/.sdkman/candidates/java/current` |
 | `CLAUDE_CODE_USE_VERTEX` | `1` |
 | `ANTHROPIC_VERTEX_PROJECT_ID` | `wf-gcp-us-sf-genai-pilot-sbx` |
 | `CLOUD_ML_REGION` | `us-east5` |
@@ -73,6 +74,7 @@ Live docs: `man zsh` | `man zshbuiltins`
 | `dev` / `d` | `$DOTFILES_DIR/scripts/dev/dev.sh` |
 | `memory` | `$DOTFILES_DIR/scripts/nvim/memory.sh` |
 | `bk-local` | `node $DOTFILES_DIR/scripts/codebase/buildkite-local-checks.mjs` |
+| `obsidian` | Open Obsidian from terminal |
 | `bk-start/stop/status/watch` | Buildkite monitor session management |
 | `icat` | `kitty +kitten icat` |
 | `tmux-reload` | Reload zsh in idle tmux panes |

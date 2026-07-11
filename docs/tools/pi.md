@@ -15,12 +15,6 @@ Live docs: `pi --help`
 - Prompts: loads from `~/dotfiles/claude/commands/global` (shared with Claude Code)
 - Thinking: off by default
 
-**Available models:**
-- `anthropic-vertex/claude-haiku-4-5-20251001`
-- `anthropic-vertex/claude-sonnet-4-6`
-- `anthropic-vertex/claude-opus-4-6`
-- `anthropic-vertex/claude-opus-4-7`
-
 ## Extensions
 
 Auto-loaded from `~/.pi/agent/extensions/` (symlinked from `~/dotfiles/pi/agent/extensions/`):

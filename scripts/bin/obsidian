@@ -1,0 +1,8 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+if [[ $# -eq 0 ]]; then
+  exec open -a "Obsidian"
+fi
+
+exec open -a "Obsidian" -- "$@"
