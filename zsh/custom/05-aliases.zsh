@@ -271,10 +271,6 @@ nvim-fzf() {
   fi
 }
 
-nvim-empty() {
-  NVIM_NO_SESSION=1 command nvim "$@"
-}
-
 nvim-grep() {
   local result=$(rg --line-number --column --no-heading --color=always . | \
     fzf --ansi \

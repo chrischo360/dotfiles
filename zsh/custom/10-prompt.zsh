@@ -10,8 +10,8 @@ zstyle ':vcs_info:*' enable git
 
 # Custom function to highlight remote SSH sessions
 remote_shell_badge() {
-  if [[ -n "$SSH_CONNECTION$SSH_CLIENT$SSH_TTY" ]]; then
-    echo "%B%K{red}%F{white} SSH:%n@%m %f%k%b "
+  if [[ -n "$SSH_CONNECTION$SSH_CLIENT$SSH_TTY$MOSH_CONNECTION" ]]; then
+    echo "%B%F{red}!! SSH %n@%m !!%f%b "
   fi
 }
 

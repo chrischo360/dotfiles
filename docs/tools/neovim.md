@@ -32,7 +32,7 @@ Lock file: `nvim/lazy-lock.json`
 | mini.nvim | Collection of small utilities | — |
 | neo-tree.nvim | File explorer | — |
 | oil.nvim | Directory editor | `<leader>-` |
-| persisted.nvim | Session management (`NVIM_NO_SESSION=1 nvim` disables load/save) | — |
+| persisted.nvim | Session management | — |
 | render-markdown.nvim | Markdown rendering | — |
 | surround.nvim | Surround motions | — |
 | telescope.nvim | Fuzzy finder | — |
