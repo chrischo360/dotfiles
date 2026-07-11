@@ -80,9 +80,8 @@ exec zsh
   under `~/dotfiles` and `~/codebase/lacuna` auto-switch identity via
   `git/gitconfig-personal` (see [`git/gitconfig`](git/gitconfig)); edit that file
   if the personal email is wrong.
-- **Fonts:** if `install.sh` reports JetBrainsMono Nerd Font missing, re-run
-  `brew bundle --file=Brewfile.macos` or install it manually from
-  [nerdfonts.com](https://www.nerdfonts.com/).
+- **Fonts:** macOS uses `Brewfile.macos`; Linux downloads Nerd Fonts into
+  `~/.local/share/fonts` and refreshes `fc-cache`.
 - **Re-run safely:** `./install.sh` is idempotent — re-run it any time (e.g. after
   `git pull`) to pick up new symlinks or tools.
 

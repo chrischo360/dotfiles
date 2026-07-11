@@ -10,7 +10,7 @@ cd ~/dotfiles
 The install script will:
 1. Install mise (dev tools manager)
 2. Install tools from .mise.toml (all CLI tools and runtimes)
-3. Install macOS-specific packages from Brewfile.macos (if on macOS)
+3. Install OS-specific packages: macOS from Brewfile.macos, Linux base packages and Nerd Fonts
 4. Initialize git submodules (zsh plugins)
 5. Backup existing config files
 6. Create all necessary symlinks
@@ -95,7 +95,7 @@ The install script will:
 2. Run install script: `cd ~/dotfiles && ./install.sh`
 3. Restart shell: `exec zsh`
 
-The install script automatically installs mise and all tools from `.mise.toml`, plus macOS packages from `Brewfile.macos` if on macOS.
+The install script automatically installs mise and all tools from `.mise.toml`, macOS packages from `Brewfile.macos` on macOS, and base packages plus Nerd Fonts on Linux.
 
 ## Testing Installation (Docker)
 

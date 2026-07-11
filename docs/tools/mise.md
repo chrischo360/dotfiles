@@ -32,7 +32,7 @@ and `03-overrides.zsh`). On Linux, mise manages Java directly since sdkman isn't
 
 **Apps:** aerospace, docker-desktop, claude-code, chromium, homerow
 
-**Fonts:** font-jetbrains-mono-nerd-font
+**Fonts:** font-jetbrains-mono-nerd-font, font-caskaydia-cove-nerd-font, font-sauce-code-pro-nerd-font
 
 ## Usage
 

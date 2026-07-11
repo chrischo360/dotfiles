@@ -111,6 +111,61 @@ install_tmux_plugins() {
     fi
 }
 
+font_installed() {
+    command -v fc-list > /dev/null 2>&1 && fc-list 2>/dev/null | grep -qi "$1"
+}
+
+install_linux_nerd_fonts() {
+    if ! command -v curl > /dev/null 2>&1 || ! command -v unzip > /dev/null 2>&1; then
+        echo -e "${YELLOW}  ⚠ curl/unzip missing, skipping Linux font installation${NC}"
+        return 0
+    fi
+
+    local font_dir="$HOME/.local/share/fonts"
+    local tmp_dir
+    tmp_dir="$(mktemp -d)"
+    mkdir -p "$font_dir"
+
+    local font_specs=(
+        "JetBrainsMono|JetBrainsMono Nerd Font"
+        "CascadiaCode|CaskaydiaCove Nerd Font"
+        "SourceCodePro|SauceCodePro Nerd Font"
+    )
+    local installed_any=false
+    local font_spec archive family zip_file url
+
+    for font_spec in "${font_specs[@]}"; do
+        archive="${font_spec%%|*}"
+        family="${font_spec#*|}"
+
+        if font_installed "$family"; then
+            echo -e "${GREEN}  ✓ $family already installed${NC}"
+            continue
+        fi
+
+        echo -e "${YELLOW}  Installing $family...${NC}"
+        zip_file="$tmp_dir/$archive.zip"
+        url="https://github.com/ryanoasis/nerd-fonts/releases/latest/download/$archive.zip"
+
+        if curl -fL "$url" -o "$zip_file" && unzip -oq "$zip_file" -d "$font_dir/$archive"; then
+            echo -e "${GREEN}  ✓ $family installed${NC}"
+            installed_any=true
+        else
+            echo -e "${YELLOW}  ⚠ Failed to install $family${NC}"
+        fi
+    done
+
+    rm -rf "$tmp_dir"
+
+    if [ "$installed_any" = true ]; then
+        if command -v fc-cache > /dev/null 2>&1 && fc-cache -f "$font_dir"; then
+            echo -e "${GREEN}  ✓ Font cache refreshed${NC}"
+        else
+            echo -e "${YELLOW}  ⚠ Failed to refresh font cache${NC}"
+        fi
+    fi
+}
+
 # Main installation steps
 echo -e "${BLUE}[1/9] Installing mise (dev tools manager)...${NC}"
 
@@ -216,6 +271,7 @@ elif [[ "$OS" == "Linux" ]]; then
     else
         echo -e "${YELLOW}  ⚠ apt-get not found — install git, curl, zip/unzip and build tools with your package manager${NC}"
     fi
+    install_linux_nerd_fonts
     echo -e "${YELLOW}  Note: GUI apps (Ghostty/AeroSpace) and macOS notifiers are skipped on Linux${NC}"
     echo -e "${YELLOW}  CLI tools (incl. neovim, gh, delta, java) come from mise${NC}"
 else
@@ -434,15 +490,14 @@ elif [[ "$OS" == "Linux" ]]; then
     # Linux-specific checks
     check_command "ghostty" || echo -e "${YELLOW}  ⚠ Ghostty (install via package manager)${NC}"
 
-    # Check JetBrainsMono Nerd Font (Linux paths)
-    if fc-list 2>/dev/null | grep -i "JetBrainsMono Nerd Font" > /dev/null || \
-       ls ~/.local/share/fonts/ 2>/dev/null | grep -i "JetBrainsMono" > /dev/null || \
-       ls /usr/share/fonts/ 2>/dev/null | grep -i "JetBrainsMono" > /dev/null; then
-        echo -e "${GREEN}  ✓ JetBrainsMono Nerd Font${NC}"
-    else
-        echo -e "${RED}  ✗ JetBrainsMono Nerd Font (not installed)${NC}"
-        echo -e "${YELLOW}    Download from: https://www.nerdfonts.com/${NC}"
-    fi
+    for font_name in "JetBrainsMono Nerd Font" "CaskaydiaCove Nerd Font" "SauceCodePro Nerd Font"; do
+        if font_installed "$font_name"; then
+            echo -e "${GREEN}  ✓ $font_name${NC}"
+        else
+            echo -e "${RED}  ✗ $font_name (not installed)${NC}"
+            echo -e "${YELLOW}    Run: $DOTFILES_DIR/install.sh${NC}"
+        fi
+    done
 else
     echo -e "${YELLOW}  ⚠ Unknown OS: $OS - skipping app-specific checks${NC}"
 fi
