@@ -9,6 +9,14 @@ show_current() {
     echo "Current: $current ($weight)"
 }
 
+sed_in_place() {
+    if [[ "$(uname -s)" == "Darwin" ]]; then
+        sed -i '' "$@"
+    else
+        sed -i "$@"
+    fi
+}
+
 switch_font() {
     local font_name=$1
 
@@ -42,11 +50,11 @@ switch_font() {
     cp "$CONFIG_FILE" "$CONFIG_FILE.bak"
 
     # Update config using sed
-    sed -i '' "s/^font-family = .*/font-family = $font/" "$CONFIG_FILE"
-    sed -i '' "s/^font-style = .*/font-style = $style/" "$CONFIG_FILE"
-    sed -i '' "s/^font-style-bold = .*/font-style-bold = $style/" "$CONFIG_FILE"
-    sed -i '' "s/^font-style-italic = .*/font-style-italic = $style Italic/" "$CONFIG_FILE"
-    sed -i '' "s/^font-style-bold-italic = .*/font-style-bold-italic = $style Italic/" "$CONFIG_FILE"
+    sed_in_place "s/^font-family = .*/font-family = $font/" "$CONFIG_FILE"
+    sed_in_place "s/^font-style = .*/font-style = $style/" "$CONFIG_FILE"
+    sed_in_place "s/^font-style-bold = .*/font-style-bold = $style/" "$CONFIG_FILE"
+    sed_in_place "s/^font-style-italic = .*/font-style-italic = $style Italic/" "$CONFIG_FILE"
+    sed_in_place "s/^font-style-bold-italic = .*/font-style-bold-italic = $style Italic/" "$CONFIG_FILE"
 
     echo "Switched to: $font ($style)"
     echo ""

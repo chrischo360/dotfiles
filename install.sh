@@ -264,7 +264,7 @@ elif [[ "$OS" == "Linux" ]]; then
         $SUDO apt-get update -y \
             || echo -e "${YELLOW}  ⚠ apt-get update failed, continuing...${NC}"
         $SUDO apt-get install -y \
-            git curl build-essential fontconfig zip unzip \
+            git curl build-essential fontconfig zip unzip lsof \
             zlib1g-dev libssl-dev libreadline-dev libyaml-dev libffi-dev \
             || echo -e "${YELLOW}  ⚠ Some apt packages failed, continuing...${NC}"
         echo -e "${GREEN}  ✓ Base packages processed${NC}"

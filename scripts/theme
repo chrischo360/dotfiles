@@ -14,6 +14,14 @@ get_active() {
     cat "$ACTIVE_THEME_FILE" 2>/dev/null || echo "dracula"
 }
 
+sed_in_place() {
+    if [[ "$(uname -s)" == "Darwin" ]]; then
+        sed -i '' "$@"
+    else
+        sed -i "$@"
+    fi
+}
+
 show_current() {
     ghostty_theme=$(grep "^theme = " "$GHOSTTY_CONFIG" | sed 's/theme = //')
     echo "Ghostty: ${ghostty_theme:-unknown}"
@@ -188,7 +196,7 @@ switch_theme() {
     echo "$nvim_theme" > "$ACTIVE_THEME_FILE"
 
     # --- Ghostty ---
-    sed -i '' "s/^theme = .*/theme = $ghostty_theme/" "$GHOSTTY_CONFIG"
+    sed_in_place "s/^theme = .*/theme = $ghostty_theme/" "$GHOSTTY_CONFIG"
     echo "Ghostty: $ghostty_theme"
 
     # Reload Ghostty config across all windows (simulate Cmd+Shift+,)
@@ -199,7 +207,10 @@ switch_theme() {
 
     # --- Neovim live reload (parallel, 3s timeout) ---
     echo "Neovim:  $nvim_theme ($mode)"
-    sockets=$(lsof -U -a -c nvim 2>/dev/null | awk '/nvim\.[0-9]+/ {print $NF}' | sort -u)
+    sockets=""
+    if command -v lsof &>/dev/null; then
+        sockets=$(lsof -U -a -c nvim 2>/dev/null | awk '/nvim\.[0-9]+/ {print $NF}' | sort -u)
+    fi
     tmp_dir=$(mktemp -d)
     pids=()
     for socket in $sockets; do
