@@ -8,6 +8,13 @@ precmd() { vcs_info }
 zstyle ':vcs_info:git:*' formats '%F{green}%b%f'
 zstyle ':vcs_info:*' enable git
 
+# Custom function to highlight remote SSH sessions
+remote_shell_badge() {
+  if [[ -n "$SSH_CONNECTION$SSH_CLIENT$SSH_TTY" ]]; then
+    echo "%B%K{red}%F{white} SSH:%n@%m %f%k%b "
+  fi
+}
+
 # Custom function to colorize path segments
 colorize_path() {
   local path_str="${PWD/#$HOME/~}"
@@ -54,5 +61,5 @@ colorize_path() {
 # %~ = current directory (with ~ for home)
 # %(?...) = conditional: show if last command failed
 # ${vcs_info_msg_0_} = git branch from vcs_info
-PROMPT='$(colorize_path) ${vcs_info_msg_0_}
+PROMPT='$(remote_shell_badge)$(colorize_path) ${vcs_info_msg_0_}
 %F{%(?.green.red)}❯%f '

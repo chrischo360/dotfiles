@@ -7,10 +7,12 @@ return {
   lazy = false, -- Load immediately
   priority = 1000, -- Load early
   config = function()
+    local session_disabled = vim.env.NVIM_NO_SESSION == "1"
+
     require("persisted").setup({
-      autostart = true, -- Automatically start the plugin on load
-      autoload = true, -- Automatically load the session for the cwd on Neovim startup
-      autosave = true, -- Automatically save the session on exit
+      autostart = not session_disabled, -- Automatically start the plugin on load
+      autoload = not session_disabled, -- Automatically load the session for the cwd on Neovim startup
+      autosave = not session_disabled, -- Automatically save the session on exit
       follow_cwd = true, -- Change the session file to match any change in the cwd
 
       -- Function to determine if a session should be saved
@@ -94,6 +96,10 @@ return {
     -- saves from one would silently clobber another's layout. To avoid that,
     -- only one instance per session file ("the owner") does periodic saves;
     -- the others fall back to the original save-on-exit-only behaviour.
+    if session_disabled then
+      return
+    end
+
     local is_session_owner = false
 
     local function lock_path()

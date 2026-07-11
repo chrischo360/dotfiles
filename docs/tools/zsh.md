@@ -75,6 +75,7 @@ Live docs: `man zsh` | `man zshbuiltins`
 | `dev` / `d` | `$DOTFILES_DIR/scripts/dev/dev.sh` |
 | `theme` | `$DOTFILES_DIR/scripts/theme` |
 | `memory` | `$DOTFILES_DIR/scripts/nvim/memory.sh` |
+| `nvim-empty` | Open Neovim without loading/saving persisted sessions |
 | `bk-local` | `node $DOTFILES_DIR/scripts/codebase/buildkite-local-checks.mjs` |
 | `obsidian` | Open Obsidian from terminal |
 | `bk-start/stop/status/watch` | Buildkite monitor session management |
@@ -87,6 +88,10 @@ Live docs: `man zsh` | `man zshbuiltins`
 
 - `zsh/plugins/zsh-autosuggestions` — command suggestions
 - `zsh/plugins/fast-syntax-highlighting` — syntax highlighting
+
+## Prompt
+
+- Remote SSH sessions show a red `SSH:user@host` badge before the path.
 
 ## History
 
