@@ -39,7 +39,7 @@ portable configuration across different users, machines, and directory locations
 - **mise** (`.mise.toml`) installs nearly all CLI tools on both macOS and Linux —
   including `neovim`, `gh`, and `delta` (via the aqua backend). This is the
   primary, cross-platform install path.
-- **macOS:** `Brewfile.macos` adds GUI apps (Ghostty, AeroSpace, Hammerspoon),
+- **macOS:** `Brewfile.macos` adds GUI apps (Ghostty, AeroSpace),
   fonts, and macOS-only notifiers (`terminal-notifier`, `alerter`).
 - **Linux:** `install.sh` installs base system packages via `apt-get`
   (`git`, `curl`, `build-essential`, font/runtime build deps). GUI apps and macOS

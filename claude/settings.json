@@ -65,7 +65,7 @@
     "ask": [],
     "defaultMode": "default"
   },
-  "model": "opus",
+  "model": "sonnet",
   "hooks": {
     "SessionStart": [
       {
@@ -157,15 +157,7 @@
     "command": "ccstatusline",
     "padding": 0
   },
-  "enabledPlugins": {
-    "vercel@claude-plugins-official": true
-  },
   "alwaysThinkingEnabled": false,
-  "theme": "dark-ansi",
-  "editorMode": "vim",
-  "preferredNotifChannel": "kitty",
-  "autoCompactEnabled": false,
-  "fileCheckpointingEnabled": false,
   "defaultMode": "plan",
   "allowedTools": [
     {
@@ -285,13 +277,5 @@
     "/Users/cc446g/codebase/terraform"
   ],
   "mcpServers": {},
-  "autoUpdaterStatus": "disabled",
-  "extraKnownMarketplaces": {
-    "claude-plugins-official": {
-      "source": {
-        "source": "github",
-        "repo": "anthropics/claude-plugins-official"
-      }
-    }
-  }
+  "autoUpdaterStatus": "disabled"
 }

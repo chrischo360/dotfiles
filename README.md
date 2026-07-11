@@ -74,7 +74,7 @@ exec zsh
 ### After Installing
 
 - **Restart your terminal** (or `exec zsh`) so the new `.zshrc` and PATH take effect.
-- **macOS permissions:** grant Accessibility access to AeroSpace and Hammerspoon
+- **macOS permissions:** grant Accessibility access to AeroSpace
   (System Settings → Privacy & Security → Accessibility) so window management works.
 - **Git identity:** confirm `git config user.email` matches you — personal repos
   under `~/dotfiles` and `~/codebase/lacuna` auto-switch identity via

@@ -7,9 +7,10 @@ macOS apps: `~/dotfiles/Brewfile.macos`
 
 ## Tools (from .mise.toml)
 
-**Language Runtimes:** node (lts), python, ruby, bun, deno, scala
+**Language Runtimes:** node (lts), python, ruby, bun, deno, scala, java
 
-Java is managed by sdkman, not mise.
+Java: on macOS, sdkman takes precedence over mise's `java` (see `zsh/custom/02-paths.zsh`
+and `03-overrides.zsh`). On Linux, mise manages Java directly since sdkman isn't installed there.
 
 **Build Tools:** yarn, maven, sbt, kubectl, gradle (vfox), pipx (asdf)
 

@@ -12,7 +12,8 @@ Live docs: `man zsh` | `man zshbuiltins`
 | `01-env.zsh` | Environment variables (history, Node certs, Vertex AI, Claude models) |
 | `02-paths.zsh` | PATH setup, mise activation, direnv hook |
 | `03-lazy-load.zsh` | Lazy loaders for sdkman, gcloud, zoxide |
-| `03-overrides.zsh` | Post-mise overrides (JAVA_HOME via sdkman) |
+| `03-overrides.zsh` | Post-mise overrides (JAVA_HOME via sdkman, macOS only) |
+| `04-platform.zsh` | Platform-specific PATH additions (macOS: PHP, Coursier, Scala CLI) |
 | `05-aliases.zsh` | Aliases and functions |
 | `06-work.zsh` | Wayfair-specific config |
 | `07-help.zsh` | Helper functions (glob, nvim-surround, regex) |
@@ -26,7 +27,7 @@ Live docs: `man zsh` | `man zshbuiltins`
 |----------|-------|
 | `EDITOR` / `VISUAL` | `nvim` |
 | `CDPATH` | `.:~:~/codebase` |
-| `JAVA_HOME` | `~/.sdkman/candidates/java/current` |
+| `JAVA_HOME` | `~/.sdkman/candidates/java/current` (macOS only; Linux uses mise's java shim) |
 | `CLAUDE_CODE_USE_VERTEX` | `1` |
 | `ANTHROPIC_VERTEX_PROJECT_ID` | `wf-gcp-us-sf-genai-pilot-sbx` |
 | `CLOUD_ML_REGION` | `us-east5` |

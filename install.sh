@@ -174,7 +174,7 @@ else
 fi
 
 echo ""
-echo -e "${BLUE}[2/9] Installing macOS-specific packages...${NC}"
+echo -e "${BLUE}[2/9] Installing OS-specific packages...${NC}"
 
 # Detect OS
 OS="$(uname -s)"
@@ -185,8 +185,9 @@ if [[ "$OS" == "Darwin" ]]; then
         echo -e "${GREEN}  ✓ Homebrew detected${NC}"
         if [ -f "$DOTFILES_DIR/Brewfile.macos" ]; then
             echo -e "${YELLOW}  Installing macOS packages from Brewfile.macos...${NC}"
-            brew bundle --file="$DOTFILES_DIR/Brewfile.macos"
-            echo -e "${GREEN}  ✓ macOS packages installed${NC}"
+            brew bundle --file="$DOTFILES_DIR/Brewfile.macos" \
+                || echo -e "${YELLOW}  ⚠ Some Homebrew packages failed, continuing...${NC}"
+            echo -e "${GREEN}  ✓ macOS packages processed${NC}"
         else
             echo -e "${YELLOW}  ⚠ Brewfile.macos not found, skipping package installation${NC}"
         fi
@@ -195,8 +196,30 @@ if [[ "$OS" == "Darwin" ]]; then
         echo -e "${YELLOW}  Install Homebrew first: /bin/bash -c \"\$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)\"${NC}"
         echo -e "${YELLOW}  Then re-run this script to install macOS packages${NC}"
     fi
+elif [[ "$OS" == "Linux" ]]; then
+    # Linux - most CLI tools come from mise; install base system packages via apt.
+    # zip/unzip are required by mise's java installer and asdf-style plugins;
+    # build-essential/headers let mise compile runtimes (python, ruby) from source.
+    if command -v apt-get &> /dev/null; then
+        echo -e "${YELLOW}  Installing base packages via apt...${NC}"
+        SUDO=""
+        if [ "$(id -u)" -ne 0 ] && command -v sudo &> /dev/null; then
+            SUDO="sudo"
+        fi
+        $SUDO apt-get update -y \
+            || echo -e "${YELLOW}  ⚠ apt-get update failed, continuing...${NC}"
+        $SUDO apt-get install -y \
+            git curl build-essential fontconfig zip unzip \
+            zlib1g-dev libssl-dev libreadline-dev libyaml-dev libffi-dev \
+            || echo -e "${YELLOW}  ⚠ Some apt packages failed, continuing...${NC}"
+        echo -e "${GREEN}  ✓ Base packages processed${NC}"
+    else
+        echo -e "${YELLOW}  ⚠ apt-get not found — install git, curl, zip/unzip and build tools with your package manager${NC}"
+    fi
+    echo -e "${YELLOW}  Note: GUI apps (Ghostty/AeroSpace) and macOS notifiers are skipped on Linux${NC}"
+    echo -e "${YELLOW}  CLI tools (incl. neovim, gh, delta, java) come from mise${NC}"
 else
-    echo -e "${YELLOW}  ⚠ Not on macOS - skipping Homebrew packages${NC}"
+    echo -e "${YELLOW}  ⚠ Unknown OS: $OS - skipping system packages${NC}"
     echo -e "${YELLOW}  Most tools are installed via mise instead${NC}"
 fi
 
@@ -424,13 +447,6 @@ if [[ "$OS" == "Darwin" ]]; then
         echo -e "${GREEN}  ✓ AeroSpace${NC}"
     else
         echo -e "${RED}  ✗ AeroSpace (not installed)${NC}"
-        echo -e "${YELLOW}    Run: brew bundle --file=$DOTFILES_DIR/Brewfile.macos${NC}"
-    fi
-
-    if [ -d "/Applications/Hammerspoon.app" ]; then
-        echo -e "${GREEN}  ✓ Hammerspoon${NC}"
-    else
-        echo -e "${RED}  ✗ Hammerspoon (not installed)${NC}"
         echo -e "${YELLOW}    Run: brew bundle --file=$DOTFILES_DIR/Brewfile.macos${NC}"
     fi
 

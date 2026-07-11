@@ -11,7 +11,7 @@
 node = "lts"                    # Node.js (replaces fnm)
 python = "latest"               # Python (replaces pyenv)
 ruby = "latest"                 # Ruby (replaces rbenv)
-java = "latest"               # Java (sdkman takes precedence on macOS via zshrc)
+java = "latest"                 # Java (macOS: sdkman takes precedence via zshrc; Linux: mise manages it directly)
 bun = "latest"                  # Fast JavaScript runtime
 deno = "latest"                 # Secure TypeScript runtime
 

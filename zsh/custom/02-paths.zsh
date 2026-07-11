@@ -8,10 +8,12 @@ export PATH="$DOTFILES_DIR/scripts/bin:$HOME/.local/bin:$PATH"
 # Use ~/.local/bin (tilde expands properly in zsh)
 eval "$(~/.local/bin/mise activate zsh)"
 
-# Override: mise unsets JAVA_HOME since Java is managed by sdkman, not mise
-# Set JAVA_HOME immediately after mise activation
-export JAVA_HOME="$HOME/.sdkman/candidates/java/current"
-export PATH="$JAVA_HOME/bin:$PATH"
+# Override: on macOS, mise unsets JAVA_HOME since Java is managed by sdkman there
+# On Linux, Java is managed by mise (java = "latest" in .mise.toml), so leave it alone
+if [[ "$(uname -s)" == "Darwin" ]]; then
+    export JAVA_HOME="$HOME/.sdkman/candidates/java/current"
+    export PATH="$JAVA_HOME/bin:$PATH"
+fi
 
 # direnv - per-directory environment variables
 eval "$(direnv hook zsh)"
