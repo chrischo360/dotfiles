@@ -7,8 +7,8 @@
     "~/.pi/agent/extensions/codeblock-copy",
     "~/.pi/agent/extensions/web-tools"
   ],
-  "defaultProvider": "openai-codex",
-  "defaultModel": "gpt-5.5",
+  "defaultProvider": "deepseek",
+  "defaultModel": "deepseek-v4-pro",
   "lastChangelogVersion": "0.80.6",
   "defaultThinkingLevel": "high",
   "enabledModels": [

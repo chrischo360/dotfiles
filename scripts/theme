@@ -15,10 +15,24 @@ get_active() {
 }
 
 show_current() {
-    ghostty_theme=$(grep "^theme = " "$GHOSTTY_CONFIG" | sed 's/theme = //')
+    ghostty_theme=$(grep "^theme = " "$GHOSTTY_CONFIG" | sed 's/theme = //' 2>/dev/null)
     echo "Ghostty: ${ghostty_theme:-unknown}"
     echo "Neovim:  $(get_active)"
     echo "Mode:    $(get_mode)"
+}
+
+set_ghostty_theme() {
+    local ghostty_theme=$1
+    local tmp_file
+
+    [ -f "$GHOSTTY_CONFIG" ] || return 1
+
+    tmp_file=$(mktemp)
+    awk -v theme="$ghostty_theme" '
+        /^theme = / && !updated { print "theme = " theme; updated = 1; next }
+        { print }
+        END { if (!updated) print "theme = " theme }
+    ' "$GHOSTTY_CONFIG" > "$tmp_file" && mv "$tmp_file" "$GHOSTTY_CONFIG"
 }
 
 print_usage() {
@@ -180,18 +194,27 @@ switch_theme() {
     echo "$nvim_theme" > "$ACTIVE_THEME_FILE"
 
     # --- Ghostty ---
-    sed -i '' "s/^theme = .*/theme = $ghostty_theme/" "$GHOSTTY_CONFIG"
-    echo "Ghostty: $ghostty_theme"
+    if set_ghostty_theme "$ghostty_theme"; then
+        echo "Ghostty: $ghostty_theme"
+    else
+        echo "Ghostty: config not found at $GHOSTTY_CONFIG"
+    fi
 
     # Reload Ghostty config across all windows (simulate Cmd+Shift+,)
-    osascript \
-        -e 'tell application "Ghostty" to activate' \
-        -e 'tell application "System Events" to keystroke "," using {command down, shift down}' \
-        2>/dev/null && echo "Ghostty: reloaded all windows"
+    if command -v osascript >/dev/null 2>&1; then
+        osascript \
+            -e 'tell application "Ghostty" to activate' \
+            -e 'tell application "System Events" to keystroke "," using {command down, shift down}' \
+            2>/dev/null && echo "Ghostty: reloaded all windows"
+    fi
 
     # --- Neovim live reload (parallel, 3s timeout) ---
     echo "Neovim:  $nvim_theme ($mode)"
-    sockets=$(lsof -U -a -c nvim 2>/dev/null | awk '/nvim\.[0-9]+/ {print $NF}' | sort -u)
+    if command -v lsof >/dev/null 2>&1; then
+        sockets=$(lsof -U -a -c nvim 2>/dev/null | awk '/nvim\.[0-9]+/ {print $NF}' | sort -u)
+    else
+        sockets=""
+    fi
     tmp_dir=$(mktemp -d)
     pids=()
     for socket in $sockets; do
