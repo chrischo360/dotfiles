@@ -72,12 +72,14 @@ Live docs: `man zsh` | `man zshbuiltins`
 | Alias | Command |
 |-------|---------|
 | `dev` / `d` | `$DOTFILES_DIR/scripts/dev/dev.sh` |
+| `theme` | `$DOTFILES_DIR/scripts/theme` |
 | `memory` | `$DOTFILES_DIR/scripts/nvim/memory.sh` |
 | `bk-local` | `node $DOTFILES_DIR/scripts/codebase/buildkite-local-checks.mjs` |
 | `obsidian` | Open Obsidian from terminal |
 | `bk-start/stop/status/watch` | Buildkite monitor session management |
 | `icat` | `kitty +kitten icat` |
 | `tmux-reload` | Reload zsh in idle tmux panes |
+| `tmux-daily` | Create curated daily tmux sessions |
 | `cli-agent` | `cursor agent` (AI CLI switcher) |
 
 ## Plugins (git submodules)

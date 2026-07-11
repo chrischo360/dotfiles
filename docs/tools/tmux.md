@@ -25,6 +25,7 @@ Live docs: `man tmux` | `tmux list-commands`
 | `Prefix+c` | New window (same directory) |
 | `Prefix+r` | Reload tmux config |
 | `Prefix+R` | Reload zsh in idle panes (skips nvim/ssh) |
+| `tmux-daily` | Create curated daily sessions |
 
 ### Panes
 
@@ -68,6 +69,7 @@ Live docs: `man tmux` | `tmux list-commands`
 
 - Refreshes every 10 seconds
 - Shared agent renderer: `~/.config/tmux/scripts/agent_status.sh`
+- Agent state uses session-name badges colored by state: green complete, red waiting/context, yellow working/running, cyan reading/web, blue searching/delegating, magenta editing
 - Pi status script: `~/.config/tmux/scripts/pi_status.sh`
 - Claude status script: `~/.config/tmux/scripts/claude_status.sh`
 - Devin status script: `~/.config/tmux/scripts/devin_status.sh`
@@ -83,4 +85,18 @@ Requires `socat` and mpv launched with `--input-ipc-server=/tmp/mpvsocket` (hand
 
 - `tmux-plugins/tpm` — plugin manager
 - `tmux-plugins/tmux-resurrect` — save/restore sessions, including nvim sessions
-- `tmux-plugins/tmux-continuum` — auto-save every 15 min, auto-restore
+- `tmux-plugins/tmux-continuum` — auto-save every 15 min; auto-restore disabled
+
+## Daily Sessions
+
+Script: `~/dotfiles/tmux/scripts/daily-sessions.sh`
+LaunchAgent: `~/dotfiles/tmux/scripts/com.user.tmux-daily.plist` → `~/Library/LaunchAgents/com.user.tmux-daily.plist`
+
+Creates missing sessions only:
+- `dotfiles` → `~/dotfiles` with nvim
+- `notes` → `~/notes` with nvim
+- `sf-ui-web` → shell
+- `sf-ui-checkout` → shell
+- `loyalty-orchestrator-subgraph` → shell
+
+Full tmux-resurrect restore remains manual: `Prefix+Ctrl+r`.

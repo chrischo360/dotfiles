@@ -25,6 +25,7 @@ alias music='yt "https://www.youtube.com/playlist?list=PLGpO1PrgW3bifY2tgAFqLN1v
 # Dev CLI - Context-aware development commands
 alias dev='$DOTFILES_DIR/scripts/dev/dev.sh'
 alias d='dev'
+alias theme='$DOTFILES_DIR/scripts/theme'
 
 # Scout CLI - GitHub/Buildkite automation (optional, requires ~/codebase/scout)
 if [ -d "$HOME/codebase/scout" ]; then
@@ -298,6 +299,7 @@ alias bk-start='$DOTFILES_DIR/scripts/tmux/buildkite_monitor_session.sh start'
 alias bk-stop='$DOTFILES_DIR/scripts/tmux/buildkite_monitor_session.sh stop'
 alias bk-status='$DOTFILES_DIR/scripts/tmux/buildkite_monitor_session.sh status'
 alias bk-watch='tmux attach -t buildkite-monitor'
+alias tmux-daily='$DOTFILES_DIR/tmux/scripts/daily-sessions.sh'
 
 # Buildkite local checks generator
 alias bk-local='node $DOTFILES_DIR/scripts/codebase/buildkite-local-checks.mjs'

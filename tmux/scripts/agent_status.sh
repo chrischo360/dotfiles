@@ -43,48 +43,75 @@ while IFS='|' read -r status action tmux_session repo ctx_warning; do
   echo "$priority|$status|$action|$display_name|$ctx_warning" >> "$temp_file"
 done
 
+state_badge() {
+  local status="$1"
+  local action="$2"
+  local display_name="$3"
+  local ctx_warning="$4"
+  local style="#[fg=black,bg=yellow]"
+  local label="work"
+
+  if [[ "$status" == "idle" ]]; then
+    style="#[fg=black,bg=green]"
+    label="done"
+  elif [[ "$status" == "waiting_for_input" || "$action" == "asking" ]]; then
+    style="#[fg=white,bg=red]"
+    label="wait"
+  elif [[ "$status" == "active" ]]; then
+    case "$action" in
+      reading)
+        style="#[fg=black,bg=cyan]"
+        label="read"
+        ;;
+      searching)
+        style="#[fg=white,bg=blue]"
+        label="search"
+        ;;
+      editing)
+        style="#[fg=white,bg=magenta]"
+        label="edit"
+        ;;
+      running)
+        style="#[fg=black,bg=yellow]"
+        label="run"
+        ;;
+      delegating)
+        style="#[fg=white,bg=blue]"
+        label="agent"
+        ;;
+      fetching)
+        style="#[fg=black,bg=cyan]"
+        label="web"
+        ;;
+      *)
+        style="#[fg=black,bg=yellow]"
+        label="work"
+        ;;
+    esac
+  fi
+
+  if [[ -n "$ctx_warning" ]] && awk -v pct="$ctx_warning" 'BEGIN { exit !(pct >= 80) }'; then
+    style="#[fg=white,bg=red]"
+    label="ctx ${ctx_warning%.*}%"
+  fi
+
+  printf '%s %s #[default]' "$style" "$display_name"
+}
+
 session_displays=()
 while IFS= read -r session_name; do
   [[ -z "$session_name" ]] && continue
   entries=$(awk -F'|' -v name="$session_name" '$4 == name' "$temp_file" | sort -rn)
 
-  icons=""
   while IFS='|' read -r priority status action display_name ctx_warning; do
     [[ -z "$status" ]] && continue
-
-    icon=""
-    if [[ "$status" == "idle" ]]; then
-      icon="✅"
-    elif [[ "$status" == "waiting_for_input" || "$action" == "asking" ]]; then
-      icon="❓"
-    elif [[ -n "$action" ]]; then
-      case "$action" in
-        reading)    icon="📖" ;;
-        searching)  icon="🔍" ;;
-        editing)    icon="✏️" ;;
-        running)    icon="⚙️" ;;
-        delegating) icon="🤖" ;;
-        fetching)   icon="🌐" ;;
-        *)          icon="⚡" ;;
-      esac
-    else
-      icon="⚡"
-    fi
-
-    icons="${icons}${icon}"
-
-    if [[ -n "$ctx_warning" ]] && awk -v pct="$ctx_warning" 'BEGIN { exit !(pct >= 80) }'; then
-      icons="${icons}⚠️"
-    fi
+    session_displays+=("$(state_badge "$status" "$action" "$display_name" "$ctx_warning")")
   done <<< "$entries"
-
-  if [[ -n "$icons" ]]; then
-    session_displays+=("${session_name}${icons}")
-  fi
 done < <(cut -d'|' -f4 "$temp_file" 2>/dev/null | sort -u)
 
 if [[ ${#session_displays[@]} -eq 0 ]]; then
   echo ""
 else
-  echo "$LABEL: ${session_displays[*]}"
+  printf '%s' "${session_displays[@]}"
+  echo
 fi

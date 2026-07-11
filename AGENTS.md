@@ -78,6 +78,7 @@ See `.env.example` for full list.
 ~/.zshrc                       -> ~/dotfiles/zsh/.zshrc
 ~/.tmux.conf                   -> ~/dotfiles/tmux/tmux.conf
 ~/.config/tmux/scripts/        -> ~/dotfiles/tmux/scripts/
+~/Library/LaunchAgents/com.user.tmux-daily.plist -> ~/dotfiles/tmux/scripts/com.user.tmux-daily.plist
 ~/.gitconfig                   -> ~/dotfiles/git/gitconfig
 ~/.aerospace.toml              -> ~/dotfiles/aerospace/aerospace.toml
 ~/.config/ghostty/             -> ~/dotfiles/ghostty/

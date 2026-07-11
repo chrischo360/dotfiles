@@ -3,7 +3,7 @@
   "shell": {
     "setup_complete": true
   },
-  "theme_mode": "light",
+  "theme_mode": "dark",
   "agent": {
     "model": "claude-sonnet-5-medium"
   },
