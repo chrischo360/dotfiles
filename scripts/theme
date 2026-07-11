@@ -37,6 +37,7 @@ print_usage() {
     echo "  duskfox     - Warm dusk dark (nightfox family)"
     echo "  everforest  - Natural green palette (dark/light)"
     echo "  solarized   - Classic solarized (dark/light)"
+    echo "  typewriter  - Warm Obsidian Typewriter-inspired theme (dark/light)"
     echo "  custom      - Your custom theme (dark/light)"
 }
 
@@ -121,6 +122,13 @@ resolve_theme() {
                 ghostty_theme="iTerm2 Solarized Light"
             else
                 ghostty_theme="iTerm2 Solarized Dark"
+            fi
+            ;;
+        typewriter)
+            if [ "$mode" = "light" ]; then
+                ghostty_theme="Pencil Light"
+            else
+                ghostty_theme="Pencil Dark"
             fi
             ;;
         custom)
@@ -241,6 +249,7 @@ pick_theme() {
             "duskfox|Warm dusk dark (nightfox family)" \
             "everforest|Natural green palette" \
             "solarized|Classic solarized dark" \
+            "typewriter|Warm Obsidian Typewriter-inspired dark theme" \
             "custom|Your custom dark theme")
     else
         themes=$(printf '%s\n' \
@@ -253,6 +262,7 @@ pick_theme() {
             "nightfox|Dayfox clean professional light" \
             "everforest|Natural green palette light" \
             "solarized|Classic solarized light" \
+            "typewriter|Warm Obsidian Typewriter-inspired light theme" \
             "custom|Your custom light theme")
     fi
 

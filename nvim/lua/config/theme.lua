@@ -127,6 +127,11 @@ local function resolve(theme, mode)
       vim.o.background = mode == "light" and "light" or "dark"
     end
 
+  elseif theme == "typewriter" then
+    return "typewriter", function()
+      vim.o.background = mode == "light" and "light" or "dark"
+    end
+
   elseif theme == "custom" then
     -- Hand-rolled dark/light pair. Tweak colors here to build your own aesthetic.
     -- Currently based on gruvbox as a starting point.
@@ -151,14 +156,13 @@ function M.apply(theme, mode)
   end
 
   local plugin = plugin_map[colorscheme]
-  if not plugin then
+  if plugin then
+    local ok, lazy = pcall(require, "lazy")
+    if ok then
+      lazy.load({ plugins = { plugin }, wait = true })
+    end
+  elseif colorscheme ~= "typewriter" then
     return "error: no plugin for colorscheme: " .. colorscheme
-  end
-
-  -- Load plugin if not already loaded
-  local ok, lazy = pcall(require, "lazy")
-  if ok then
-    lazy.load({ plugins = { plugin }, wait = true })
   end
 
   -- Run theme-specific setup
@@ -173,12 +177,13 @@ function M.apply(theme, mode)
     return "error: colorscheme: " .. tostring(cs_err)
   end
 
-  -- Apply shared highlight overrides
-  local hl_ok, hl_err = pcall(function()
-    require("config.highlights")[mode == "light" and "light" or "dark"]()
-  end)
-  if not hl_ok then
-    return "error: highlights: " .. tostring(hl_err)
+  if colorscheme ~= "typewriter" then
+    local hl_ok, hl_err = pcall(function()
+      require("config.highlights")[mode == "light" and "light" or "dark"]()
+    end)
+    if not hl_ok then
+      return "error: highlights: " .. tostring(hl_err)
+    end
   end
 
   return "ok"

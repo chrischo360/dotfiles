@@ -92,11 +92,30 @@ Requires `socat` and mpv launched with `--input-ipc-server=/tmp/mpvsocket` (hand
 Script: `~/dotfiles/tmux/scripts/daily-sessions.sh`
 LaunchAgent: `~/dotfiles/tmux/scripts/com.user.tmux-daily.plist` → `~/Library/LaunchAgents/com.user.tmux-daily.plist`
 
-Creates missing sessions only:
-- `dotfiles` → `~/dotfiles` with nvim
-- `notes` → `~/notes` with nvim
-- `sf-ui-web` → shell
-- `sf-ui-checkout` → shell
+Creates missing sessions only. Current list:
+- `android` → shell
+- `anki-goat` → shell
+- `basket-service` → shell
+- `block-builder-api` → shell
+- `cf-cypress` → shell
+- `dotfiles` → nvim + shell
+- `experience-decision-engine` → shell
+- `homebase` → shell
+- `ios` → shell
+- `lacuna` → shell
+- `leetcode` → shell
+- `loyalty-membership` → shell
+- `loyalty-membership-subgraph` → shell
 - `loyalty-orchestrator-subgraph` → shell
+- `music` → shell
+- `notes` → nvim + shell
+- `payments-paykit-subgraph` → shell
+- `php` → shell
+- `portfolio` → shell
+- `server` → shell
+- `sf-js-libraries` → shell
+- `sf-ui-cart-and-checkout` → shell
+- `sf-ui-checkout` → shell
+- `sf-ui-web` → 4 shells
 
 Full tmux-resurrect restore remains manual: `Prefix+Ctrl+r`.
