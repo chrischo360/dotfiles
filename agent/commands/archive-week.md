@@ -1,8 +1,8 @@
-Archive the current weekly plan files and create new ones.
+archive the current weekly plan files and create new ones.
 
 Plan files:
-- Work: `~/notes/Plans/week.md`
-- Personal: `~/notes/Plans/personal_week.md`
+- Work: `~/notes/plans/week.md`
+- Personal: `~/notes/plans/personal_week.md`
 
 Process both files when present. Skip missing optional files, but report what was skipped.
 
@@ -15,13 +15,13 @@ Steps:
    - Parent task context for uncompleted child tasks
 
 2. Load the matching template:
-   - Work: `~/notes/Plans/template/week.md`
-   - Personal: `~/notes/Plans/template/personal_week.md`
+   - Work: `~/notes/plans/template/week.md`
+   - Personal: `~/notes/plans/template/personal_week.md`
    - If the personal template does not exist, derive a clean personal template from the current `personal_week.md` by keeping the header, section headings, day headings, priority separators, and personal `###` category headings, then removing task lines.
 
-3. Archive each current plan file before rewriting it:
-   - `week.md` → `~/notes/Plans/archive/{year}-week-{current_week}_{date}.md`
-   - `personal_week.md` → `~/notes/Plans/archive/personal_week-{year}-week-{current_week}_{date}.md`
+3. archive each current plan file before rewriting it:
+   - `week.md` → `~/notes/plans/archive/{year}-week-{current_week}_{date}.md`
+   - `personal_week.md` → `~/notes/plans/archive/personal_week-{year}-week-{current_week}_{date}.md`
    - Date format example: `2026-week-30_2026-jul-18.md`
    - Use unique filenames if an archive already exists.
 
@@ -47,12 +47,12 @@ Steps:
    - If duplicate day headings exist, preserve the template order and append migrated daily tasks to the first matching target day section.
 
 6. Write the new plan files back to:
-   - `~/notes/Plans/week.md`
-   - `~/notes/Plans/personal_week.md`
+   - `~/notes/plans/week.md`
+   - `~/notes/plans/personal_week.md`
 
 7. Display a concise result:
-   - `Archived week.md to {archive_path}`
-   - `Archived personal_week.md to {archive_path}`
+   - `archived week.md to {archive_path}`
+   - `archived personal_week.md to {archive_path}`
    - `Created new week.md for Week {next_week}`
    - `Created new personal_week.md for Week {next_week}`
    - Include skipped files, if any.

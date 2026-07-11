@@ -1,8 +1,8 @@
 Move uncompleted tasks from a source day to a target day in weekly plan files.
 
 Plan files:
-- Work: `~/notes/Plans/week.md` (Monday-Friday)
-- Personal: `~/notes/Plans/personal_week.md` (Sunday-Saturday)
+- Work: `~/notes/plans/week.md` (Monday-Friday)
+- Personal: `~/notes/plans/personal_week.md` (Sunday-Saturday)
 
 Process both files when present. Skip a file only when it does not exist or the resolved source/target day is outside that file's day set.
 
@@ -34,8 +34,8 @@ Steps:
    - If no files are eligible, error with a clear message.
 
 2. Read and parse each eligible plan file:
-   - `~/notes/Plans/week.md`: identify day sections `## Monday` through `## Friday`
-   - `~/notes/Plans/personal_week.md`: identify day sections `## Sunday` through `## Saturday`
+   - `~/notes/plans/week.md`: identify day sections `## Monday` through `## Friday`
+   - `~/notes/plans/personal_week.md`: identify day sections `## Sunday` through `## Saturday`
    - If `personal_week.md` has duplicate day headers, process all matching source sections and append moved tasks to the last matching target section.
    - Identify priority subsections within each day when present:
      * `--- **Important** + **Urgent** ---`

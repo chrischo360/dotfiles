@@ -1,6 +1,6 @@
 Generate a tailored "Why do you want to work here?" answer for a job application.
 
-Reads the canonical why-company draft from ~/notes/Resumes/app_questions.md and
+Reads the canonical why-company draft from ~/notes/resumes/app_questions.md and
 customizes it with 1-2 concrete hooks from the job description.
 Outputs a polished answer in the user's voice.
 
@@ -13,10 +13,10 @@ Steps:
 
 2. Read context in parallel:
    ```bash
-   cat ~/notes/Resumes/app_questions.md
+   cat ~/notes/resumes/app_questions.md
    ```
    ```bash
-   cat ~/notes/Career/background.md
+   cat ~/notes/career/background.md
    ```
 
 3. Extract 1-2 company-specific hooks from the JD that map to the user's documented motivations.
@@ -74,8 +74,8 @@ What this does:
 - Optionally grows the answer bank with approved company-specific versions
 
 Notes:
-- Bank file: ~/notes/Resumes/app_questions.md (why-company entry is the canonical base)
-- Experience profile: ~/notes/Career/background.md
+- Bank file: ~/notes/resumes/app_questions.md (why-company entry is the canonical base)
+- Experience profile: ~/notes/career/background.md
 - Pitch command: ~/dotfiles/agent/commands/pitch.md — canonical voice reference
 - Do not fabricate experience — draw only from the bank raw notes or what the user provides
 - This command is for written application fields. For interview prep, use /answer-app-questions

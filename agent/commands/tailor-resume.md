@@ -5,7 +5,7 @@ Generate a tailored LaTeX resume for a specific job description.
 
 Shared command for Pi, Claude, and Devin. Treat this file as the canonical workflow; do not copy agent-specific variants. Use native file-read/edit tools when available, and use the bash snippets only as fallbacks or for compilation.
 
-Reads the best-matching base template from `~/notes/Resumes/Templates/`, incorporates JD keywords, selects relevant extra bullets, and writes a new `~/notes/Resumes/resume-<company>-<date>.tex`.
+Reads the best-matching base template from `~/notes/resumes/templates/`, incorporates JD keywords, selects relevant extra bullets, and writes a new `~/notes/resumes/resume-<company>-<date>.tex`.
 
 ## Inputs
 
@@ -19,16 +19,16 @@ Ask the user for anything not already provided:
 1. Confirm the inputs are available. If either company name or job description is missing, ask for it before continuing.
 
 2. Select and read the base resume template, extra bullets pool, and experience profile in parallel:
-   - List available templates in `~/notes/Resumes/Templates/`.
+   - List available templates in `~/notes/resumes/templates/`.
    - Choose the best-matching `.tex` template based on role emphasis:
      - Frontend/product/growth/design roles: `frontend_product_growth.tex`
      - AI/devtools/tooling roles: `ai_devtools_engineer.tex`
      - If no clear match exists, ask the user which template to use.
    - Read the selected template plus the support files using the agent's native read tool. If unavailable, use:
    ```bash
-   cat ~/notes/Resumes/Templates/<selected-template>.tex
-   cat ~/notes/Resumes/extra_bullets.md
-   cat ~/notes/Career/background.md
+   cat ~/notes/resumes/templates/<selected-template>.tex
+   cat ~/notes/resumes/extra_bullets.md
+   cat ~/notes/career/background.md
    ```
 
 3. Normalize the job description text before keyword extraction:
@@ -93,7 +93,7 @@ Ask the user for anything not already provided:
 
    Wait for user approval before proceeding. If the user requests changes, apply them and re-summarize before writing.
 
-7. Write output to `~/notes/Resumes/resume-<company>-<date>.tex`
+7. Write output to `~/notes/resumes/resume-<company>-<date>.tex`
    - Lowercase company name, hyphens for spaces, and use `YYYY-MM-DD` date format (e.g. `resume-stripe-2026-06-26.tex`, `resume-jane-street-2026-06-26.tex`)
    - Preserve all LaTeX formatting and escaping from the original (\%, \$, \&, etc.)
    - Keep \documentclass{resume} and all \begin/\end environments intact
@@ -126,10 +126,10 @@ Ask the user for anything not already provided:
 
 9. Compile and move to the finished output location:
    ```bash
-   cd ~/notes/Resumes && mkdir -p Finished/<company>-<date> && pdflatex resume-<company>-<date>.tex && mv resume-<company>-<date>.pdf Finished/<company>-<date>/Christopher_Cho_Resume.pdf && rm -f resume-<company>-<date>.{aux,log,out}
+   cd ~/notes/resumes && mkdir -p finished/<company>-<date> && pdflatex resume-<company>-<date>.tex && mv resume-<company>-<date>.pdf finished/<company>-<date>/Christopher_Cho_Resume.pdf && rm -f resume-<company>-<date>.{aux,log,out}
    ```
-   - Output: `~/notes/Resumes/Finished/<company>-<date>/Christopher_Cho_Resume.pdf`
-   - The `.tex` source stays at `~/notes/Resumes/resume-<company>-<date>.tex`
+   - Output: `~/notes/resumes/finished/<company>-<date>/Christopher_Cho_Resume.pdf`
+   - The `.tex` source stays at `~/notes/resumes/resume-<company>-<date>.tex`
    - aux/log/out files are cleaned up automatically
 
 10. Output a gap analysis table comparing the JD against the final resume. Run through all six keyword categories from step 4:
@@ -189,7 +189,7 @@ Ask the user for anything not already provided:
     - For each "missing" or "partial" gap identified in step 10, ask:
       "Do you have real experience with [term/skill] that isn't captured in the resume yet?"
     - If yes, ask them to describe it briefly, then offer a draft bullet pre-filled with the JD action verb and domain as a template (e.g. "Designed and implemented [X] for [Y], reducing [Z] by [N]%") — user fills in the specifics
-    - Append confirmed bullets to ~/notes/Resumes/extra_bullets.md under the correct role section
+    - Append confirmed bullets to ~/notes/resumes/extra_bullets.md under the correct role section
     - This step is optional — user can skip any or all gaps
 
 What this does:
@@ -205,8 +205,8 @@ Agent compatibility:
 - Keep the workflow tool-agnostic: prefer read/edit/write operations, reserve bash for listing files and compiling LaTeX.
 
 Notes:
-- Base resumes live in `~/notes/Resumes/Templates/`; select the best-matching `.tex` template for the JD.
-- Output filename pattern: `Resumes/resume-<company>-<date>.tex`
-- Extra bullets are auto-read from `~/notes/Resumes/extra_bullets.md` — no need to paste them
+- Base resumes live in `~/notes/resumes/templates/`; select the best-matching `.tex` template for the JD.
+- Output filename pattern: `resumes/resume-<company>-<date>.tex`
+- Extra bullets are auto-read from `~/notes/resumes/extra_bullets.md` — no need to paste them
 - Do not commit the output file
 - If the JD mentions a technology already in the resume, ensure it appears in Skills even if not currently listed

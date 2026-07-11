@@ -1,6 +1,6 @@
 ---
 name: brag-document
-description: Record weekly accomplishments into a running brag document at ~/notes/Plans/brag_document.md. Translates completed tickets and work from the weekly plan into clear, promotable, interview-ready entries. Use when Chris asks to update the brag doc, log wins, record accomplishments, or do a weekly reflection.
+description: Record weekly accomplishments into a running brag document at ~/notes/plans/brag_document.md. Translates completed tickets and work from the weekly plan into clear, promotable, interview-ready entries. Use when Chris asks to update the brag doc, log wins, record accomplishments, or do a weekly reflection.
 metadata:
   source: local://dotfiles/agent/skills/brag-document
 ---
@@ -18,7 +18,7 @@ Use this skill when:
 ## Brag document location
 
 ```txt
-~/notes/Plans/brag_document.md
+~/notes/plans/brag_document.md
 ```
 
 Create the file with a header if it does not exist:
@@ -65,13 +65,13 @@ Only include sections that have real content. Omit empty sections.
 
 ### Step 1 — Read the weekly plan
 
-Read `~/notes/Plans/week.md` for:
+Read `~/notes/plans/week.md` for:
 - Completed tasks (`- [x]`).
 - In-progress tasks (`- [ ]` with subtasks started).
 - Ticket IDs (e.g., `[PGL-1754]`).
 - Any notes about deployment, reviews, or collaboration.
 
-If Chris says "last week" or the current week is sparse, also check the most recent file in `~/notes/Plans/Archive/` to find the prior week.
+If Chris says "last week" or the current week is sparse, also check the most recent file in `~/notes/plans/archive/` to find the prior week.
 
 ### Step 2 — Ask for missing context (briefly)
 
@@ -106,7 +106,7 @@ Tips:
 
 ### Step 4 — Write the entry
 
-Prepend the new entry into `~/notes/Plans/brag_document.md` below the file header (above any existing entries).
+Prepend the new entry into `~/notes/plans/brag_document.md` below the file header (above any existing entries).
 
 Preserve all existing entries exactly as written.
 
@@ -131,7 +131,7 @@ Chris is building a promotion case. When logging entries, note in the `### Notes
 Promotion plan document for context (read when relevant):
 
 ```txt
-~/notes/Plans/Promotion_Summer_2026/plan.md
+~/notes/plans/promotion_summer_2026/plan.md
 ```
 
 ## Tone
@@ -146,6 +146,6 @@ Promotion plan document for context (read when relevant):
 
 1. Read the weekly plan and any relevant context.
 2. Draft the brag entry without asking unnecessary questions.
-3. Write the entry to `~/notes/Plans/brag_document.md`.
+3. Write the entry to `~/notes/plans/brag_document.md`.
 4. Show Chris the drafted entry in the response.
 5. Note any entries worth turning into a case study later.

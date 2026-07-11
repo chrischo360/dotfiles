@@ -41,7 +41,7 @@ File naming:
 Example:
 
 ```txt
-Interviews/Airgoods/Technical/what_you_worked_on/high_friction_checkout.mdoc
+interviews/airgoods/technical/what_you_worked_on/high_friction_checkout.mdoc
 ```
 
 The `.mdoc` file should include:
@@ -268,10 +268,10 @@ Use `read`, `grep`, `find`, or `ls`. Avoid unnecessary shell exploration.
 Look in:
 
 ```txt
-Resumes/
-Resumes/extra_bullets.md
-Resumes/resume_patterns.md
-Resumes/Generated/
+resumes/
+resumes/extra_bullets.md
+resumes/resume_patterns.md
+resumes/generated/
 ```
 
 Extract:

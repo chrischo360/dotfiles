@@ -21,8 +21,8 @@ Then paste the job posting content when prompted.
 
 ### 2. Personal Background Integration
 Sources to pull from:
-- `~/notes/Career/background.md` - Work experience, skills, achievements
-- `~/notes/Career/examples/successful-pitches.md` - Reference examples that worked
+- `~/notes/career/background.md` - Work experience, skills, achievements
+- `~/notes/career/examples/successful-pitches.md` - Reference examples that worked
 - Key highlights to emphasize:
   - Technical experience (internships, projects, tech stack)
   - Education background
@@ -89,7 +89,7 @@ Sources to pull from:
 ## Resources
 
 Read these files before generating:
-- `~/notes/Career/background.md` — required experience profile
-- `~/notes/Career/examples/successful-pitches.md` — optional examples; use only if it has real examples
+- `~/notes/career/background.md` — required experience profile
+- `~/notes/career/examples/successful-pitches.md` — optional examples; use only if it has real examples
 
-If `~/notes/Career/background.md` is missing, stop and ask the user for background details. Do not invent experience.
+If `~/notes/career/background.md` is missing, stop and ask the user for background details. Do not invent experience.
