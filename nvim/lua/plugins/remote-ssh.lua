@@ -56,6 +56,13 @@ return {
         capabilities = cmp_nvim_lsp.default_capabilities(capabilities)
       end
 
+      for key, direction in pairs({ h = "h", j = "j", k = "k", l = "l" }) do
+        vim.keymap.set("t", "<C-" .. key .. ">", "<C-\\><C-n><C-w>" .. direction, {
+          desc = "Navigate to " .. ({ h = "left", j = "below", k = "above", l = "right" })[key] .. " window",
+          silent = true,
+        })
+      end
+
       require("remote-ssh").setup({
         capabilities = capabilities,
         filetype_to_server = {
@@ -78,6 +85,11 @@ return {
         async_write_opts = {
           autosave = false,
           save_debounce_ms = 3000,
+        },
+        remote_tui_opts = {
+          keymaps = {
+            hide_session = "<C-\\>h",
+          },
         },
       })
     end,
