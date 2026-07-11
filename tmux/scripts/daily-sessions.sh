@@ -59,11 +59,11 @@ for entry in "${sessions[@]}"; do
 
   for mode in "${modes[@]:1}"; do
     command=$(command_for_mode "$mode")
-    "$TMUX_BIN" split-window -t "$name:1" -c "$dir" "$command"
+    "$TMUX_BIN" split-window -h -t "$name:1" -c "$dir" "$command"
   done
 
   if [[ ${#modes[@]} -gt 1 ]]; then
-    "$TMUX_BIN" select-layout -t "$name:1" tiled >/dev/null
+    "$TMUX_BIN" select-layout -t "$name:1" even-horizontal >/dev/null
   fi
 
 done
