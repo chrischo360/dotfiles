@@ -88,9 +88,71 @@ return {
     -- Periodically save the session as a safety net against unclean exits
     -- (crashes, OS restarts, `kill -9`, closing the terminal, etc. skip
     -- VimLeavePre, which is the only event persisted.nvim saves on by default)
+    --
+    -- Guard: persisted.nvim names session files by cwd+branch, so if you have
+    -- multiple Neovim instances open in the same directory/branch, periodic
+    -- saves from one would silently clobber another's layout. To avoid that,
+    -- only one instance per session file ("the owner") does periodic saves;
+    -- the others fall back to the original save-on-exit-only behaviour.
+    local is_session_owner = false
+
+    local function lock_path()
+      return require("persisted").current() .. ".lock"
+    end
+
+    local function is_pid_alive(pid)
+      if not pid then
+        return false
+      end
+      local ok, result = pcall(vim.uv.kill, pid, 0)
+      return ok and result == 0
+    end
+
+    local function release_lock()
+      if not is_session_owner then
+        return
+      end
+      local path = lock_path()
+      local f = io.open(path, "r")
+      if f then
+        local pid = tonumber(f:read("*a"))
+        f:close()
+        if pid == vim.fn.getpid() then
+          vim.fn.delete(path)
+        end
+      end
+      is_session_owner = false
+    end
+
+    local function acquire_lock()
+      release_lock() -- give up ownership of any previous session (e.g. after DirChanged)
+
+      local path = lock_path()
+      local existing = io.open(path, "r")
+      if existing then
+        local pid = tonumber(existing:read("*a"))
+        existing:close()
+        if is_pid_alive(pid) and pid ~= vim.fn.getpid() then
+          is_session_owner = false -- another live instance already owns this session
+          return
+        end
+      end
+
+      local f = io.open(path, "w")
+      if f then
+        f:write(tostring(vim.fn.getpid()))
+        f:close()
+      end
+      is_session_owner = true
+    end
+
+    acquire_lock()
+    vim.api.nvim_create_autocmd("DirChanged", { callback = acquire_lock })
+    vim.api.nvim_create_autocmd("VimLeavePre", { callback = release_lock })
+
     local persisted_timer = vim.uv.new_timer()
     persisted_timer:start(60000, 60000, vim.schedule_wrap(function()
-      if vim.g.persisting then
+      if vim.g.persisting and is_session_owner then
         require("persisted").save()
       end
     end))
@@ -98,7 +160,7 @@ return {
     -- Also save on focus lost / buffer write, since those are natural checkpoints
     vim.api.nvim_create_autocmd({ "FocusLost", "BufWritePost" }, {
       callback = function()
-        if vim.g.persisting then
+        if vim.g.persisting and is_session_owner then
           require("persisted").save()
         end
       end,
