@@ -90,7 +90,7 @@ Live docs: `man zsh` | `man zshbuiltins`
 
 ## Prompt
 
-- Remote SSH/Mosh sessions show a bold red `!! SSH user@host !!` badge before the path.
+- Remote SSH/Mosh sessions show a red `user@host` label before the path.
 
 ## History
 
