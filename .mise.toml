@@ -45,7 +45,7 @@ yt-dlp = "latest"               # YouTube downloader/streamer
 # Terminal & Editors
 # ============================================
 tmux = "latest"                 # Terminal multiplexer
-neovim = "latest"               # Editor (aqua backend, cross-platform)
+"aqua:neovim/neovim" = "latest"  # Editor (aqua backend, cross-platform)
 
 # ============================================
 # Version Control
