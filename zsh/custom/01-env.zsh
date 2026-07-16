@@ -1,5 +1,11 @@
 # Environment Variables
 
+# Locale - force UTF-8 so tmux/terminal apps don't garble multi-byte
+# characters (em dashes, curly quotes, box-drawing glyphs, etc.) when the
+# system locale falls back to the POSIX "C" locale.
+export LANG="en_US.UTF-8"
+export LC_ALL="en_US.UTF-8"
+
 # Better History Configuration
 HISTFILE="$HOME/.zsh_history"
 HISTSIZE=50000

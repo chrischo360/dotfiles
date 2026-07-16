@@ -557,6 +557,40 @@ Visualization of all Claude commands and their relationships.
 
 ---
 
+### pitch-company
+**Skill:** `global:pitch-company`
+**Purpose:** Tailor a concise job application pitch (150–250w) from a company name and job posting
+
+**Uses:**
+- `~/notes/career/background.md` (required)
+- `~/notes/career/examples/successful-pitches.md` (optional)
+
+**Used by:**
+- User invoked when applying to a job (WaaS, LinkedIn, cold email, application form)
+
+**Related:**
+- `/pitch` (parent skill — same rules)
+- `/answer-app-questions` (written field answers after pitch)
+- `/tailor-resume` (same JD input)
+
+---
+
+### answer-app-questions
+**Skill:** `global:answer-app-questions`
+**Purpose:** Answer job application questions in human style, drawing from a personal Q&A bank
+
+**Uses:**
+- File I/O (`~/notes/resumes/app-questions.md`, `~/notes/resumes/*.tex`)
+- Q&A bank (read existing answers, append approved new ones)
+
+**Used by:**
+- User invoked when filling out job application fields
+
+**Related:**
+- `/tailor-resume` (same JD input can be reused)
+
+---
+
 ### archive-week
 **Skill:** `repos:notes:archive-week`
 **Purpose:** Archive the current weekly plan and create a new one

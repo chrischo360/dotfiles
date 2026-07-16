@@ -25,6 +25,7 @@ Live docs: `man zsh` | `man zshbuiltins`
 
 | Variable | Value |
 |----------|-------|
+| `LANG` / `LC_ALL` | `en_US.UTF-8` (prevents mojibake in tmux/terminal apps when the system falls back to the `C` locale) |
 | `EDITOR` / `VISUAL` | `nvim` |
 | `CDPATH` | `.:~:~/codebase` |
 | `JAVA_HOME` | `~/.sdkman/candidates/java/current` (macOS only; Linux uses mise's java shim) |
