@@ -197,4 +197,24 @@ I'll update the login validation in src/auth/login.js:45-50
 Would you like me to run the linter to verify syntax?
 ```
 
+## Skills & Commands
+
+Source of truth for all shared agent config lives in `~/dotfiles/agent/`.
+
+**Skills** — loaded on-demand with `/skill:name`:
+- Source: `~/dotfiles/agent/skills/`
+- `~/.agents/skills/` → symlink to `~/dotfiles/agent/skills/`
+- `~/.claude/skills/` → symlink to `~/dotfiles/agent/skills/`
+- `~/dotfiles/devin/skills/` → symlink to `~/dotfiles/agent/skills/`
+
+**Commands** — slash commands (`/name`) in the editor:
+- Source: `~/dotfiles/agent/commands/`
+- `~/.claude/commands/global/` → symlink to `~/dotfiles/agent/commands/`
+- `~/.pi/agent/prompts/` → symlink to `~/dotfiles/agent/commands/`
+
+To add a skill: create a directory with `SKILL.md` in `~/dotfiles/agent/skills/`. No re-linking needed.
+To add a command: add a `.md` file to `~/dotfiles/agent/commands/`. No re-linking needed.
+
+---
+
 **Remember:** When in doubt, ask first. I prefer being consulted over autonomous decisions.
