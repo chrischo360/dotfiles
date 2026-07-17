@@ -20,6 +20,10 @@ nvim/last-theme.txt
 # LeetCode solutions (stored in ~/leetcode, not in dotfiles)
 leetcode/
 
+# Private agent skills
+agent/skills/adhd-planner/
+agent/skills/pitch-company/
+
 # Local/private agent state
 .claude/
 .devin/
