@@ -1,1 +1,0 @@
-../../../agent/commands/tailor-resume.md
